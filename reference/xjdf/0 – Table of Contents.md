@@ -1,0 +1,732 @@
+# XJDF SPECIFICATION VERSION 2.2
+
+## Table of Contents
+
+### Chapter 1 Introduction
+
+- 1.1 Further Information
+    - 1.1.1 NMTOKEN repository
+    - 1.1.2 Errata
+- 1.2 Background on XJDF
+- 1.3 Design Criteria for XJDF
+    - 1.3.1 Simplify and reduce variations
+    - 1.3.2 Enable dynamic changes
+    - 1.3.3 Retain the semantic structures
+    - 1.3.4 Remove implementation specific details
+    - 1.3.5 Enhance Compatibility with standard XML and XML Tools
+    - 1.3.6 Device Capabilities
+    - 1.3.7 Compatibility with JDF and prior versions of XJDF
+- 1.4 Encoding Methods
+    - 1.4.1 Use of XML
+    - 1.4.2 Use of JSON
+- 1.5 Conceptual Changes from JDF to XJDF
+    - 1.5.1 Use of Abstract Elements
+    - 1.5.2 Resource Partitioning
+    - 1.5.3 Structural Changes
+    - 1.5.4 Process Model Changes
+    - 1.5.5 Alignment of Signals and Audits
+    - 1.5.6 Messaging Changes
+- 1.6 Conventions Used in this Specification
+    - 1.6.1 Document References
+    - 1.6.2 Text Styles
+    - 1.6.3 XPath Notation
+    - 1.6.4 Modification Notes
+    - 1.6.5 Specification of Cardinality
+    - 1.6.6 Template for Tables that Describe Elements
+- 1.7 Changes from the Previous Version
+    - 1.7.1 Additions
+    - 1.7.2 Removals
+    - 1.7.3 Modifications
+- 1.8 Glossary
+- 1.9 Conformance
+    - 1.9.1 Conformance Terminology
+    - 1.9.2 Interoperability Conformance Specifications
+- 1.10 Data Structures
+    - 1.10.1 Units of measurement
+    - 1.10.2 Counting in XJDF
+    - 1.10.3 Human and Machine readable strings and tokens
+
+### Chapter 2 Overview
+
+- 2.1 Introduction
+- 2.2 Referencing Data
+    - 2.2.1 Referencing External Data
+    - 2.2.2 Identifying Sections of XJDF from External Sources
+    - 2.2.3 Identifying Sections of XJDF from within the Same XJDF
+- 2.3 System Components
+    - 2.3.1 Workflow Component Roles
+- 2.4 XJDF Workflow
+    - 2.4.1 Product Intent and Processes
+    - 2.4.2 Process Reporting
+- 2.5 Role of Messaging in XJDF
+- 2.6 Coordinate Systems in XJDF
+    - 2.6.1 Introduction
+    - 2.6.2 Coordinate Systems of Resources and Processes
+    - 2.6.3 Coordinate System Transformations
+    - 2.6.4 General Rules
+    - 2.6.5 Homogeneous Coordinates
+
+### Chapter 3 Structure
+
+- 3.1 XJDF
+    - 3.1.1 ICS Versions Value
+    - 3.1.2 XJDF for Product Intent
+    - 3.1.3 XJDF for Process Description and Gray Boxes
+- 3.2 AuditPool
+    - 3.2.1 AuditCreated
+    - 3.2.2 AuditNotification
+    - 3.2.3 AuditProcessRun
+    - 3.2.4 AuditResource
+    - 3.2.5 AuditStatus
+- 3.3 ProductList
+    - 3.3.1 Product
+- 3.4 ResourceSet
+    - 3.4.1 Dependent
+- 3.5 XJDF Extensibility
+    - 3.5.1 Foreign Namespaces
+    - 3.5.2 Creating Extension ResourceSets
+    - 3.5.3 Creating Extension Message Type Elements
+    - 3.5.4 Creating Extension Intent Elements
+    - 3.5.5 Extending NMTOKEN Lists
+    - 3.5.6 Extending Process Types
+
+### Chapter 4 Product Intent
+
+- 4.1 Intent
+    - 4.1.1 Product Intent
+    - 4.1.2 Representation of Product Binding
+- 4.2 AssemblingIntent
+    - 4.2.1 AssemblyItem
+    - 4.2.2 BindIn
+    - 4.2.3 BlowIn
+    - 4.2.4 StickOn
+- 4.3 BindingIntent
+    - 4.3.1 AdhesiveNote
+    - 4.3.2 EdgeGluing
+    - 4.3.3 HardCoverBinding
+    - 4.3.4 LooseBinding
+    - 4.3.5 SaddleStitching
+    - 4.3.6 SideStitching
+    - 4.3.7 SoftCoverBinding
+    - 4.3.8 Tabs
+- 4.4 ColorIntent
+    - 4.4.1 SurfaceColor
+- 4.5 ContentCheckIntent
+    - 4.5.1 PreflightItem
+    - 4.5.2 ProofItem
+- 4.6 EmbossingIntent
+    - 4.6.1 EmbossingItem
+- 4.7 FoldingIntent
+    - 4.7.1 Typical Product Folds
+- 4.8 HoleMakingIntent
+- 4.9 LaminatingIntent
+- 4.10 LayoutIntent
+- 4.11 MediaIntent
+- 4.12 ProductionIntent
+- 4.13 ShapeCuttingIntent
+    - 4.13.1 ShapeCut
+- 4.14 VariableIntent
+
+### Chapter 5 Processes
+
+- 5.1 Process Template
+- 5.2 Combining Individual Process Steps
+    - 5.2.1 Exchange ResourceSets in combined processes
+    - 5.2.2 Usage of ResourceSets that are used as both input and output
+    - 5.2.3 XJDF with Multiple Processes of the Same Type
+- 5.3 General Processes
+    - 5.3.1 Approval
+    - 5.3.2 Delivery
+    - 5.3.3 ManualLabor
+    - 5.3.4 QualityControl
+    - 5.3.5 Verification
+- 5.4 Prepress Processes
+    - 5.4.1 Bending
+    - 5.4.2 ColorCorrection
+    - 5.4.3 ColorSpaceConversion
+    - 5.4.4 DieDesign
+    - 5.4.5 DieLayoutProduction
+    - 5.4.6 ImageEnhancement
+    - 5.4.7 ImageSetting
+    - 5.4.8 Imposition
+    - 5.4.9 InkZoneCalculation
+    - 5.4.10 Interpreting
+    - 5.4.11 LayoutElementProduction
+    - 5.4.12 LayoutShifting
+    - 5.4.13 PDLCreation
+    - 5.4.14 Preflight
+    - 5.4.15 PreviewGeneration
+    - 5.4.16 RasterReading
+    - 5.4.17 Rendering
+    - 5.4.18 Screening
+    - 5.4.19 Separation
+    - 5.4.20 ShapeDefProduction
+    - 5.4.21 SheetOptimizing
+    - 5.4.22 Stripping
+    - 5.4.23 Trapping
+- 5.5 Press Processes
+    - 5.5.1 ConventionalPrinting
+    - 5.5.2 DigitalPrinting
+    - 5.5.3 Varnishing
+- 5.6 Postpress Processes
+    - 5.6.1 BlockPreparation
+    - 5.6.2 BoxFolding
+    - 5.6.3 BoxPacking
+    - 5.6.4 Bundling
+    - 5.6.5 CaseMaking
+    - 5.6.6 CasingIn
+    - 5.6.7 Collecting
+    - 5.6.8 CoverApplication
+    - 5.6.9 Creasing
+    - 5.6.10 Cutting
+    - 5.6.11 DieMaking
+    - 5.6.12 Embossing
+    - 5.6.13 EndSheetGluing
+    - 5.6.14 Feeding
+    - 5.6.15 Folding
+    - 5.6.16 Gathering
+    - 5.6.17 Gluing
+    - 5.6.18 HeadBandApplication
+    - 5.6.19 HoleMaking
+    - 5.6.20 Inserting
+    - 5.6.21 Jacketing
+    - 5.6.22 Labeling
+    - 5.6.23 Laminating
+    - 5.6.24 LooseBinding
+    - 5.6.25 Palletizing
+    - 5.6.26 Perforating
+    - 5.6.27 ShapeCutting
+    - 5.6.28 Shrinking
+    - 5.6.29 SpinePreparation
+    - 5.6.30 SpineTaping
+    - 5.6.31 Stacking
+    - 5.6.32 Stitching
+    - 5.6.33 Strapping
+    - 5.6.34 ThreadSealing
+    - 5.6.35 ThreadSewing
+    - 5.6.36 Trimming
+    - 5.6.37 WebInlineFinishing
+    - 5.6.38 Winding
+    - 5.6.39 Wrapping
+
+### Chapter 6 Resources
+
+- 6.1 Resource
+    - 6.1.1 AmountPool
+    - 6.1.2 PartAmount
+    - 6.1.3 Part
+    - 6.1.4 PartWaste
+- 6.2 ApprovalDetails
+- 6.3 ApprovalParams
+- 6.4 Assembly
+    - 6.4.1 AssemblySection
+- 6.5 BendingParams
+- 6.6 BinderySignature
+    - 6.6.1 MultiPageFold
+    - 6.6.2 SignatureCell
+    - 6.6.3 Definition of Margins in Signature Cell
+- 6.7 BlockPreparationParams
+- 6.8 BoxFoldingParams
+    - 6.8.1 BoxFoldingType attribute values
+    - 6.8.2 BoxFoldAction
+- 6.9 BoxPackingParams
+- 6.10 Bundle
+    - 6.10.1 BundleItem
+- 6.11 BundlingParams
+- 6.12 CaseMakingParams
+- 6.13 CasingInParams
+- 6.14 Color
+    - 6.14.1 DeviceNColor
+- 6.15 ColorantControl
+    - 6.15.1 ColorantAlias
+    - 6.15.2 DeviceNSpace
+- 6.16 ColorCorrectionParams
+    - 6.16.1 ColorCorrectionOp
+- 6.17 ColorSpaceConversionParams
+    - 6.17.1 ColorSpaceConversionOp
+- 6.18 Component
+    - 6.18.1 Terms and Definitions
+- 6.19 Contact
+    - 6.19.1 ComChannel
+    - 6.19.2 Company
+    - 6.19.3 OrganizationalUnit
+    - 6.19.4 Person
+- 6.20 Content
+    - 6.20.1 BarcodeProductionParams
+    - 6.20.2 ContentMetadata
+    - 6.20.3 PositionObj
+- 6.21 ConventionalPrintingParams
+- 6.22 CoverApplicationParams
+    - 6.22.1 Score
+- 6.23 CreasingParams
+- 6.24 CustomerInfo
+- 6.25 CuttingParams
+- 6.26 DeliveryParams
+    - 6.26.1 DropItem
+- 6.27 DevelopingParams
+- 6.28 Device
+    - 6.28.1 Icon
+    - 6.28.2 IconList
+    - 6.28.3 Module
+- 6.29 DieLayout
+    - 6.29.1 Station
+- 6.30 DieLayoutProductionParams
+    - 6.30.1 RepeatDesc
+- 6.31 DigitalPrintingParams
+    - 6.31.1 Coordinate systems in DigitalPrinting
+- 6.32 EmbossingParams
+    - 6.32.1 Emboss
+- 6.33 EndSheetGluingParams
+- 6.34 ExposedMedia
+- 6.35 FeedingParams
+    - 6.35.1 CollatingItem
+    - 6.35.2 Feeder
+    - 6.35.3 FeederQualityParams
+- 6.36 FoldingParams
+- 6.37 FontPolicy
+- 6.38 GluingParams
+- 6.39 HeadBandApplicationParams
+- 6.40 HoleMakingParams
+- 6.41 ImageCompressionParams
+- 6.42 ImageEnhancementParams
+    - 6.42.1 ImageEnhancementOp
+- 6.43 ImageSetterParams
+- 6.44 Ink
+- 6.45 InkZoneCalculationParams
+- 6.46 InkZoneProfile
+- 6.47 InsertingParams
+- 6.48 InterpretingParams
+    - 6.48.1 InterpretingDetails
+    - 6.48.2 PDFInterpretingParams
+    - 6.48.3 ReferenceXObjParams
+- 6.49 JacketingParams
+- 6.50 LabelingParams
+- 6.51 LaminatingParams
+- 6.52 Layout
+    - 6.52.1 CIELABMeasuringField
+    - 6.52.2 ContentObject
+    - 6.52.3 DensityMeasuringField
+    - 6.52.4 MarkObject
+    - 6.52.5 PageActivation
+    - 6.52.6 PageCondition
+    - 6.52.7 PlacedObject
+    - 6.52.8 Position
+    - 6.52.9 SheetActivation
+    - 6.52.10 More about Layout
+- 6.53 LayoutElementProductionParams
+- 6.54 LayoutShift
+    - 6.54.1 ShiftPoint
+- 6.55 LooseBindingParams
+    - 6.55.1 ChannelBindingDetails
+    - 6.55.2 CoilBindingDetails
+    - 6.55.3 CombBindingDetails
+    - 6.55.4 RingBindingDetails
+    - 6.55.5 StripBindingDetails
+- 6.56 ManualLaborParams
+- 6.57 Media
+    - 6.57.1 TabDimensions
+    - 6.57.2 More about Media
+- 6.58 MiscConsumable
+    - 6.58.1 MiscConsumableType
+- 6.59 NodeInfo
+- 6.60 Pallet
+- 6.61 PalletizingParams
+- 6.62 PDLCreationParams
+    - 6.62.1 AdvancedParams
+    - 6.62.2 FontParams
+    - 6.62.3 PDFCreationDetails
+    - 6.62.4 PDFXParams
+    - 6.62.5 PSCreationDetails
+    - 6.62.6 ThinPDFParams
+- 6.63 PerforatingParams
+- 6.64 PreflightParams
+    - 6.64.1 PreflightTest
+- 6.65 PreflightReport
+    - 6.65.1 PreflightCheck
+- 6.66 Preview
+- 6.67 PreviewGenerationParams
+- 6.68 PrintCondition
+- 6.69 QualityControlParams
+    - 6.69.1 BindingQualityParams
+- 6.70 QualityControlResult
+    - 6.70.1 Defect
+    - 6.70.2 Inspection
+    - 6.70.3 BindingQualityMeasurement
+- 6.71 RasterReadingParams
+- 6.72 RenderingParams
+    - 6.72.1 TIFFEmbeddedFile
+    - 6.72.2 TIFFFormatParams
+    - 6.72.3 TIFFtag
+- 6.73 RunList
+    - 6.73.1 Referencing pages of a RunList from a Layout
+    - 6.73.2 Filtering parts of a RunList
+    - 6.73.3 Pages, Documents and Sets for common PDL types
+    - 6.73.4 Band
+    - 6.73.5 ByteMap
+- 6.74 ScreeningParams
+- 6.75 SeparationControlParams
+- 6.76 ShapeCuttingParams
+- 6.77 ShapeDef
+- 6.78 ShapeDefProductionParams
+    - 6.78.1 ObjectModel
+    - 6.78.2 ShapeDimension
+    - 6.78.3 ShapeTemplate
+- 6.79 SheetOptimizingParams
+    - 6.79.1 GangElement
+- 6.80 SheetOptimizingReport
+- 6.81 ShrinkingParams
+- 6.82 SpinePreparationParams
+- 6.83 SpineTapingParams
+- 6.84 StackingParams
+    - 6.84.1 Disjointing
+    - 6.84.2 InsertSheet
+- 6.85 StitchingParams
+- 6.86 StrappingParams
+- 6.87 ThreadSealingParams
+- 6.88 ThreadSewingParams
+- 6.89 Tool
+- 6.90 TransferCurve
+- 6.91 TrappingParams
+- 6.92 TrimmingParams
+- 6.93 UsageCounter
+- 6.94 VarnishingParams
+    - 6.94.1 Combined Use of VarnishingParams Attributes
+- 6.95 VerificationParams
+- 6.96 VerificationResult
+- 6.97 WebInlineFinishingParams
+    - 6.97.1 FolderProduction
+    - 6.97.2 ProductionPath
+- 6.98 WindingParams
+- 6.99 WrappingParams
+
+### Chapter 7 Messaging
+
+- 7.1 XJMF
+    - 7.1.1 Message
+    - 7.1.2 Header
+- 7.2 XJMF Message Families
+    - 7.2.1 Query
+    - 7.2.2 Command
+    - 7.2.3 Signal
+    - 7.2.4 Response
+- 7.3 List of All XJMF Messages
+- 7.4 ForceGang
+    - 7.4.1 CommandForceGang
+    - 7.4.2 ResponseForceGang
+- 7.5 GangStatus
+    - 7.5.1 QueryGangStatus
+    - 7.5.2 ResponseGangStatus
+    - 7.5.3 SignalGangStatus
+- 7.6 KnownDevices
+    - 7.6.1 QueryKnownDevices
+    - 7.6.2 ResponseKnownDevices
+    - 7.6.3 SignalKnownDevices
+- 7.7 KnownMessages
+    - 7.7.1 QueryKnownMessages
+    - 7.7.2 ResponseKnownMessages
+- 7.8 KnownSubscriptions
+    - 7.8.1 QueryKnownSubscriptions
+    - 7.8.2 ResponseKnownSubscriptions
+    - 7.8.3 SignalKnownSubscriptions
+- 7.9 ModifyQueueEntry
+    - 7.9.1 CommandModifyQueueEntry
+    - 7.9.2 ResponseModifyQueueEntry
+- 7.10 Notification
+    - 7.10.1 QueryNotification
+    - 7.10.2 ResponseNotification
+    - 7.10.3 SignalNotification
+- 7.11 PipeControl
+    - 7.11.1 CommandPipeControl
+    - 7.11.2 ResponsePipeControl
+- 7.12 QueueStatus
+    - 7.12.1 QueryQueueStatus
+    - 7.12.2 ResponseQueueStatus
+    - 7.12.3 SignalQueueStatus
+    - 7.12.4 Queue
+- 7.13 RequestQueueEntry
+    - 7.13.1 CommandRequestQueueEntry
+    - 7.13.2 ResponseRequestQueueEntry
+- 7.14 Resource
+    - 7.14.1 QueryResource
+    - 7.14.2 CommandResource
+    - 7.14.3 ResponseResource
+    - 7.14.4 SignalResource
+- 7.15 ResubmitQueueEntry
+    - 7.15.1 CommandResubmitQueueEntry
+    - 7.15.2 ResponseResubmitQueueEntry
+- 7.16 ReturnQueueEntry
+    - 7.16.1 CommandReturnQueueEntry
+    - 7.16.2 ResponseReturnQueueEntry
+- 7.17 ShutDown
+    - 7.17.1 CommandShutDown
+    - 7.17.2 ResponseShutDown
+- 7.18 Status
+    - 7.18.1 QueryStatus
+    - 7.18.2 ResponseStatus
+    - 7.18.3 SignalStatus
+- 7.19 StopPersistentChannel
+    - 7.19.1 CommandStopPersistentChannel
+    - 7.19.2 ResponseStopPersistentChannel
+- 7.20 SubmitQueueEntry
+    - 7.20.1 CommandSubmitQueueEntry
+    - 7.20.2 ResponseSubmitQueueEntry
+- 7.21 WakeUp
+    - 7.21.1 CommandWakeUp
+    - 7.21.2 ResponseWakeUp
+
+### Chapter 8 Subelements
+
+- 8.1 Address
+    - 8.1.1 AddressLine
+- 8.2 ApprovalPerson
+- 8.3 AutomatedOverPrintParams
+- 8.4 BarcodeCompParams
+- 8.5 BarcodeReproParams
+- 8.6 BindingQuality
+    - 8.6.1 Flex test
+    - 8.6.2 Pull test
+- 8.7 Certification
+- 8.8 ColorControlStrip
+    - 8.8.1 Patch
+- 8.9 ColorMeasurement
+- 8.10 ColorMeasurementConditions
+- 8.11 Comment
+- 8.12 Condition
+- 8.13 ConvertingConfig
+- 8.14 Crease
+- 8.15 Cut
+- 8.16 CutBlock
+- 8.17 CutMark
+- 8.18 Event
+- 8.19 FileSpec
+    - 8.19.1 Disposition
+    - 8.19.2 NetworkHeader
+- 8.20 FitPolicy
+- 8.21 Fold
+- 8.22 GangSource
+- 8.23 GeneralID
+- 8.24 Glue
+- 8.25 HolePattern
+- 8.26 IdentificationField
+    - 8.26.1 BarcodeDetails
+    - 8.26.2 ExtraValues
+    - 8.26.3 Usage of barcode attributes
+- 8.27 ImageCompression
+    - 8.27.1 CCITTFaxParams
+    - 8.27.2 DCTParams
+    - 8.27.3 FlateParams
+    - 8.27.4 JBIG2Params
+    - 8.27.5 JPEG2000Params
+    - 8.27.6 LZWParams
+- 8.28 MediaLayers
+- 8.29 MetadataMap
+    - 8.29.1 Expr
+- 8.30 MISDetails
+- 8.31 Notification
+    - 8.31.1 Milestone
+- 8.32 ObjectResolution
+- 8.33 OCGControl
+- 8.34 Perforate
+- 8.35 QueueEntry
+- 8.36 QueueFilter
+- 8.37 RefAnchor
+- 8.38 RegisterMark
+    - 8.38.1 MarkElement
+    - 8.38.2 Register MarkType
+    - 8.38.3 Combined Register Mark
+- 8.39 RegisterRibbon
+- 8.40 RegistrationQuality
+- 8.41 RuleLength
+- 8.42 ScavengerArea
+- 8.43 ScreenSelector
+- 8.44 Shape
+- 8.45 StripMark
+    - 8.45.1 FillMark
+    - 8.45.2 MarkColor
+    - 8.45.3 JobField
+- 8.46 SubscriptionInfo
+
+### Chapter 9 Building a System
+
+- 9.1 Queue Support
+    - 9.1.1 Queue Entry ID Generation
+- 9.2 Status Transitions
+- 9.3 Execution Model
+    - 9.3.1 Determining Executable XJDF
+    - 9.3.2 Serial Processing
+    - 9.3.3 Partial Processing of XJDF with Partitioned ResourceSets
+    - 9.3.4 Parallel Processing
+    - 9.3.5 Overlapping Processing
+    - 9.3.6 Approval, Proofing, Quality Control and Verification
+    - 9.3.7 Gang Jobs
+    - 9.3.8 Error Handling
+- 9.4 Specifying Complex Processing
+    - 9.4.1 Referencing Multiple XJDF in a Directory
+- 9.5 XJDF and XJMF Interchange Protocol
+    - 9.5.1 HTTP Port
+    - 9.5.2 HTTP Response Code
+    - 9.5.3 HTTP Request Method
+    - 9.5.4 HTTPS-Based Protocol – TLS
+    - 9.5.5 Authentication
+- 9.6 XJMF Handshaking
+    - 9.6.1 Single Query/Command Response Communication
+    - 9.6.2 Subscribing for Signals
+    - 9.6.3 Managing Persistent Channels
+    - 9.6.4 Signal Handshaking
+    - 9.6.5 Reliable Signaling
+    - 9.6.6 Deleting Persistent Channels
+    - 9.6.7 XJMF Bootstrapping
+    - 9.6.8 Device/Controller Selection
+- 9.7 XJDF Packaging
+    - 9.7.1 ZIP Packaging Details of XML-Encoded XJMF
+    - 9.7.2 MIME Types and File Extensions
+- 9.8 Job Modification
+    - 9.8.1 Rescheduling with ModifyQueueEntry
+    - 9.8.2 Modifying Jobs
+    - 9.8.3 Examples for Job Modification
+- 9.9 Use of XML Schema for Capability Descriptions
+- 9.10 Use of JSON and REST APIs
+    - 9.10.1 Mapping XJDF Data Types
+    - 9.10.2 Syntax Mapping
+    - 9.10.3 REST API Endpoints
+    - 9.10.4 JSON Transport Layer
+
+### Appendix A Data Types and Values
+
+- A.1 XJDF Data Types
+    - A.1.1 TransferFunction
+- A.2 Enumerations
+    - A.2.1 Action
+    - A.2.2 Activation
+    - A.2.3 Anchor
+    - A.2.4 Automation
+    - A.2.5 Axis
+    - A.2.6 BinderMaterial
+    - A.2.7 BindingType
+    - A.2.8 BundleType
+    - A.2.9 ChannelMode
+    - A.2.10 Coating
+    - A.2.11 Compensation
+    - A.2.12 CutMarkType
+    - A.2.13 DataType
+    - A.2.14 DeviceStatus
+    - A.2.15 Drying
+    - A.2.16 Edge
+    - A.2.17 EmbossDirection
+    - A.2.18 EmbossType
+    - A.2.19 Face
+    - A.2.20 FeedQuality
+    - A.2.21 FitPolicy
+    - A.2.22 GangPolicy
+    - A.2.23 Glue
+    - A.2.24 IncludeResources
+    - A.2.25 ISOPaperSubstrate
+    - A.2.26 JDFJMFVersion
+    - A.2.27 MappingSelection
+    - A.2.28 MediaDirection
+    - A.2.29 MediaType
+    - A.2.30 NamedColor
+    - A.2.31 Opacity
+    - A.2.32 Orientation
+    - A.2.33 Polarity
+    - A.2.34 PositionPolicy
+    - A.2.35 RenderingIntent
+    - A.2.36 Scope
+    - A.2.37 Severity
+    - A.2.38 SheetLay
+    - A.2.39 Side
+    - A.2.40 Sides
+    - A.2.41 SourceColorSpace
+    - A.2.42 SourceObjects
+    - A.2.43 SpreadType
+    - A.2.44 StapleShape
+    - A.2.45 Status
+    - A.2.46 TightBacking
+    - A.2.47 UpdateGranularity
+    - A.2.48 Usage
+    - A.2.49 WorkingDirection
+    - A.2.50 WorkStyle
+    - A.2.51 XJDFXJMFVersion
+- A.3 Preferred NMTOKEN Values
+    - A.3.1 Comb and Coil Shapes
+    - A.3.2 Contact Types
+    - A.3.3 Content Types
+    - A.3.4 Delivery Methods
+    - A.3.5 Device Classes
+    - A.3.6 Employee Roles
+    - A.3.7 Flute Types
+    - A.3.8 Fold Catalog
+    - A.3.9 Ink and Varnish Coatings
+    - A.3.10 Input Tray and Output Bin Names
+    - A.3.11 MediaType Details
+    - A.3.12 Milestones
+    - A.3.13 Module Types
+    - A.3.14 Node Categories
+    - A.3.15 Pallet Types
+    - A.3.16 Printing Technologies
+    - A.3.17 PrintStandard Characterization Data Sets
+    - A.3.18 Product Types
+    - A.3.19 Quality Control Methods
+    - A.3.20 Spine Operations
+    - A.3.21 Status Details
+    - A.3.22 Texture
+    - A.3.23 Units
+- A.4 Integer Values
+    - A.4.1 DDES3 Diecutting Data
+    - A.4.2 Return Codes
+
+### Appendix B Media Weight
+
+- B.1 North American Media Weight
+- B.2 Japanese Media Weight
+- B.3 Paper Grade
+    - B.3.1 Translation between ISO12647-2:2013 and ISO12647-2:2004
+    - B.3.2 Translation between ISO12647-2:2023 and ISO12647-2:2004
+    - B.3.3 Translation between ISO12647-3:2013 and ISO12647-2:2004
+    - B.3.4 Translation between ISO12647-4:2014 and ISO12647-2:2004
+
+### Appendix C Media Size
+
+- C.1 Architectural Paper Sizes
+- C.2 Business Card Sizes
+- C.3 International A Paper Sizes
+- C.4 International and Japanese B Paper Sizes
+    - C.4.1 International (ISO) B Paper Sizes
+    - C.4.2 Japanese (JIS) B Paper Sizes
+- C.5 International C Envelope Sizes
+- C.6 RA and SRA Paper Sizes
+- C.7 US ANSI Paper Sizes
+- C.8 US Paper Sizes
+
+### Appendix D String Generation
+
+- D.1 Template Variables
+- D.2 Template Operators
+
+### Appendix E Pagination Catalog
+
+- E.1 How to interpret the diagrams
+    - E.1.1 Legend
+    - E.1.2 Meaning of a Pagination Scheme
+    - E.1.3 Modifying the Pagination Schemes with BindingOrientation
+    - E.1.4 Examples of applying BindingOrientation
+- E.2 Pagination Diagrams
+
+### Appendix F Hole Pattern Catalog
+
+- F.1 Naming Scheme
+- F.2 Ring Binding – Two Hole
+- F.3 Ring Binding – Three Hole
+- F.4 Ring Binding – Four Hole
+- F.5 Ring Binding – Five Hole
+- F.6 Ring Binding – Six Hole
+- F.7 Ring Binding – Seven Hole
+- F.8 Ring Binding – Eleven Hole
+- F.9 Plastic Comb Binding
+- F.10 Wire Comb Binding
+- F.11 Coil and Spiral Binding
+- F.12 Special Binding
+
+### Appendix G References
+
+### Appendix H Release Notes
