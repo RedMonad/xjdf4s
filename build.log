@@ -1,0 +1,32 @@
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/PatchLaws.scala:85:37
+[error] 85 |    assertEquals(result.resourceSets.head.resources.head.id, Some(Id.unsafe("new")))
+[error]    |                 ^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    | value head is not a member of cats.data.Chain[xjdf4s.model.ResourceSet]
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/PatchLaws.scala:95:37
+[error] 95 |    assertEquals(result.resourceSets.head.resources.head.id, Some(Id.unsafe("new")))
+[error]    |                 ^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    | value head is not a member of cats.data.Chain[xjdf4s.model.ResourceSet]
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/PatchLaws.scala:116:78
+[error] 116 |    assertEquals(ids, Set(Some(Id.unsafe("m0new")), Some(Id.unsafe("n0new"))))
+[error]     |                                                                              ^
+[error]     |Can't compare these two types:
+[error]     |  First type:  Set[Option[xjdf4s.prim.Id]]
+[error]     |  Second type: Set[Some[xjdf4s.prim.Id]]
+[error]     |Possible ways to fix this error:
+[error]     |  Alternative 1: provide an implicit instance for Compare[Set[Option[xjdf4s.prim.Id]], Set[Some[xjdf4s.prim.Id]]]
+[error]     |  Alternative 2: upcast either type into `Any` or a shared supertype.
+[error]     |I found:
+[error]     |
+[error]     |    munit.Compare.compareSubtypeWithSupertype[Set[Option[xjdf4s.prim.Id]],
+[error]     |      Set[Some[xjdf4s.prim.Id]]](
+[error]     |      /* missing */summon[Set[Option[xjdf4s.prim.Id]] <:< Set[Some[xjdf4s.prim.Id]]]
+[error]     |      )
+[error]     |
+[error]     |But no implicit values were found that match type Set[Option[xjdf4s.prim.Id]] <:< Set[Some[xjdf4s.prim.Id]].
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/PatchLaws.scala:131:37
+[error] 131 |    assertEquals(result.resourceSets.head.select(Part.empty).flatMap(_.id), Some(Id.unsafe("new")))
+[error]     |                 ^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |value head is not a member of cats.data.Chain[xjdf4s.model.ResourceSet]
+[error] four errors found
+[error] (laws / Test / compileIncremental) Compilation failed
+[error] elapsed time: 5 s, cache 88%, 81 disk cache hits, 11 onsite tasks
