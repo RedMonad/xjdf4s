@@ -327,7 +327,7 @@ object HolePattern:
       Chain.one(Issue.errorC(
         IssueCode.HolePatternPatternRequired,
         at,
-        \"HolePattern/@Pattern SHALL be supplied when @Center, @Extent or @Shape is missing (Table 8.30)\"
+        "HolePattern/@Pattern SHALL be supplied when @Center, @Extent or @Shape is missing (Table 8.30)"
       ))
     else Chain.empty
 
