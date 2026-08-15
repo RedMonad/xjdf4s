@@ -130,14 +130,15 @@ object SpecExamples:
           ))
         ))
       )
+      val payload = IntentPayload.Binding(binding)
       val intent = Intent(
-        name = IntentPayload.Binding(binding).elementName,
-        specific = IntentPayload.Binding(binding)
+        name = IntentName.of(payload.elementName),
+        specific = payload
       )
       // Add a product with the binding intent
       val product = Product(
         id = Some(Id.unsafe("P1")),
-        isRoot = Some(true),
+        isRoot = true,
         amount = Some(100L),
         intents = Chain.one(intent)
       )
