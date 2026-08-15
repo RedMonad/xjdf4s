@@ -733,7 +733,7 @@ class TicketLaws extends ScalaCheckSuite:
     assert(!escalated.isValid)
     assert(escalated.warnings.isEmpty)
     assertEquals(escalated.errors.size.toInt, 1)
-    assert(escalated.errors.head.severity == SeverityClass.Error)
+    assert(escalated.errors.headOption.exists(_.severity == SeverityClass.Error))
 
   test("M1.3-5: escalate(codes) only escalates warnings carrying the given codes"):
     val w1 = Issue.warningC(IssueCode.LocalLawViolation, XPath("/XJDF"), "w1")

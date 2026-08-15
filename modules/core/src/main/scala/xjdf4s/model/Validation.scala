@@ -6,7 +6,6 @@ import xjdf4s.prim.*
 import cats.Show
 import cats.data.{Chain, NonEmptyChain, Validated, ValidatedNec}
 import cats.kernel.Eq
-import cats.syntax.all.*
 
 /** A validation finding: a stable machine-readable code, the severity class,
  *  the XPath location of the offending trait and a human-readable message.
