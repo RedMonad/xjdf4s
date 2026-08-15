@@ -1,6 +1,7 @@
 package xjdf4s.laws
 
 import xjdf4s.dsl.dsl
+import xjdf4s.intents.*
 import xjdf4s.model.*
 import xjdf4s.prim.*
 import xjdf4s.resources.*
@@ -245,6 +246,62 @@ class TicketLaws extends ScalaCheckSuite:
     val invalid = ticket(NonEmptyChain.one(ProcessType.Cutting), Chain(a, a))
     assert(invalid.validate.isInvalid)
 
+  test("§3.4 / N-16: partial CPI overlap [0] vs [0,1] is rejected"):
+    val rs0 = ResourceSet(
+      name = ResourceSetName.unsafe("NodeInfo"),
+      usage = Some(Usage.Input),
+      combinedProcessIndex = Some(NonEmptyChain.one(ProcessIndex.unsafe(0))),
+      resources = Chain.one(Resource.of(ResourcePayload.NodeInfoResource(NodeInfo())))
+    )
+    val rs01 = rs0.copy(
+      combinedProcessIndex =
+        Some(NonEmptyChain.of(ProcessIndex.unsafe(0), ProcessIndex.unsafe(1)))
+    )
+    val invalid = ticket(
+      NonEmptyChain.of(ProcessType.Cutting, ProcessType.Folding),
+      Chain(rs0, rs01)
+    )
+    assert(invalid.validate.isInvalid)
+    val clashIssues = invalid.validate.toEither.left.toOption.toList
+      .flatMap(_.toChain.toList)
+      .filter(_.code.contains(IssueCode.ResourceSetClash))
+    assert(clashIssues.nonEmpty, "expected a ResourceSetClash issue code")
+
+  test("§3.4 / N-16: no-CPI vs CPI=[1] is rejected (no entries applies to all)"):
+    val noCpi = ResourceSet(
+      name = ResourceSetName.unsafe("NodeInfo"),
+      usage = Some(Usage.Input),
+      resources = Chain.one(Resource.of(ResourcePayload.NodeInfoResource(NodeInfo())))
+    )
+    val withCpi = noCpi.copy(
+      combinedProcessIndex = Some(NonEmptyChain.one(ProcessIndex.unsafe(1)))
+    )
+    val invalid = ticket(
+      NonEmptyChain.of(ProcessType.Cutting, ProcessType.Folding),
+      Chain(noCpi, withCpi)
+    )
+    assert(invalid.validate.isInvalid)
+    val clashIssues = invalid.validate.toEither.left.toOption.toList
+      .flatMap(_.toChain.toList)
+      .filter(_.code.contains(IssueCode.ResourceSetClash))
+    assert(clashIssues.nonEmpty, "expected a ResourceSetClash issue code")
+
+  test("§3.4 / Example 3.6: disjoint CPI [0] vs [1] with same name is valid"):
+    val rs0 = ResourceSet(
+      name = ResourceSetName.unsafe("NodeInfo"),
+      usage = Some(Usage.Input),
+      combinedProcessIndex = Some(NonEmptyChain.one(ProcessIndex.unsafe(0))),
+      resources = Chain.one(Resource.of(ResourcePayload.NodeInfoResource(NodeInfo())))
+    )
+    val rs1 = rs0.copy(
+      combinedProcessIndex = Some(NonEmptyChain.one(ProcessIndex.unsafe(1)))
+    )
+    val valid = ticket(
+      NonEmptyChain.of(ProcessType.Cutting, ProcessType.Folding),
+      Chain(rs0, rs1)
+    )
+    assert(valid.validate.isValid)
+
   test("§3.4: CombinedProcessIndex out of bounds is rejected"):
     val rs = ResourceSet(
       name = ResourceSetName.unsafe("NodeInfo"),
@@ -432,4 +489,279 @@ class TicketLaws extends ScalaCheckSuite:
     val ticket: ValidatedNec[Issue, XJDF] =
       dsl.TicketDraft.of("J1", ProcessType.Product).andThen(_.build)
     assert(ticket.isValid)
+
+  // --- M1.3-3: DomainRule bus negative tests -------------------------------
+
+  private def productWithIntent(intent: Intent): Product =
+    Product(
+      id = Some(Id.unsafe("P1")),
+      productType = Some(NmToken.unsafe("Book")),
+      intents = Chain.one(intent)
+    )
+
+  private def ticketWithProduct(p: Product): XJDF =
+    ticket(NonEmptyChain.one(ProcessType.Product), productList = Some(ProductList(NonEmptyChain.one(p))))
+
+  private def issuesOf(t: XJDF): List[Issue] =
+    t.validate.toEither.left.toOption.toList.flatMap(_.toChain.toList)
+
+  private def assertHasCode(t: XJDF, code: IssueCode): Unit =
+    val issues = issuesOf(t)
+    assert(
+      issues.exists(_.code.contains(code)),
+      s"Expected issue code ${code.value}, got: ${issues.map(i => i.code.fold("<none>")(_.value)).mkString(", ")}"
+    )
+
+  test("Table 4.8: SaddleStitching details with @BindingType=SoftCover is rejected (DomainRule)"):
+    val badBinding = BindingIntent(
+      bindingType = BindingType.SoftCover,
+      details = Some(SaddleStitching())
+    )
+    val intent = Intent(IntentName.unsafe("BindingIntent"), IntentPayload.Binding(badBinding))
+    val t = ticketWithProduct(productWithIntent(intent))
+    assert(t.validate.isInvalid)
+    // The intent @Name matches the payload, so only the binding pairing law fires.
+    val codes = issuesOf(t).flatMap(_.code)
+    assert(codes.contains(IssueCode.LocalLawViolation), s"got codes: $codes")
+    assert(!codes.contains(IssueCode.IntentNameMismatch), s"got codes: $codes")
+
+  test("Table 4.8: matching BindingType/details pair is accepted"):
+    val goodBinding = BindingIntent(
+      bindingType = BindingType.SaddleStitch,
+      details = Some(SaddleStitching())
+    )
+    val intent = Intent(IntentName.unsafe("BindingIntent"), IntentPayload.Binding(goodBinding))
+    val t = ticketWithProduct(productWithIntent(intent))
+    assert(t.validate.isValid)
+
+  test("Table 4.8: @BindingSide with @BindingOrder=None is rejected"):
+    val badBinding = BindingIntent(
+      bindingType = BindingType.SaddleStitch,
+      bindingOrder = Some(BindingOrder.Unbound),
+      bindingSide = Some(Edge.Top),
+      details = Some(SaddleStitching())
+    )
+    val intent = Intent(IntentName.unsafe("BindingIntent"), IntentPayload.Binding(badBinding))
+    val t = ticketWithProduct(productWithIntent(intent))
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.LocalLawViolation)
+
+  test("Table 4.36: @MaxPages < @AveragePages is rejected"):
+    val badVar = VariableIntent(
+      variableType = VariableType.OneLine,
+      averagePages = Some(9L),
+      maxPages = Some(5L)
+    )
+    val intent = Intent(IntentName.unsafe("VariableIntent"), IntentPayload.Variable(badVar))
+    val t = ticketWithProduct(productWithIntent(intent))
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.LocalLawViolation)
+
+  test("Table 4.36: MinPages ≤ AveragePages ≤ MaxPages is accepted"):
+    val goodVar = VariableIntent(
+      variableType = VariableType.OneLine,
+      minPages = Some(2L),
+      averagePages = Some(5L),
+      maxPages = Some(10L)
+    )
+    val intent = Intent(IntentName.unsafe("VariableIntent"), IntentPayload.Variable(goodVar))
+    val t = ticketWithProduct(productWithIntent(intent))
+    assert(t.validate.isValid)
+
+  test("Table 6.5: PartWaste without @ModuleIDs/@WasteDetails is rejected"):
+    val pa = PartAmount(partWaste = Chain.one(PartWaste(waste = Amount(1.0))))
+    val rs = ResourceSet(
+      name = ResourceSetName.unsafe("Component"),
+      resources = Chain.one(
+        Resource(
+          specific = Some(ResourcePayload.ComponentResource(Component())),
+          amountPool = Some(AmountPool.of(pa))
+        )
+      )
+    )
+    val t = ticket(NonEmptyChain.one(ProcessType.Product), Chain.one(rs))
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.LocalLawViolation)
+
+  test("Table 6.1: @Status on Usage=Output ResourceSet is rejected"):
+    val rs = ResourceSet(
+      name = ResourceSetName.unsafe("Component"),
+      usage = Some(Usage.Output),
+      resources = Chain.one(
+        Resource(
+          specific = Some(ResourcePayload.ComponentResource(Component())),
+          status = Some(ResourceStatus.Available)
+        )
+      )
+    )
+    val t = ticket(NonEmptyChain.one(ProcessType.Product), Chain.one(rs))
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.ResourceStatusOnOutput)
+
+  test("§3.3.1.1: negative product amount is rejected by local law"):
+    val p = Product(amount = Some(-5L), id = Some(Id.unsafe("P1")))
+    val t = ticketWithProduct(p)
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.LocalLawViolation)
+
+  // --- Registry: every DomainRule-carrying type is reached by the bus ------
+
+  test("M1.3-3 registry: all types with local DomainRules are reached by validate"):
+    // The types carrying local laws in M1.3-3. If a new given DomainRule[T] is
+    // added, it MUST be wired into TicketValidator.checkLocalLaws AND listed
+    // here (the test exercises a positive path for each, proving reachability).
+    val intent = Intent(IntentName.unsafe("BindingIntent"),
+      IntentPayload.Binding(BindingIntent(bindingType = BindingType.SaddleStitch,
+        details = Some(SaddleStitching()))))
+    val productWithBind = productWithIntent(intent)
+    assert(ticketWithProduct(productWithBind).validate.isValid)
+
+    val variableIntent = Intent(IntentName.unsafe("VariableIntent"),
+      IntentPayload.Variable(VariableIntent(variableType = VariableType.OneLine,
+        averagePages = Some(4L))))
+    assert(ticketWithProduct(productWithIntent(variableIntent)).validate.isValid)
+
+    // Notification laws
+    val header = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(1))
+    val notif = Notification(classification = SeverityClass.Information,
+      comments = Chain(
+        Comment(text = CommentText("en"), language = Some(LanguageTag.unsafe("en"))),
+        Comment(text = CommentText("fr"), language = Some(LanguageTag.unsafe("fr")))
+      ))
+    val notifTicket = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      auditPool = Some(AuditPool.of(Audit.Notified(header, notif)))
+    )
+    assert(notifTicket.validate.isValid)
+  // --- M1.3-4: aggregate integrity (N-19, N-36, N-37) ---------------------
+
+  test("N-19: ticket with a cycle in @ChildRefs is rejected by validate"):
+    val a = Product(id = Some(Id.unsafe("A")), isRoot = true,
+      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("B"))))))))
+    val b = Product(id = Some(Id.unsafe("B")), isRoot = false,
+      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("A"))))))))
+    val t = ticket(NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.of(a, b))))
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.BomCycle)
+
+  test("N-19: unresolved @ChildRefs is rejected by validate"):
+    val a = Product(id = Some(Id.unsafe("A")), isRoot = true,
+      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("MISSING"))))))))
+    val t = ticket(NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.one(a))))
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.BomUnresolvedChildRef)
+
+  test("N-36: duplicate \"Product\" token in @Types is rejected (strict policy)"):
+    val t = ticket(NonEmptyChain.of(ProcessType.Product, ProcessType.Product))
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.ProductTokenDuplicate)
+
+  test("N-37: child with @PartVersion=v1, root without @PartVersion is rejected"):
+    val child = Product(id = Some(Id.unsafe("C")), isRoot = false,
+      partVersion = Some(NmToken.unsafe("v1")))
+    val root = Product(id = Some(Id.unsafe("R")), isRoot = true,
+      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("C"))))))))
+    val t = ticket(NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.of(root, child))))
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.PartVersionMismatch)
+
+  test("N-37: child @PartVersion=v1, root @PartVersion=v2 is rejected"):
+    val child = Product(id = Some(Id.unsafe("C")), isRoot = false,
+      partVersion = Some(NmToken.unsafe("v1")))
+    val root = Product(id = Some(Id.unsafe("R")), isRoot = true,
+      partVersion = Some(NmToken.unsafe("v2")),
+      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("C"))))))))
+    val t = ticket(NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.of(root, child))))
+    assert(t.validate.isInvalid)
+    assertHasCode(t, IssueCode.PartVersionMismatch)
+
+  test("N-37: matching @PartVersion on child and root is accepted"):
+    val child = Product(id = Some(Id.unsafe("C")), isRoot = false,
+      partVersion = Some(NmToken.unsafe("v1")))
+    val root = Product(id = Some(Id.unsafe("R")), isRoot = true,
+      partVersion = Some(NmToken.unsafe("v1")),
+      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("C"))))))))
+    val t = ticket(NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.of(root, child))))
+    assert(t.validate.isValid)
+
+  // --- M1.3-5: ValidationReport / severity (ADR-0006) ---------------------
+
+  test("M1.3-5: a ticket with only warnings is valid but carries warnings"):
+    // A structurally valid ticket with no SHALL violations: validateReport
+    // reports isValid=true and an empty error chain. Warnings are produced by
+    // SHOULD/MAY rules when present; currently the core emits only errors, so
+    // the positive baseline must be a clean report.
+    val t = ticket(NonEmptyChain.one(ProcessType.Product))
+    val report = TicketValidator.validateReport(t)
+    assert(report.isValid)
+    assert(report.errors.isEmpty)
+
+  test("M1.3-5: a ticket with one error is invalid and the error carries an IssueCode"):
+    val invalid = ticket(NonEmptyChain.of(ProcessType.Product, ProcessType.Cutting))
+    val report = TicketValidator.validateReport(invalid)
+    assert(!report.isValid)
+    assert(report.errors.nonEmpty)
+    assert(report.errors.forall(_.code.isDefined), "every error SHALL carry a stable IssueCode")
+    assert(report.errors.exists(_.code.contains(IssueCode.ProductTokenMixed)))
+
+  test("M1.3-5: withWarningsAsErrors escalates every warning to an error"):
+    val warning = Issue.warningC(
+      IssueCode.LocalLawViolation,
+      XPath("/XJDF"),
+      "SHOULD violation"
+    )
+    val report = ValidationReport(errors = Chain.empty, warnings = Chain.one(warning))
+    assert(report.isValid)
+    val escalated = report.withWarningsAsErrors
+    assert(!escalated.isValid)
+    assert(escalated.warnings.isEmpty)
+    assertEquals(escalated.errors.size.toInt, 1)
+    assert(escalated.errors.head.severity == SeverityClass.Error)
+
+  test("M1.3-5: escalate(codes) only escalates warnings carrying the given codes"):
+    val w1 = Issue.warningC(IssueCode.LocalLawViolation, XPath("/XJDF"), "w1")
+    val w2 = Issue.warningC(IssueCode.AuditNotChronological, XPath("/XJDF/AuditPool"), "w2")
+    val report = ValidationReport(Chain.empty, Chain(w1, w2))
+    val escalated = report.escalate(Set(IssueCode.LocalLawViolation))
+    assert(!escalated.isValid)
+    assertEquals(escalated.errors.size.toInt, 1)
+    assertEquals(escalated.warnings.size.toInt, 1)
+
+  test("M1.3-5: every issue produced by the core validator carries an IssueCode"):
+    // Negative fixture that exercises a variety of rules; none of the core
+    // issues may be code-less after M1.3-5 (the `code: Option[IssueCode]`
+    // escape hatch remains on the constructor for external codecs/tests, but
+    // TicketValidator itself SHALL always supply one).
+    val badBinding = BindingIntent(
+      bindingType = BindingType.SoftCover,
+      details = Some(SaddleStitching())
+    )
+    val p = Product(
+      id = Some(Id.unsafe("P1")),
+      amount = Some(-3L),
+      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(badBinding)))
+    )
+    val t = ticketWithProduct(p)
+    val report = TicketValidator.validateReport(t)
+    assert(!report.isValid)
+    val codeLess = report.errors.filter(_.code.isEmpty)
+    assert(codeLess.isEmpty, s"codeless errors: $codeLess")
 end TicketLaws

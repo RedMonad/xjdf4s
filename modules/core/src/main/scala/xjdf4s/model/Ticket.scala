@@ -82,9 +82,19 @@ final case class XJDF(
    *  specification (uniqueness of ResourceSet keys, index bounds, ID/IDREF
    *  consistency, `@Types` rules, audit chronology, …). All violations are
    *  accumulated — the applicative functor of errors.
+   *
+   *  This is the legacy entry point: every finding (error or warning) is
+   *  treated as invalid. Prefer `validateReport` for the errors/warnings
+   *  split (ADR-0006).
    */
   def validate: ValidatedNec[Issue, Unit] =
     TicketValidator.validate(this)
+
+  /** Validates this ticket and returns a `ValidationReport` separating errors
+   *  (SHALL violations) from warnings (SHOULD/MAY findings) (ADR-0006).
+   */
+  def validateReport: ValidationReport =
+    TicketValidator.validateReport(this)
 end XJDF
 
 object XJDF:

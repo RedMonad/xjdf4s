@@ -1,6 +1,7 @@
 package xjdf4s
 package intents
 
+import xjdf4s.model.{DomainRule, Issue, IssueCode, XPath}
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
@@ -30,19 +31,30 @@ final case class BindingIntent(
 
   def references: Chain[IdRef] = Chain.fromSeq(childRefs.toList.flatMap(_.toList))
 
-  /** The pairing rules between `@BindingType` and the detail elements (Table 4.8). */
+  /** The pairing rules between `@BindingType` and the detail elements (Table 4.8),
+   *  plus the rule `@BindingSide` SHALL NOT be provided when `@BindingOrder="None"`.
+   */
   def isLawful: Boolean =
+    detailsPairingOk && bindingSideOk
+
+  private[intents] def detailsPairingOk: Boolean =
     details match
       case None => true
       case Some(d) =>
         d match
-          case _: AdhesiveNote => bindingType == BindingType.AdhesiveNote
-          case _: EdgeGluing => bindingType == BindingType.EdgeGluing
+          case _: AdhesiveNote    => bindingType == BindingType.AdhesiveNote
+          case _: EdgeGluing      => bindingType == BindingType.EdgeGluing
           case _: HardCoverBinding => bindingType == BindingType.HardCover
-          case _: LooseBinding => BindingIntent.looseTypes.contains(bindingType)
+          case _: LooseBinding    => BindingIntent.looseTypes.contains(bindingType)
           case _: SaddleStitching => bindingType == BindingType.SaddleStitch
-          case _: SideStitching => bindingType == BindingType.SideStitch
+          case _: SideStitching   => bindingType == BindingType.SideStitch
           case _: SoftCoverBinding => bindingType == BindingType.SoftCover
+
+  /** Table 4.8: `@BindingSide` SHALL NOT be provided if `@BindingOrder="None"`
+   *  (i.e. `BindingOrder.Unbound`, whose wire token is `"None"`).
+   */
+  private[intents] def bindingSideOk: Boolean =
+    !(bindingOrder.contains(BindingOrder.Unbound) && bindingSide.isDefined)
 end BindingIntent
 
 object BindingIntent:
@@ -55,6 +67,34 @@ object BindingIntent:
       BindingType.RingBinding,
       BindingType.StripBinding
     )
+
+  /** Table 4.8 local laws: details ↔ @BindingType pairing and the
+   *  @BindingSide / @BindingOrder="None" exclusion. Explicitly invoked from
+   *  `TicketValidator.checkIntentLocalLaws`.
+   */
+  val law: DomainRule[BindingIntent] =
+    (value: BindingIntent, at: XPath) =>
+      val pairing =
+        if value.detailsPairingOk then Chain.empty
+        else
+          Chain.one(
+            Issue.errorC(
+              IssueCode.LocalLawViolation,
+              at,
+              s"BindingIntent details do not match @BindingType=${value.bindingType.token.value} (Table 4.8)"
+            )
+          )
+      val side =
+        if value.bindingSideOk then Chain.empty
+        else
+          Chain.one(
+            Issue.errorC(
+              IssueCode.LocalLawViolation,
+              at,
+              "@BindingSide SHALL NOT be provided when @BindingOrder=\"None\" (Table 4.8)"
+            )
+          )
+      pairing ++ side
 
   given Eq[BindingIntent] = Eq.fromUniversalEquals
 

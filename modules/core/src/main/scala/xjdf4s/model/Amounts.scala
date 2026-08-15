@@ -15,11 +15,30 @@ final case class PartWaste(
     wasteDetails: Option[WasteDetail] = None
 ):
 
-  /** The “at least one of” rule of Table 6.5. */
-  def isLawful: Boolean = moduleIds.isDefined || wasteDetails.isDefined
+  /** The “at least one of” rule of Table 6.5, as a convenience predicate
+   *  derived from the `DomainRule` (the XPath passed here is discarded
+   *  because only the presence of issues matters). The real validation in
+   *  `TicketValidator` passes the actual location.
+   */
+  def isLawful: Boolean = PartWaste.law.check(this, XPath("")).isEmpty
 end PartWaste
 
 object PartWaste:
+
+  /** Table 6.5: at least one of `@ModuleIDs` / `@WasteDetails` SHALL be present.
+   *  Explicitly invoked from `TicketValidator.checkResourceLocalLaws`.
+   */
+  val law: DomainRule[PartWaste] =
+    (value: PartWaste, at: XPath) =>
+      if value.moduleIds.isDefined || value.wasteDetails.isDefined then Chain.empty
+      else
+        Chain.one(
+          Issue.errorC(
+            IssueCode.LocalLawViolation,
+            at,
+            "PartWaste: at least one of @ModuleIDs or @WasteDetails SHALL be specified (Table 6.5)"
+          )
+        )
 
   given Show[PartWaste] = Show.fromToString
 

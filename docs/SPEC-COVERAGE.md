@@ -22,4 +22,23 @@
 | `XjdfVersion.from` принимает только `"2.2"` | Table 3.1 требует `"2.2"` для соответствующих спецификации документов, хотя Table A.52 перечисляет `2.0`/`2.1`/`2.2` | scaladoc-объяснение (M1.5-2); при поддержке 2.0/2.1 — отдельное решение | запланировано (M1.5-2) |
 | `Monoid[Matrix]` вместо `Group` | вырожденная матрица необратима | `inverse: Option[Matrix]` + задокументированная причина; опциональный `InvertibleMatrix` вне M1 | реализовано |
 | `Semigroup` (не `Monoid`) для `AuditPool`, `AmountPool`, `NmTokens`, `ProcessPath` | носитель `NonEmptyChain`, кардинальность `T+` запрещает пустое значение | явная запись в scaladoc и в `docs/01` | реализовано |
-| Дубликат `"Product"` в `@Types` считается нарушением | §3.1.3 говорит «additional process type tokens»; трактовка «любой второй токен» | зафиксировано как интерпретация + тест (M1.3-4, N-36) | запланировано (M1.3-4) |
+| Дубликат `"Product"` в `@Types` считается нарушением | §3.1.3 говорит «additional process type tokens»; трактовка «любой второй токен» | зафиксировано как интерпретация + негативный тест (N-36, `XJDF-TYPES-PRODUCT-DUPLICATE`) | реализовано (PR-8, M1.3-4) |
+
+## Decision records (короткие)
+
+### DR-N36 — дубликат `"Product"` в `@Types` (строгая политика)
+
+**Норма.** §3.1.3: «`@Types` of process XJDF SHALL NOT contain the token `"Product"` if any additional process type tokens are present».
+
+**Вопрос.** Запрещает ли норма только смешение `"Product"` с процессными токенами (`"Product Cutting"`), или и чистый дубликат (`"Product Product"`)? Слово «additional» допускает оба толкования.
+
+**Решение (PR-8, M1.3-4).** Принята строгая политика: дубликат `"Product"` отклоняется отдельным кодом `XJDF-TYPES-PRODUCT-DUPLICATE` (`IssueCode.ProductTokenDuplicate`), а смешение с процессными токенами — кодом `XJDF-TYPES-PRODUCT-MIXED` (`IssueCode.ProductTokenMixed`). Обоснование: `@Types` — упорядоченный список процессов (§5.2, `ProcessPath`); идентификатор процесса `"Product"` не несёт процессной семантики при повторении, и его дублирование указывает на ошибку отправителя. Это интерпретация, а не дословная норма, поэтому: (1) выделен отдельный `IssueCode`, (2) добавлен негативный тест `N-36: duplicate "Product" token in @Types is rejected`, (3) запись остаётся в реестре отклонений.
+
+### DR-DomainRule — форма локальных законов (ADR-0003, M1.3-3)
+
+**Контекст.** Ряд локальных инвариантов (`Intent.isLawful`, `BindingIntent.isLawful`, `VariableIntent.isLawful`, `PartWaste.isLawful`, `Disposition.isLawful`, `Product.hasLawfulAmounts`, `Notification.hasLawfulMilestone/hasUniqueCommentLanguages`, `ResourceSet.hasLawfulChildren/hasLawfulStatuses`) был реализован как `Boolean`-предикаты; часть из них не была подключена к корневому валидатору (N-18).
+
+**Решение (PR-8).** Все локальные законы приведены к контракту ADR-0003 `trait DomainRule[-A]: def check(value: A, at: XPath): Chain[Issue]` и явно вызываются из `TicketValidator.checkLocalLaws`. Каждый закон возвращает структурированный `Issue` со стабильным `IssueCode`, severity и XPath. `Boolean`-предикаты сохранены как производные аксессоры там, где их использует DSL (`Intent.isLawful`) или тесты, но они больше не являются первичной формой закона. Глобальные правила (ID/IDREF, §3.4, BOM, хронология) остаются в `TicketValidator`; решение владельца — рефакторить все предикаты сразу (не оставлять legacy).
+
+**Прим.:** `Disposition.law` определён в `TicketValidator.dispositionLaw`, а не в `prim.Disposition`, чтобы не создавать зависимости `prim → validation` до разрыва цикла в M1.4-1.
+

@@ -79,7 +79,8 @@ object Patch:
       case Some(conflicting) =>
         Ior.left(
           conflicting.map: rs =>
-            Issue.error(
+            Issue.errorC(
+              IssueCode.ResourceSetClash,
               XPath("/XJDF/ResourceSet"),
               s"Change order contains conflicting ResourceSets (§3.4): ${Show[ResourceSetKey].show(rs.key)}"
             )
@@ -103,7 +104,8 @@ object Patch:
 
   /** A warning that an old ResourceSet was replaced by a change order (§3.4). */
   private def warnReplaced(rs: ResourceSet): Issue =
-    Issue.warning(
+    Issue.warningC(
+      IssueCode.ResourceSetClash,
       XPath("/XJDF/ResourceSet"),
       s"Duplicate ResourceSet replaced (§3.4): ${Show[ResourceSetKey].show(rs.key)}"
     )

@@ -200,6 +200,95 @@ object XPath:
 
 end XPath
 
+/** A stable, machine-readable identifier of a validation finding (ADR-0003,
+ *  ADR-0006). Codecs (M2) and transport layers (M4) dispatch on the code
+ *  rather than on human-readable messages. Codes are NMTOKEN tokens so they
+ *  serialize directly as XML/JSON attributes.
+ */
+opaque type IssueCode = String
+
+object IssueCode:
+
+  def apply(raw: String): IssueCode = raw
+
+  /** Constructs a code from a plain Scala string; the string must be a valid NMTOKEN. */
+  def unsafe(raw: String): IssueCode =
+    require(NmToken.from(raw).isDefined, s"Not a valid IssueCode (NMTOKEN): '$raw'")
+    raw
+
+  extension (code: IssueCode) def value: String = code
+
+  given Show[IssueCode] = Show.show(identity)
+
+  given Eq[IssueCode] = Eq.fromUniversalEquals
+
+  // --- Well-known codes used by the core validator ---------------------------
+  // Adding a code here is intentional: every new SHALL rule gets a stable code
+  // so downstream consumers do not parse message strings.
+
+  /** `@Version` is not `"2.2"` (Table 3.1). */
+  val UnsupportedVersion: IssueCode = unsafe("XJDF-VERSION-UNSUPPORTED")
+
+  /** `"Product"` is combined with process type tokens (§3.1.3). */
+  val ProductTokenMixed: IssueCode = unsafe("XJDF-TYPES-PRODUCT-MIXED")
+
+  /** A duplicate `"Product"` token in `@Types` (N-36, strict policy). */
+  val ProductTokenDuplicate: IssueCode = unsafe("XJDF-TYPES-PRODUCT-DUPLICATE")
+
+  /** `@RelatedJobPartID` without `@RelatedJobID` (Table 3.1). */
+  val RelatedJobPartIdWithoutJobId: IssueCode = unsafe("XJDF-RELATED-JOBPARTID-WITHOUT-JOBID")
+
+  /** Two `ResourceSet`s clash per §3.4 (same Name/Usage/ProcessUsage with
+   *  common or no `@CombinedProcessIndex` entries). */
+  val ResourceSetClash: IssueCode = unsafe("RESOURCESET-CLASH")
+
+  /** A `Resource` payload element name does not match the parent `@Name`. */
+  val ResourceSetChildNameMismatch: IssueCode = unsafe("RESOURCESET-CHILD-NAME-MISMATCH")
+
+  /** `@Status` is specified on a `ResourceSet/@Usage="Output"` (Table 6.1). */
+  val ResourceStatusOnOutput: IssueCode = unsafe("RESOURCE-STATUS-ON-OUTPUT")
+
+  /** A `@CombinedProcessIndex` value is out of bounds for `@Types`. */
+  val CombinedProcessIndexOutOfBounds: IssueCode = unsafe("COMBINED-PROCESS-INDEX-OUT-OF-BOUNDS")
+
+  /** Duplicate document-scoped `@ID` (§2.2.3). */
+  val DuplicateId: IssueCode = unsafe("ID-DUPLICATE")
+
+  /** An `IDREF` does not resolve to a declared `@ID` (§2.2.3). */
+  val DanglingIdRef: IssueCode = unsafe("IDREF-DANGLING")
+
+  /** `AuditPool` is not ordered chronologically (§3.2). */
+  val AuditNotChronological: IssueCode = unsafe("AUDIT-NOT-CHRONOLOGICAL")
+
+  /** A PartAmount/Part repeats or mismatches a parent Partition Key (§6.1.2.1). */
+  val PartKeyShadowsParent: IssueCode = unsafe("PART-KEY-SHADOWS-PARENT")
+
+  /** `Intent/@Name` does not match the payload element name (Table 4.1). */
+  val IntentNameMismatch: IssueCode = unsafe("INTENT-NAME-MISMATCH")
+
+  /** A `Notification` carries a `Milestone` but `@Class` is not `"Event"` (Table 8.49). */
+  val NotificationMilestoneClass: IssueCode = unsafe("NOTIFICATION-MILESTONE-CLASS")
+
+  /** Multiple `Comment` elements in a container share a `@Language` (Table 8.49, N-38). */
+  val CommentLanguageDuplicate: IssueCode = unsafe("COMMENT-LANGUAGE-DUPLICATE")
+
+  /** BOM: a cycle in `Product/@ChildRefs` (§3.3.1.1). */
+  val BomCycle: IssueCode = unsafe("BOM-CYCLE")
+
+  /** BOM: an unresolved `@ChildRefs` target (§3.3.1.1). */
+  val BomUnresolvedChildRef: IssueCode = unsafe("BOM-UNRESOLVED-CHILDREF")
+
+  /** BOM: a ProductList has no root product. */
+  val BomNoRoot: IssueCode = unsafe("BOM-NO-ROOT")
+
+  /** Product `@PartVersion` disagrees between a child and its referencing root (Table 3.11, N-37). */
+  val PartVersionMismatch: IssueCode = unsafe("PART-VERSION-MISMATCH")
+
+  /** A local structural law of a model node is violated (ADR-0003). */
+  val LocalLawViolation: IssueCode = unsafe("LOCAL-LAW-VIOLATION")
+
+end IssueCode
+
 /** Scala 3 trait parameter: a named element — the common surface of XJDF
  *  elements that are identified by their `@Name` (ResourceSet, Intent).
  *  The member is abstract; case-class subclasses supply it with their `name`

@@ -90,10 +90,37 @@ final case class Notification(
     langs.distinct.size == langs.size
 end Notification
 
-/** `Event | Milestone` — a union type: the two alternative payloads of a Notification. */
-type NotificationDetail = Event | Milestone
-
 object Notification:
+
+  /** Table 8.49 local laws (N-13, N-38):
+   *    - Milestone ⇒ `@Class="Event"`;
+   *    - multiple Comment elements SHALL have distinct `@Language`.
+   *
+   *  Explicitly invoked from `TicketValidator.checkLocalLaws`.
+   */
+  val law: DomainRule[Notification] =
+    (value: Notification, at: XPath) =>
+      val milestone =
+        if value.hasLawfulMilestone then Chain.empty
+        else
+          Chain.one(
+            Issue.errorC(
+              IssueCode.NotificationMilestoneClass,
+              at,
+              "Notification with Milestone SHALL have @Class=\"Event\" (Table 8.49)"
+            )
+          )
+      val comments =
+        if value.hasUniqueCommentLanguages then Chain.empty
+        else
+          Chain.one(
+            Issue.errorC(
+              IssueCode.CommentLanguageDuplicate,
+              at,
+              "Multiple Comment elements in Notification SHALL have distinct @Language values (Table 8.49)"
+            )
+          )
+      milestone ++ comments
 
   given Show[Notification] =
     Show.show(n => s"Notification(class=${n.classification.token.value})")
@@ -101,6 +128,9 @@ object Notification:
   given Eq[Notification] = Eq.fromUniversalEquals
 
 end Notification
+
+/** `Event | Milestone` — a union type: the two alternative payloads of a Notification. */
+type NotificationDetail = Event | Milestone
 
 /** `ProcessRun` (Table 3.7): the details of an individual Workstep execution —
  *  the payload of `AuditProcessRun`.

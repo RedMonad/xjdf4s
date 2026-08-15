@@ -207,11 +207,7 @@ final case class Disposition(
     minDuration: Option[TimeSpan] = None,
     until: Option[Timestamp] = None,
     priority: Option[Int] = None
-):
-
-  /** True when the `@MinDuration`/`@Until` exclusivity rule holds. */
-  def isLawful: Boolean = !(minDuration.isDefined && until.isDefined)
-end Disposition
+)
 
 object Disposition:
 

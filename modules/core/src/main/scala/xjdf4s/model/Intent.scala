@@ -27,6 +27,23 @@ end Intent
 
 object Intent:
 
+  /** Table 4.1: `Intent/@Name` SHALL equal the specific intent's element name.
+   *  Explicitly invoked from `TicketValidator.checkIntentLocalLaws`; not a
+   *  `given` to keep the local-law registry grep-proof (N-18).
+   */
+  val nameLaw: DomainRule[Intent] =
+    (value: Intent, at: XPath) =>
+      if value.name == value.specific.elementName then Chain.empty
+      else
+        Chain.one(
+          Issue.errorC(
+            IssueCode.IntentNameMismatch,
+            at,
+            s"Intent/@Name='${value.name.toNmToken.value}' does not match payload element " +
+              s"'${value.specific.elementName.value}' (Table 4.1)"
+          )
+        )
+
   given Show[Intent] =
     Show.show(i => s"Intent(${i.name.toNmToken.value})")
 

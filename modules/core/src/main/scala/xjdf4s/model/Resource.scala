@@ -205,6 +205,40 @@ final case class ResourceSet(
     if usage.contains(Usage.Output) then resources.forall(_.status.isEmpty) else true
 end ResourceSet
 
+/** Local laws of `ResourceSet` (Table 6.1): @Name↔payload pairing and the
+ *  `@Status` / `@Usage="Output"` exclusion. Explicitly invoked from
+ *  `TicketValidator.checkLocalLaws`.
+ */
+object ResourceSetLaw:
+
+  /** Table 6.1: a specific resource element name SHALL match `ResourceSet/@Name`.
+   *  Bodyless `<Resource/>` elements (no payload) are skipped.
+   */
+  val children: DomainRule[ResourceSet] =
+    (rs: ResourceSet, at: XPath) =>
+      val bad = rs.resources.filterNot(r => r.elementName.forall(_ == rs.name.toNmToken))
+      Chain.fromSeq(bad).map { r =>
+        val actual = r.elementName.fold("<bodyless>")(_.value)
+        Issue.errorC(
+          IssueCode.ResourceSetChildNameMismatch,
+          at,
+          s"Resource element '$actual' does not match ResourceSet/@Name='${rs.name.toNmToken.value}' (Table 6.1)"
+        )
+      }
+
+  /** Table 6.1: `@Status` SHALL NOT be specified if `ResourceSet/@Usage="Output"`. */
+  val statuses: DomainRule[ResourceSet] =
+    (rs: ResourceSet, at: XPath) =>
+      if rs.usage.contains(Usage.Output) then
+        Chain.fromSeq(rs.resources.filter(_.status.isDefined)).map { r =>
+          Issue.errorC(
+            IssueCode.ResourceStatusOnOutput,
+            at,
+            s"Resource @Status SHALL NOT be specified for Usage=\"Output\" (Table 6.1): $r"
+          )
+        }
+      else Chain.empty
+
 object ResourceSet:
 
   /** §3.4: two ResourceSets clash when `@Name`/`@Usage`/`@ProcessUsage` are equal AND

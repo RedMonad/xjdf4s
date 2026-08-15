@@ -39,6 +39,24 @@ end Product
 
 object Product:
 
+  /** §3.3.1.1: product amounts SHALL be non-negative. Explicitly invoked
+   *  from `TicketValidator.checkLocalLaws`.
+   */
+  val amountsLaw: DomainRule[Product] =
+    (value: Product, at: XPath) =>
+      val bad = List(
+        value.amount.map(a => "@Amount" -> a),
+        value.maxAmount.map(a => "@MaxAmount" -> a),
+        value.minAmount.map(a => "@MinAmount" -> a)
+      ).flatten.filter(_._2 < 0L)
+      Chain.fromSeq(bad).map { case (name, a) =>
+        Issue.errorC(
+          IssueCode.LocalLawViolation,
+          at,
+          s"Product $name=$a SHALL be non-negative (§3.3.1.1)"
+        )
+      }
+
   given Show[Product] =
     Show.show { p =>
       val name = p.productType.map(_.value).orElse(p.descriptiveName.map(_.value)).getOrElse("?")
@@ -135,7 +153,11 @@ object Bom:
     val currentId = product.id.map(_.value)
     currentId match
       case Some(id) if seen.contains(id) =>
-        Left(Issue.error(XPath("/XJDF/ProductList"), s"Cycle in product structure at ID '$id'"))
+        Left(Issue.errorC(
+          IssueCode.BomCycle,
+          XPath("/XJDF/ProductList"),
+          s"Cycle in product structure at ID '$id'"
+        ))
       case _ =>
         val nextSeen = currentId.fold(seen)(seen + _)
         product.references.toList.distinct match
@@ -148,7 +170,11 @@ object Bom:
                   for
                     kids  <- acc
                     child <- byId.get(ref.value).toRight(
-                               Issue.error(XPath("/XJDF/ProductList"), s"Unresolved ChildRef '${ref.value}'"))
+                               Issue.errorC(
+                                 IssueCode.BomUnresolvedChildRef,
+                                 XPath("/XJDF/ProductList"),
+                                 s"Unresolved ChildRef '${ref.value}'"
+                               ))
                     kid   <- toTree(child, byId, nextSeen)
                   yield kids :+ kid
               }
@@ -162,7 +188,11 @@ object Bom:
       pl.products.toChain.toList.flatMap(p => p.id.map(id => id.value -> p)).toMap
     val roots = pl.roots
     if roots.isEmpty then
-      Left(Issue.error(XPath("/XJDF/ProductList"), "A ProductList SHALL contain at least one root product"))
+      Left(Issue.errorC(
+        IssueCode.BomNoRoot,
+        XPath("/XJDF/ProductList"),
+        "A ProductList SHALL contain at least one root product"
+      ))
     else
       val trees = roots.foldLeft(Right(Chain.empty[Fix[ProductTree]]): Either[Issue, Chain[Fix[ProductTree]]]) {
         case (acc, p) =>
@@ -172,7 +202,8 @@ object Bom:
           yield ts :+ t
       }
       trees.flatMap(ts =>
-        NonEmptyChain.fromChain(ts).toRight(Issue.error(XPath("/XJDF/ProductList"), "Empty product list"))
+        NonEmptyChain.fromChain(ts).toRight(
+          Issue.errorC(IssueCode.BomNoRoot, XPath("/XJDF/ProductList"), "Empty product list"))
       )
 
   /** A catamorphism: folds an `ProductTree[A] => A` algebra over the whole tree.
@@ -196,7 +227,12 @@ object Bom:
   private def checkAmounts(p: Product): ValidatedNec[Issue, Unit] =
     val bad = List(p.amount, p.maxAmount, p.minAmount).flatten.filter(_ < 0L)
     if bad.isEmpty then ().validNec
-    else Issue.error(XPath("/XJDF/ProductList"), s"Negative product amount in $p").invalidNec
+    else
+      Issue.errorC(
+        IssueCode.LocalLawViolation,
+        XPath("/XJDF/ProductList"),
+        s"Negative product amount in $p"
+      ).invalidNec
 
   /** The total number of copies of every product in the BOM, following
    *  §3.3.1.1: a parent amount multiplies the per-parent amounts of its parts.

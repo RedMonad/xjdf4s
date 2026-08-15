@@ -1,6 +1,7 @@
 package xjdf4s
 package intents
 
+import xjdf4s.model.{DomainRule, Issue, IssueCode, XPath}
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
@@ -38,18 +39,46 @@ final case class VariableIntent(
 
   def references: Chain[IdRef] = Chain.fromSeq(childRefs.toList.flatMap(_.toList))
 
-  /** True when `@MinPages <= @AveragePages <= @MaxPages` (§4.14). */
+  /** True when `@MinPages <= @AveragePages <= @MaxPages` (Table 4.36). */
   def isLawful: Boolean =
     val okMin = (minPages, averagePages) match
       case (Some(mn), Some(av)) => mn <= av
-      case _ => true
+      case _                     => true
     val okMax = (averagePages, maxPages) match
       case (Some(av), Some(mx)) => av <= mx
-      case _ => true
+      case _                     => true
     okMin && okMax
 end VariableIntent
 
 object VariableIntent:
+
+  /** Table 4.36: `@MinPages <= @AveragePages <= @MaxPages`. Explicitly invoked
+   *  from `TicketValidator.checkIntentLocalLaws`.
+   */
+  val law: DomainRule[VariableIntent] =
+    (value: VariableIntent, at: XPath) =>
+      val minIssue = (value.minPages, value.averagePages) match
+        case (Some(mn), Some(av)) if mn > av =>
+          Chain.one(
+            Issue.errorC(
+              IssueCode.LocalLawViolation,
+              at,
+              s"@MinPages=$mn SHALL NOT be larger than @AveragePages=$av (Table 4.36)"
+            )
+          )
+        case _ => Chain.empty
+      val maxIssue = (value.averagePages, value.maxPages) match
+        case (Some(av), Some(mx)) if av > mx =>
+          Chain.one(
+            Issue.errorC(
+              IssueCode.LocalLawViolation,
+              at,
+              s"@MaxPages=$mx SHALL NOT be smaller than @AveragePages=$av (Table 4.36)"
+            )
+          )
+        case _ => Chain.empty
+      minIssue ++ maxIssue
+
   given Eq[VariableIntent] = Eq.fromUniversalEquals
 
 /** `AssemblingIntent` (Table 4.3): placing or inserting one component within
