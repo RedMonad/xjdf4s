@@ -1,5 +1,6 @@
 package xjdf4s.laws
 
+import xjdf4s.model.SeverityClass
 import xjdf4s.prim.*
 import munit.FunSuite
 

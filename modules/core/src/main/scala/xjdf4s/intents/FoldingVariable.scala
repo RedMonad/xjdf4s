@@ -1,7 +1,7 @@
 package xjdf4s
 package intents
 
-import xjdf4s.model.{DomainRule, Issue}
+import xjdf4s.model.{DomainRule, Issue, IssueCode, XPath}
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq

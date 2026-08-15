@@ -126,14 +126,6 @@ object DeviceStatus extends XjdfEnumCompanion[DeviceStatus]:
   val all: List[DeviceStatus] =
     List(Cleanup, Idle, NonProductive, Offline, Production, Setup, Stopped)
 
-/** `Severity`: class of a notification (Table A.2.37). */
-enum SeverityClass extends XjdfEnum:
-  case Event, Information, Warning, Error, Fatal
-  def token: NmToken = NmToken.unsafe(this.toString)
-
-object SeverityClass extends XjdfEnumCompanion[SeverityClass]:
-  val all: List[SeverityClass] = List(Event, Information, Warning, Error, Fatal)
-
 /** `BindingType`: the required style of binding (Table A.2.7). */
 enum BindingType extends XjdfEnum:
   case AdhesiveNote, ChannelBinding, CoilBinding, CombBinding, CornerStitch, EdgeGluing,
