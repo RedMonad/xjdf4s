@@ -4,7 +4,7 @@ package resources
 import xjdf4s.prim.*
 import cats.kernel.Eq
 
-/** The `Color` resource (Table 6.14): the colorant information of one
+/** The `Color` resource (Table 6.27): the colorant information of one
  *  separation. Color resources are partitioned by `Part/@Separation`.
  */
 final case class Color(

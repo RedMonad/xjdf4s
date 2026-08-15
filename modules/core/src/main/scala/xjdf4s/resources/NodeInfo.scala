@@ -4,7 +4,7 @@ package resources
 import xjdf4s.prim.*
 import cats.kernel.Eq
 
-/** The `NodeInfo` resource (Table 6.59): scheduling information about the
+/** The `NodeInfo` resource (Table 6.119): scheduling information about the
  *  process described by this XJDF. `NodeInfo` without `@ProcessUsage` applies to
  *  the whole process; `NodeInfo[@ProcessUsage="EndCustomer"]` carries end
  *  customer scheduling requirements (§3.4).

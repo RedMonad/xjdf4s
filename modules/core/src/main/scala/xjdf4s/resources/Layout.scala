@@ -5,7 +5,7 @@ import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
 
-/** The `Layout` resource (Table 6.52): imposition — the placement of source
+/** The `Layout` resource (Table 6.95): imposition — the placement of source
  *  pages onto a sheet surface. XJDF 2.x merged MIS-level stripping and RIP-level
  *  imposition into this one resource (§1.3.1.7).
  */

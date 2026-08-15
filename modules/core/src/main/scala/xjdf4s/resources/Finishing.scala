@@ -6,7 +6,7 @@ import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
 
-/** The `CuttingParams` resource (Table 6.25): the parameter set of a Cutting
+/** The `CuttingParams` resource (Table 6.53): the parameter set of a Cutting
  *  process.
  */
 final case class CuttingParams(
@@ -41,7 +41,7 @@ object CutBlock:
 
 end CutBlock
 
-/** The `FoldingParams` resource (Table 6.36): the parameter set of a Folding
+/** The `FoldingParams` resource (Table 6.74): the parameter set of a Folding
  *  process. The geometry elements `Fold` and `Perforate` are shared with
  *  `FoldingIntent`.
  */

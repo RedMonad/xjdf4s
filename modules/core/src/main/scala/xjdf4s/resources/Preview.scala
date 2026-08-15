@@ -5,7 +5,7 @@ import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
 
-/** The `Preview` resource (Table 6.66): a preview associated with a process and
+/** The `Preview` resource (Table 6.134): a preview associated with a process and
  *  used for display purposes. `Part/@PreviewType` SHOULD be `ThumbNail` or
  *  `Viewable`.
  */

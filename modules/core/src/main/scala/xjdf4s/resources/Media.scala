@@ -5,7 +5,7 @@ import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
 
-/** The `Media` resource (Table 6.57): a physical medium — paper, film, plate,
+/** The `Media` resource (Table 6.114): a physical medium — paper, film, plate,
  *  textile — consumed by a process. The counterpart of `MediaIntent`.
  *
  *  Color attributes are `NamedColor` (§A.2.30): an open catalog, so they are
