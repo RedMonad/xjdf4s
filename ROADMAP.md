@@ -1355,7 +1355,7 @@ final case class PartAmount(
 
 **Статус сессии (PR-6).** `PartAmount.parts: Chain[Part]` внедрено (коммит `784c4b4`); переходный аксессор `def part: Option[Part] = parts.headOption` помечен `@deprecated("transitional accessor; removed before M2", "M1")`. Мигрированы `Show[PartAmount]` (печатает все `parts`), генератор `arbPartAmount` (порождает `Chain` из 0..* `Part`) и сообщение валидатора. Call sites уже, чем ожидалось: `dsl/XjdfDsl.scala` и `examples/SpecExamples.scala` не используют `PartAmount.part` (единственное вхождение `PartAmount(amount = …)` в `SpecExamples.changeOrder` на `part` не ссылается), поэтому правки в них не потребовались. Генератор `arbPartAmount` ограничен `Gen.listOfN(0..3, arbPart)` (коммит `41bcf86`), чтобы не раздувать `AmountPool`-закон в `AlgebraLaws` квадратичным `Gen.listOf`. Прогон владельца (Приложение D: `sbt -batch clean scalafmtCheckAll compile test examples/run`) — чистый; статус `[x] (верифицировано владельцем)`.
 
-#### M1.2-4. Bodyless `Resource` (P1) — закрывает N-11 — `[~]` выполнено в PR-7 (ожидает верификации владельцем)
+#### M1.2-4. Bodyless `Resource` (P1) — закрывает N-11 — `[x]` выполнено (верифицировано владельцем; PR-7)
 
 **Норма** — Table 6.1: `Specific Resource?`:
 
@@ -1383,9 +1383,9 @@ final case class PartAmount(
 - `SpecExamples.combinedProcesses` переписан буквально под Example 3.6 с `dsl.emptyResource`;
 - XML-кодек M2 обязан сохранять `<Resource/>`.
 
-**Статус сессии (PR-7):** реализовано в коммите `c8876ea`. Тесты в `TicketLaws.scala`: представимость bodyless `<Resource/>`, сохранение поведения ресурсов с payload, `hasLawfulChildren` на пустых и ошибочных детях, буквальное моделирование Example 3.6.
+**Статус сессии (PR-7):** реализовано в коммите `c8876ea`. Тесты в `TicketLaws.scala`: представимость bodyless `<Resource/>`, сохранение поведения ресурсов с payload, `hasLawfulChildren` на пустых и ошибочных детях, буквальное моделирование Example 3.6. Прогон владельца (`sbt -batch clean scalafmtCheckAll compile test examples/run`) чистый; статус `[x] (верифицировано владельцем)`.
 
-#### M1.2-5. Пропущенные поля и области видимости ID (P1) — закрывает N-12, N-13, N-14 — `[~]` выполнено в PR-7 (ожидает верификации владельцем)
+#### M1.2-5. Пропущенные поля и области видимости ID (P1) — закрывает N-12, N-13, N-14 — `[x]` выполнено (верифицировано владельцем; PR-7)
 
 ```scala
 /** `DropItem` (Table 6.55). */
@@ -1418,7 +1418,7 @@ final case class Notification(
 - `XJDF.references` сделан полным: обходит `ResourceSet.references`, `ResourceInfo.references` (`final case class ResourceInfo(resourceSet: ResourceSet, …)`), `Audit.references`, `AuditPool.references`.
 - `XJDF/@Name` и `@$schema` не добавляются в домен (X-04, ADR-0007) — зафиксированы в `docs/SPEC-COVERAGE.md` со статусом codec-only (M2).
 
-**Статус сессии (PR-7):** реализовано в коммитах `e4322b1`, `241020a`, `6bccf04`. Тесты в `TicketLaws.scala`: поля `DropItem`, опциональный `moduleId`, валидация Milestone/@Class, уникальность языков Comment в Notification, два аудита с одинаковым `Header/@ID` валидны, сбор и валидация IDREF из `AuditResource`.
+**Статус сессии (PR-7):** реализовано в коммитах `e4322b1`, `241020a`, `6bccf04`. Тесты в `TicketLaws.scala`: поля `DropItem`, опциональный `moduleId`, валидация Milestone/@Class, уникальность языков Comment в Notification, два аудита с одинаковым `Header/@ID` валидны, сбор и валидация IDREF из `AuditResource`. Прогон владельца (`sbt -batch clean scalafmtCheckAll compile test examples/run`) чистый; статус `[x] (верифицировано владельцем)`.
 
 #### M1.2-6. Scaladoc-ссылки и реестр покрытия (P1/P3) — закрывает N-15, N-46
 
