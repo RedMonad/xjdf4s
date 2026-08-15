@@ -186,18 +186,18 @@ object TicketValidator:
             pa.parts.toList.flatMap: child =>
               child.keys.flatMap: key =>
                 parentValues(r.parts, key) match
+                  case Nil => Nil
                   case _ :: Nil =>
                     List(
                       s"${rs.name.toNmToken.value}/@${key.attributeName} overrides a Partition Key already uniquely specified by the parent Resource/Part"
                     )
-                  case parents if parents.nonEmpty =>
+                  case parents =>
                     child.valueOf(key) match
                       case Some(v) if !parents.contains(v) =>
                         List(
                           s"${rs.name.toNmToken.value}/@${key.attributeName}=${Show[PartitionValue].show(v)} does not match a parent Resource/Part value"
                         )
                       case _ => Nil
-                  case Nil => Nil
     Validated.condNec(
       violations.isEmpty,
       (),
