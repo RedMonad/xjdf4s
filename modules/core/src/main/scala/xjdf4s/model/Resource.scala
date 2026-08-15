@@ -36,6 +36,7 @@ object ProcessType:
   val Cutting: ProcessType = NmToken.unsafe("Cutting")
   val Delivery: ProcessType = NmToken.unsafe("Delivery")
   val DigitalPrinting: ProcessType = NmToken.unsafe("DigitalPrinting")
+  val Embossing: ProcessType = NmToken.unsafe("Embossing")
   val Folding: ProcessType = NmToken.unsafe("Folding")
   val Gathering: ProcessType = NmToken.unsafe("Gathering")
   val HoleMaking: ProcessType = NmToken.unsafe("HoleMaking")

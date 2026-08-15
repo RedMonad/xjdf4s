@@ -62,6 +62,8 @@ README ссылается на этот документ, числа — в вы
 |---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
 | §4.9 | Table 4.30 | LaminatingTemperature | `LaminatingTemperature` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`Hot`, `Cold`) для `LaminatingIntent/@Temperature`; golden — `EnumLaws` (M1.6-9) |
 | §A.3.22 | Table A.80 | Texture catalog | `NmToken` | `?` | ❌ | ✅ | ❌ | ❌ | Implemented | открытый `Catalog.Texture`, 12 рекомендуемых значений; `LaminatingIntent/@Texture` остаётся расширяемым NMTOKEN (M1.6-9, ADR-0007) |
+| §A.2.17 | Table A.18 | EmbossDirection | `EmbossDirection` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`Both`, `Depressed`, `Flat`, `Raised`); атрибут `EmbossingItem/@Direction`; golden и машинная сверка — `EnumLaws` (M1.6-10) |
+| §A.2.18 | Table A.19 | EmbossType | `EmbossType` | 1 | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`BlindEmbossing`, `Braille`, `EmbossedFinish`, `FoilEmbossing`, `FoilStamping`); атрибут `EmbossingItem/@EmbossingType` (required); golden и машинная сверка — `EnumLaws` (M1.6-10) |
 | §A.2.49 | Table A.50 | WorkingDirection | `WorkingDirection` | 1 | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`Bottom`, `Top`); golden и машинная сверка — `EnumLaws`; тип XSD — `EnumTopBottom` (имя таблицы и атрибута нормативны); потребители — `Crease` (M1.6-2), `Cut` (M3) |
 | §A.2.23 | Table A.24 | EnumGlue | `EnumGlue` | 1 | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (3 значения: `ColdGlue`, `Hotmelt`, `PUR`); XSD `simpleType EnumGlue`; для атрибутов «Allowed value is from: Glue» (`EdgeGlue`, `SpineGlue`); переименован из `GlueType` в M1.6-3 (ADR-0011) |
 | §8.24 | Table 8.29 | GlueType | `GlueType` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (5 значений: `ColdGlue`, `Hotmelt`, `Permanent`, `PUR`, `Removable`); атрибут `Glue/@GlueType`; новый в M1.6-3 (ADR-0011, N-50) |
@@ -77,7 +79,7 @@ README ссылается на этот документ, числа — в вы
 | Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
 |---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
 | §4.1 | Table 4.1 | Intent | `Intent` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | `@Name == payload.elementName` (`Intent.nameLaw`) |
-| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 10 payload + `Extension` escape hatch |
+| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 11 payload + `Extension` escape hatch |
 | §4.2 | Table 4.3 | AssemblingIntent | `AssemblingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.2 | Table 4.4 | AssemblyItem | `AssemblyItem` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.2 | Table 4.5 | BindIn | `BindIn` | `*` | ✅ | ❌ | ❌ | ❌ | Implemented | `Glue?` → `Option[Glue]` (элемент, M1.6-3/ADR-0011); `Glue/@GlueRef` собирается; SHALL-правила Glue подключены через валидатор |
@@ -97,6 +99,8 @@ README ссылается на этот документ, числа — в вы
 | §4.3 | Table 4.19 | Tabs | `Tabs` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.4 | Table 4.20 | ColorIntent | `ColorIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.4 | Table 4.21 | SurfaceColor | `SurfaceColor` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.6 | Table 4.25 | EmbossingIntent | `EmbossingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `EmbossingItem+` → `NonEmptyChain[EmbossingItem]` (кардинальность `+`, XSD `minOccurs="1"`, структурно); IDREF отсутствуют; SHALL `EmbossingItem/@Separation` ↔ `Color/@ColorType="DieLine"` — глобальная проверка `checkEmbossingColorTypes` (M1.6-10); `ProcessType.Embossing` (§5.6.12) |
+| §4.6 | Table 4.26 | EmbossingItem | `EmbossingItem` | `+` | ✅ | ✅ | ❌ | ❌ | Implemented | required `@EmbossingType` → `EmbossType` (структурно); `@Direction?` → `EmbossDirection`; `@Face?` → `Face`; `@FoilColor?` — открытый `NamedColor` (ADR-0007); SHOULD `@FoilColorDetails` ⇒ `@FoilColor` — не ошибка без политики (ADR-0006); SHALL `@Separation`: `Color` для separation SHALL иметь `@ColorType="DieLine"` — `IssueCode.EmbossingColorNotDieLine`, интерпретация: считается `Color` с `Part/@Separation` = значению, отсутствие `@ColorType` — нарушение (M1.6-10) |
 | §4.7 | Table 4.27 | FoldingIntent | `FoldingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.8 | Table 4.29 | HoleMakingIntent | `HoleMakingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `HolePattern+` → `NonEmptyChain[HolePattern]` (кардинальность `+`, структурно); SHALL-правило вложенного `HolePattern` подключено через валидатор (M1.6-12) |
 | §4.9 | Table 4.30 | LaminatingIntent | `LaminatingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | required `@Surface` → `NonEmptyChain[Side]` (структурно); `@Temperature?`, `@Texture?`, `@Thickness?`; IDREF отсутствуют; `ProcessType.Laminating` (M1.6-9) |

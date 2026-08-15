@@ -240,6 +240,55 @@ object SpecExamples:
         .build
     }
 
+  /** Fixture (§4.6 / Tables 4.25–4.26): an embossing ticket with a blind
+   *  embossing item and a foil stamping item (M1.6-10). The blind item names
+   *  the embossing separation and the ticket carries the matching `Color`
+   *  resource typed `DieLine`, as Table 4.26 SHALLs.
+   */
+  val embossingJob: ValidatedNec[Issue, XJDF] =
+    chainV(dsl.TicketDraft.of("embossingJob", ProcessType.Embossing)) { draft =>
+      val items = NonEmptyChain(
+        EmbossingItem(
+          direction = Some(EmbossDirection.Raised),
+          embossingType = EmbossType.BlindEmbossing,
+          face = Some(Face.Front),
+          height = Some(0.3),
+          imageSize = Some(XYPair(20.0, 20.0)),
+          position = Some(XYPair(50.0, 50.0)),
+          separation = Some(NmToken.unsafe("Emboss")),
+          toolName = Some(NmToken.unsafe("EmbossDie-1"))
+        ),
+        EmbossingItem(
+          direction = Some(EmbossDirection.Flat),
+          embossingType = EmbossType.FoilStamping,
+          foilColor = Some(Catalog.NamedColor.Silver),
+          foilColorDetails = Some(XjdfString.unsafe("Holographic"))
+        )
+      )
+      val payload = IntentPayload.Embossing(EmbossingIntent(items))
+      val intent = Intent(name = IntentName.of(payload.elementName), specific = payload)
+      val product = Product(
+        id = Some(Id.unsafe("P1")),
+        isRoot = true,
+        amount = Some(200L),
+        intents = Chain.one(intent)
+      )
+      val embossColor = Resource(
+        specific = Some(ResourcePayload.ColorResource(Color(colorType = Some(ColorType.DieLine)))),
+        parts = Chain.one(Part.token(PartitionKey.Separation, NmToken.unsafe("Emboss")))
+      )
+      draft
+        .withProductList(ProductList(products = NonEmptyChain.one(product)))
+        .withResources(
+          ResourceSet(
+            ResourceSetName.unsafe("Color"),
+            usage = Some(Usage.Input),
+            resources = Chain.one(embossColor)
+          )
+        )
+        .build
+    }
+
   /** Example 5.2: Split delivery — thirty books, ten to Drop1, twenty to Drop2. */
   val splitDelivery: ValidatedNec[Issue, XJDF] =
     val drop1 = PartBuilder.empty
@@ -427,6 +476,7 @@ object SpecExamples:
       "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),
       "Laminating intent (Table 4.30):" -> laminatingJob.map(Show[XJDF].show),
+      "Embossing intent (Table 4.25):" -> embossingJob.map(Show[XJDF].show),
       "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
       "Brochure job:" -> brochureJob.map(Show[XJDF].show),
       "Brochure job after change:" -> updatedBrochureJob.map(Show[XJDF].show)

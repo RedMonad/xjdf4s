@@ -14,6 +14,7 @@ enum IntentPayload:
   case Assembly(value: AssemblingIntent)
   case Binding(value: BindingIntent)
   case Color(value: ColorIntent)
+  case Embossing(value: EmbossingIntent)
   case Folding(value: FoldingIntent)
   case HoleMaking(value: HoleMakingIntent)
   case Laminating(value: LaminatingIntent)
@@ -29,6 +30,7 @@ enum IntentPayload:
       case Assembly(_) => NmToken.unsafe("AssemblingIntent")
       case Binding(_) => NmToken.unsafe("BindingIntent")
       case Color(_) => NmToken.unsafe("ColorIntent")
+      case Embossing(_) => NmToken.unsafe("EmbossingIntent")
       case Folding(_) => NmToken.unsafe("FoldingIntent")
       case HoleMaking(_) => NmToken.unsafe("HoleMakingIntent")
       case Laminating(_) => NmToken.unsafe("LaminatingIntent")
@@ -44,6 +46,7 @@ enum IntentPayload:
       case Assembly(a) => a.references
       case Binding(b) => b.references
       case Color(_) => Chain.empty
+      case Embossing(_) => Chain.empty
       case Folding(_) => Chain.empty
       case HoleMaking(_) => Chain.empty
       case Laminating(_) => Chain.empty

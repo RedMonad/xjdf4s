@@ -1981,6 +1981,71 @@ PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0; статус `[x]`
 `XJDF(job=laminatingJob, types=Laminating, ProductList(Product(?×100, root)))`.
 Статус `[x]` — закрыт полностью.
 
+#### M1.6-10. `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) — `[~]` (PR-20, ждёт прогона владельца)
+
+Вертикальный срез продолжает паттерн интентов главы 4 (PR-18/PR-19) и вводит
+первый локальный подэлемент главы 4.
+
+- **Сверка Table/XSD (§1.2).** Table 4.25 объявляет единственный член
+  `EmbossingItem+`; `schema.xsd` (`EmbossingIntent`, строки 3047–3054)
+  подтверждает `minOccurs="1" maxOccurs="unbounded"` — кардинальность `+`
+  обеспечена структурно типом `NonEmptyChain[EmbossingItem]`, runtime-проверка
+  не нужна. Table 4.26 содержит десять атрибутов: обязательный
+  `@EmbossingType` (`EmbossType`), опциональные `@Direction` (`EmbossDirection`),
+  `@Face` (`Face`), `@FoilColor` (`NamedColor`), `@FoilColorDetails` (string),
+  `@Height` (float), `@ImageSize`/`@Position` (XYPair), `@Separation`/`@ToolName`
+  (NMTOKEN). XSD (`EmbossingItem`, строки 1902–1915) совпадает с prose;
+  дочерних элементов и IDREF-атрибутов нет. Расхождений prose/XSD не найдено.
+- **Модель** `intents/Embossing.scala`: `EmbossingIntent(embossingItems:
+  NonEmptyChain[EmbossingItem])`; `EmbossingItem` с десятью полями в порядке
+  таблицы, `embossingType: EmbossType` — обычное (не-Option) поле. `Face`
+  (Table A.20) уже существовал в модели и переиспользован.
+- **Закрытые enum** `EmbossDirection` (Table A.18: `Both`, `Depressed`, `Flat`,
+  `Raised`) и `EmbossType` (Table A.19: `BlindEmbossing`, `Braille`,
+  `EmbossedFinish`, `FoilEmbossing`, `FoilStamping`) добавлены в `prim/Enums.scala`;
+  golden-множества + машинная сверка с Appendix A в `EnumLaws`.
+- **Открытый каталог:** `@FoilColor` типизирован `NmToken` по образцу
+  `NamedColor` (ADR-0007) — расширяемость покрыта тестом.
+- **Dispatch/references:** `IntentPayload.Embossing`,
+  `elementName = "EmbossingIntent"`; IDREF-атрибутов нет,
+  `references = Chain.empty` (факт сверен по Table 4.26 и XSD).
+- **SHALL-правило (глобальное):** Table 4.26: «If a `ResourceSet/Resource/Color`
+  element is specified for this separation, the value of `Color/@ColorType`
+  SHALL be `"DieLine"`» — реализовано как `TicketValidator.checkEmbossingColorTypes`
+  (`IssueCode.EmbossingColorNotDieLine`). Задокументированная интерпретация:
+  `Color` «задан для separation» тогда, когда хотя бы один его `Part` несёт
+  `Part/@Separation` с этим значением (Color-ресурсы разбиваются по
+  `Part/@Separation`, Table 6.27); отсутствие `@ColorType` — нарушение
+  (строгая трактовка «the value SHALL be DieLine»). SHOULD-правило
+  «`@FoilColorDetails` ⇒ `@FoilColor`» не становится ошибкой без политики
+  (ADR-0006), зафиксировано в scaladoc.
+- **ProcessType:** добавлен `ProcessType.Embossing` (§5.6.12, Tables 5.87–5.88).
+- **Тесты:** `EmbossingIntentLaws.scala` (12: elementName, references,
+  структурная кардинальность, mapping, открытый каталог, позитивная корневая
+  валидация, негативный `Intent/@Name`, два негативных SHALL — `Color` с
+  `ColorType=Normal` и без `@ColorType`, позитивные — `DieLine`, другая
+  separation, непартиционированный Color, отсутствие интента);
+  `EnumLaws` golden для двух enum.
+- **Фикстура:** `SpecExamples.embossingJob` (слепое тиснение + фольгирование
+  `FoilStamping` с `Silver`/`Holographic`, Color-ресурс `DieLine` для
+  separation `Emboss`) + conformance/golden в `SpecExamplesSuite`.
+- **Coverage:** строки `EmbossingIntent`, `EmbossingItem`, `EmbossDirection`,
+  `EmbossType`; dispatch обновлён с 10 до 11 payload;
+  `check-spec-coverage.sh` — `RESULT: OK`.
+
+**Файлы:** `intents/Embossing.scala` (новый), `intents/AllIntents.scala`,
+`prim/Enums.scala`, `model/Resource.scala`, `model/ValidationTypes.scala`,
+`model/TicketValidator.scala`, `laws/EmbossingIntentLaws.scala` (новый),
+`laws/EnumLaws.scala`, `examples/SpecExamples.scala`,
+`laws/SpecExamplesSuite.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** чистая сборка `sbt -batch clean compile test examples/run`;
+284 теста зелёных (268 + `EmbossingIntentLaws` 12 + `EnumLaws` 2 +
+`SpecExamplesSuite` 2); `examples/run` exit 0 с
+`Embossing intent (Table 4.25): ...`; `check-spec-coverage.sh` — `RESULT: OK`.
+
+**Статус:** `[~]` — код и тесты закоммичены, прогон владельца ожидается.
+
 #### M1.6-12. `HoleMakingIntent` (Table 4.29, §4.8) — `[x]` выполнено (верифицировано владельцем; PR-18)
 
 Первый из пяти отсутствующих интентов главы 4; использует только что созданный
@@ -2068,12 +2133,13 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate — `[x]` (верифицировано владельцем: 201 тест зелёный, `examples/run` exit 0, golden совпали) |
 | 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | `[x]` верифицировано владельцем: 201 тест, 0 предупреждений, `examples/run` exit 0, циклов = 0 |
 | 15 | `Crease` + `WorkingDirection` (Table A.50) + N-50/ADR-0011 | M1.6-2 | 13 | `[x]` верифицировано владельцем: 209 тестов, `examples/run` exit 0 |
-| 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
+| — | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
 | 16 | `Glue` (Table 8.29) + ADR-0011 + N-50 | M1.6-3 | 15 | `[x]` верифицировано владельцем: 228 тестов, `examples/run` exit 0 |
 | 17 | `HolePattern` (Table 8.30 / Appendix F) + 3 enum + open catalogs + SHALL + LooseBinding | M1.6-5 | 16 | `[x]` верифицировано владельцем: 248 тестов, `examples/run` exit 0 |
 | 18 | `HoleMakingIntent` (Table 4.29, §4.8) + `HolePattern+` + wiring SHALL + fixture | M1.6-12 | 17 | `[x]` верифицировано владельцем: 258 тестов, `examples/run` exit 0 |
 | 19 | `LaminatingIntent` (Table 4.30, §4.9) + `LaminatingTemperature` + открытый `Catalog.Texture` | M1.6-9 | 18 | `[x]` верифицировано владельцем: 268 тестов, `examples/run` exit 0 |
-| 20+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/12) | M1.6 | 19 | шаблон среза выполнен |
+| 20 | `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) + `EmbossDirection`/`EmbossType` + SHALL `@Separation`↔`Color/@ColorType="DieLine"` | M1.6-10 | 19 | `[~]` ждёт прогона владельца |
+| 21+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/12) | M1.6 | 20 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -3021,8 +3087,18 @@ PR-19 (M1.6-9) реализовал `LaminatingIntent` (Table 4.30): обяза�
 непустой `@Surface`, закрытый `LaminatingTemperature`, открытый
 `Catalog.Texture`, `ProcessType.Laminating`, dispatch, тесты, фикстуру и coverage;
 верифицировано владельцем: **268 тестов зелёных (268/0)**, `examples/run` exit 0,
-статус `[x]`. Следующий срез PR-20+ выбирается из M1.6-1 Certification, M1.6-4/7/8
-GangSource+MISDetails+NodeInfo, M1.6-6 IdentificationField, M1.6-10/11/13
-оставшихся интентов, M1.6-14 NamedFeatures или M1.6-15 Part audit. LICENSE
-остаётся `BLOCKED` до решения владельца; возврат обязательного CI — открытая
-часть M1.0-1.
+статус `[x]`. PR-20 (M1.6-10) реализовал `EmbossingIntent` (Table 4.25, §4.6) +
+`EmbossingItem` (Table 4.26): `EmbossingItem+` → `NonEmptyChain[EmbossingItem]`
+(структурно), закрытые `EmbossDirection` (Table A.18) и `EmbossType` (Table A.19),
+переиспользование `Face` (Table A.20), открытый `@FoilColor` (ADR-0007),
+глобальное SHALL-правило `@Separation` ↔ `Color/@ColorType="DieLine"`
+(`IssueCode.EmbossingColorNotDieLine`, `TicketValidator.checkEmbossingColorTypes`),
+`ProcessType.Embossing`, тесты `EmbossingIntentLaws` (12), golden-токены,
+фикстура `embossingJob` + conformance/golden, coverage
+(`check-spec-coverage.sh` — `RESULT: OK`); статус `[~]` — ждёт прогона
+владельца (ожидается **284/0**). Следующий срез PR-21+ выбирается из
+M1.6-1 Certification, M1.6-4/7/8 GangSource+MISDetails+NodeInfo,
+M1.6-6 IdentificationField, M1.6-11/13 оставшихся интентов
+(`ContentCheckIntent`, `ShapeCuttingIntent`), M1.6-14 NamedFeatures или
+M1.6-15 Part audit. LICENSE остаётся `BLOCKED` до решения владельца;
+возврат обязательного CI — открытая часть M1.0-1.

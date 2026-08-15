@@ -4,6 +4,7 @@ package model
 import xjdf4s.intents.{AdhesiveNote, AssemblingIntent, BindingIntent, HoleMakingIntent, IntentPayload, VariableIntent}
 import xjdf4s.model.elements.{Disposition, Glue => GlueElement, HolePattern => HolePatternElement}
 import xjdf4s.prim.*
+import xjdf4s.resources.ResourcePayload
 import cats.Show
 import cats.data.{Chain, NonEmptyChain, Validated}
 
@@ -57,6 +58,7 @@ object TicketValidator:
       checkPartVersion,
       checkAuditChronology,
       checkPartAmountKeys,
+      checkEmbossingColorTypes,
       checkLocalLaws
     ).flatMap(_(ticket))
 
@@ -420,6 +422,58 @@ object TicketValidator:
       s"PartAmount keys shadow parent Part keys: ${violations.mkString(", ")}",
       IssueCode.PartKeyShadowsParent
     )
+
+  /** Table 4.26 (`EmbossingItem/@Separation`): if a
+   *  `ResourceSet/Resource/Color` element is specified for a separation that an
+   *  `EmbossingItem` names, the value of `Color/@ColorType` SHALL be
+   *  `"DieLine"`.
+   *
+   *  Interpretation (documented in SPEC-COVERAGE.md):
+   *  - a `Color` resource is "specified for this separation" when at least one
+   *    of its `Part` elements carries `@Separation` with that value (`Color`
+   *    resources are partitioned by `Part/@Separation`, Table 6.27); a `Color`
+   *    without such a Part is a generic colorant and is not matched;
+   *  - the SHALL is read strictly: `@ColorType` must be present and equal to
+   *    `DieLine` — an absent `@ColorType` is not `DieLine`.
+   */
+  private def checkEmbossingColorTypes(ticket: XJDF): Chain[Issue] =
+    val separations: List[NmToken] =
+      ticket.productList
+        .fold(List.empty[NmToken]) { pl =>
+          pl.products.toChain.toList.flatMap { p =>
+            p.intents.toList.flatMap { i =>
+              i.specific match
+                case IntentPayload.Embossing(e) =>
+                  e.embossingItems.toChain.toList.flatMap(_.separation.toList)
+                case _ => Nil
+            }
+          }
+        }
+        .distinct
+    if separations.isEmpty then Chain.empty
+    else
+      val violations = ticket.resourceSets.toList.flatMap { rs =>
+        rs.resources.toList.flatMap { r =>
+          r.specific match
+            case Some(ResourcePayload.ColorResource(c)) =>
+              r.parts.toList
+                .flatMap(p => p.separation.toList)
+                .filter(s => separations.contains(s))
+                .distinct
+                .filter(_ => c.colorType != Some(ColorType.DieLine))
+                .map { s =>
+                  val actual = c.colorType.fold("no @ColorType")(t => s"@ColorType='${t.token.value}'")
+                  Issue.errorC(
+                    IssueCode.EmbossingColorNotDieLine,
+                    XPath(s"/XJDF/ResourceSet[@Name='${rs.name.toNmToken.value}']/Resource/Color"),
+                    s"Color specified for embossing separation '${s.value}' SHALL have " +
+                      s"@ColorType=\"DieLine\", found $actual (Table 4.26)"
+                  )
+                }
+            case _ => Nil
+        }
+      }
+      Chain.fromSeq(violations)
 
   /** Helper: emits one error issue with the given code when `condition` is false. */
   private def issueUnless(

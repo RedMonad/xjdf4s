@@ -66,6 +66,22 @@ enum Edge extends XjdfEnum:
 object Edge extends XjdfEnumCompanion[Edge]:
   val all: List[Edge] = List(Bottom, Left, Right, Top)
 
+/** `EmbossDirection` (Table A.2.17): the type and direction of embossing. */
+enum EmbossDirection extends XjdfEnum:
+  case Both, Depressed, Flat, Raised
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object EmbossDirection extends XjdfEnumCompanion[EmbossDirection]:
+  val all: List[EmbossDirection] = List(Both, Depressed, Flat, Raised)
+
+/** `EmbossType` (Table A.2.18): the type of embossing required. */
+enum EmbossType extends XjdfEnum:
+  case BlindEmbossing, Braille, EmbossedFinish, FoilEmbossing, FoilStamping
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object EmbossType extends XjdfEnumCompanion[EmbossType]:
+  val all: List[EmbossType] = List(BlindEmbossing, Braille, EmbossedFinish, FoilEmbossing, FoilStamping)
+
 /** `Face`: a named position on a product (Table A.2.19). */
 enum Face extends XjdfEnum:
   case Back, Bottom, Front, Left, Right, Top

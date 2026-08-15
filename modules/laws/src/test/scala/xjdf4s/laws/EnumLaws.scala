@@ -105,6 +105,15 @@ class EnumLaws extends FunSuite:
   test("Table 4.30: LaminatingIntent/@Temperature wire tokens"):
     assertEquals(tokensOf(LaminatingTemperature.all), Set("Hot", "Cold"))
 
+  test("Table A.18: EmbossDirection wire tokens"):
+    assertEquals(tokensOf(EmbossDirection.all), Set("Both", "Depressed", "Flat", "Raised"))
+
+  test("Table A.19: EmbossType wire tokens"):
+    assertEquals(
+      tokensOf(EmbossType.all),
+      Set("BlindEmbossing", "Braille", "EmbossedFinish", "FoilEmbossing", "FoilStamping")
+    )
+
   test("Table A.50: WorkingDirection wire tokens"):
     assertEquals(tokensOf(WorkingDirection.all), Set("Bottom", "Top"))
 
@@ -153,6 +162,8 @@ class EnumLaws extends FunSuite:
         ("ISOPaperSubstrate", ISOPaperSubstrate.all, ISOPaperSubstrate.fromToken),
         ("MediaType", MediaType.all, MediaType.fromToken),
         ("Scope", Scope.all, Scope.fromToken),
+        ("EmbossDirection", EmbossDirection.all, EmbossDirection.fromToken),
+        ("EmbossType", EmbossType.all, EmbossType.fromToken),
         ("BindingType", BindingType.all, BindingType.fromToken),
         ("Coating", Coating.all, Coating.fromToken),
         ("SoftCoverScoring", SoftCoverScoring.all, SoftCoverScoring.fromToken),
@@ -179,6 +190,8 @@ class EnumLaws extends FunSuite:
         "MediaType"           -> MediaType.all,
         "Scope"               -> Scope.all,
         "Status"              -> Status.all,
+        "EmbossDirection"     -> EmbossDirection.all,
+        "EmbossType"          -> EmbossType.all,
         "BindingType"         -> BindingType.all,
         "LaminatingTemperature" -> LaminatingTemperature.all,
         "WorkingDirection"    -> WorkingDirection.all,
@@ -238,6 +251,8 @@ class EnumLaws extends FunSuite:
       "Coating"           -> Coating.all,
       "DeviceStatus"      -> DeviceStatus.all,
       "Edge"              -> Edge.all,
+      "EmbossDirection"   -> EmbossDirection.all,
+      "EmbossType"        -> EmbossType.all,
       "Face"              -> Face.all,
       "FitPolicy"         -> FitPolicy.all,
       "Glue"              -> EnumGlue.all,

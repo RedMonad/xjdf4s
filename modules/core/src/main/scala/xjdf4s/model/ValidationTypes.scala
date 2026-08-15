@@ -145,6 +145,10 @@ object IssueCode:
   /** `HolePattern/@Pattern` SHALL be supplied when `@Center`, `@Extent` or `@Shape` is missing (Table 8.30). */
   val HolePatternPatternRequired: IssueCode = unsafe("HOLE-PATTERN-PATTERN-REQUIRED")
 
+  /** A `Color` resource specified for an `EmbossingItem/@Separation` does not
+   *  have `@ColorType="DieLine"` (Table 4.26). */
+  val EmbossingColorNotDieLine: IssueCode = unsafe("EMBOSSING-COLOR-NOT-DIELINE")
+
 end IssueCode
 
 /** A validation finding: a stable machine-readable code, the severity class,
