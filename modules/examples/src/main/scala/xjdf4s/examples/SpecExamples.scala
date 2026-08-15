@@ -75,8 +75,8 @@ object SpecExamples:
           combinedProcessIndex = Some(NonEmptyChain.one(ProcessIndex.unsafe(1)))
         )(dsl.nodeInfo(NodeInfo(start = Some(Timestamp.ofEpochSecond(1800)))))
       ) { foldingInfo =>
-        chainV(dsl.resourceSet("CuttingParams", usage = Some(Usage.Input))()) { cuttingParams =>
-          chainV(dsl.resourceSet("FoldingParams", usage = Some(Usage.Input))()) { foldingParams =>
+        chainV(dsl.resourceSet("CuttingParams", usage = Some(Usage.Input))(dsl.emptyResource)) { cuttingParams =>
+          chainV(dsl.resourceSet("FoldingParams", usage = Some(Usage.Input))(dsl.emptyResource)) { foldingParams =>
             chainV(dsl.TicketDraft.of("CPI_Example", ProcessType.Cutting, ProcessType.Folding)) { draft =>
               draft
                 .withResources(cuttingInfo, foldingInfo, cuttingParams, foldingParams)
@@ -98,27 +98,27 @@ object SpecExamples:
       .withToken(PartitionKey.DropID, NmToken.unsafe("Drop2"))
       .build
     val contact1 = Resource(
-      specific = ResourcePayload.ContactResource(
+      specific = Some(ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city1")))))
-      ),
+      )),
       parts = Chain.one(drop1)
     )
     val contact2 = Resource(
-      specific = ResourcePayload.ContactResource(
+      specific = Some(ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city2")))))
-      ),
+      )),
       parts = Chain.one(drop2)
     )
     val delivery1 = Resource(
-      specific = ResourcePayload.DeliveryParamsResource(
+      specific = Some(ResourcePayload.DeliveryParamsResource(
         DeliveryParams(dropItems = Chain.one(DropItem(10, IdRef.unsafe("IDBook"))))
-      ),
+      )),
       parts = Chain.one(Part.token(PartitionKey.DropID, NmToken.unsafe("Drop1")))
     )
     val delivery2 = Resource(
-      specific = ResourcePayload.DeliveryParamsResource(
+      specific = Some(ResourcePayload.DeliveryParamsResource(
         DeliveryParams(dropItems = Chain.one(DropItem(20, IdRef.unsafe("IDBook"))))
-      ),
+      )),
       parts = Chain.one(Part.token(PartitionKey.DropID, NmToken.unsafe("Drop2")))
     )
     val book = Product(amount = Some(30), id = Some(Id.unsafe("IDBook")), productType = Some(Catalog.ProductType.Book))
@@ -149,8 +149,7 @@ object SpecExamples:
       agentVersion = Some(XjdfString.unsafe("V_2.0"))
     )
     val consumedMedia = Resource(
-      specific = ResourcePayload.MediaResource(Media(MediaType.Paper, weight = Some(Grammage(90.0))))
-    )
+      specific = Some(ResourcePayload.MediaResource(Media(MediaType.Paper, weight = Some(Grammage(90.0))))))
     val audit = Audit.Resource(
       header = header,
       resourceInfo = ResourceInfo(

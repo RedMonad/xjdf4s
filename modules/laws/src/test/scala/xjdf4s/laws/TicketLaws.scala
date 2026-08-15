@@ -39,7 +39,7 @@ class TicketLaws extends ScalaCheckSuite:
    */
   private def exposedMedia(parts: Part*): Resource =
     Resource(
-      specific = ResourcePayload.Foreign(NsPrefix.unsafe("ex"), NmToken.unsafe("ExposedMedia")),
+      specific = Some(ResourcePayload.Foreign(NsPrefix.unsafe("ex"), NmToken.unsafe("ExposedMedia"))),
       parts = Chain.fromSeq(parts)
     )
 
@@ -54,49 +54,167 @@ class TicketLaws extends ScalaCheckSuite:
       name = ResourceSetName.unsafe("NodeInfo"),
       usage = Some(Usage.Input),
       combinedProcessIndex = Some(NonEmptyChain.one(ProcessIndex.unsafe(0))),
-      resources = Chain.one(Resource(ResourcePayload.NodeInfoResource(cutting)))
+      resources = Chain.one(Resource.of(ResourcePayload.NodeInfoResource(cutting)))
     )
     val rsFolding = rsCutting.copy(
       combinedProcessIndex = Some(NonEmptyChain.one(ProcessIndex.unsafe(1))),
-      resources = Chain.one(Resource(ResourcePayload.NodeInfoResource(folding)))
+      resources = Chain.one(Resource.of(ResourcePayload.NodeInfoResource(folding)))
     )
-    val rsCuttingParams = ResourceSet(ResourceSetName.unsafe("CuttingParams"), usage = Some(Usage.Input))
-    val rsFoldingParams = ResourceSet(ResourceSetName.unsafe("FoldingParams"), usage = Some(Usage.Input))
+    val rsCuttingParams = ResourceSet(
+      name = ResourceSetName.unsafe("CuttingParams"),
+      usage = Some(Usage.Input),
+      resources = Chain.one(Resource.empty)
+    )
+    val rsFoldingParams = ResourceSet(
+      name = ResourceSetName.unsafe("FoldingParams"),
+      usage = Some(Usage.Input),
+      resources = Chain.one(Resource.empty)
+    )
     val combined = ticket(
       NonEmptyChain.of(ProcessType.Cutting, ProcessType.Folding),
       Chain(rsCutting, rsFolding, rsCuttingParams, rsFoldingParams)
     )
     assert(combined.validate.isValid)
 
+  test("Table 6.1 / Example 3.6: bodyless Resource elements are representable and validate"):
+    val emptyRes = Resource.empty
+    assert(emptyRes.isBodyless)
+    assert(emptyRes.elementName.isEmpty)
+    assert(emptyRes.references.isEmpty)
+    val rs = ResourceSet(
+      name = ResourceSetName.unsafe("CuttingParams"),
+      usage = Some(Usage.Input),
+      resources = Chain.one(emptyRes)
+    )
+    assert(rs.hasLawfulChildren)
+    val t = ticket(NonEmptyChain.one(ProcessType.Cutting), resourceSets = Chain.one(rs))
+    assert(t.validate.isValid)
+
+  test("Table 6.1: Resource with payload preserves elementName, references and validation"):
+    val res = Resource.withPayload(ResourcePayload.MediaResource(Media(MediaType.Paper)))
+    assert(!res.isBodyless)
+    assertEquals(res.elementName, Some(NmToken.unsafe("Media")))
+    val rs = ResourceSet(
+      name = ResourceSetName.unsafe("Media"),
+      usage = Some(Usage.Input),
+      resources = Chain.one(res)
+    )
+    assert(rs.hasLawfulChildren)
+
+  test("Table 6.1 / §3.4: ResourceSet.hasLawfulChildren accepts bodyless and rejects mismatched payload"):
+    val validSet = ResourceSet(
+      name = ResourceSetName.unsafe("CuttingParams"),
+      resources = Chain(Resource.empty, Resource.empty)
+    )
+    assert(validSet.hasLawfulChildren)
+    val invalidSet = ResourceSet(
+      name = ResourceSetName.unsafe("CuttingParams"),
+      resources = Chain.one(Resource.withPayload(ResourcePayload.MediaResource(Media(MediaType.Paper))))
+    )
+    assert(!invalidSet.hasLawfulChildren)
+
+  test("Table 8.49: Notification carries optional moduleId"):
+    val n = Notification(
+      classification = SeverityClass.Information,
+      moduleId = Some(NmToken.unsafe("Module_1"))
+    )
+    assertEquals(n.moduleId, Some(NmToken.unsafe("Module_1")))
+
+  test("Table 8.49: Notification with Milestone and @Class=\"Event\" validates"):
+    val header = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(10))
+    val validNotification = Notification(
+      classification = SeverityClass.Event,
+      detail = Some(Milestone(NmToken.unsafe("Printed")))
+    )
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      auditPool = Some(AuditPool.of(Audit.Notified(header, validNotification)))
+    )
+    assert(t.validate.isValid)
+
+  test("Table 8.49: Notification with Milestone and non-Event @Class is rejected"):
+    val header = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(10))
+    val invalidNotification = Notification(
+      classification = SeverityClass.Warning,
+      detail = Some(Milestone(NmToken.unsafe("Printed")))
+    )
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      auditPool = Some(AuditPool.of(Audit.Notified(header, invalidNotification)))
+    )
+    assert(t.validate.isInvalid)
+
+  test("Table 8.49 / N-38: multiple Comments with duplicate @Language in Notification are rejected"):
+    val header = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(10))
+    val c1 = Comment(text = CommentText("English 1"), language = Some(LanguageTag.unsafe("en")))
+    val c2 = Comment(text = CommentText("English 2"), language = Some(LanguageTag.unsafe("en")))
+    val notif = Notification(
+      classification = SeverityClass.Information,
+      comments = Chain(c1, c2)
+    )
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      auditPool = Some(AuditPool.of(Audit.Notified(header, notif)))
+    )
+    assert(t.validate.isInvalid)
+
+  test("Table 8.49 / N-38: multiple Comments with distinct @Language in Notification are accepted"):
+    val header = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(10))
+    val c1 = Comment(text = CommentText("English"), language = Some(LanguageTag.unsafe("en")))
+    val c2 = Comment(text = CommentText("French"), language = Some(LanguageTag.unsafe("fr")))
+    val notif = Notification(
+      classification = SeverityClass.Information,
+      comments = Chain(c1, c2)
+    )
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      auditPool = Some(AuditPool.of(Audit.Notified(header, notif)))
+    )
+    assert(t.validate.isValid)
+
+  test("Table 6.55: DropItem supports totalDimensions, totalVolume, and totalWeight"):
+    val item = DropItem(
+      amount = 50L,
+      itemRef = IdRef.unsafe("prod_1"),
+      totalDimensions = Some(Shape(100.0, 200.0, 50.0)),
+      totalVolume = Some(1.0),
+      totalWeight = Some(2.5)
+    )
+    assertEquals(item.amount, 50L)
+    assertEquals(item.itemRef, IdRef.unsafe("prod_1"))
+    assertEquals(item.totalDimensions, Some(Shape(100.0, 200.0, 50.0)))
+    assertEquals(item.totalVolume, Some(1.0))
+    assertEquals(item.totalWeight, Some(2.5))
+
   test("Example 5.2: split delivery validates"):
     val contact1 = Resource(
-      specific = ResourcePayload.ContactResource(
+      specific = Some(ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city1")))))
-      ),
+      )),
       parts = Chain.one(PartBuilder.empty.withToken(
         PartitionKey.ContactType,
         Catalog.ContactType.Delivery
       ).withToken(PartitionKey.DropID, NmToken.unsafe("Drop1")).build)
     )
     val contact2 = Resource(
-      specific = ResourcePayload.ContactResource(
+      specific = Some(ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city2")))))
-      ),
+      )),
       parts = Chain.one(PartBuilder.empty.withToken(
         PartitionKey.ContactType,
         Catalog.ContactType.Delivery
       ).withToken(PartitionKey.DropID, NmToken.unsafe("Drop2")).build)
     )
     val drop1 = Resource(
-      specific = ResourcePayload.DeliveryParamsResource(
+      specific = Some(ResourcePayload.DeliveryParamsResource(
         DeliveryParams(dropItems = Chain.one(DropItem(10, IdRef.unsafe("IDBook"))))
-      ),
+      )),
       parts = Chain.one(Part.token(PartitionKey.DropID, NmToken.unsafe("Drop1")))
     )
     val drop2 = Resource(
-      specific = ResourcePayload.DeliveryParamsResource(
+      specific = Some(ResourcePayload.DeliveryParamsResource(
         DeliveryParams(dropItems = Chain.one(DropItem(20, IdRef.unsafe("IDBook"))))
-      ),
+      )),
       parts = Chain.one(Part.token(PartitionKey.DropID, NmToken.unsafe("Drop2")))
     )
     val book = Product(amount = Some(30), id = Some(Id.unsafe("IDBook")), productType = Some(Catalog.ProductType.Book))
@@ -132,7 +250,7 @@ class TicketLaws extends ScalaCheckSuite:
       name = ResourceSetName.unsafe("NodeInfo"),
       usage = Some(Usage.Input),
       combinedProcessIndex = Some(NonEmptyChain.one(ProcessIndex.unsafe(7))),
-      resources = Chain.one(Resource(ResourcePayload.NodeInfoResource(NodeInfo())))
+      resources = Chain.one(Resource.of(ResourcePayload.NodeInfoResource(NodeInfo())))
     )
     val invalid = ticket(NonEmptyChain.one(ProcessType.Cutting), Chain(rs))
     assert(invalid.validate.isInvalid)
@@ -142,18 +260,66 @@ class TicketLaws extends ScalaCheckSuite:
     val rs = ResourceSet(
       name = ResourceSetName.unsafe("Component"),
       resources = Chain(
-        Resource(ResourcePayload.ComponentResource(Component()), id = Some(id)),
-        Resource(ResourcePayload.ComponentResource(Component()), id = Some(id))
+        Resource(Some(ResourcePayload.ComponentResource(Component())), id = Some(id)),
+        Resource(Some(ResourcePayload.ComponentResource(Component())), id = Some(id))
       )
     )
     val invalid = ticket(NonEmptyChain.one(ProcessType.Cutting), Chain(rs))
     assert(invalid.validate.isInvalid)
 
+  test("Table 7.3 / §2.2.3: audits with duplicate Header/@ID in messaging scope do not cause document @ID collision"):
+    val headerId = Id.unsafe("msg_1")
+    val h1 = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(1), id = Some(headerId))
+    val h2 = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(2), id = Some(headerId))
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      auditPool = Some(AuditPool.of(Audit.Created(h1), Audit.Created(h2)))
+    )
+    assert(t.validate.isValid)
+    assertEquals(t.declaredIds, Chain.empty)
+
+  test("Table 7.53 / §2.2.3: IDREFs inside Audit ResourceInfo are collected in references and validated"):
+    val mediaId = Id.unsafe("media_1")
+    val mediaRes = Resource(
+      specific = Some(ResourcePayload.MediaResource(Media(MediaType.Paper))),
+      id = Some(mediaId)
+    )
+    val mediaSet = ResourceSet(ResourceSetName.unsafe("Media"), resources = Chain.one(mediaRes))
+
+    val compWithValidRef = Resource(
+      specific = Some(ResourcePayload.ComponentResource(Component(mediaRef = Some(IdRef.unsafe("media_1")))))
+    )
+    val auditInfoValid = ResourceInfo(
+      ResourceSet(ResourceSetName.unsafe("Component"), resources = Chain.one(compWithValidRef))
+    )
+    val header = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(1))
+    val validTicket = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      resourceSets = Chain.one(mediaSet),
+      auditPool = Some(AuditPool.of(Audit.Resource(header, auditInfoValid)))
+    )
+    assert(validTicket.validate.isValid)
+    assert(validTicket.references.contains(IdRef.unsafe("media_1")))
+
+    val compWithDanglingRef = Resource(
+      specific = Some(ResourcePayload.ComponentResource(Component(mediaRef = Some(IdRef.unsafe("non_existent")))))
+    )
+    val auditInfoInvalid = ResourceInfo(
+      ResourceSet(ResourceSetName.unsafe("Component"), resources = Chain.one(compWithDanglingRef))
+    )
+    val invalidTicket = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      resourceSets = Chain.one(mediaSet),
+      auditPool = Some(AuditPool.of(Audit.Resource(header, auditInfoInvalid)))
+    )
+    assert(invalidTicket.validate.isInvalid)
+    assert(invalidTicket.references.contains(IdRef.unsafe("non_existent")))
+
   test("§2.2.3: dangling IDREFs are rejected"):
     val rs = ResourceSet(
       name = ResourceSetName.unsafe("Component"),
       resources = Chain.one(
-        Resource(ResourcePayload.ComponentResource(Component(mediaRef = Some(IdRef.unsafe("missing")))))
+        Resource(Some(ResourcePayload.ComponentResource(Component(mediaRef = Some(IdRef.unsafe("missing"))))))
       )
     )
     val invalid = ticket(NonEmptyChain.one(ProcessType.Cutting), Chain(rs))
@@ -193,7 +359,7 @@ class TicketLaws extends ScalaCheckSuite:
       name = ResourceSetName.unsafe("Media"),
       resources = Chain.one(
         Resource(
-          specific = ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar")),
+          specific = Some(ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar"))),
           parts = Chain.one(parent),
           amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child))))
         )

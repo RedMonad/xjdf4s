@@ -191,9 +191,14 @@ final case class ResourceSet(
   def byId(id: Id): Option[Resource] =
     resources.iterator.find(_.id.contains(id))
 
-  /** True when every child Resource matches the `@Name` of this set. */
+  /** All IDREFs referenced by the resources in this set. */
+  def references: Chain[IdRef] = resources.flatMap(_.references)
+
+  /** True when every child Resource with a payload matches the `@Name` of this set.
+   *  Bodyless Resource elements (`<Resource/>`, Table 6.1) are lawful in any ResourceSet.
+   */
   def hasLawfulChildren: Boolean =
-    resources.forall(r => r.elementName == name)
+    resources.forall(r => r.elementName.forall(_ == name.toNmToken))
 
   /** True when `@Usage` and the resource statuses are consistent (Table 6.1). */
   def hasLawfulStatuses: Boolean =
@@ -228,10 +233,11 @@ end ResourceSet
 
 /** `Resource` (Table 6.1): one physical or logical entity in the partition
  *  context defined by its `Part` elements. The specific resource — the last
- *  XJDF-namespace element of the Resource — is carried by `specific`.
+ *  XJDF-namespace element of the Resource — is optional (`specific: Option[ResourcePayload]`).
+ *  A bodyless `<Resource/>` element represents an unelaborated resource.
  */
 final case class Resource(
-    specific: ResourcePayload,
+    specific: Option[ResourcePayload] = None,
     id: Option[Id] = None,
     externalId: Option[NmToken] = None,
     descriptiveName: Option[XjdfString] = None,
@@ -248,8 +254,13 @@ final case class Resource(
     generalIds: Chain[GeneralID] = Chain.empty
 ):
 
-  /** The local element name of the specific resource payload. */
-  def elementName: NmToken = specific.elementName
+  /** The local element name of the specific resource payload, if present.
+   *  Bodyless resources have no specific element name (`None`).
+   */
+  def elementName: Option[NmToken] = specific.map(_.elementName)
+
+  /** True when this resource is bodyless (`<Resource/>`, Table 6.1 / Example 3.6). */
+  def isBodyless: Boolean = specific.isEmpty
 
   /** §6.1.3.3: a Resource without `Part` elements applies to the entire
    *  ResourceSet; a Resource with several parts applies to any of them.
@@ -258,16 +269,22 @@ final case class Resource(
     parts.isEmpty || parts.exists(_.matches(selector))
 
   /** All IDREFs used by this resource. */
-  def references: Chain[IdRef] = specific.references
+  def references: Chain[IdRef] = specific.fold(Chain.empty[IdRef])(_.references)
 end Resource
 
 object Resource:
 
-  /** A plain resource with just the specific payload, e.g. `<Resource/>`. */
-  def of(payload: ResourcePayload): Resource = Resource(payload)
+  /** A bodyless resource, e.g. `<Resource/>` (Table 6.1, Example 3.6). */
+  val empty: Resource = Resource()
+
+  /** A plain resource with just the specific payload. */
+  def of(payload: ResourcePayload): Resource = Resource(Some(payload))
+
+  /** A resource with the given specific payload. */
+  def withPayload(payload: ResourcePayload): Resource = Resource(Some(payload))
 
   given Show[Resource] =
-    Show.show(r => s"Resource(${r.elementName.value})")
+    Show.show(r => s"Resource(${r.elementName.fold("<bodyless>")(_.value)})")
 
   given Eq[Resource] = Eq.fromUniversalEquals
 

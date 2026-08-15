@@ -19,7 +19,9 @@ object dsl:
   // Partitions
   // ------------------------------------------------------------------
 
-  /** A single-key partition with a runtime-tagged value, e.g. `part(PartitionKey.SheetName, PartitionValue.Token("S1"))`. */
+  /** A single-key partition with a runtime-tagged value,
+   *  e.g. `part(PartitionKey.SheetName, PartitionValue.Token("S1"))`.
+   */
   def part(key: PartitionKey, value: PartitionValue): Part =
     Part.ofValue(key, value)
 
@@ -57,7 +59,7 @@ object dsl:
           .toValidNec(Issue.error(XPath("/XJDF/ResourceSet/@ProcessUsage"), s"Invalid ProcessUsage: '$raw'"))
           .map(Some(_))
       case None => None.validNec
-    val childrenOk = resources.forall(_.elementName.value == name)
+    val childrenOk = resources.forall(_.elementName.forall(_.value == name))
     val childrenV = Validated.condNec(
       childrenOk,
       (),
@@ -73,26 +75,32 @@ object dsl:
       )
     }
 
+  /** A bodyless resource: `<Resource/>` (Table 6.1, Example 3.6). */
+  def emptyResource: Resource = Resource.empty
+
+  /** A resource with payload: `Resource.withPayload(payload)`. */
+  def withPayload(payload: ResourcePayload): Resource = Resource.withPayload(payload)
+
   /** A resource carrying a Media payload. */
   def media(media: Media, id: Option[String] = None, parts: Part*): ValidatedNec[Issue, Resource] =
     validateId(id).map { idv =>
-      Resource(specific = ResourcePayload.MediaResource(media), id = idv, parts = Chain.fromSeq(parts))
+      Resource(specific = Some(ResourcePayload.MediaResource(media)), id = idv, parts = Chain.fromSeq(parts))
     }
 
   /** A resource carrying a Component payload. */
   def component(component: Component, id: Option[String] = None, parts: Part*): ValidatedNec[Issue, Resource] =
     validateId(id).map { idv =>
-      Resource(specific = ResourcePayload.ComponentResource(component), id = idv, parts = Chain.fromSeq(parts))
+      Resource(specific = Some(ResourcePayload.ComponentResource(component)), id = idv, parts = Chain.fromSeq(parts))
     }
 
   /** A resource carrying a NodeInfo payload. */
   def nodeInfo(info: NodeInfo, parts: Part*): Resource =
-    Resource(specific = ResourcePayload.NodeInfoResource(info), parts = Chain.fromSeq(parts))
+    Resource(specific = Some(ResourcePayload.NodeInfoResource(info)), parts = Chain.fromSeq(parts))
 
   /** A resource carrying a RunList payload. */
   def runList(runList: RunList, id: Option[String] = None, parts: Part*): ValidatedNec[Issue, Resource] =
     validateId(id).map { idv =>
-      Resource(specific = ResourcePayload.RunListResource(runList), id = idv, parts = Chain.fromSeq(parts))
+      Resource(specific = Some(ResourcePayload.RunListResource(runList)), id = idv, parts = Chain.fromSeq(parts))
     }
 
   /** A resource carrying a DeliveryParams payload, partitioned by `@DropID`. */
@@ -102,7 +110,7 @@ object dsl:
       .toValidNec(Issue.error(XPath("/XJDF/ResourceSet/Resource/Part"), s"Invalid DropID: '$dropId'"))
       .map { token =>
         Resource(
-          specific = ResourcePayload.DeliveryParamsResource(params),
+          specific = Some(ResourcePayload.DeliveryParamsResource(params)),
           parts = Chain.one(Part.token(PartitionKey.DropID, token))
         )
       }

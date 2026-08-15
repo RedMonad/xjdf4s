@@ -23,7 +23,7 @@ class PatchLaws extends FunSuite:
       combinedProcessIndex = cpi,
       resources = Chain.one(
         Resource(
-          specific = ResourcePayload.MediaResource(Media(MediaType.Paper)),
+          specific = Some(ResourcePayload.MediaResource(Media(MediaType.Paper))),
           id = resourceId
         )
       )
@@ -36,7 +36,7 @@ class PatchLaws extends FunSuite:
       combinedProcessIndex = cpi,
       resources = Chain.one(
         Resource(
-          specific = ResourcePayload.NodeInfoResource(NodeInfo()),
+          specific = Some(ResourcePayload.NodeInfoResource(NodeInfo())),
           id = resourceId
         )
       )
@@ -86,7 +86,10 @@ class PatchLaws extends FunSuite:
     assert(result.validate.isValid)
 
   test("merge with partial CPI overlap replaces (Both) — §3.4 N-16"):
-    val old = mediaSet(Some(NonEmptyChain.of(ProcessIndex.unsafe(0), ProcessIndex.unsafe(1))), resourceId = Some(Id.unsafe("old")))
+    val old = mediaSet(
+      Some(NonEmptyChain.of(ProcessIndex.unsafe(0), ProcessIndex.unsafe(1))),
+      resourceId = Some(Id.unsafe("old"))
+    )
     val fresh = mediaSet(Some(NonEmptyChain.one(ProcessIndex.unsafe(0))), resourceId = Some(Id.unsafe("new")))
     val merged = Patch.mergeResourceSets(ticket(old), Chain.one(fresh))
     assert(merged.isBoth)

@@ -173,8 +173,8 @@ class PartitionLaws extends ScalaCheckSuite:
 
   property("selection: a Resource without parts applies to the entire set"):
     forAll { (selector: Part) =>
-      val resource =
-        Resource(specific = xjdf4s.resources.ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar")))
+      val payload = xjdf4s.resources.ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar"))
+      val resource = Resource(specific = Some(payload))
       resource.matches(selector)
     }
 
@@ -182,8 +182,8 @@ class PartitionLaws extends ScalaCheckSuite:
     val s1 = Part.sheetName("S1").get
     val s2 = Part.sheetName("S2").get
     val payload = xjdf4s.resources.ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar"))
-    val r1 = Resource(specific = payload, parts = cats.data.Chain.one(s1))
-    val r2 = Resource(specific = payload, parts = cats.data.Chain.one(s2))
+    val r1 = Resource(specific = Some(payload), parts = cats.data.Chain.one(s1))
+    val r2 = Resource(specific = Some(payload), parts = cats.data.Chain.one(s2))
     val rs = ResourceSet(
       name = ResourceSetName.unsafe("foo:Bar"),
       resources = cats.data.Chain(r1, r2)
@@ -194,7 +194,7 @@ class PartitionLaws extends ScalaCheckSuite:
   property("selection: IDREF selection ignores Part elements"):
     val id = Id.unsafe("r_1")
     val payload = xjdf4s.resources.ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar"))
-    val r = Resource(specific = payload, id = Some(id), parts = cats.data.Chain.one(Part.sheetName("S9").get))
+    val r = Resource(specific = Some(payload), id = Some(id), parts = cats.data.Chain.one(Part.sheetName("S9").get))
     val rs = ResourceSet(
       name = ResourceSetName.unsafe("foo:Bar"),
       resources = cats.data.Chain.one(r)
