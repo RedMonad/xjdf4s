@@ -44,15 +44,79 @@ object Arbitraries:
         ty <- Gen.choose(-100.0, 100.0)
       yield Matrix(a, b, c, d, tx, ty)
 
+  implicit val arbXYPair: Arbitrary[XYPair] =
+    Arbitrary:
+      for
+        x <- Gen.choose(-1000.0, 1000.0)
+        y <- Gen.choose(-1000.0, 1000.0)
+      yield XYPair(x, y)
+
+  implicit val arbRegExp: Arbitrary[RegExp] =
+    Arbitrary(Gen.alphaNumStr.suchThat(_.nonEmpty).map(RegExp.unsafe))
+
+  /** `Part` generator covering all 27 Partition Keys of Table 6.4 (N-29).
+   *  Every key is drawn independently, so each law is exercised with every
+   *  combination of keys, including the empty Part.
+   */
   implicit val arbPart: Arbitrary[Part] =
     Arbitrary:
       for
-        sheet <- Gen.option(arbNmToken.arbitrary)
-        sep   <- Gen.option(arbNmToken.arbitrary)
-        run   <- Gen.option(arbNmToken.arbitrary)
-        side  <- Gen.option(Gen.oneOf(Side.Front, Side.Back))
-        doc   <- Gen.option(Gen.choose(-10L, 10L).map(IntegerRange.single))
-      yield Part(sheetName = sheet, separation = sep, run = run, side = side, docIndex = doc)
+        binderySignatureId <- Gen.option(arbNmToken.arbitrary)
+        blockName          <- Gen.option(arbNmToken.arbitrary)
+        contactType        <- Gen.option(arbNmToken.arbitrary)
+        docIndex           <- Gen.option(arbIntegerRange.arbitrary)
+        dropId             <- Gen.option(arbNmToken.arbitrary)
+        location           <- Gen.option(arbNmToken.arbitrary)
+        lotId              <- Gen.option(arbNmToken.arbitrary)
+        metadata           <- Gen.option(arbRegExp.arbitrary)
+        optionKey          <- Gen.option(arbNmToken.arbitrary)
+        pageNumber         <- Gen.option(arbIntegerRange.arbitrary)
+        partVersion        <- Gen.option(arbNmToken.arbitrary)
+        previewType        <- Gen.option(Gen.oneOf(PreviewType.all))
+        printCondition     <- Gen.option(arbNmToken.arbitrary)
+        product            <- Gen.option(arbNmToken.arbitrary)
+        productPart        <- Gen.option(arbNmToken.arbitrary)
+        qualityMeasurement <- Gen.option(arbNmToken.arbitrary)
+        run                <- Gen.option(arbNmToken.arbitrary)
+        runIndex           <- Gen.option(arbIntegerRange.arbitrary)
+        separation         <- Gen.option(arbNmToken.arbitrary)
+        setIndex           <- Gen.option(arbIntegerRange.arbitrary)
+        sheetIndex         <- Gen.option(arbIntegerRange.arbitrary)
+        sheetName          <- Gen.option(arbNmToken.arbitrary)
+        side               <- Gen.option(Gen.oneOf(Side.all))
+        stationName        <- Gen.option(arbNmToken.arbitrary)
+        tileId             <- Gen.option(arbXYPair.arbitrary)
+        transferCurveName  <- Gen.option(Gen.oneOf(TransferCurveTarget.all))
+        webName            <- Gen.option(arbNmToken.arbitrary)
+      yield Part(
+        binderySignatureId = binderySignatureId,
+        blockName = blockName,
+        contactType = contactType,
+        docIndex = docIndex,
+        dropId = dropId,
+        location = location,
+        lotId = lotId,
+        metadata = metadata,
+        optionKey = optionKey,
+        pageNumber = pageNumber,
+        partVersion = partVersion,
+        previewType = previewType,
+        printCondition = printCondition,
+        product = product,
+        productPart = productPart,
+        qualityMeasurement = qualityMeasurement,
+        run = run,
+        runIndex = runIndex,
+        separation = separation,
+        setIndex = setIndex,
+        sheetIndex = sheetIndex,
+        sheetName = sheetName,
+        side = side,
+        stationName = stationName,
+        tileId = tileId,
+        transferCurveName = transferCurveName,
+        webName = webName
+      )
 
   implicit val arbAmountRange: Arbitrary[AmountRange] =
     Arbitrary:

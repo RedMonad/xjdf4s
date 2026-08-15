@@ -51,6 +51,119 @@ class PartitionLaws extends ScalaCheckSuite:
   property("typed constructor bySide carries the Side enum"):
     Part.bySide(Side.Front).valueOf(PartitionKey.Side).contains(PartitionValue.BySide(Side.Front))
 
+  // --- M1.2-1: per-key law families (Table 6.4) ---------------------------
+
+  property("Part.keys ↔ valueOf are consistent"):
+    forAll { (p: Part) =>
+      PartitionKey.values.forall(k => p.keys.contains(k) == p.valueOf(k).isDefined)
+    }
+
+  property("Part.combine is right-biased per key"):
+    forAll { (a: Part, b: Part) =>
+      PartitionKey.values.forall(k =>
+        Part.combine(a, b).valueOf(k) == b.valueOf(k).orElse(a.valueOf(k))
+      )
+    }
+
+  property("matches(b) == conflictingKeys(b).isEmpty"):
+    forAll { (a: Part, b: Part) => a.matches(b) == a.conflictingKeys(b).isEmpty }
+
+  test("regression: overlay is right-biased (X-03 archive)"):
+    val l = Part(docIndex = Some(IntegerRange(3, 3)))
+    val r = Part(docIndex = Some(IntegerRange(-10, -10)))
+    assertEquals(Part.combine(l, r).docIndex, r.docIndex)
+
+  test("Table 6.4: PartitionKey wire names match attributeName"):
+    val wireNames: Map[PartitionKey, String] = Map(
+      PartitionKey.BinderySignatureID -> "BinderySignatureID",
+      PartitionKey.BlockName -> "BlockName",
+      PartitionKey.ContactType -> "ContactType",
+      PartitionKey.DocIndex -> "DocIndex",
+      PartitionKey.DropID -> "DropID",
+      PartitionKey.Location -> "Location",
+      PartitionKey.LotID -> "LotID",
+      PartitionKey.Metadata -> "Metadata",
+      PartitionKey.OptionKey -> "Option",
+      PartitionKey.PageNumber -> "PageNumber",
+      PartitionKey.PartVersion -> "PartVersion",
+      PartitionKey.PreviewType -> "PreviewType",
+      PartitionKey.PrintCondition -> "PrintCondition",
+      PartitionKey.Product -> "Product",
+      PartitionKey.ProductPart -> "ProductPart",
+      PartitionKey.QualityMeasurement -> "QualityMeasurement",
+      PartitionKey.Run -> "Run",
+      PartitionKey.RunIndex -> "RunIndex",
+      PartitionKey.Separation -> "Separation",
+      PartitionKey.SetIndex -> "SetIndex",
+      PartitionKey.SheetIndex -> "SheetIndex",
+      PartitionKey.SheetName -> "SheetName",
+      PartitionKey.Side -> "Side",
+      PartitionKey.StationName -> "StationName",
+      PartitionKey.TileID -> "TileID",
+      PartitionKey.TransferCurveName -> "TransferCurveName",
+      PartitionKey.WebName -> "WebName"
+    )
+    // The golden map must cover *all* enum cases: a newly added Partition Key
+    // without a wire-name entry breaks this test (requirement M1.2-1).
+    assertEquals(PartitionKey.values.toSet, wireNames.keySet)
+    PartitionKey.values.foreach(k => assertEquals(k.attributeName, wireNames(k)))
+
+  test("Table 6.4: runtime tag of each PartitionValue kind"):
+    val p = Part(
+      binderySignatureId = Some(NmToken.unsafe("b1")),
+      blockName = Some(NmToken.unsafe("b2")),
+      contactType = Some(NmToken.unsafe("c1")),
+      docIndex = Some(IntegerRange(1, 2)),
+      dropId = Some(NmToken.unsafe("d1")),
+      location = Some(NmToken.unsafe("l1")),
+      lotId = Some(NmToken.unsafe("lot1")),
+      metadata = Some(RegExp.unsafe("Meta.*")),
+      optionKey = Some(NmToken.unsafe("o1")),
+      pageNumber = Some(IntegerRange(3, 4)),
+      partVersion = Some(NmToken.unsafe("v1")),
+      previewType = Some(PreviewType.ThumbNail),
+      printCondition = Some(NmToken.unsafe("p1")),
+      product = Some(NmToken.unsafe("prod1")),
+      productPart = Some(NmToken.unsafe("pp1")),
+      qualityMeasurement = Some(NmToken.unsafe("q1")),
+      run = Some(NmToken.unsafe("r1")),
+      runIndex = Some(IntegerRange(5, 6)),
+      separation = Some(NmToken.unsafe("sep1")),
+      setIndex = Some(IntegerRange(7, 8)),
+      sheetIndex = Some(IntegerRange(9, 10)),
+      sheetName = Some(NmToken.unsafe("s1")),
+      side = Some(Side.Front),
+      stationName = Some(NmToken.unsafe("st1")),
+      tileId = Some(XYPair(1.0, 2.0)),
+      transferCurveName = Some(TransferCurveTarget.Plate),
+      webName = Some(NmToken.unsafe("w1"))
+    )
+    def tagOf(key: PartitionKey): String =
+      p.valueOf(key).map(_.productPrefix).getOrElse(fail(s"Missing partition value for $key"))
+    val rangeKeys = List(
+      PartitionKey.DocIndex,
+      PartitionKey.PageNumber,
+      PartitionKey.RunIndex,
+      PartitionKey.SetIndex,
+      PartitionKey.SheetIndex
+    )
+    rangeKeys.foreach(k => assertEquals(tagOf(k), "Range"))
+    assertEquals(tagOf(PartitionKey.Metadata), "RegExpValue")
+    assertEquals(tagOf(PartitionKey.ProductPart), "ProductRef")
+    assertEquals(tagOf(PartitionKey.Side), "BySide")
+    assertEquals(tagOf(PartitionKey.TileID), "Tile")
+    assertEquals(tagOf(PartitionKey.PreviewType), "ByPreviewType")
+    assertEquals(tagOf(PartitionKey.TransferCurveName), "ByTransferCurveTarget")
+    val nonTokenKeys = (rangeKeys ++ List(
+      PartitionKey.Metadata,
+      PartitionKey.ProductPart,
+      PartitionKey.Side,
+      PartitionKey.TileID,
+      PartitionKey.PreviewType,
+      PartitionKey.TransferCurveName
+    )).toSet
+    PartitionKey.values.filterNot(nonTokenKeys).foreach(k => assertEquals(tagOf(k), "Token"))
+
   property("the ValueOf match type agrees with the typed fields at the type level"):
     // `sheetName` is Option[NmToken] == Option[ValueOf[PartitionKey.SheetName.type]]:
     // the match type is used here as a *type-level* witness, since GADT
