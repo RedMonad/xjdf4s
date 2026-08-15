@@ -1,7 +1,7 @@
 package xjdf4s
 package model
 
-import xjdf4s.intents.{AdhesiveNote, AssemblingIntent, BindingIntent, IntentPayload, VariableIntent}
+import xjdf4s.intents.{AdhesiveNote, AssemblingIntent, BindingIntent, HoleMakingIntent, IntentPayload, VariableIntent}
 import xjdf4s.model.elements.{Disposition, Glue => GlueElement, HolePattern => HolePatternElement}
 import xjdf4s.prim.*
 import cats.Show
@@ -124,6 +124,7 @@ object TicketValidator:
       case IntentPayload.Binding(b)  =>
         BindingIntent.law.check(b, path) ++ checkBindingGlueLaws(b, path) ++ checkBindingHolePatternLaws(b, path)
       case IntentPayload.Assembly(a) => checkAssemblyGlueLaws(a, path)
+      case IntentPayload.HoleMaking(h) => checkHoleMakingLaws(h, path)
       case IntentPayload.Variable(v) => VariableIntent.law.check(v, path)
       case _                         => Chain.empty
     nameIssues ++ payloadIssues
@@ -145,6 +146,12 @@ object TicketValidator:
           HolePatternElement.law(hp, XPath(s"$path/LooseBinding/HolePattern"))
         }
       case _ => Chain.empty
+
+  /** Validates `HolePattern` elements nested inside `HoleMakingIntent` (Table 4.29, `HolePattern+`). */
+  private def checkHoleMakingLaws(h: HoleMakingIntent, path: XPath): Chain[Issue] =
+    h.holePatterns.toChain.zipWithIndex.flatMap { (hp, i) =>
+      HolePatternElement.law(hp, XPath(s"$path/HolePattern[$i]"))
+    }
 
   /** Validates `Glue` elements nested inside `AssemblingIntent/BindIn` and `StickOn` (Table 8.29). */
   private def checkAssemblyGlueLaws(a: AssemblingIntent, path: XPath): Chain[Issue] =

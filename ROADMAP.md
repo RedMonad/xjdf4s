@@ -1928,6 +1928,51 @@ ChangeOrderLaws 8, SpecExamplesSuite 20, EnumLaws 23, BomLaws 8, TicketLaws 59,
 PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0; статус `[x]` — закрыт полностью.
 Исправление экранирования `87497a7` — `clean`/`compile` зелёный.
 
+#### M1.6-12. `HoleMakingIntent` (Table 4.29, §4.8) — `[~]` реализовано статически (ожидает верификации владельца; PR-18)
+
+Первый из пяти отсутствующих интентов главы 4; использует только что созданный
+`HolePattern` (M1.6-5), закрепляя паттерн «общий элемент главы 8 → использующий
+его интент главы 4».
+
+- **Сверка кардинальности (§1.2).** Table 4.29 объявляет единственный член
+  `HolePattern+` (`element`); `schema.xsd` (`HoleMakingIntent`, строки 3074–3083)
+  подтверждает `minOccurs="1" maxOccurs="unbounded"`. Итог —
+  `NonEmptyChain[HolePattern]`: правило «at least one HolePattern» SHALL
+  обеспечивается **структурно** типом, runtime-проверка не нужна.
+- **Модель** `intents/HoleMaking.scala`: `final case class HoleMakingIntent(holePatterns: NonEmptyChain[HolePattern])`;
+  сам интент атрибутов не имеет.
+- **Dispatch:** `IntentPayload.HoleMaking` в `intents/AllIntents.scala`
+  (`elementName = "HoleMakingIntent"`); `references` — `Chain.empty`
+  (у `HolePattern` нет IDREF-атрибутов).
+- **Wiring SHALL-правила:** `TicketValidator.checkHoleMakingLaws` обходит
+  `holePatterns` и применяет существующее `HolePattern.law` (Table 8.30,
+  `IssueCode.HolePatternPatternRequired`) к каждому элементу — с XPath-индексом
+  `HolePattern[i]`.
+- **Тесты** `laws/HoleMakingIntentLaws.scala` (8): elementName, пустые references,
+  кардинальность `NonEmptyChain`, позитивные (один и несколько валидных
+  HolePattern через корневой `validate`), негативные на вложенное SHALL
+  (missing `@Pattern`, только offending-элемент из нескольких, полностью пустой
+  HolePattern — через `validateReport` с `IssueCode.HolePatternPatternRequired`).
+- **Фикстура** `SpecExamples.holeMakingJob` (Table 4.29 / Table 8.30 / Appendix F):
+  два `HolePattern` (каталожный `R4m-DIN-A4` + явная геометрия); conformance +
+  golden в `SpecExamplesSuite`.
+- **Coverage:** строки `HoleMakingIntent` (Table 4.29) и обновление
+  `Intent payload dispatch` (9 payload) и `HolePattern` (контейнер
+  `HoleMakingIntent` теперь моделируется); `check-spec-coverage.sh` — `RESULT: OK`
+  (Intents 27 строк).
+
+**Файлы:** `intents/HoleMaking.scala` (новый), `intents/AllIntents.scala`,
+`model/TicketValidator.scala`, `laws/HoleMakingIntentLaws.scala` (новый),
+`examples/SpecExamples.scala`, `laws/SpecExamplesSuite.scala`,
+`docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** чистая сборка `sbt -batch clean compile test examples/run`;
+258 тестов зелёных (248 + `HoleMakingIntentLaws` 8 + `SpecExamplesSuite` 2);
+`examples/run` exit 0 с `Hole making intent (Table 4.29): ...`;
+`check-spec-coverage.sh` — `RESULT: OK`.
+
+**Статус:** `[~]` — реализовано статически, ожидает прогона владельца.
+
 **Шаблон одного вертикального среза:**
 
 1. точный table-to-type mapping и version notes;
@@ -1964,7 +2009,8 @@ PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0; статус `[x]`
 | 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
 | 16 | `Glue` (Table 8.29) + ADR-0011 + N-50 | M1.6-3 | 15 | `[x]` верифицировано владельцем: 228 тестов, `examples/run` exit 0 |
 | 17 | `HolePattern` (Table 8.30 / Appendix F) + 3 enum + open catalogs + SHALL + LooseBinding | M1.6-5 | 16 | `[x]` верифицировано владельцем: 248 тестов, `examples/run` exit 0 |
-| 18+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15) | M1.6 | 17 | шаблон среза выполнен |
+| 18 | `HoleMakingIntent` (Table 4.29, §4.8) + `HolePattern+` + wiring SHALL + fixture | M1.6-12 | 17 | `[~]` реализовано статически; ожидает верификации владельца (258 тестов) |
+| 19+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15) | M1.6 | 18 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -2900,7 +2946,15 @@ conformance/golden; верифицировано владельцем: **248 т�
 `check-spec-coverage.sh` — `RESULT: OK`, статус `[x]` — закрыт полностью.
 Первичный гейт `clean`/`compile` — чисто, 67 disk cache hits.
 Исправлена ошибка экранирования строки в `HolePattern.law` (commit `87497a7`).
-Следующий по плану — PR-18+ (M1.6-1 Certification, M1.6-12 HoleMakingIntent
-который теперь открыт после HolePattern, или другие срезы глав 4/8 — выбор
-подтверждается владельцем). LICENSE остаётся `BLOCKED` до решения владельца;
+PR-18 (M1.6-12) реализовал вертикальный срез `HoleMakingIntent` (Table 4.29,
+§4.8): `HolePattern+` → `NonEmptyChain[HolePattern]` (кардинальность сверена по
+prose и `schema.xsd`, структурно), `IntentPayload.HoleMaking`, wiring SHALL-правила
+`HolePattern.law` через `TicketValidator.checkHoleMakingLaws`, тесты
+`HoleMakingIntentLaws` (8), фикстура `holeMakingJob` + conformance/golden,
+строки в `docs/SPEC-COVERAGE.md` (27 строк Intents; `check-spec-coverage.sh` —
+`RESULT: OK`). Статус `[~]` — реализовано статически, ожидает прогона владельца
+(ожидаемо **258 тестов зелёных**, `examples/run` exit 0).
+Следующий по плану — PR-19+ (M1.6-1 Certification, M1.6-4 GangSource+MISDetails
+под `NodeInfo`, M1.6-9…M1.6-13 остальные интенты главы 4 — выбор подтверждается
+владельцем). LICENSE остаётся `BLOCKED` до решения владельца;
 возврат обязательного CI — открытая часть M1.0-1.

@@ -184,6 +184,38 @@ object SpecExamples:
         .build
     }
 
+  /** Fixture (Table 4.29 / Table 8.30 / Appendix F): a hole making ticket
+   *  demonstrating the `HoleMakingIntent` (M1.6-12). The intent carries a
+   *  `NonEmptyChain` of `HolePattern` elements (cardinality `+`); the first
+   *  uses a predefined catalog value `R4m-DIN-A4` (Appendix F), the second
+   *  specifies its geometry explicitly instead of a catalog pattern.
+   */
+  val holeMakingJob: ValidatedNec[Issue, XJDF] =
+    chainV(dsl.TicketDraft.of("holeMakingJob", ProcessType.HoleMaking)) { draft =>
+      val patterns = NonEmptyChain(
+        HolePattern(
+          pattern = Some(Catalog.HolePattern.R4mDINA4),
+          referenceEdge = Some(HoleReferenceEdge.Left)
+        ),
+        HolePattern(
+          center = Some(XYPair(0.0, 0.0)),
+          extent = Some(XYPair(6.0, 6.0)),
+          shape = Some(HoleShape.Round)
+        )
+      )
+      val payload = IntentPayload.HoleMaking(HoleMakingIntent(patterns))
+      val intent = Intent(name = IntentName.of(payload.elementName), specific = payload)
+      val product = Product(
+        id = Some(Id.unsafe("P1")),
+        isRoot = true,
+        amount = Some(20L),
+        intents = Chain.one(intent)
+      )
+      draft
+        .withProductList(ProductList(products = NonEmptyChain.one(product)))
+        .build
+    }
+
   /** Example 5.2: Split delivery — thirty books, ten to Drop1, twenty to Drop2. */
   val splitDelivery: ValidatedNec[Issue, XJDF] =
     val drop1 = PartBuilder.empty
@@ -369,6 +401,7 @@ object SpecExamples:
       "Creasing job (Table 8.17):" -> creasingJob.map(Show[XJDF].show),
       "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
       "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
+      "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),
       "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
       "Brochure job:" -> brochureJob.map(Show[XJDF].show),
       "Brochure job after change:" -> updatedBrochureJob.map(Show[XJDF].show)

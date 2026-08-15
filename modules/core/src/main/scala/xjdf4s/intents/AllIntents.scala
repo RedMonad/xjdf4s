@@ -15,6 +15,7 @@ enum IntentPayload:
   case Binding(value: BindingIntent)
   case Color(value: ColorIntent)
   case Folding(value: FoldingIntent)
+  case HoleMaking(value: HoleMakingIntent)
   case Layout(value: LayoutIntent)
   case Media(value: MediaIntent)
   case Production(value: ProductionIntent)
@@ -28,6 +29,7 @@ enum IntentPayload:
       case Binding(_) => NmToken.unsafe("BindingIntent")
       case Color(_) => NmToken.unsafe("ColorIntent")
       case Folding(_) => NmToken.unsafe("FoldingIntent")
+      case HoleMaking(_) => NmToken.unsafe("HoleMakingIntent")
       case Layout(_) => NmToken.unsafe("LayoutIntent")
       case Media(_) => NmToken.unsafe("MediaIntent")
       case Production(_) => NmToken.unsafe("ProductionIntent")
@@ -41,6 +43,7 @@ enum IntentPayload:
       case Binding(b) => b.references
       case Color(_) => Chain.empty
       case Folding(_) => Chain.empty
+      case HoleMaking(_) => Chain.empty
       case Layout(_) => Chain.empty
       case Media(_) => Chain.empty
       case Production(_) => Chain.empty

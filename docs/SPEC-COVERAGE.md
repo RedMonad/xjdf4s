@@ -48,7 +48,7 @@ README ссылается на этот документ, числа — в вы
 | §6.36 | Table 6.74 | FoldingParams | `FoldingParams` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `Crease*` (Table 8.17) моделируется (M1.6-2); `Cut*` — M3 |
 | §8.14 | Table 8.17 | Crease | `Crease` | `*` | ❌ | ✅ | ❌ | ❌ | Implemented | structural; container-level validation; контейнеры — `FoldingParams` (`Crease*`, моделируется), `CreasingParams` (`Crease+`, M3); `@Depth` в µm → `Microns` |
 | §8.24 | Table 8.29 | Glue | `Glue` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | SHALL: `@GluingPattern` even entries, `@MeltingTemperature` only with Hotmelt/PUR (M1.6-3, ADR-0011); `@GlueRef` → IDREF (collected); контейнеры — `BindIn`, `StickOn`, `AdhesiveNote` (глава 4), `GluingParams` etc. (M3) |
-| §8.25 | Table 8.30 | HolePattern | `HolePattern` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | SHALL: `@Pattern` SHALL be supplied when `@Center`, `@Extent` or `@Shape` missing (M1.6-5); контейнеры — `HoleMakingIntent` (`+`, M1.6/M3), `HoleMakingParams` (`+`, M3), `LooseBinding` (`?`, моделируется), `Media` (`*`, M3); открытый каталог `Catalog.HolePattern` (Appendix F, 34 значения incl. None из XSD); `Catalog.HoleReinforcement` (Grommet) |
+| §8.25 | Table 8.30 | HolePattern | `HolePattern` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | SHALL: `@Pattern` SHALL be supplied when `@Center`, `@Extent` or `@Shape` missing (M1.6-5); контейнеры — `HoleMakingIntent` (`+`, моделируется, M1.6-12), `HoleMakingParams` (`+`, M3), `LooseBinding` (`?`, моделируется), `Media` (`*`, M3); открытый каталог `Catalog.HolePattern` (Appendix F, 34 значения incl. None из XSD); `Catalog.HoleReinforcement` (Grommet) |
 | §6.52 | Table 6.95 | Layout | `Layout` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@Anchor`, `@SheetLay` — моделируются; `@ExpansionBox`, `Position/@PositionOrd` — не моделируются (M3) |
 | §6.57 | Table 6.114 | Media | `Media` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@BackCIE*`, `@Spectrum`, `ColorMeasurementConditions` — не моделируются (M3) |
 | §6.59 | Table 6.119 | NodeInfo | `NodeInfo` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
@@ -75,7 +75,7 @@ README ссылается на этот документ, числа — в вы
 | Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
 |---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
 | §4.1 | Table 4.1 | Intent | `Intent` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | `@Name == payload.elementName` (`Intent.nameLaw`) |
-| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 8 payload + `Extension` escape hatch |
+| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 9 payload + `Extension` escape hatch |
 | §4.2 | Table 4.3 | AssemblingIntent | `AssemblingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.2 | Table 4.4 | AssemblyItem | `AssemblyItem` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.2 | Table 4.5 | BindIn | `BindIn` | `*` | ✅ | ❌ | ❌ | ❌ | Implemented | `Glue?` → `Option[Glue]` (элемент, M1.6-3/ADR-0011); `Glue/@GlueRef` собирается; SHALL-правила Glue подключены через валидатор |
@@ -96,6 +96,7 @@ README ссылается на этот документ, числа — в вы
 | §4.4 | Table 4.20 | ColorIntent | `ColorIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.4 | Table 4.21 | SurfaceColor | `SurfaceColor` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.7 | Table 4.27 | FoldingIntent | `FoldingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
+| §4.8 | Table 4.29 | HoleMakingIntent | `HoleMakingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `HolePattern+` → `NonEmptyChain[HolePattern]` (кардинальность `+`, структурно); SHALL-правило вложенного `HolePattern` подключено через валидатор (M1.6-12) |
 | §8.21 | Table 8.26 | Fold | `Fold` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation; общий для `FoldingIntent` и `FoldingParams` |
 | §8.34 | Table 8.53 | Perforate | `Perforate` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.10 | Table 4.31 | LayoutIntent | `LayoutIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
