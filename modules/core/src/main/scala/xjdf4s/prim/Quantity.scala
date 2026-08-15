@@ -224,7 +224,7 @@ object Microns:
   /** 1 point = 25.4 / 72 mm = 352.7(7) µm. */
   private val MicronsPerPoint = 25.4 / 72.0 * 1000.0
 
-  def ofPoints(p: Points): Microns = Microns(p.value * MicronsPerPoint)
+  def ofPoints(p: Points): Microns = Microns(p * MicronsPerPoint)
 
   extension (m: Microns)
     def value: Double        = m
@@ -452,7 +452,7 @@ object CMYKColor:
     def k: UnitInterval = color.k
 
   given Show[CMYKColor] =
-    Show.show(color => s"${fmtDouble(color.c.value)} ${fmtDouble(color.m.value)} ${fmtDouble(color.y.value)} ${fmtDouble(color.k.value)}")
+    Show.show(color => s"${fmtDouble(color.c)} ${fmtDouble(color.m)} ${fmtDouble(color.y)} ${fmtDouble(color.k)}")
 
   given Eq[CMYKColor] = Eq.fromUniversalEquals
 
@@ -479,7 +479,7 @@ object RGBColor:
     def b: UnitInterval = color.b
 
   given Show[RGBColor] =
-    Show.show(color => s"${fmtDouble(color.r.value)} ${fmtDouble(color.g.value)} ${fmtDouble(color.b.value)}")
+    Show.show(color => s"${fmtDouble(color.r)} ${fmtDouble(color.g)} ${fmtDouble(color.b)}")
 
   given Eq[RGBColor] = Eq.fromUniversalEquals
 
@@ -589,9 +589,9 @@ object AmountRange:
   given Show[AmountRange] =
     Show.show { r =>
       val parts = List(
-        r.min.map(m => s"min ${fmtDouble(m.value)}"),
-        r.amount.map(a => s"amount ${fmtDouble(a.value)}"),
-        r.max.map(m => s"max ${fmtDouble(m.value)}")
+        r.min.map(m => s"min ${fmtDouble(m)}"),
+        r.amount.map(a => s"amount ${fmtDouble(a)}"),
+        r.max.map(m => s"max ${fmtDouble(m)}")
       ).flatten
       if parts.isEmpty then "unbounded" else parts.mkString(", ")
     }

@@ -70,7 +70,7 @@ object NmTokens:
     def head: NmToken                   = tokens.head
     def contains(token: NmToken): Boolean = tokens.exists(_ == token)
 
-  given Show[NmTokens] = Show.show(_.toList.map(_.value).mkString(" "))
+  given Show[NmTokens] = Show.show(tokens => tokens.toChain.toList.mkString(" "))
 
   given Eq[NmTokens] = Eq.fromUniversalEquals
 

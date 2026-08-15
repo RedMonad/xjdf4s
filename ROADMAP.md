@@ -61,8 +61,11 @@ XJDF: тикет, который невозможно построить нев�
 
 - [x] **Feedback-итерация сборки.** Прогнать CI-сборку (sbt 2.0.2, Scala 3.8.4)
       по результатам ревью этого PR; зафиксировать все замечания компилятора
-      в этом пункте и закрыть их. *(Закрыто: исправления по `build.log`
-      от ревью — см. коммит "M1: fix compilation errors reported in build.log".)*
+      в этом пункте и закрыть их. *(Закрыто в два захода: исправления по
+      первому `build.log` — коммит "M1: fix compilation errors…"; исправления
+      по второму `build.log` (прозрачность opaque-типов внутри определяющего
+      файла, `DateTimeParseException`, `Option[CMYKColor]`) — коммит
+      "M1b: fix remaining compilation errors from the updated build.log".)*
 - [ ] **Полный Part.** Добить недостающие поля, если ревью спецификации
       (Table 6.4) покажет расхождения (проверка против `schema.xsd`).
 - [ ] **Оставшиеся интенты главы 4:** ContentCheckIntent (+PreflightItem/

@@ -29,10 +29,10 @@ final case class Color(
 object Color:
 
   /** The standard process colors. */
-  def cyan: Color    = Color(cmyk = CMYKColor.unsafe(1, 0, 0, 0), colorName = XjdfString.from("Cyan"))
-  def magenta: Color = Color(cmyk = CMYKColor.unsafe(0, 1, 0, 0), colorName = XjdfString.from("Magenta"))
-  def yellow: Color  = Color(cmyk = CMYKColor.unsafe(0, 0, 1, 0), colorName = XjdfString.from("Yellow"))
-  def black: Color   = Color(cmyk = CMYKColor.unsafe(0, 0, 0, 1), colorName = XjdfString.from("Black"))
+  def cyan: Color    = Color(cmyk = Some(CMYKColor.unsafe(1, 0, 0, 0)), colorName = XjdfString.from("Cyan"))
+  def magenta: Color = Color(cmyk = Some(CMYKColor.unsafe(0, 1, 0, 0)), colorName = XjdfString.from("Magenta"))
+  def yellow: Color  = Color(cmyk = Some(CMYKColor.unsafe(0, 0, 1, 0)), colorName = XjdfString.from("Yellow"))
+  def black: Color   = Color(cmyk = Some(CMYKColor.unsafe(0, 0, 0, 1)), colorName = XjdfString.from("Black"))
 
   given Eq[Color] = Eq.fromUniversalEquals
 

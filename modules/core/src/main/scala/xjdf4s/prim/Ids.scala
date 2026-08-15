@@ -63,7 +63,7 @@ object IdRefs:
     def toList: List[IdRef]           = refs.toChain.toList
     def contains(ref: IdRef): Boolean = refs.exists(_ == ref)
 
-  given Show[IdRefs] = Show.show(_.toList.map(_.value).mkString(" "))
+  given Show[IdRefs] = Show.show(refs => refs.toChain.toList.mkString(" "))
 
   given Eq[IdRefs] = Eq.fromUniversalEquals
 

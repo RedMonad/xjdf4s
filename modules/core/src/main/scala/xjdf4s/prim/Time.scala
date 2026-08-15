@@ -14,7 +14,7 @@ object Timestamp:
 
   def from(raw: String): Option[Timestamp] =
     try Some(java.time.OffsetDateTime.parse(raw))
-    catch case _: java.time.DateTimeParseException => None
+    catch case _: java.time.format.DateTimeParseException => None
 
   def unsafe(raw: String): Timestamp =
     from(raw).getOrElse(throw new IllegalArgumentException(s"Not a valid dateTime: '$raw'"))
@@ -29,10 +29,10 @@ object Timestamp:
     def instant: java.time.Instant            = t.toInstant
     def isBefore(o: Timestamp): Boolean       = t.isBefore(o)
     def isAfter(o: Timestamp): Boolean        = t.isAfter(o)
-    def plus(d: TimeSpan): Timestamp          = t.plus(d.toJava)
-    def minus(d: TimeSpan): Timestamp         = t.minus(d.toJava)
+    def plus(d: TimeSpan): Timestamp          = t.plus(d)
+    def minus(d: TimeSpan): Timestamp         = t.minus(d)
 
-  given Show[Timestamp] =
+  given showTimestamp: Show[Timestamp] =
     Show.show(t => t.format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME))
 
   given Eq[Timestamp] = Eq.fromUniversalEquals
@@ -52,7 +52,7 @@ object TimeSpan:
 
   def from(raw: String): Option[TimeSpan] =
     try Some(java.time.Duration.parse(raw))
-    catch case _: java.time.DateTimeParseException => None
+    catch case _: java.time.format.DateTimeParseException => None
 
   def ofSeconds(seconds: Long): TimeSpan = java.time.Duration.ofSeconds(seconds)
 
@@ -89,11 +89,11 @@ object TimeRange:
   extension (r: TimeRange)
     def start: Timestamp = r.start
     def end: Timestamp   = r.end
-    def duration: TimeSpan = java.time.Duration.between(r.start.toJava.toInstant, r.end.toJava.toInstant)
+    def duration: TimeSpan = java.time.Duration.between(r.start.toInstant, r.end.toInstant)
     def contains(t: Timestamp): Boolean = !t.isBefore(r.start) && !t.isAfter(r.end)
 
   given Show[TimeRange] =
-    Show.show(r => s"${Show[Timestamp].show(r.start)} .. ${Show[Timestamp].show(r.end)}")
+    Show.show(r => s"${Timestamp.showTimestamp.show(r.start)} .. ${Timestamp.showTimestamp.show(r.end)}")
 
   given Eq[TimeRange] = Eq.fromUniversalEquals
 
