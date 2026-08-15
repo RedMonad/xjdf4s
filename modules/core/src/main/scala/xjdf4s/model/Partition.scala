@@ -437,3 +437,79 @@ final case class PartBuilder private (part: Part):
 
   def build: Part = part
 end PartBuilder
+object PartBuilder:
+
+  val empty: PartBuilder = PartBuilder(Part.empty)
+
+  /** Total field assignment of one runtime-tagged PartitionValue onto a Part. */
+  private def set(part: Part, key: PartitionKey, value: PartitionValue): Either[Issue, Part] =
+    key match
+      case PartitionKey.BinderySignatureID => expectToken(key, value).map(v => part.copy(binderySignatureId = Some(v)))
+      case PartitionKey.BlockName => expectToken(key, value).map(v => part.copy(blockName = Some(v)))
+      case PartitionKey.ContactType => expectToken(key, value).map(v => part.copy(contactType = Some(v)))
+      case PartitionKey.DocIndex => expectRange(key, value).map(v => part.copy(docIndex = Some(v)))
+      case PartitionKey.DropID => expectToken(key, value).map(v => part.copy(dropId = Some(v)))
+      case PartitionKey.Location => expectToken(key, value).map(v => part.copy(location = Some(v)))
+      case PartitionKey.LotID => expectToken(key, value).map(v => part.copy(lotId = Some(v)))
+      case PartitionKey.Metadata => expectRegExp(key, value).map(v => part.copy(metadata = Some(v)))
+      case PartitionKey.OptionKey => expectToken(key, value).map(v => part.copy(optionKey = Some(v)))
+      case PartitionKey.PageNumber => expectRange(key, value).map(v => part.copy(pageNumber = Some(v)))
+      case PartitionKey.PartVersion => expectToken(key, value).map(v => part.copy(partVersion = Some(v)))
+      case PartitionKey.PreviewType => expectPreviewType(key, value).map(v => part.copy(previewType = Some(v)))
+      case PartitionKey.PrintCondition => expectToken(key, value).map(v => part.copy(printCondition = Some(v)))
+      case PartitionKey.Product => expectToken(key, value).map(v => part.copy(product = Some(v)))
+      case PartitionKey.ProductPart => expectProductRef(key, value).map(v => part.copy(productPart = Some(v)))
+      case PartitionKey.QualityMeasurement => expectToken(key, value).map(v => part.copy(qualityMeasurement = Some(v)))
+      case PartitionKey.Run => expectToken(key, value).map(v => part.copy(run = Some(v)))
+      case PartitionKey.RunIndex => expectRange(key, value).map(v => part.copy(runIndex = Some(v)))
+      case PartitionKey.Separation => expectToken(key, value).map(v => part.copy(separation = Some(v)))
+      case PartitionKey.SetIndex => expectRange(key, value).map(v => part.copy(setIndex = Some(v)))
+      case PartitionKey.SheetIndex => expectRange(key, value).map(v => part.copy(sheetIndex = Some(v)))
+      case PartitionKey.SheetName => expectToken(key, value).map(v => part.copy(sheetName = Some(v)))
+      case PartitionKey.Side => expectSide(key, value).map(v => part.copy(side = Some(v)))
+      case PartitionKey.StationName => expectToken(key, value).map(v => part.copy(stationName = Some(v)))
+      case PartitionKey.TileID => expectTile(key, value).map(v => part.copy(tileId = Some(v)))
+      case PartitionKey.TransferCurveName => expectTransferCurveTarget(key, value).map(v => part.copy(transferCurveName = Some(v)))
+      case PartitionKey.WebName => expectToken(key, value).map(v => part.copy(webName = Some(v)))
+
+  private def mismatch[A](key: PartitionKey, expected: String, value: PartitionValue): Either[Issue, A] =
+    Left(Issue.error(
+      XPath(s"/XJDF/ResourceSet/Resource/Part/@${key.attributeName}"),
+      s"Expected $expected for @${key.attributeName}, got ${Show[PartitionValue].show(value)}"
+    ))
+
+  private def expectToken(key: PartitionKey, value: PartitionValue): Either[Issue, NmToken] = value match
+    case PartitionValue.Token(token) => Right(token)
+    case _ => mismatch(key, "an NMTOKEN partition value", value)
+
+  private def expectRegExp(key: PartitionKey, value: PartitionValue): Either[Issue, RegExp] = value match
+    case PartitionValue.RegExpValue(regexp) => Right(regexp)
+    case _ => mismatch(key, "a Metadata partition value", value)
+
+  private def expectRange(key: PartitionKey, value: PartitionValue): Either[Issue, IntegerRange] = value match
+    case PartitionValue.Range(range) => Right(range)
+    case _ => mismatch(key, "an IntegerRange partition value", value)
+
+  private def expectSide(key: PartitionKey, value: PartitionValue): Either[Issue, Side] = value match
+    case PartitionValue.BySide(side) => Right(side)
+    case _ => mismatch(key, "a Side partition value", value)
+
+  private def expectTile(key: PartitionKey, value: PartitionValue): Either[Issue, XYPair] = value match
+    case PartitionValue.Tile(tile) => Right(tile)
+    case _ => mismatch(key, "a Tile partition value", value)
+
+  private def expectPreviewType(key: PartitionKey, value: PartitionValue): Either[Issue, PreviewType] = value match
+    case PartitionValue.ByPreviewType(previewType) => Right(previewType)
+    case _ => mismatch(key, "a PreviewType partition value", value)
+
+  private def expectTransferCurveTarget(
+      key: PartitionKey,
+      value: PartitionValue
+  ): Either[Issue, TransferCurveTarget] = value match
+    case PartitionValue.ByTransferCurveTarget(target) => Right(target)
+    case _ => mismatch(key, "a TransferCurveTarget partition value", value)
+
+  private def expectProductRef(key: PartitionKey, value: PartitionValue): Either[Issue, NmToken] = value match
+    case PartitionValue.ProductRef(reference) => Right(reference)
+    case _ => mismatch(key, "a ProductPart partition value", value)
+end PartBuilder
