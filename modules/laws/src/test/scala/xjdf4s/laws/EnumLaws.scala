@@ -15,7 +15,7 @@ import scala.io.Source
  *       normative table it was copied from — these fail loudly if a value is
  *       added, removed or renamed by accident;
  *    2. a machine cross-check of every closed enum against the tables of
- *       Appendix A in `reference/xjdf/*` — a fast transcription of a table
+ *       Appendix A under `reference/xjdf` — a fast transcription of a table
  *       tends to lose exactly the values marked *New in XJDF 2.1 / 2.2*, which
  *       is how N-06, N-07, N-47, N-48 and N-49 came about.
  */
