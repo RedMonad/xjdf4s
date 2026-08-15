@@ -1928,7 +1928,7 @@ ChangeOrderLaws 8, SpecExamplesSuite 20, EnumLaws 23, BomLaws 8, TicketLaws 59,
 PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0; статус `[x]` — закрыт полностью.
 Исправление экранирования `87497a7` — `clean`/`compile` зелёный.
 
-#### M1.6-12. `HoleMakingIntent` (Table 4.29, §4.8) — `[~]` реализовано статически (ожидает верификации владельца; PR-18)
+#### M1.6-12. `HoleMakingIntent` (Table 4.29, §4.8) — `[x]` выполнено (верифицировано владельцем; PR-18)
 
 Первый из пяти отсутствующих интентов главы 4; использует только что созданный
 `HolePattern` (M1.6-5), закрепляя паттерн «общий элемент главы 8 → использующий
@@ -1971,7 +1971,16 @@ PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0; статус `[x]`
 `examples/run` exit 0 с `Hole making intent (Table 4.29): ...`;
 `check-spec-coverage.sh` — `RESULT: OK`.
 
-**Статус:** `[~]` — реализовано статически, ожидает прогона владельца.
+**Статус:** верифицировано владельцем (2026-08-16):
+`clean`/`compile` — чисто (91 disk cache hits); `testFull` — **258/0**
+(GlueLaws 15, HolePatternLaws 14, CreaseLaws 5, HoleMakingIntentLaws 8,
+PatchLaws 13, AlignmentLaws 6, ChangeOrderLaws 8, SpecExamplesSuite 22,
+EnumLaws 23, BomLaws 8, TicketLaws 59, PartitionLaws 27, AlgebraLaws 50);
+`examples/run` — exit 0, вывод содержит `Hole making intent (Table 4.29):
+XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
+`check-spec-coverage.sh` — `RESULT: OK`; статус `[x]` — закрыт полностью.
+Исправление `NonEmptyChain.size` → `.toChain.size.toInt` (коммит `047f812`) —
+по конвенции кодовой базы (`Resource.scala`, `TicketValidator.scala`).
 
 **Шаблон одного вертикального среза:**
 
@@ -2009,7 +2018,7 @@ PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0; статус `[x]`
 | 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
 | 16 | `Glue` (Table 8.29) + ADR-0011 + N-50 | M1.6-3 | 15 | `[x]` верифицировано владельцем: 228 тестов, `examples/run` exit 0 |
 | 17 | `HolePattern` (Table 8.30 / Appendix F) + 3 enum + open catalogs + SHALL + LooseBinding | M1.6-5 | 16 | `[x]` верифицировано владельцем: 248 тестов, `examples/run` exit 0 |
-| 18 | `HoleMakingIntent` (Table 4.29, §4.8) + `HolePattern+` + wiring SHALL + fixture | M1.6-12 | 17 | `[~]` реализовано статически; ожидает верификации владельца (258 тестов) |
+| 18 | `HoleMakingIntent` (Table 4.29, §4.8) + `HolePattern+` + wiring SHALL + fixture | M1.6-12 | 17 | `[x]` верифицировано владельцем: 258 тестов, `examples/run` exit 0 |
 | 19+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15) | M1.6 | 18 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -2952,8 +2961,8 @@ prose и `schema.xsd`, структурно), `IntentPayload.HoleMaking`, wiring
 `HolePattern.law` через `TicketValidator.checkHoleMakingLaws`, тесты
 `HoleMakingIntentLaws` (8), фикстура `holeMakingJob` + conformance/golden,
 строки в `docs/SPEC-COVERAGE.md` (27 строк Intents; `check-spec-coverage.sh` —
-`RESULT: OK`). Статус `[~]` — реализовано статически, ожидает прогона владельца
-(ожидаемо **258 тестов зелёных**, `examples/run` exit 0).
+`RESULT: OK`). Статус `[x]` — закрыт полностью (верифицировано владельцем:
+**258 тестов зелёных (258/0)**, `examples/run` exit 0).
 Следующий по плану — PR-19+ (M1.6-1 Certification, M1.6-4 GangSource+MISDetails
 под `NodeInfo`, M1.6-9…M1.6-13 остальные интенты главы 4 — выбор подтверждается
 владельцем). LICENSE остаётся `BLOCKED` до решения владельца;
