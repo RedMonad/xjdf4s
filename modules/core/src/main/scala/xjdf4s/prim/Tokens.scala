@@ -139,6 +139,35 @@ object LanguageTag:
 
 end LanguageTag
 
+/** XJDF data type `regExp` (Table A.1): a regular expression as defined by
+ *  `[XMLSchema]`. Used e.g. by `Part/@Metadata` (Table 6.4).
+ *
+ *  The XSD regular-expression grammar differs from `java.util.regex`
+ *  (character-class subtraction `[a-z-[aeiou]]` vs `&&`, no backreferences or
+ *  lookaround), so compatibility with the Java engine cannot be claimed and
+ *  validation is deliberately limited to non-emptiness (ROADMAP risk R5,
+ *  Appendix C). Grammar-level validation is a codec concern (M2).
+ */
+opaque type RegExp = String
+
+object RegExp:
+
+  /** Validates `raw` as a non-empty regExp. */
+  def from(raw: String): Option[RegExp] =
+    Option(raw).filter(_.nonEmpty)
+
+  /** Raises `IllegalArgumentException` when `raw` is empty. */
+  def unsafe(raw: String): RegExp =
+    from(raw).getOrElse(throw new IllegalArgumentException(s"Not a valid regExp: '$raw'"))
+
+  extension (r: RegExp) def value: String = r
+
+  given Show[RegExp] = Show.show(_.value)
+
+  given Eq[RegExp] = Eq.fromUniversalEquals
+
+end RegExp
+
 /** XJDF data type `text` (Table A.1): free text content of an element. */
 opaque type CommentText = String
 

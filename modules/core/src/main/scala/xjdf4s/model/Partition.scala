@@ -53,6 +53,15 @@ object PartitionKey:
 
   given Eq[PartitionKey] = Eq.fromUniversalEquals
 
+  /** The XJDF attribute name of this Partition Key (Table 6.4). `OptionKey` is
+   *  the only key whose Scala name differs from its wire name (the collision
+   *  with `scala.Option` forces the rename). `Show[Part]`, validator messages
+   *  and the future M2 codecs must use this, not `toString` of the key.
+   */
+  def attributeName: String = this match
+    case OptionKey => "Option"
+    case other     => other.toString
+
 end PartitionKey
 
 /** The runtime-tagged value of a Partition Key. Used when the key is not known
@@ -67,7 +76,8 @@ enum PartitionValue:
   case Tile(value: XYPair)
   case ByPreviewType(value: PreviewType)
   case ByTransferCurveTarget(value: TransferCurveTarget)
-  case ProductRef(value: IdRef)
+  case ProductRef(value: NmToken)
+  case RegExpValue(value: RegExp)
 
 object PartitionValue:
 
@@ -80,6 +90,7 @@ object PartitionValue:
       case ByPreviewType(v) => v.token.value
       case ByTransferCurveTarget(v) => v.token.value
       case ProductRef(v) => v.value
+      case RegExpValue(v) => v.value
 
   given Eq[PartitionValue] = Eq.fromUniversalEquals
 
@@ -91,7 +102,10 @@ end PartitionValue
  *  - range keys (`DocIndex`, `PageNumber`, `RunIndex`, `SetIndex`, `SheetIndex`)
  *    carry `IntegerRange`;
  *  - `Side`, `PreviewType`, `TransferCurveName` carry their closed enums;
- *  - `TileID` carries an `XYPair` of integers, `ProductPart` an `IdRef`;
+ *  - `Metadata` carries `RegExp`;
+ *  - `TileID` carries an `XYPair` of integers;
+ *  - `ProductPart` carries an open `NmToken` (Table 6.4: NMTOKEN, not an IDREF —
+ *    it is outside the §2.2.3 ID/IDREF mechanism);
  *  - everything else is an open `NmToken`.
  *
  *  Exposed for type-level programming downstream; the value-level accessors of
@@ -107,7 +121,8 @@ type ValueOf[K <: PartitionKey] = K match
   case PartitionKey.TileID.type => XYPair
   case PartitionKey.PreviewType.type => PreviewType
   case PartitionKey.TransferCurveName.type => TransferCurveTarget
-  case PartitionKey.ProductPart.type => IdRef
+  case PartitionKey.Metadata.type => RegExp
+  case PartitionKey.ProductPart.type => NmToken
   case _ => NmToken
 
 /** The `Part` element (Table 6.4): the partition context in which a Resource is
@@ -127,14 +142,14 @@ final case class Part(
     dropId: Option[NmToken] = None,
     location: Option[NmToken] = None,
     lotId: Option[NmToken] = None,
-    metadata: Option[NmToken] = None,
+    metadata: Option[RegExp] = None,
     optionKey: Option[NmToken] = None,
     pageNumber: Option[IntegerRange] = None,
     partVersion: Option[NmToken] = None,
     previewType: Option[PreviewType] = None,
     printCondition: Option[NmToken] = None,
     product: Option[NmToken] = None,
-    productPart: Option[IdRef] = None,
+    productPart: Option[NmToken] = None,
     qualityMeasurement: Option[NmToken] = None,
     run: Option[NmToken] = None,
     runIndex: Option[IntegerRange] = None,
@@ -194,7 +209,7 @@ final case class Part(
       case PartitionKey.DropID => dropId.map(PartitionValue.Token.apply)
       case PartitionKey.Location => location.map(PartitionValue.Token.apply)
       case PartitionKey.LotID => lotId.map(PartitionValue.Token.apply)
-      case PartitionKey.Metadata => metadata.map(PartitionValue.Token.apply)
+      case PartitionKey.Metadata => metadata.map(PartitionValue.RegExpValue.apply)
       case PartitionKey.OptionKey => optionKey.map(PartitionValue.Token.apply)
       case PartitionKey.PageNumber => pageNumber.map(PartitionValue.Range.apply)
       case PartitionKey.PartVersion => partVersion.map(PartitionValue.Token.apply)
@@ -309,8 +324,12 @@ object Part:
   def byTransferCurveTarget(value: TransferCurveTarget): Part =
     ofValue(PartitionKey.TransferCurveName, PartitionValue.ByTransferCurveTarget(value))
 
-  /** `@ProductPart` partition — references the `Product/@ID` this Part applies to. */
-  def byProductRef(value: IdRef): Part =
+  /** `@ProductPart` partition — references the `Product/@ID` this Part applies to
+   *  (Table 6.4: `NMTOKEN`; deprecated in XJDF 2.1. Not an IDREF: it stays
+   *  outside the §2.2.3 ID/IDREF collection — a semantic reference to
+   *  `Product/@ID` is checked by a separate rule, if at all).
+   */
+  def byProductPart(value: NmToken): Part =
     ofValue(PartitionKey.ProductPart, PartitionValue.ProductRef(value))
 
   // ------------------------------------------------------------------
@@ -369,7 +388,7 @@ object Part:
       else
         val entries = p.keys.map { k =>
           val rendered = p.valueOf(k).map(Show[PartitionValue].show).getOrElse("?")
-          s"${k.toString}=$rendered"
+          s"${k.attributeName}=$rendered"
         }
         s"Part(${entries.mkString(", ")})"
     }
@@ -412,7 +431,7 @@ object PartBuilder:
       case PartitionKey.DropID => part.copy(dropId = Some(expectToken(value)))
       case PartitionKey.Location => part.copy(location = Some(expectToken(value)))
       case PartitionKey.LotID => part.copy(lotId = Some(expectToken(value)))
-      case PartitionKey.Metadata => part.copy(metadata = Some(expectToken(value)))
+      case PartitionKey.Metadata => part.copy(metadata = Some(expectRegExp(value)))
       case PartitionKey.OptionKey => part.copy(optionKey = Some(expectToken(value)))
       case PartitionKey.PageNumber => part.copy(pageNumber = Some(expectRange(value)))
       case PartitionKey.PartVersion => part.copy(partVersion = Some(expectToken(value)))
@@ -437,6 +456,10 @@ object PartBuilder:
     case PartitionValue.Token(t) => t
     case other => throw new IllegalArgumentException(s"Expected an NMTOKEN partition value, got $other")
 
+  private def expectRegExp(value: PartitionValue): RegExp = value match
+    case PartitionValue.RegExpValue(r) => r
+    case other => throw new IllegalArgumentException(s"Expected a Metadata partition value, got $other")
+
   private def expectRange(value: PartitionValue): IntegerRange = value match
     case PartitionValue.Range(r) => r
     case other => throw new IllegalArgumentException(s"Expected an IntegerRange partition value, got $other")
@@ -457,7 +480,7 @@ object PartBuilder:
     case PartitionValue.ByTransferCurveTarget(t) => t
     case other => throw new IllegalArgumentException(s"Expected a TransferCurveTarget partition value, got $other")
 
-  private def expectProductRef(value: PartitionValue): IdRef = value match
+  private def expectProductRef(value: PartitionValue): NmToken = value match
     case PartitionValue.ProductRef(r) => r
     case other => throw new IllegalArgumentException(s"Expected a ProductPart partition value, got $other")
 end PartBuilder
