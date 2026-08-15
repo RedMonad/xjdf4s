@@ -29,6 +29,7 @@ object ProcessType:
 
   // A representative subset of Chapter 5 processes.
   val Approval: ProcessType = NmToken.unsafe("Approval")
+  val Binding: ProcessType = NmToken.unsafe("Binding")
   val Collecting: ProcessType = NmToken.unsafe("Collecting")
   val ColorSpaceConversion: ProcessType = NmToken.unsafe("ColorSpaceConversion")
   val ConventionalPrinting: ProcessType = NmToken.unsafe("ConventionalPrinting")
