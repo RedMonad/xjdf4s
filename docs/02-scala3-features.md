@@ -22,7 +22,7 @@
 Это не «анемичные обёртки»: в компаньонах живут конструкторы с валидацией
 (`from: … => Option`, `unsafe`), законы-инварианты и cats-инстансы
 (`Show`, `Eq`, `Order`, `Monoid`, `Semigroup`, `CommutativeMonoid`).
-Ссылка: `reference/other-new-features/opaques.md`.
+Ссылка: `./reference/scala/docs/reference/other-new-features/opaques.md`.
 
 > **Урок прозрачности (подтверждён сборкой).** Внутри файла, где определён
 > opaque type, тип **прозрачен** (виден как лежащий в основе), поэтому:
@@ -42,7 +42,7 @@
 ## named tuples — именованные записи там, где class избыточен
 
 Начиная со Scala 3.7 (в 3.8 — стабильная фича,
-`reference/other-new-features/named-tuples.md`):
+`./reference/scala/docs/reference/other-new-features/named-tuples.md`):
 
 - `XYPair = (x: Double, y: Double)`, `Shape = (width, height, depth)`,
   `Rectangle = (llx, lly, urx, ury)`, `Matrix = (a, b, c, d, tx, ty)` —
@@ -92,7 +92,7 @@ PR-5 на `NmToken` + `Catalog.NamedColor` со 147 значениями SVG 1.1
 - `Audit` — 5 видов аудитов с Header-ом (Table 3.3);
 - `PartitionValue` — рантайм-тегованное значение ключа разбиения.
 
-Ссылка: `reference/enums/adts.md`.
+Ссылка: `./reference/scala/docs/reference/enums/adts.md`.
 
 ## union types — «не более одного из» и открытые альтернативы
 
@@ -104,7 +104,7 @@ PR-5 на `NmToken` + `Catalog.NamedColor` со 147 значениями SVG 1.1
   типо-зависимые детали BindingIntent (Table 4.8), с проверкой парности
   «BindingType ↔ деталь» в `BindingIntent.isLawful`.
 
-Ссылка: `reference/new-types/union-types.md`.
+Ссылка: `./reference/scala/docs/reference/new-types/union-types.md`.
 
 ## intersection types — отказ от вырожденного пересечения
 
@@ -123,7 +123,7 @@ ChangeOrder` с `Option`/`Chain`-полями. Обязателен только
 пересечение невырождено: `type SubscribedQuery = Query & WithSubscription`
 (два независимых trait-а, ни один не является подтипом другого).
 
-Ссылка: `reference/new-types/intersection-types.md`; решение — `docs/adr/0001-change-order.md`.
+Ссылка: `./reference/scala/docs/reference/new-types/intersection-types.md`; решение — `docs/adr/0001-change-order.md`.
 
 ## match types — тип значения ключа зависит от самого ключа
 
@@ -149,7 +149,7 @@ type ValueOf[K <: PartitionKey] = K match
 реализуем без кастов: компилятор не уточняет абстрактный ключ в ветках матча
 при редукции match type — подтверждено сборкой; см. `ROADMAP.md`, «Риски и меры снижения».)
 
-Ссылка: `reference/new-types/match-types.md`.
+Ссылка: `./reference/scala/docs/reference/new-types/match-types.md`.
 
 ## trait — общая поверхность именованных элементов
 
@@ -158,8 +158,8 @@ type ValueOf[K <: PartitionKey] = K match
 сознательно: trait-конструктор `(val name: N)` конфликтовал бы с
 case-class-параметром `name` подкласса (E164: «needs `override` modifier»),
 а `Named[N](name: N)` без val не даёт членов. Ссылки:
-`reference/other-new-features/trait-parameters.md`,
-`reference/changed-features/…`.
+`./reference/scala/docs/reference/other-new-features/trait-parameters.md`,
+`./reference/scala/docs/reference/changed-features/…`.
 
 ## context functions — сознательно не используются с PR-11
 
@@ -179,7 +179,7 @@ def run[A](program: IdAllocator[A]): A            // runA(Map.empty).value
 оставлена только как явно документированный escape hatch; `dsl.productWithFreshId`
 использует чистую программу. Честная демонстрация context functions отложена
 до задачи, которой они реально нужны. Ссылка:
-`reference/contextual/context-functions.md`.
+`./reference/scala/docs/reference/contextual/context-functions.md`.
 
 ## case class + параметры по умолчанию — таблицы спецификации один-в-один
 

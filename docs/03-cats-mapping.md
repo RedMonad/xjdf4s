@@ -14,7 +14,7 @@
 Аппликативный функтор `Validated` накапливает **все** нарушения сразу
 (monoidal combine), а не останавливается на первом — то, что нужно
 интегратору. `NonEmptyChain[Issue]` гарантирует непустой список ошибок.
-Ссылка: `docs/typeclasses/applicative.md`, `docs/datatypes/validated.md`.
+Ссылка: `./reference/cats/docs/typeclasses/applicative.md`, `./reference/cats/docs/datatypes/validated.md`.
 
 > **Важно:** `Validated` — **не монада**: у него сознательно нет монадического
 > `flatMap` (см. validated.md: «Validated isn't a monad, but an Applicative
@@ -43,7 +43,7 @@
 - `Foldable`/`NonEmptyTraverse` для свёрток и травесов;
 - `mkString_`, `last`/`head`, дешёвое конкатенирование.
 
-Ссылка: `docs/datatypes/chain.md`, `docs/typeclasses/foldable.md`.
+Ссылка: `./reference/cats/docs/datatypes/chain.md`, `./reference/cats/docs/typeclasses/foldable.md`.
 
 ## Semigroup/Monoid — явные алгебры домена
 
@@ -77,7 +77,7 @@
 оптимистичное расширение. `Semilattice` **не объявляется**: `meet` частична,
 а «законы важнее названий» (N-23) — вместо инстанса property-тесты
 направлений, законов и пустого пересечения в `AlgebraLaws`.
-Ссылка: `docs/algebra.md` (иерархия lattice из algebra).
+Ссылка: `./reference/cats/docs/algebra.md` (иерархия lattice из algebra).
 
 ## FunctionK — естественное преобразование сигнал → история
 
@@ -88,20 +88,20 @@ val signalToAudit: Signal => Audit             // Table 3.2
 
 Закон естественности (`map f ∘ snapshot = snapshot ∘ map f`) проверяется
 свойством в laws. `Pulse` имеет `Functor`, `NonEmptyChain` — функтор
-свободного моноида. Ссылка: `docs/datatypes/functionk.md`,
-`docs/typeclasses/functor.md`.
+свободного моноида. Ссылка: `./reference/cats/docs/datatypes/functionk.md`,
+`./reference/cats/docs/typeclasses/functor.md`.
 
 ## Ior — трёхзначный итог слияния change order
 
 `Patch.mergeResourceSets: Ior[NonEmptyChain[Issue], XJDF]` — `Left` (слить
 нельзя), `Right` (чисто), `Both` (слито, но ключи конфликтовали — issue
-остаётся свидетелем). Ссылка: `docs/datatypes/ior.md`.
+остаётся свидетелем). Ссылка: `./reference/cats/docs/datatypes/ior.md`.
 
 ## State — выделение ID как чистый эффект
 
 `IdSource.fresh: State[Counter, Id]` — генератор `@ID` без мутаций; наружу —
 context function `IdAllocator` (см. 02-scala3-features.md). Ссылка:
-`docs/datatypes/state.md`.
+`./reference/cats/docs/datatypes/state.md`.
 
 ## Show/Eq/Order — наблюдаемость домена
 
@@ -118,7 +118,7 @@ context function `IdAllocator` (см. 02-scala3-features.md). Ссылка:
 С PR-12 `Eval` используется: `Bom.toTreeEval`/`cataEval` — варианты развёртки
 и катаморфизма на trampoline `Eval.defer`; `toTree`/`cata` — совместимые
 обёртки. Deep-тест `BomLaws` гоняет цепочку `@ChildRefs` глубиной 10 000 без
-`StackOverflowError`. Ссылка: `docs/datatypes/eval.md`.
+`StackOverflowError`. Ссылка: `./reference/cats/docs/datatypes/eval.md`.
 
 Остаются запланированными в `ROADMAP.md`:
 - потоковая обработка сигналов (`fs2`-совместимый слой, `Writer`-семантика
