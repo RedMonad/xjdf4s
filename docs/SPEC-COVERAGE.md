@@ -62,5 +62,5 @@
 
 **Migration impact.** `ChangeOrder` больше не является `XJDF`. Call sites: `Ticket.scala` (удаление alias), `TicketLaws.scala` (удалён тест пересечения), `SpecExamples.scala` / `Main.scala` (демо на новом типе), `README.md`, `docs/02`, `docs/04`.
 
-**Верификация.** Цикл ADR-0002 не вернулся (`ChangeOrder → TicketValidator`, обратного ребра нет). Статус `[~]` до прогона владельца.
+**Верификация.** Цикл ADR-0002 не вернулся (`ChangeOrder → TicketValidator`, обратного ребра нет). Владелец подтвердил чистый прогон `sbt -batch clean scalafmtCheckAll compile test examples/run`; статус `[x]` (верифицировано владельцем).
 
