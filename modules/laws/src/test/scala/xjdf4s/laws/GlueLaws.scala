@@ -65,14 +65,14 @@ class GlueLaws extends FunSuite:
     val glue = GlueElement(gluingPattern = Some(FloatList.of(1.0, 0.5, 2.0)))
     val issues = GlueElement.law(glue, at)
     assertEquals(issues.size.toInt, 1)
-    assertEquals(issues.head.code, Some(IssueCode.GluePatternOdd))
+    assertEquals(issues.toList.head.code, Some(IssueCode.GluePatternOdd))
   }
 
   test("Table 8.29: @GluingPattern with single entry is invalid") {
     val glue = GlueElement(gluingPattern = Some(FloatList.of(5.0)))
     val issues = GlueElement.law(glue, at)
     assertEquals(issues.size.toInt, 1)
-    assertEquals(issues.head.code, Some(IssueCode.GluePatternOdd))
+    assertEquals(issues.toList.head.code, Some(IssueCode.GluePatternOdd))
   }
 
   // --- Negative tests: @MeltingTemperature rule -----------------------------
@@ -81,28 +81,28 @@ class GlueLaws extends FunSuite:
     val glue = GlueElement(glueType = Some(GlueType.ColdGlue), meltingTemperature = Some(50L))
     val issues = GlueElement.law(glue, at)
     assertEquals(issues.size.toInt, 1)
-    assertEquals(issues.head.code, Some(IssueCode.GlueMeltingTempWithoutHeat))
+    assertEquals(issues.toList.head.code, Some(IssueCode.GlueMeltingTempWithoutHeat))
   }
 
   test("Table 8.29: @MeltingTemperature with @GlueType=Permanent is invalid") {
     val glue = GlueElement(glueType = Some(GlueType.Permanent), meltingTemperature = Some(100L))
     val issues = GlueElement.law(glue, at)
     assertEquals(issues.size.toInt, 1)
-    assertEquals(issues.head.code, Some(IssueCode.GlueMeltingTempWithoutHeat))
+    assertEquals(issues.toList.head.code, Some(IssueCode.GlueMeltingTempWithoutHeat))
   }
 
   test("Table 8.29: @MeltingTemperature with @GlueType=Removable is invalid") {
     val glue = GlueElement(glueType = Some(GlueType.Removable), meltingTemperature = Some(80L))
     val issues = GlueElement.law(glue, at)
     assertEquals(issues.size.toInt, 1)
-    assertEquals(issues.head.code, Some(IssueCode.GlueMeltingTempWithoutHeat))
+    assertEquals(issues.toList.head.code, Some(IssueCode.GlueMeltingTempWithoutHeat))
   }
 
   test("Table 8.29: @MeltingTemperature without any @GlueType is invalid") {
     val glue = GlueElement(meltingTemperature = Some(150L))
     val issues = GlueElement.law(glue, at)
     assertEquals(issues.size.toInt, 1)
-    assertEquals(issues.head.code, Some(IssueCode.GlueMeltingTempWithoutHeat))
+    assertEquals(issues.toList.head.code, Some(IssueCode.GlueMeltingTempWithoutHeat))
   }
 
   // --- IDREF collection -----------------------------------------------------
