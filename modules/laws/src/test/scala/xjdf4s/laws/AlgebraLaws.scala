@@ -129,10 +129,34 @@ class AlgebraLaws extends ScalaCheckSuite:
     intercept[IllegalArgumentException](AmountBounds(Some(Amount(10)), Some(Amount(5))))
 
   // --- XYPair: commutative monoid of pointwise addition ----------------
-  commutativeMonoidLaws[XYPair]("XYPair")
+  // NOTE: Floating-point addition is not associative; use approxEq.
+  property("XYPair: monoid identity is (0, 0)"):
+    forAll { (a: XYPair) =>
+      xyPairApproxEq(XYPair.zero + a, a) && xyPairApproxEq(a + XYPair.zero, a)
+    }
+
+  property("XYPair: monoid associativity (approx)"):
+    forAll { (a: XYPair, b: XYPair, c: XYPair) =>
+      xyPairApproxEq((a + b) + c, a + (b + c))
+    }
+
+  property("XYPair: commutative monoid commutativity"):
+    forAll { (a: XYPair, b: XYPair) => xyPairApproxEq(a + b, b + a) }
 
   // --- Points: commutative monoid of length addition -------------------
-  commutativeMonoidLaws[Points]("Points")
+  // NOTE: Floating-point addition is not associative; use approxEq.
+  property("Points: monoid identity is 0"):
+    forAll { (a: Points) =>
+      approxEq(Points.zero + a, a) && approxEq(a + Points.zero, a)
+    }
+
+  property("Points: monoid associativity (approx)"):
+    forAll { (a: Points, b: Points, c: Points) =>
+      approxEq((a + b) + c, a + (b + c))
+    }
+
+  property("Points: commutative monoid commutativity"):
+    forAll { (a: Points, b: Points) => approxEq(a + b, b + a) }
 
   // --- TimeSpan: commutative monoid of duration addition ---------------
   commutativeMonoidLaws[TimeSpan]("TimeSpan")
@@ -151,6 +175,9 @@ class AlgebraLaws extends ScalaCheckSuite:
   // --- Matrix: the affine transformation monoid (NOT Group, X-05) ------
   private def approxEq(x: Double, y: Double): Boolean =
     x == y || math.abs(x - y) <= 1e-6 * math.max(1.0, math.max(math.abs(x), math.abs(y)))
+
+  private def xyPairApproxEq(a: XYPair, b: XYPair): Boolean =
+    approxEq(a.x, b.x) && approxEq(a.y, b.y)
 
   private def matrixEq(a: Matrix, b: Matrix): Boolean =
     approxEq(a.a, b.a) && approxEq(a.b, b.b) && approxEq(a.c, b.c) &&
