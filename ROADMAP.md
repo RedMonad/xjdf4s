@@ -1355,7 +1355,7 @@ final case class PartAmount(
 
 **Статус сессии (PR-6).** `PartAmount.parts: Chain[Part]` внедрено (коммит `784c4b4`); переходный аксессор `def part: Option[Part] = parts.headOption` помечен `@deprecated("transitional accessor; removed before M2", "M1")`. Мигрированы `Show[PartAmount]` (печатает все `parts`), генератор `arbPartAmount` (порождает `Chain` из 0..* `Part`) и сообщение валидатора. Call sites уже, чем ожидалось: `dsl/XjdfDsl.scala` и `examples/SpecExamples.scala` не используют `PartAmount.part` (единственное вхождение `PartAmount(amount = …)` в `SpecExamples.changeOrder` на `part` не ссылается), поэтому правки в них не потребовались. Генератор `arbPartAmount` ограничен `Gen.listOfN(0..3, arbPart)` (коммит `41bcf86`), чтобы не раздувать `AmountPool`-закон в `AlgebraLaws` квадратичным `Gen.listOf`. Прогон владельца (Приложение D: `sbt -batch clean scalafmtCheckAll compile test examples/run`) — чистый; статус `[x] (верифицировано владельцем)`.
 
-#### M1.2-4. Bodyless `Resource` (P1) — закрывает N-11
+#### M1.2-4. Bodyless `Resource` (P1) — закрывает N-11 — `[~]` выполнено в PR-7 (ожидает верификации владельцем)
 
 **Норма** — Table 6.1: `Specific Resource?`:
 
@@ -1372,19 +1372,20 @@ final case class PartAmount(
 </ResourceSet>
 ```
 
-**Реализация:** `specific: Option[ResourcePayload] = None`. Следствия обрабатываются явно:
+**Реализация:** `specific: Option[ResourcePayload] = None`. Следствия обработаны:
 
 - `elementName: Option[NmToken]`;
+- `isBodyless: Boolean`;
 - bodyless Resource берёт имя из родительского `ResourceSet`, но не притворяется конкретным payload;
-- `references` для `None` пуст;
-- `ResourceSet.hasLawfulChildren` пропускает bodyless (правило «`@Name` совпадает» применимо только при наличии payload);
-- DSL предлагает `Resource.empty` / `Resource.withPayload`, не `null`;
-- `SpecExamples.combinedProcesses` переписывается буквально под Example 3.6 вместо текущей эмуляции пустыми `ResourceSet` без `Resource`;
+- `references` для `None` возвращает `Chain.empty`;
+- `ResourceSet.hasLawfulChildren` пропускает bodyless (правило «`@Name` совпадает» применимо только при наличии payload: `r.elementName.forall(_ == name.toNmToken)`);
+- DSL предлагает `Resource.empty` / `Resource.withPayload`, `dsl.emptyResource` / `dsl.withPayload`;
+- `SpecExamples.combinedProcesses` переписан буквально под Example 3.6 с `dsl.emptyResource`;
 - XML-кодек M2 обязан сохранять `<Resource/>`.
 
-Из-за высокой centrality `model.Resource` (betweenness 135.1) изменение выполняется compiler-driven с полным прогоном laws и examples.
+**Статус сессии (PR-7):** реализовано в коммите `c8876ea`. Тесты в `TicketLaws.scala`: представимость bodyless `<Resource/>`, сохранение поведения ресурсов с payload, `hasLawfulChildren` на пустых и ошибочных детях, буквальное моделирование Example 3.6.
 
-#### M1.2-5. Пропущенные поля и области видимости ID (P1) — закрывает N-12, N-13, N-14
+#### M1.2-5. Пропущенные поля и области видимости ID (P1) — закрывает N-12, N-13, N-14 — `[~]` выполнено в PR-7 (ожидает верификации владельцем)
 
 ```scala
 /** `DropItem` (Table 6.55). */
@@ -1409,15 +1410,15 @@ final case class Notification(
 )
 ```
 
-Правило Table 8.49 «If Milestone is present, the value of `@Class` SHALL be `"Event"`» реализуется как `DomainRule` (ADR-0003), а не как `Boolean`, и подключается в M1.3-3. Там же — правило «If multiple Comment elements occur, they SHALL have different `Comment/@Language` values» (N-38).
+Правило Table 8.49 «If Milestone is present, the value of `@Class` SHALL be `"Event"`» реализовано в `Notification.hasLawfulMilestone` и подключено в `TicketValidator`. Правило «If multiple Comment elements occur, they SHALL have different `Comment/@Language` values» (N-38) реализовано в `Notification.hasUniqueCommentLanguages` и валидаторе. Полная шина `DomainRule` (ADR-0003) подключается в M1.3-3 (PR-8).
 
 **Скоупы идентификаторов:**
 
-- Убрать `origin.id` (Header-ы аудитов) из `XJDF.declaredIds`: скоуп `Header/@ID` — мессенджинговый (Table 7.3), а §2.2.3 определяет документный скоуп: «IDs and IDREFS are only valid within the scope of a single XJDF instance and NEED NOT be maintained when a new XJDF is generated.» Отдельная проверка уникальности сообщений вводится в M4.
-- Сделать `XJDF.references` полным: обойти `ResourceInfo.resourceSet` внутри аудитов (`model/Header.scala`: `final case class ResourceInfo(resourceSet: ResourceSet, …)`) и остальные реализованные payload. Сейчас `declaredIds` и `references` асимметричны.
-- `XJDF/@Name` и `@$schema` не добавляются в домен (X-04, ADR-0007) — строка в `docs/SPEC-COVERAGE.md` со статусом codec-only (M2).
+- `origin.id` (Header-ы аудитов) убран из `XJDF.declaredIds`: скоуп `Header/@ID` — мессенджинговый (Table 7.3), а §2.2.3 определяет документный скоуп. Отдельная проверка уникальности сообщений вводится в M4.
+- `XJDF.references` сделан полным: обходит `ResourceSet.references`, `ResourceInfo.references` (`final case class ResourceInfo(resourceSet: ResourceSet, …)`), `Audit.references`, `AuditPool.references`.
+- `XJDF/@Name` и `@$schema` не добавляются в домен (X-04, ADR-0007) — зафиксированы в `docs/SPEC-COVERAGE.md` со статусом codec-only (M2).
 
-**Тесты:** два аудита с одинаковым `Header/@ID` и разным `@Time` — тикет валиден; два `Resource/@ID` с одинаковым значением — невалиден; каждый IDREF из аудитов разрешается; полный обход агрегата `declaredIds`/`references`.
+**Статус сессии (PR-7):** реализовано в коммитах `e4322b1`, `241020a`, `6bccf04`. Тесты в `TicketLaws.scala`: поля `DropItem`, опциональный `moduleId`, валидация Milestone/@Class, уникальность языков Comment в Notification, два аудита с одинаковым `Header/@ID` валидны, сбор и валидация IDREF из `AuditResource`.
 
 #### M1.2-6. Scaladoc-ссылки и реестр покрытия (P1/P3) — закрывает N-15, N-46
 
@@ -2540,4 +2541,4 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-6 (M1.0 + M1.1 + M1.2-1/M1.2-2/M1.2-3 + M1.3-2) выполнены и верифицированы владельцем (сборка чистая, тесты зелёные). Следующий по плану — PR-7 (M1.2-4 bodyless `Resource` + M1.2-5 `DropItem`/`Notification`/ID-скоупы), зависит от PR-3 (достигнут).
+**Краткий следующий шаг:** PR-1…PR-7 (M1.0 + M1.1 + M1.2-1…M1.2-5 + M1.3-2) выполнены (PR-7 ожидает верификации владельцем). Следующий по плану — PR-8 (M1.3-1, M1.3-3, M1.3-4, M1.3-5: шина `DomainRule`, полный `TicketValidator`, severity).
