@@ -89,9 +89,16 @@ final case class ProductList(products: NonEmptyChain[Product]):
   def resolve(ref: IdRef): Option[Product] =
     byId(Id.unsafe(ref.value))
 
-  /** All document-scoped IDs declared by the products. */
+  /** All document-scoped IDs declared by the products and their intents
+   *  (§2.2.3). Intent-declared IDs come from `IntentPayload.declaredIds` —
+   *  today the `ProofItem/@ID` values inside `ContentCheckIntent`
+   *  (Table 4.24), referenceable by `DeliveryParams/DropItem/@ItemRef`
+   *  (Table 6.55).
+   */
   def declaredIds: Chain[Id] =
-    Chain.fromSeq(products.toChain.toList.flatMap(_.id))
+    products.toChain.flatMap { p =>
+      Chain.fromOption(p.id) ++ p.intents.flatMap(_.declaredIds)
+    }
 
   /** All IDREFs used by the products (e.g. binding child references). */
   def references: Chain[IdRef] =

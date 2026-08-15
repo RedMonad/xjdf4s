@@ -3,7 +3,7 @@ package xjdf4s.laws
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.{Comment, Milestone}
+import xjdf4s.model.elements.{Comment, Disposition, FileSpec, Milestone}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}
@@ -658,6 +658,15 @@ class TicketLaws extends ScalaCheckSuite:
       IntentPayload.Variable(VariableIntent(variableType = VariableType.OneLine,
         averagePages = Some(4L))))
     assert(ticketWithProduct(productWithIntent(variableIntent)).validate.isValid)
+
+    // Disposition law reached through the first FileSpec-bearing intent
+    // (ContentCheckIntent/ProofItem/FileSpec, M1.6-11). A lawful Disposition
+    // (only @MinDuration) proves the traversal is wired.
+    val contentCheckIntent = Intent(IntentName.unsafe("ContentCheckIntent"),
+      IntentPayload.ContentCheck(ContentCheckIntent(proofItems = Chain.one(ProofItem(
+        fileSpec = Some(FileSpec(disposition = Some(Disposition(
+          minDuration = Some(TimeSpan.ofHours(24)))))))))))
+    assert(ticketWithProduct(productWithIntent(contentCheckIntent)).validate.isValid)
 
     // Notification laws
     val header = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(1))

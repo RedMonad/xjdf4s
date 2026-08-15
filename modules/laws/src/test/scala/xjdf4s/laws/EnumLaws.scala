@@ -144,6 +144,12 @@ class EnumLaws extends FunSuite:
   test("Table 8.30: HoleShape wire tokens"):
     assertEquals(tokensOf(HoleShape.all), Set("Elliptic", "Rectangular", "Round"))
 
+  test("Table 4.23: PreflightLevel wire tokens"):
+    assertEquals(tokensOf(PreflightLevel.all), Set("Basic", "Extended", "Premium"))
+
+  test("Table 4.24: ProofColorType wire tokens"):
+    assertEquals(tokensOf(ProofColorType.all), Set("Monochrome", "BasicColor", "MatchedColor"))
+
   test("Table A.8 / A.11 / A.46: the '→ None' token family"):
     // Scala reserves `None`, so four enumerations rename the case and map the
     // token explicitly (ROADMAP Appendix C).
@@ -174,7 +180,9 @@ class EnumLaws extends FunSuite:
         ("GluingTechnique", GluingTechnique.all, GluingTechnique.fromToken),
         ("HoleCenterReference", HoleCenterReference.all, HoleCenterReference.fromToken),
         ("HoleReferenceEdge", HoleReferenceEdge.all, HoleReferenceEdge.fromToken),
-        ("HoleShape", HoleShape.all, HoleShape.fromToken)
+        ("HoleShape", HoleShape.all, HoleShape.fromToken),
+        ("PreflightLevel", PreflightLevel.all, PreflightLevel.fromToken),
+        ("ProofColorType", ProofColorType.all, ProofColorType.fromToken)
       )
     companions.foreach: (name, all, fromToken) =>
       all.foreach: v =>
@@ -200,7 +208,9 @@ class EnumLaws extends FunSuite:
         "GluingTechnique"     -> GluingTechnique.all,
         "HoleCenterReference" -> HoleCenterReference.all,
         "HoleReferenceEdge"   -> HoleReferenceEdge.all,
-        "HoleShape"           -> HoleShape.all
+        "HoleShape"           -> HoleShape.all,
+        "PreflightLevel"      -> PreflightLevel.all,
+        "ProofColorType"      -> ProofColorType.all
       )
     closed.foreach: (name, all) =>
       assertEquals(all.map(_.token.value).distinct.size, all.size, s"$name has duplicate tokens")

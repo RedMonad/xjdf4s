@@ -385,6 +385,21 @@ enum PreflightLevel extends XjdfEnum:
 object PreflightLevel extends XjdfEnumCompanion[PreflightLevel]:
   val all: List[PreflightLevel] = List(Basic, Extended, Premium)
 
+/** `ProofColorType`: the color quality of a customer proof
+ *  (`ProofItem/@ColorType`, Table 4.24).
+ *
+ *  The XJDF attribute is named `ColorType`, like `Color/@ColorType` of the
+ *  Color resource (Table 6.27), but the two are distinct enumerations — the
+ *  XSD declares this one inline on `ProofItem`. The Scala name is prefixed to
+ *  avoid the clash (ROADMAP Appendix C).
+ */
+enum ProofColorType extends XjdfEnum:
+  case Monochrome, BasicColor, MatchedColor
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object ProofColorType extends XjdfEnumCompanion[ProofColorType]:
+  val all: List[ProofColorType] = List(Monochrome, BasicColor, MatchedColor)
+
 /** `PreviewType`: the type and usage of a Preview (Table 6.4). */
 enum PreviewType extends XjdfEnum:
   case Animation, Identification, SeparatedThumbNail, Separation, SeparationRaw,

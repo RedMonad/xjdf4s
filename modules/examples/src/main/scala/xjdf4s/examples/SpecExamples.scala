@@ -289,6 +289,53 @@ object SpecExamples:
         .build
     }
 
+  /** Fixture (§4.5 / Tables 4.22–4.24): a content-check ticket (M1.6-11).
+   *  The intent pairs with the `Approval` (§5.3.1) and `Preflight` (§5.4.14)
+   *  processes — Chapter 5 defines no `ContentCheck` process of its own. A
+   *  Premium preflight combines with a matched-color contract proof whose
+   *  `@ID` is referenced by `DeliveryParams/DropItem/@ItemRef` (Table 6.55),
+   *  exercising the intent-level `declaredIds` wiring.
+   */
+  val contentCheckJob: ValidatedNec[Issue, XJDF] =
+    chainV(dsl.TicketDraft.of("contentCheckJob", ProcessType.Approval, ProcessType.Preflight)) { draft =>
+      val contentCheck = ContentCheckIntent(
+        preflightItems = Chain.one(PreflightItem(preflightLevel = Some(PreflightLevel.Premium))),
+        proofItems = Chain.one(
+          ProofItem(
+            amount = Some(2L),
+            colorType = Some(ProofColorType.MatchedColor),
+            contract = Some(true),
+            id = Some(Id.unsafe("Proof1")),
+            pageIndex = Some(IntegerRange(0, 3)),
+            fileSpec = Some(FileSpec.ofUrl(Url.unsafe("file:///proofs/customer-record.pdf")))
+          )
+        )
+      )
+      val payload = IntentPayload.ContentCheck(contentCheck)
+      val intent = Intent(name = IntentName.of(payload.elementName), specific = payload)
+      val product = Product(
+        id = Some(Id.unsafe("P1")),
+        isRoot = true,
+        amount = Some(100L),
+        intents = Chain.one(intent)
+      )
+      val delivery = Resource(
+        specific = Some(ResourcePayload.DeliveryParamsResource(
+          DeliveryParams(dropItems = Chain.one(DropItem(2L, IdRef.unsafe("Proof1"))))
+        ))
+      )
+      draft
+        .withProductList(ProductList(products = NonEmptyChain.one(product)))
+        .withResources(
+          ResourceSet(
+            ResourceSetName.unsafe("DeliveryParams"),
+            usage = Some(Usage.Input),
+            resources = Chain.one(delivery)
+          )
+        )
+        .build
+    }
+
   /** Example 5.2: Split delivery — thirty books, ten to Drop1, twenty to Drop2. */
   val splitDelivery: ValidatedNec[Issue, XJDF] =
     val drop1 = PartBuilder.empty
@@ -477,6 +524,7 @@ object SpecExamples:
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),
       "Laminating intent (Table 4.30):" -> laminatingJob.map(Show[XJDF].show),
       "Embossing intent (Table 4.25):" -> embossingJob.map(Show[XJDF].show),
+      "Content check intent (Table 4.22):" -> contentCheckJob.map(Show[XJDF].show),
       "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
       "Brochure job:" -> brochureJob.map(Show[XJDF].show),
       "Brochure job after change:" -> updatedBrochureJob.map(Show[XJDF].show)

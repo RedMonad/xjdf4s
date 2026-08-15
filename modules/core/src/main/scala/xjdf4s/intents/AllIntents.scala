@@ -14,6 +14,7 @@ enum IntentPayload:
   case Assembly(value: AssemblingIntent)
   case Binding(value: BindingIntent)
   case Color(value: ColorIntent)
+  case ContentCheck(value: ContentCheckIntent)
   case Embossing(value: EmbossingIntent)
   case Folding(value: FoldingIntent)
   case HoleMaking(value: HoleMakingIntent)
@@ -30,6 +31,7 @@ enum IntentPayload:
       case Assembly(_) => NmToken.unsafe("AssemblingIntent")
       case Binding(_) => NmToken.unsafe("BindingIntent")
       case Color(_) => NmToken.unsafe("ColorIntent")
+      case ContentCheck(_) => NmToken.unsafe("ContentCheckIntent")
       case Embossing(_) => NmToken.unsafe("EmbossingIntent")
       case Folding(_) => NmToken.unsafe("FoldingIntent")
       case HoleMaking(_) => NmToken.unsafe("HoleMakingIntent")
@@ -46,6 +48,7 @@ enum IntentPayload:
       case Assembly(a) => a.references
       case Binding(b) => b.references
       case Color(_) => Chain.empty
+      case ContentCheck(_) => Chain.empty
       case Embossing(_) => Chain.empty
       case Folding(_) => Chain.empty
       case HoleMaking(_) => Chain.empty
@@ -55,6 +58,16 @@ enum IntentPayload:
       case Production(_) => Chain.empty
       case Variable(v) => v.references
       case Extension(_, _) => Chain.empty
+
+  /** All document-scoped `@ID`s declared inside this intent payload
+   *  (§2.2.3). Only `ContentCheckIntent` declares IDs today — the
+   *  `ProofItem/@ID` values that `DeliveryParams/DropItem/@ItemRef` may
+   *  reference (Table 6.55).
+   */
+  def declaredIds: Chain[Id] =
+    this match
+      case ContentCheck(c) => c.declaredIds
+      case _               => Chain.empty
 end IntentPayload
 
 object IntentPayload:

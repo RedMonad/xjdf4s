@@ -1,7 +1,15 @@
 package xjdf4s
 package model
 
-import xjdf4s.intents.{AdhesiveNote, AssemblingIntent, BindingIntent, HoleMakingIntent, IntentPayload, VariableIntent}
+import xjdf4s.intents.{
+  AdhesiveNote,
+  AssemblingIntent,
+  BindingIntent,
+  ContentCheckIntent,
+  HoleMakingIntent,
+  IntentPayload,
+  VariableIntent
+}
 import xjdf4s.model.elements.{Disposition, Glue => GlueElement, HolePattern => HolePatternElement}
 import xjdf4s.prim.*
 import xjdf4s.resources.ResourcePayload
@@ -113,11 +121,13 @@ object TicketValidator:
       }
     }
     // Note: Disposition (Table 8.23) is a child of FileSpec inside chapter-6
-    // resources; once resources carrying FileSpec are implemented (M1.6/M3),
-    // the traversal extends here with `TicketValidator.dispositionLaw.check(d, at)`.
+    // resources; once resources carrying FileSpec are implemented (M3), the
+    // traversal extends here with `TicketValidator.dispositionLaw.check(d, at)`.
     // The rule is defined as `TicketValidator.dispositionLaw` to keep `prim`
     // free of validation dependencies (ADR-0002, M1.4-1); the hook stays a
-    // one-line addition.
+    // one-line addition. The intent-side FileSpec carrier (`ContentCheckIntent/
+    // ProofItem/FileSpec`, Table 4.24) is wired in M1.6-11 through
+    // `checkContentCheckLaws` below.
 
   private def checkIntentLocalLaws(intent: Intent, parentPath: XPath): Chain[Issue] =
     val path = XPath(s"$parentPath/Intent[@Name='${intent.name.toNmToken.value}']")
@@ -126,6 +136,7 @@ object TicketValidator:
       case IntentPayload.Binding(b)  =>
         BindingIntent.law.check(b, path) ++ checkBindingGlueLaws(b, path) ++ checkBindingHolePatternLaws(b, path)
       case IntentPayload.Assembly(a) => checkAssemblyGlueLaws(a, path)
+      case IntentPayload.ContentCheck(c) => checkContentCheckLaws(c, path)
       case IntentPayload.HoleMaking(h) => checkHoleMakingLaws(h, path)
       case IntentPayload.Variable(v) => VariableIntent.law.check(v, path)
       case _                         => Chain.empty
@@ -153,6 +164,20 @@ object TicketValidator:
   private def checkHoleMakingLaws(h: HoleMakingIntent, path: XPath): Chain[Issue] =
     h.holePatterns.toChain.zipWithIndex.flatMap { (hp, i) =>
       HolePatternElement.law(hp, XPath(s"$path/HolePattern[$i]"))
+    }
+
+  /** Validates the `Disposition` elements nested inside
+   *  `ContentCheckIntent/ProofItem/FileSpec` (Table 8.23). This is the first
+   *  FileSpec-bearing traversal wired into the local-law bus — the hook
+   *  anticipated in `checkResourceLocalLaws` (M1.6-11).
+   */
+  private def checkContentCheckLaws(c: ContentCheckIntent, path: XPath): Chain[Issue] =
+    c.proofItems.toChain.zipWithIndex.flatMap { (pi, i) =>
+      pi.fileSpec.fold(Chain.empty[Issue]) { fs =>
+        fs.disposition.fold(Chain.empty[Issue]) { d =>
+          dispositionLaw.check(d, XPath(s"$path/ProofItem[$i]/FileSpec/Disposition"))
+        }
+      }
     }
 
   /** Validates `Glue` elements nested inside `AssemblingIntent/BindIn` and `StickOn` (Table 8.29). */

@@ -73,13 +73,15 @@ README ссылается на этот документ, числа — в вы
 | §8.25 | Table 8.30 | HoleShape | `HoleShape` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (3 значения: `Elliptic`, `Rectangular`, `Round`); атрибут `HolePattern/@Shape`; новый в M1.6-5 |
 | §8.25 | Table 8.30 | HolePattern catalog | `NmToken` | `?` | ❌ | ✅ | ❌ | ❌ | Implemented | открытый каталог Appendix F (34 значения incl. `None` из XSD) `Catalog.HolePattern`; данные — NMTOKEN, allowed from Section F; новый в M1.6-5 |
 | §8.25 | Table 8.30 | HoleReinforcement | `NmToken` | `?` | ❌ | ✅ | ❌ | ❌ | Implemented | открытый каталог `Grommet` `Catalog.HoleReinforcement`; `@Reinforcement` NMTOKEN, Values include: Grommet; новый в M1.6-5 |
+| §4.5.1 | Table 4.23 | PreflightLevel | `PreflightLevel` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`Basic`, `Extended`, `Premium`); атрибут `PreflightItem/@PreflightLevel`; golden и round-trip — `EnumLaws` (M1.6-11) |
+| §4.5.2 | Table 4.24 | ProofColorType | `ProofColorType` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`Monochrome`, `BasicColor`, `MatchedColor`); атрибут `ProofItem/@ColorType`; Scala-имя с префиксом — коллизия с `ColorType` Color-ресурса (Приложение C); golden и round-trip — `EnumLaws` (M1.6-11) |
 
 ## Intents (Chapter 4)
 
 | Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
 |---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
 | §4.1 | Table 4.1 | Intent | `Intent` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | `@Name == payload.elementName` (`Intent.nameLaw`) |
-| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 11 payload + `Extension` escape hatch |
+| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 12 payload + `Extension` escape hatch; `declaredIds` — документные ID внутри интентов (`ProofItem/@ID`, M1.6-11) |
 | §4.2 | Table 4.3 | AssemblingIntent | `AssemblingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.2 | Table 4.4 | AssemblyItem | `AssemblyItem` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.2 | Table 4.5 | BindIn | `BindIn` | `*` | ✅ | ❌ | ❌ | ❌ | Implemented | `Glue?` → `Option[Glue]` (элемент, M1.6-3/ADR-0011); `Glue/@GlueRef` собирается; SHALL-правила Glue подключены через валидатор |
@@ -99,6 +101,9 @@ README ссылается на этот документ, числа — в вы
 | §4.3 | Table 4.19 | Tabs | `Tabs` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.4 | Table 4.20 | ColorIntent | `ColorIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.4 | Table 4.21 | SurfaceColor | `SurfaceColor` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.5 | Table 4.22 | ContentCheckIntent | `ContentCheckIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `PreflightItem*`/`ProofItem*` → `Chain` (обе кардинальности `*`, XSD `minOccurs="0"`, пустой интент валиден); IDREF отсутствуют; `ProofItem/@ID` собирается в `declaredIds` через `IntentPayload.declaredIds` (§2.2.3, Table 6.55); процесса `ContentCheck` в главе 5 нет — pairing с `Approval` (§5.3.1) и `Preflight` (§5.4.14), `ProcessType.Preflight` добавлен (M1.6-11) |
+| §4.5.1 | Table 4.23 | PreflightItem | `PreflightItem` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | `@PreflightLevel?` → закрытый `PreflightLevel` (M1.6-11) |
+| §4.5.2 | Table 4.24 | ProofItem | `ProofItem` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | 7 атрибутов + `FileSpec?` (вложенный элемент, XSD `maxOccurs="1"` — не IDREF): `@Amount?` integer, `@ColorType?` → закрытый `ProofColorType` (Scala-имя с префиксом: коллизия с `ColorType` Color-ресурса), `@Contract?`/`@HalfTone?` boolean, `@ID?` → документный скоуп (§2.2.3), `@PageIndex?` IntegerRange, `@ProofTarget?` URL (Deprecated 2.1, удержан для декодирования 2.0), `FileSpec` переиспользован из `model/elements` (M1.4-8); SHALL `@ID` при доставке proof — структурно через разрешение IDREF (`checkReferences`, Table 6.55); `Disposition` под `FileSpec` — подключение `dispositionLaw` (Table 8.23, M1.6-11); SHOULD/семантика `@HalfTone`, `@PageIndex`, «нет ProofItem ⇒ нет customer proofs» — не модельные правила (scaladoc) |
 | §4.6 | Table 4.25 | EmbossingIntent | `EmbossingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `EmbossingItem+` → `NonEmptyChain[EmbossingItem]` (кардинальность `+`, XSD `minOccurs="1"`, структурно); IDREF отсутствуют; SHALL `EmbossingItem/@Separation` ↔ `Color/@ColorType="DieLine"` — глобальная проверка `checkEmbossingColorTypes` (M1.6-10); `ProcessType.Embossing` (§5.6.12) |
 | §4.6 | Table 4.26 | EmbossingItem | `EmbossingItem` | `+` | ✅ | ✅ | ❌ | ❌ | Implemented | required `@EmbossingType` → `EmbossType` (структурно); `@Direction?` → `EmbossDirection`; `@Face?` → `Face`; `@FoilColor?` — открытый `NamedColor` (ADR-0007); SHOULD `@FoilColorDetails` ⇒ `@FoilColor` — не ошибка без политики (ADR-0006); SHALL `@Separation`: `Color` для separation SHALL иметь `@ColorType="DieLine"` — `IssueCode.EmbossingColorNotDieLine`, интерпретация: считается `Color` с `Part/@Separation` = значению, отсутствие `@ColorType` — нарушение (M1.6-10) |
 | §4.7 | Table 4.27 | FoldingIntent | `FoldingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
@@ -136,6 +141,9 @@ README ссылается на этот документ, числа — в вы
 | `Monoid[Matrix]` вместо `Group` | вырожденная матрица необратима | `inverse: Option[Matrix]` + задокументированная причина; опциональный `InvertibleMatrix` вне M1 | реализовано (PR-12) |
 | `Semigroup` (не `Monoid`) для `AuditPool`, `AmountPool`, `NmTokens`, `ProcessPath` | носитель `NonEmptyChain`, кардинальность `T+` запрещает пустое значение | явная запись в scaladoc и в `docs/01`; compile-тест | реализовано (PR-12) |
 | Дубликат `"Product"` в `@Types` считается нарушением | §3.1.3 говорит «additional process type tokens»; трактовка «любой второй токен» | зафиксировано как интерпретация + негативный тест (N-36, `XJDF-TYPES-PRODUCT-DUPLICATE`) | реализовано (PR-8, M1.3-4) |
+| `ProofColorType` вместо `ColorType` для `ProofItem/@ColorType` | коллизия с `ColorType` Color-ресурса (Table 6.27) — два разных набора значений; XSD объявляет набор ProofItem inline | wire-токены без изменений (`Monochrome`, `BasicColor`, `MatchedColor`) + golden-тест `EnumLaws`; расхождение Scala-имени — только внутри модели | реализовано (PR-21, M1.6-11) |
+| `ProofItem/@ProofTarget` моделируется несмотря на Deprecated in XJDF 2.1 | декодер обязан читать документы XJDF 2.0 (ADR-0010); `FileSpec` (New in 2.1) — замена, но не удаление | scaladoc-пометка; `@deprecated` не ставится (сборка warning-free); та же политика, что для deprecated-значений `MediaType` | реализовано (PR-21, M1.6-11) |
+| Интент `ContentCheckIntent` не получает `ProcessType.ContentCheck` | в главе 5 нет процесса `ContentCheck` — интент pairing с `Approval` (§5.3.1) и `Preflight` (§5.4.14); выдумывать токен нельзя (§1.2) | `ProcessType.Preflight` добавлен (§5.4.14, Tables 5.39–5.40); фикстура использует `Types="Approval Preflight"` | реализовано (PR-21, M1.6-11) |
 
 ## Version notes
 
@@ -152,6 +160,7 @@ README ссылается на этот документ, числа — в вы
 | Table 6.114 | `@BackCIE*`, `@BackSpectrum`, `@Spectrum`, `ColorMeasurementConditions` (2.1) | не моделируются (M3) |
 | Table 6.148 | `@DocPages` (2.1) | моделируется (`RunList.docPages`) |
 | Table 8.19 | `@DescriptiveName`, `@ExternalID`, `@Operations` (2.1) | моделируются (`CutBlock`) |
+| Table 4.24 | `@ProofTarget` (2.1, Deprecated), `FileSpec` (2.1, New) | оба моделируются: `proofTarget: Option[Url]` (удержан для декодирования XJDF 2.0, без `@deprecated`-аннотации — политика warning-free) и `fileSpec: Option[FileSpec]` (переиспользование общего элемента, M1.6-11) |
 | Table 4.33 | `Certification*` (2.1) | не моделируется (M1.6) |
 
 ## Decision records (короткие)

@@ -515,6 +515,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 | N-48 | `MediaType` неполон: 13 значений из 21 | Table A.30 — 21 значение; отсутствует `Synthetic` *(New in XJDF 2.1)*, а также 7 значений с пометкой Deprecated (`EmbossingFoil`, `Foil`, `LaminatingFoil`, `MountingTape`, `SelfAdhesive`, `ShrinkFoil`, `Vinyl`), которые обязаны декодироваться | `prim/Enums.scala`: `case Blanket … Transparency` | M1.2-2 |
 | N-49 | `Scope` неполон: 4 значения из 5 | Table A.36 — 5 значений; отсутствует `Device` *(New in XJDF 2.2)*: «The amount of resources is an absolute measurement that is currently available within the scope of a Device.» | `prim/Enums.scala`: `case Allowed, Estimate, Job, Present` | M1.2-2 |
 | N-50 | Glue-энумерации смешаны: `prim.GlueType` (3 значения) используется и для полей, которые по Table 4.5/4.7/4.9 и XSD являются **элементом** `Glue` (`BindIn.glue`, `StickOn.glue`, `AdhesiveNote.glue`); набор `Glue/@GlueType` из 5 значений не смоделирован | Внутренний конфликт спецификации: Table A.24 (§A.2.23) — 3 значения (`ColdGlue`, `Hotmelt`, `PUR`); Table 8.29 `@GlueType` — 5 значений («Allowed values are: … `Permanent` … `Removable`»); `schema.xsd`: `EnumGlue` (3) для «from: Glue»-атрибутов vs inline-ограничение `Glue/@GlueType` (5); Example 8.15: `GlueType="Removable"`. По §1.2 приоритет — prose Table 8.29 и пример → **два разных закрытых набора** | `prim/Enums.scala:180-185` (`GlueType`, 3 значения); `intents/Binding.scala:111,117,137,213`; `intents/FoldingVariable.scala:119,143` | ADR-0011, M1.6-3 (PR-16) |
+| N-51 | `FileSpec` (Table 8.22, `model/elements/CommonElements.scala`) неполон: (1) SHALL-правило взаимного исключения локаций — «If neither `@URL` nor `@UID` is present, both `@FileFormat` and `@FileTemplate` SHALL be present, unless the resource is a pipe. If either `@URL` or `@UID` is specified, then `@FileFormat` and `@FileTemplate` SHALL NOT be specified» — не проверяется: case class допускает одновременное задание `url` и `fileFormat`/`fileTemplate`, а `location` молча выбирает по приоритету; (2) `NetworkHeader*` *(New in XJDF 2.1)* не моделируется; (3) строки в `SPEC-COVERAGE.md` нет (тип вне `resources/*`/`intents/*`, чекер не требует) | Table 8.22 (`reference/xjdf/8 – Subelements.md`, строки 519+); `schema.xsd` `FileSpec` | `model/elements/CommonElements.scala` (`FileSpec`, `FileLocation`) | M1.6/M3 follow-up: `FileSpec.law` (`DomainRule`) + подключение к обходам всех FileSpec-несущих контейнеров (первый подключён в M1.6-11 — `ContentCheckIntent/ProofItem/FileSpec`); `NetworkHeader` — по решению о его моделировании. Зарегистрировано в PR-21 (M1.6-11) при сверке Table 4.24 |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -2054,6 +2055,107 @@ PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0, вывод сод�
 ProductList(Product(?×200, root)))`; `check-spec-coverage.sh` — `RESULT: OK`.
 Статус `[x]` — закрыт полностью.
 
+#### M1.6-11. `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (Table 4.23) + `ProofItem` (Table 4.24) — `[~]` реализовано, ожидает прогона владельца (PR-21)
+
+Вертикальный срез продолжает паттерн интентов главы 4 (PR-18/19/20) и впервые
+масштабирует его на два подэлемента и на переиспользование общего элемента
+`FileSpec` из `model/elements` (перенос M1.4-8). Выбор подтверждён владельцем
+2026-08-16.
+
+- **Сверка Table/XSD (§1.2).** Table 4.22 объявляет `PreflightItem*` и
+  `ProofItem*`; `schema.xsd` (`ContentCheckIntent`, строки 3267–3277)
+  подтверждает `minOccurs="0" maxOccurs="unbounded"` для обоих — кардинальность
+  `*` → `Chain`, пустой интент структурно валиден, контейнерного «at least
+  one»-правила нет. Table 4.23: единственный атрибут `@PreflightLevel?` —
+  закрытая энумерация (`Basic`, `Extended`, `Premium`); enum `PreflightLevel`
+  уже существовал в `prim/Enums.scala` (добавлен заранее), но без golden-теста
+  — пробел закрыт в этом PR. Table 4.24 (два листа): семь атрибутов и один
+  дочерний элемент — `@Amount?` (integer), `@ColorType?` (закрытая
+  энумерация `Monochrome`/`BasicColor`/`MatchedColor`, inline-ограничение в
+  XSD), `@Contract?`/`@HalfTone?` (boolean), `@ID?` (ID), `@PageIndex?`
+  (IntegerRange), `@ProofTarget?` (URL, *Deprecated in XJDF 2.1*),
+  `FileSpec?` (element, *New in XJDF 2.1*). XSD (`ProofItem`, строки
+  2500–2522) совпадает с prose: `FileSpec` — вложенный элемент
+  (`minOccurs="0" maxOccurs="1"`), **не IDREF**. Расхождений prose/XSD не
+  найдено.
+- **Модель** `intents/ContentCheck.scala` (новый файл):
+  `ContentCheckIntent(preflightItems: Chain[PreflightItem], proofItems:
+  Chain[ProofItem])` + `declaredIds`; `PreflightItem(preflightLevel:
+  Option[PreflightLevel])`; `ProofItem` — 8 полей в порядке таблицы,
+  `fileSpec: Option[FileSpec]` (переиспользование), `proofTarget:
+  Option[Url]` (deprecated-поле удержано для декодирования XJDF 2.0, без
+  `@deprecated`-аннотации — политика warning-free, как для deprecated-значений
+  `MediaType`).
+- **Новый закрытый enum** `ProofColorType` (`Monochrome`, `BasicColor`,
+  `MatchedColor`) в `prim/Enums.scala`. Отклонение: атрибут спецификации
+  называется `ColorType`, но это имя занято энумерацией Color-ресурса
+  (Table 6.27, другой набор значений) — Scala-имя с префиксом, wire-токены без
+  изменений; зафиксировано в Приложении C и `SPEC-COVERAGE.md`.
+- **Процесс.** В главе 5 **нет** процесса `ContentCheck` — интент pairing с
+  `Approval` (§5.3.1, Tables 5.2–5.3) и `Preflight` (§5.4.14, Tables
+  5.39–5.40). `ProcessType.Approval` уже существовал; добавлен
+  `ProcessType.Preflight`. Выдумывать токен `ContentCheck` нельзя (§1.2) —
+  решение зафиксировано в Приложении C.
+- **ID/IDREF (§2.2.3, Table 6.55).** `ProofItem/@ID` — документный ID:
+  `ContentCheckIntent.declaredIds` → новый метод `IntentPayload.declaredIds`
+  (dispatch) → `Intent.declaredIds` → `ProductList.declaredIds` (расширен:
+  теперь собирает и ID интентов). Так `DeliveryParams/DropItem/@ItemRef`
+  (Table 6.55: «SHALL reference the Resource, ResourceSet, ProofItem or
+  ProductList/Product») разрешается против `ProofItem/@ID` через существующий
+  `checkReferences`. IDREF-атрибутов у интента нет — `references =
+  Chain.empty` (факт сверен по Tables 4.22–4.24 и XSD).
+- **SHALL-правила.** (1) «`@ID` SHALL be specified if delivery of a proof is
+  specified in DeliveryParams» — обеспечено **структурно** разрешением IDREF:
+  proof без `@ID` не может быть адресован; тесты — позитивный (ItemRef →
+  ProofItem/@ID разрешается) и негативный (dangling → `IDREF-DANGLING`).
+  (2) `Disposition` (`FileSpec`-ребёнок, Table 8.23: `@MinDuration` и `@Until`
+  взаимно исключаются) — существующий `TicketValidator.dispositionLaw` впервые
+  подключён к обходу через `checkContentCheckLaws` (запланированный хук для
+  FileSpec-несущих контейнеров). Семантика `@HalfTone="true"` (эмуляция
+  растрирования), `@PageIndex` (все страницы по умолчанию) и «нет ProofItem ⇒
+  нет customer proofs» — runtime/обязательства поставки, не модельные правила
+  (задокументированы в scaladoc, ошибки не создаются — ADR-0006).
+- **Тесты:** `ContentCheckIntentLaws.scala` (12: dispatch, references,
+  структурная валидность пустого интента, mapping PreflightLevel ×3,
+  mapping всех 8 членов ProofItem включая deprecated+new сосуществование,
+  `declaredIds`-wiring, позитив ItemRef→ProofItem, негатив dangling ItemRef,
+  негатив duplicate ProofItem/@ID, негатив Disposition @MinDuration+@Until,
+  позитив Disposition @MinDuration-only, негатив Intent/@Name mismatch);
+  `EnumLaws` +2 golden (`PreflightLevel` Table 4.23 — закрытие пробела,
+  `ProofColorType` Table 4.24) + round-trip/duplicates; registry-тест
+  `TicketLaws` расширен FileSpec/Disposition-путём; фикстура
+  `SpecExamples.contentCheckJob` (Types="Approval Preflight", Premium-префлайт
+  + MatchedColor contract proof с `@ID`, DeliveryParams/DropItem → `Proof1`)
+  + conformance/golden в `SpecExamplesSuite`.
+- **Находка N-51 (зарегистрирована, не исправляется в этом PR — один
+  семантический выбор на срез):** `FileSpec` (Table 8.22) неполон — SHALL
+  взаимного исключения `@URL`/`@UID` vs `@FileFormat`/`@FileTemplate` не
+  проверяется (case class допускает конфликт, `location` молча выбирает по
+  приоритету), `NetworkHeader*` (New in 2.1) не моделируется, строки в
+  `SPEC-COVERAGE.md` нет. Задача — `FileSpec.law` + подключение к обходам
+  FileSpec-несущих контейнеров (M1.6/M3 follow-up).
+- **Coverage:** строки `ContentCheckIntent`, `PreflightItem`, `ProofItem`,
+  `PreflightLevel`, `ProofColorType`; dispatch обновлён с 11 до 12 payload;
+  version note Table 4.24; три строки отклонений;
+  `check-spec-coverage.sh` — `RESULT: OK` (Intents 36 строк, 107 таблиц).
+
+**Файлы:** `intents/ContentCheck.scala` (новый), `intents/AllIntents.scala`,
+`prim/Enums.scala`, `model/Resource.scala`, `model/Intent.scala`,
+`model/Product.scala`, `model/TicketValidator.scala`,
+`laws/ContentCheckIntentLaws.scala` (новый), `laws/EnumLaws.scala`,
+`laws/TicketLaws.scala`, `examples/SpecExamples.scala`,
+`laws/SpecExamplesSuite.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** чистая сборка `sbt -batch clean compile test
+examples/run`; 300 тестов зелёных (284 + `ContentCheckIntentLaws` 12 +
+`EnumLaws` 2 + `SpecExamplesSuite` 2); `examples/run` exit 0 с
+`Content check intent (Table 4.22): XJDF(job=contentCheckJob, types=Approval
+Preflight, ProductList(Product(?×100, root)))`; `check-spec-coverage.sh` —
+`RESULT: OK`.
+
+**Статус:** `[~]` — код и тесты внесены статически (среда без JVM/sbt);
+ожидается прогон владельца: `sbt -batch clean compile test examples/run`.
+
 #### M1.6-12. `HoleMakingIntent` (Table 4.29, §4.8) — `[x]` выполнено (верифицировано владельцем; PR-18)
 
 Первый из пяти отсутствующих интентов главы 4; использует только что созданный
@@ -2147,7 +2249,8 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 18 | `HoleMakingIntent` (Table 4.29, §4.8) + `HolePattern+` + wiring SHALL + fixture | M1.6-12 | 17 | `[x]` верифицировано владельцем: 258 тестов, `examples/run` exit 0 |
 | 19 | `LaminatingIntent` (Table 4.30, §4.9) + `LaminatingTemperature` + открытый `Catalog.Texture` | M1.6-9 | 18 | `[x]` верифицировано владельцем: 268 тестов, `examples/run` exit 0 |
 | 20 | `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) + `EmbossDirection`/`EmbossType` + SHALL `@Separation`↔`Color/@ColorType="DieLine"` | M1.6-10 | 19 | `[x]` верифицировано владельцем: 284 теста, `examples/run` exit 0 |
-| 21+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/12) | M1.6 | 20 | шаблон среза выполнен |
+| 21 | `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (4.23) + `ProofItem` (4.24) + `ProofColorType` + `ProcessType.Preflight` + `IntentPayload.declaredIds`-wiring + подключение `dispositionLaw` (Table 8.23) | M1.6-11 | 20 | `[~]` внесено статически; ожидается прогон владельца: 300 тестов, `examples/run` exit 0 |
+| 22+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/11/12; плюс N-51 `FileSpec.law`) | M1.6 | 21 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -2518,6 +2621,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-48 | `MediaType` неполон (13/21) | ✅ пополнен по Table A.30 | M1.2-2 | P1 |
 | N-49 | `Scope` неполон (4/5) | ✅ пополнен по Table A.36 | M1.2-2 | P1 |
 | N-50 | Glue-энумерации смешаны; `Glue/@GlueType` (5 значений) не смоделирован | ✅ ADR-0011: элемент `Glue` + два закрытых набора (Table A.24 — 3, Table 8.29 — 5); реализация — PR-16 (M1.6-3), регистрация — PR-15 (M1.6-2) | M1.6-3 | P1 |
+| N-51 | `FileSpec` неполон: нет SHALL-правила взаимного исключения `@URL`/`@UID` vs `@FileFormat`/`@FileTemplate`; `NetworkHeader*` (New in 2.1) не моделируется; нет строки в `SPEC-COVERAGE.md` | зарегистрировано при сверке Table 4.24 (PR-21, M1.6-11); `FileSpec.law` + подключение к FileSpec-несущим обходам — отдельный срез | M1.6/M3 follow-up | P1 |
 | N-10 | `PartAmount.part` единственный | ✅ `Chain[Part]` | M1.2-3 | P1 |
 | N-11 | `Resource.specific` обязателен | ✅ `Option` | M1.2-4 | P1 |
 | N-12 | `DropItem` неполон | ✅ три поля Table 6.55 | M1.2-5 | P1 |
@@ -3105,9 +3209,21 @@ PR-19 (M1.6-9) реализовал `LaminatingIntent` (Table 4.30): обяза�
 фикстура `embossingJob` + conformance/golden, coverage
 (`check-spec-coverage.sh` — `RESULT: OK`); верифицировано владельцем:
 **284 теста зелёных (284/0)**, `examples/run` exit 0, статус `[x]`.
-Следующий срез PR-21+ выбирается из
+PR-21 (M1.6-11) реализует `ContentCheckIntent` (Table 4.22, §4.5) +
+`PreflightItem` (Table 4.23) + `ProofItem` (Table 4.24): обе кардинальности
+`*` → `Chain` (пустой интент валиден), закрытый `ProofColorType`
+(`Monochrome`/`BasicColor`/`MatchedColor`), переиспользование `FileSpec`
+(`model/elements`, первый FileSpec-несущий интент), deprecated `@ProofTarget`
+удержан, `ProcessType.Preflight` (§5.4.14; процесса `ContentCheck` в главе 5
+нет — pairing с `Approval`/`Preflight`), новый `IntentPayload.declaredIds`
+для `ProofItem/@ID` (§2.2.3, Table 6.55), подключение `dispositionLaw`
+(Table 8.23), 12 тестов `ContentCheckIntentLaws` + 2 golden `EnumLaws`
+(включая закрытие пробела `PreflightLevel`) + фикстура `contentCheckJob`;
+зарегистрирована находка N-51 (неполнота `FileSpec`, M1.6/M3 follow-up).
+Статус `[~]` — ожидает прогона владельца (ожидается 300 тестов,
+`examples/run` exit 0). Следующий срез PR-22+ выбирается из
 M1.6-1 Certification, M1.6-4/7/8 GangSource+MISDetails+NodeInfo,
-M1.6-6 IdentificationField, M1.6-11/13 оставшихся интентов
-(`ContentCheckIntent`, `ShapeCuttingIntent`), M1.6-14 NamedFeatures или
-M1.6-15 Part audit. LICENSE остаётся `BLOCKED` до решения владельца;
-возврат обязательного CI — открытая часть M1.0-1.
+M1.6-6 IdentificationField, M1.6-13 ShapeCuttingIntent (требует примитива
+`PDFPath`), M1.6-14 NamedFeatures, M1.6-15 Part audit или N-51 `FileSpec.law`.
+LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
+открытая часть M1.0-1.
