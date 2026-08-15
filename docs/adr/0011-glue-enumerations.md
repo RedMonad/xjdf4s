@@ -96,10 +96,14 @@ enum `prim.GlueType` (3 значения).
 - **Отрицательные:** breaking change: переименование `GlueType` → `Glue` и типы трёх
   полей; затрагиваются `intents/Binding.scala`, `intents/FoldingVariable.scala`,
   `laws/EnumLaws.scala`, генераторы/примеры при их обращении к enum.
-- **Открытый вопрос:** имя 3-значного enum (`Glue` vs альтернативы вроде `EnumGlue` —
-  по XSD-имени) может быть пересмотрено владельцем при ревью ADR; правка локальна
-  (один файл + импорты).
-- Срок пересмотра: при реализации M1.6-3 (PR-16).
+- **Решение по открытому вопросу (реализация M1.6-3, PR-16):** 3-значный enum
+  переименован в `prim.EnumGlue` (XSD-имя `simpleType EnumGlue`), а не в
+  `prim.Glue`. Причина: `intents/Binding.scala` содержит как элементные поля
+  (`AdhesiveNote.glue: Option[GlueElement]`), так и энумерационные
+  (`EdgeGluing.edgeGlue: Option[EnumGlue]`) — в одном файле; явный импорт
+  элемента `Glue` перекрывал бы wildcard `prim.*` для обоих случаев, что
+  невозможно. Имя `EnumGlue` устраняет конфликт без квалификации.
+- Срок пересмотра: закрыт.
 
 ## Normative references
 
@@ -115,7 +119,9 @@ enum `prim.GlueType` (3 значения).
 
 Реализуется в PR-16 (M1.6-3) вместе с элементом `Glue`:
 
-- `prim.GlueType` → `prim.Glue` (переименование; `EnumLaws` golden Table A.24 обновляется);
+- `prim.GlueType` → `prim.EnumGlue` (переименование по XSD-имени; `EnumLaws` golden Table A.24 обновляется);
 - `BindIn.glue`, `StickOn.glue`, `AdhesiveNote.glue`: `Option[GlueType]` → `Option[Glue]` (элемент);
-- новый `GlueType` (5 значений) + golden Table 8.29;
-- полный список call sites — в описании PR-16 (компилятор обязателен).
+- `EdgeGluing.edgeGlue`, `HardCoverBinding.spineGlue`, `SoftCoverBinding.spineGlue`: `Option[GlueType]` → `Option[EnumGlue]`;
+- новый `prim.GlueType` (5 значений, Table 8.29) + golden;
+- новый `prim.GluingTechnique` (3 значения, Table 8.29) + golden;
+- полный список call sites: `intents/Binding.scala` (4 поля), `intents/FoldingVariable.scala` (2 поля), `laws/EnumLaws.scala` (3 golden + round-trip + duplicates).
