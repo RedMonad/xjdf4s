@@ -85,9 +85,12 @@ object PartAmount:
 end PartAmount
 
 /** `AmountPool` (Table 6.2): a non-empty, ordered list of PartAmount elements —
- *  the amount-related metadata of a Resource. Concatenation is the free-monoid
- *  (semigroup) operation: planning amounts and recorded amounts accumulate in
- *  order.
+ *  the amount-related metadata of a Resource.
+ *
+ *  A `Semigroup` (not `Monoid`): the empty history is forbidden by the
+ *  specification (cardinality `T+`). `Monoid` is structurally unattainable.
+ *  Concatenation is the semigroup operation: planning amounts and recorded
+ *  amounts accumulate in order.
  */
 opaque type AmountPool = NonEmptyChain[PartAmount]
 

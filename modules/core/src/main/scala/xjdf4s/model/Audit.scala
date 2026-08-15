@@ -72,8 +72,9 @@ end Audit
 /** `AuditPool` (§3.2, Table 3.3): the recorded results of a process, ordered
  *  chronologically — the last entry represents the newest state.
  *
- *  Categorically an AuditPool is an element of the *free monoid* over `Audit`:
- *  the semigroup operation is chronological concatenation. `isChronological`
+ *  A `Semigroup` (not `Monoid`): the empty history is forbidden by the
+ *  specification (cardinality `T+`). `Monoid` is structurally unattainable.
+ *  The semigroup operation is chronological concatenation. `isChronological`
  *  checks that the sequence is lawful as a time-ordered history.
  */
 opaque type AuditPool = NonEmptyChain[Audit]

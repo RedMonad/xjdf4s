@@ -2,7 +2,7 @@ package xjdf4s
 package prim
 
 import cats.Show
-import cats.kernel.{Eq, Monoid, Order}
+import cats.kernel.{CommutativeMonoid, Eq, Monoid, Order}
 
 /** XJDF data type `dateTime` (Table A.1): a specific instant of time — UTC or a
  *  local time that includes the time zone. Backed by `java.time.OffsetDateTime`.
@@ -67,7 +67,9 @@ object TimeSpan:
 
   given Eq[TimeSpan] = Eq.fromUniversalEquals
 
-  given Monoid[TimeSpan] with
+  given Order[TimeSpan] = Order.from((a, b) => a.compareTo(b))
+
+  given CommutativeMonoid[TimeSpan] with
     def empty: TimeSpan = java.time.Duration.ZERO
     def combine(a: TimeSpan, b: TimeSpan): TimeSpan = a.plus(b)
 

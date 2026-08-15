@@ -2,7 +2,7 @@ package xjdf4s
 package prim
 
 import cats.Show
-import cats.kernel.{Eq, Monoid, Order, Semigroup}
+import cats.kernel.{CommutativeMonoid, Eq, Monoid, Order, Semigroup}
 
 /** Canonical float rendering: drop the trailing `.0` (e.g. `80` instead of `80.0`). */
 private[xjdf4s] def fmtDouble(d: Double): String =
@@ -41,7 +41,7 @@ object XYPair:
     if byX != 0 then byX else java.lang.Double.compare(a.y, b.y)
   )
 
-  given Monoid[XYPair] with
+  given CommutativeMonoid[XYPair] with
     def empty: XYPair = zero
     def combine(a: XYPair, b: XYPair): XYPair = a + b
 
@@ -105,7 +105,9 @@ end Rectangle
  *
  *  Matrices act on column vectors `[x y 1]ᵀ`; `m1 * m2` means “apply `m2`,
  *  then `m1`”. Multiplication is associative with the identity `1 0 0 1 0 0` —
- *  a lawful monoid, i.e. the group of affine plane transformations (§2.6).
+ *  a lawful monoid, but NOT a `Group` (X-05): the inverse exists only when
+ *  the determinant is non-zero. A singular matrix (det = 0) has no inverse;
+ *  use `InvertibleMatrix` (outside M1) for a total `Group`.
  */
 opaque type Matrix = (a: Double, b: Double, c: Double, d: Double, tx: Double, ty: Double)
 
@@ -204,7 +206,7 @@ object Points:
 
   given Order[Points] = Order.from((a, b) => java.lang.Double.compare(a, b))
 
-  given Monoid[Points] with
+  given CommutativeMonoid[Points] with
     def empty: Points = zero
     def combine(a: Points, b: Points): Points = a + b
 
@@ -304,6 +306,8 @@ object Coverage:
 
   given Eq[Coverage] = Eq.fromUniversalEquals
 
+  given Order[Coverage] = Order.from((a, b) => java.lang.Double.compare(a, b))
+
 end Coverage
 
 /** A normalized value in [0, 1] (e.g. CMYK/RGB color components, `@Area`). */
@@ -321,6 +325,8 @@ object UnitInterval:
   given Show[UnitInterval] = Show.show(u => fmtDouble(u.value))
 
   given Eq[UnitInterval] = Eq.fromUniversalEquals
+
+  given Order[UnitInterval] = Order.from((a, b) => java.lang.Double.compare(a, b))
 
 end UnitInterval
 
@@ -399,6 +405,11 @@ object IntegerRange:
   given Show[IntegerRange] = Show.show(r => s"${r.from} ${r.to}")
 
   given Eq[IntegerRange] = Eq.fromUniversalEquals
+
+  given Order[IntegerRange] = Order.from((a, b) =>
+    val byFrom = java.lang.Long.compare(a.from, b.from)
+    if byFrom != 0 then byFrom else java.lang.Long.compare(a.to, b.to)
+  )
 
 end IntegerRange
 
