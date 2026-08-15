@@ -2,7 +2,8 @@ package xjdf4s.examples
 
 import cats.data.{Validated, ValidatedNec}
 import munit.FunSuite
-import xjdf4s.model.{Bom, Issue, validate}
+import xjdf4s.model.{AmountPool, Bom, Issue, ResourceSetName, validate}
+import xjdf4s.prim.Amount
 
 /** Smoke test that actually *executes* the specification examples, so the CI
  *  gate cannot silently pass with "No tests to run" while the suites are

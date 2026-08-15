@@ -576,7 +576,7 @@ def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
 
 | ID | Находка | Доказательство | Задача |
 | --- | --- | --- | --- |
-| N-20 | `ChangeOrder = XJDF & Partial` вырожден и семантически пуст | `model/Ticket.scala:13` `trait Partial`; `:41` `final case class XJDF(...) extends Partial`; `:118` `type ChangeOrder = XJDF & Partial`. Так как `XJDF <: Partial`, пересечение `XJDF & Partial ≡ XJDF`. Ни одна сигнатура публичного API не принимает `ChangeOrder` | M1.4-2 |
+| N-20 | `ChangeOrder = XJDF & Partial` вырожден и семантически пуст | было: `trait Partial` + `type ChangeOrder = XJDF & Partial` ≡ `XJDF`. Закрыто в PR-10: номинальный `ChangeOrder` (ADR-0001) | M1.4-2 — `[~]` |
 | N-21 | Цикл файловых зависимостей внутри `model` | `Validation → Product → Ticket → Patch → Validation` (4 файла), подтверждено импортами и статическим анализом | M1.4-1 |
 | N-22 | `IdSource`/`IdAllocator`/`WithIds` — мёртвый код | `grep -rn "IdAllocator\|IdSource\|WithIds" modules` вне самого `model/IdSource.scala` возвращает **ноль** вхождений; Fan-In узла = 0. DSL берёт ID из явного параметра | M1.4-4 |
 | N-23 | `AmountRange.meet`/`join` расходятся с собственной документацией; `join` не используется и не покрыт законом | `prim/Quantity.scala:540-544`: `stricterMin` возвращает **большее** (`if compare(x, y) >= 0 then x else y`); `meet.amount` использует `stricterMin` — «ужесточение» повышает обещание; `join.min` тоже использует `stricterMin` — «оптимистичное расширение» сужает интервал. `Semilattice[AmountRange]` определён через `meet`. grep подтверждает: `join` не вызывается нигде | M1.4-5 |
@@ -1565,11 +1565,21 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 **Прогон владельца (Приложение D):** `sbt -batch clean scalafmtCheckAll compile test examples/run` — чистая сборка без предупреждений `-Wunused:all -Wvalue-discard -Wnonunit-statement`, все сьюты зелёные, `examples/run` завершается с exit 0. Подтверждено владельцем после коммита `fbcff7e`; статус `[x] (верифицировано владельцем)`.
 
-#### M1.4-2. Номинальный ChangeOrder (P2) — закрывает N-20, ADR-0001
+#### M1.4-2. Номинальный ChangeOrder (P2) — закрывает N-20, ADR-0001 — `[~]` реализовано (ожидает верификации владельца)
 
 Удалить `trait Partial` и `type ChangeOrder = XJDF & Partial`; ввести `final case class ChangeOrder`, `ChangeOrder.compile`, `applyChange`. Переписать демонстрацию change order в `SpecExamples` на новый тип. Обновить `docs/02` (честное описание отказа от вырожденного intersection). Сохранить закон действия `Patch`: `applyTo(applyTo(t, p), q) == applyTo(t, p |+| q)`, выверив согласованность с `Monoid[Patch]` (`combine = andThen`).
 
 Не принимаются как финал: `XJDF & Partial` при `XJDF <: Partial`; `opaque type ChangeOrder = XJDF`, если он не выражает ослабленную кардинальность; применение без повторной корневой валидации.
+
+**Статус сессии (PR-10).** ADR-0001 зафиксирован в `docs/adr/0001-change-order.md` **до** кода. Сверка §1.3.2, §1.6.5, Table 1.2, Table 3.1, Table 7.56, §9.8.2.1.1–9.8.2.1.2, примеров 9.5–9.10 и `schema.xsd` закрыла набор полей — стартовая сигнатура ROADMAP §6 принята без расширения (Incremental; `Complete`/`Remove` и корневые атрибуты вроде `@Types` отложены в M4). Реализовано:
+
+- `model/ChangeOrder.scala` — `final case class ChangeOrder(jobId, jobPartId?, productList?, auditPool?, resourceSets*, comments*)`; `compile` проверяет контекст и внутренний §3.4, собирает `Patch` через `andThen`; `applyChange` применяет патч и **обязательно** ревалидирует результат;
+- `IssueCode.ChangeOrderJobIdMismatch` / `ChangeOrderJobPartIdMismatch`;
+- `trait Partial` и `type ChangeOrder = XJDF & Partial` удалены из `Ticket.scala`;
+- тесты в `laws/ChangeOrderLaws.scala` (позитивные resourceSets/auditPool/productList; негативные jobId, jobPartId, §3.4 внутри update, §6.1.2.1 после apply; закон действия `Patch`);
+- `SpecExamples.changeOrder` переписан на новый тип; `docs/02` честно описывает отказ от вырожденного intersection.
+
+Цикл ADR-0002 не вернулся: `ChangeOrder` зависит от `TicketValidator`, обратного ребра нет. Статус `[~]` до прогона владельца (Приложение D).
 
 #### M1.4-3. Тотальные конструкторы (P2) — закрывает N-24, N-25
 
@@ -1731,7 +1741,7 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 | 7 | Bodyless `Resource`, `DropItem`, `Notification`, ID-скоупы | M1.2-4, M1.2-5 | 3 | Example 3.6 + тесты скоупов |
 | 8 | Шина `DomainRule`, полный `TicketValidator`, severity | M1.3-1, M1.3-3, M1.3-4, M1.3-5 | 2, 6, 7 | все локальные законы подключены |
 | 9 | `ValidationTypes` и разрыв цикла | M1.4-1 | 8 | циклов = 0 — `[x]` (PR-9 верифицирован владельцем) |
-| 10 | ADR-0001 + номинальный `ChangeOrder` | M1.4-2 | 3, 9 | compile/apply/revalidate |
+| 10 | ADR-0001 + номинальный `ChangeOrder` | M1.4-2 | 3, 9 | compile/apply/revalidate — `[~]` (ожидает верификации владельца) |
 | 11 | Тотальные builder-ы, решение по `IdAllocator`, ADR-0004 `AmountRange` | M1.4-3, M1.4-4, M1.4-5 | 9 | нет скрытых исключений |
 | 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 |
 | 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate |
@@ -2078,7 +2088,7 @@ M1: одна обязательная быстрая платформа — Temu
 
 **Открытые вопросы, требующие решения в ADR** (перечислены явно, чтобы не оставаться неявными допущениями):
 
-1. Точный набор полей `ChangeOrder` (ADR-0001) — подтверждается сверкой §1.3.2, §1.6.5 и change-order-схемы.
+1. Точный набор полей `ChangeOrder` (ADR-0001) — **закрыт** сверкой §1.3.2, §1.6.5, Table 7.56, §9.8.2 и примеров 9.5–9.10: принята стартовая сигнатура ROADMAP §6 без расширения. Change-order schema в репозитории отсутствует (онлайн, §1.4.1.3); `schema.xsd` — жёсткая схема original job. Полная форма документа — M4.
 2. Судьба `AmountRange.join`: удалить или переименовать в `widen` (ADR-0004) — зависит от наличия потребителя.
 3. Нужен ли отдельный валидатор сообщений для мессенджингового ID-скоупа (решается в M4).
 4. Переход на `cats-laws`/`discipline-munit` целиком либо сохранение локальных законов (ADR-0009).
@@ -2117,7 +2127,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-17 | §6.1.2.1 частично | ✅ оба правила | M1.3-2 | P1 |
 | N-18 | `isLawful` не подключены | ✅ шина `DomainRule` (ADR-0003), все локальные законы подключены | M1.3-3 — `[x]` | P1 |
 | N-19 | BOM вне `validate` | ✅ `checkBomIntegrity` через `Bom.fromProductList` | M1.3-4 — `[x]` | P1 |
-| N-20 | `ChangeOrder` вырожден | ✅ ADR-0001, вариант C | M1.4-2 | P2 |
+| N-20 | `ChangeOrder` вырожден | ✅ ADR-0001, вариант C; номинальный `ChangeOrder` + `compile`/`applyChange`; `& Partial` удалён | M1.4-2 — `[~]` | P2 |
 | N-21 | Цикл зависимостей | ✅ ADR-0002 (реализовано в PR-9) | M1.4-1 — `[x]` | P2 |
 | N-22 | `IdAllocator` мёртв | ✅ явное решение (интегрировать/удалить) | M1.4-4 | P2 |
 | N-23 | `meet`/`join` расходятся с docs | ✅ ADR-0004 | M1.4-5 | P2 |
@@ -2476,6 +2486,7 @@ M1: одна обязательная быстрая платформа — Temu
 | `docs/03-cats-mapping.md` | M1.0-2, M1.0-5, M1.5-2 |
 | `docs/04-architecture.md` | M1.0-5, M1.5-2 |
 | `docs/adr/*` (новые) | M1.5-4 (ADR-0001 … ADR-0010); каждый ADR фиксируется перед своей задачей |
+| `docs/adr/0001-change-order.md` | M1.4-2 (создан в PR-10) |
 | `docs/adr/0007-closed-enums-vs-open-catalogs.md` | M1.2-2 (создан в PR-5) |
 | `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4 |
 | `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги |
@@ -2490,7 +2501,8 @@ M1: одна обязательная быстрая платформа — Temu
 | `model/Product.scala` | M1.1-1, M1.3-3, M1.3-4, M1.4-7 |
 | `model/Patch.scala` | M1.1-2, M1.1-3, M1.4-2 |
 | `model/Resource.scala` | M1.2-3, M1.2-4, M1.3-1 |
-| `model/Ticket.scala` | M1.2-5, M1.4-1, M1.4-2 |
+| `model/Ticket.scala` | M1.2-5, M1.4-1, M1.4-2 (удаление `Partial`) |
+| `model/ChangeOrder.scala` (новый) | M1.4-2 |
 | `model/Header.scala` | M1.2-5 (`Notification`), M1.3-3 |
 | `model/Audit.scala` | M1.2-5 (references), M1.4-6 |
 | `model/Validation.scala` → `model/TicketValidator.scala` | M1.3-1 … M1.3-5, M1.4-1 (переименование выполнено в PR-9) |
@@ -2506,6 +2518,7 @@ M1: одна обязательная быстрая платформа — Temu
 | `laws/AlgebraLaws.scala` | M1.0-3, M1.1-4, M1.4-5, M1.4-6 |
 | `laws/PartitionLaws.scala` | M1.2-1, M1.5-1 |
 | `laws/TicketLaws.scala` | M1.0-2, M1.1-1, M1.1-3, M1.3-*, M1.5-3 |
+| `laws/ChangeOrderLaws.scala` (новый) | M1.4-2 |
 | `laws/AlignmentLaws.scala` | M1.4-6 |
 | `laws/EnumLaws.scala` (новый) | M1.2-2 (golden-токены, открытые каталоги, сверка с Appendix A) |
 | `examples/SpecExamples.scala` | M1.1-1, M1.2-3, M1.2-4, M1.4-2, M1.5-3 |
@@ -2588,4 +2601,4 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-8 (M1.0 + M1.1 + M1.2 + M1.3) и PR-9 (M1.4-1) выполнены и верифицированы владельцем: создан `model/ValidationTypes.scala` (фундамент валидации с Fan-Out 0), `Validation.scala` переименован в `TicketValidator.scala`, цикл `Validation → Product → Ticket → Patch → Validation` разорван (анализ — 0 циклов, прогон владельца — чистый). Следующий по плану — PR-10 (M1.4-2: номинальный `ChangeOrder` по ADR-0001), зависит от PR-3 и PR-9.
+**Краткий следующий шаг:** PR-1…PR-9 выполнены и верифицированы владельцем. PR-10 (M1.4-2, ADR-0001) реализован: номинальный `ChangeOrder`, `compile`/`applyChange` с повторной валидацией, `trait Partial` удалён; статус `[~]` до прогона владельца (`sbt -batch clean scalafmtCheckAll compile test examples/run`). Следующий по плану после верификации — PR-11 (M1.4-3/4/5: safe API, IdAllocator, AmountRange).

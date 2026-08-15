@@ -54,3 +54,13 @@
 
 **Компиляция (прогоны владельца).** Первый прогон дал единственную ошибку — E008 в теле `withPatch`: extension-синтаксис `patch.applyTo(ticket)` не резолвится для opaque `Patch` из тела top-level extension-блока в файле-определителе. Исправлено статической формой `Patch.applyTo(patch)(ticket)`; повторный прогон владельца — чистый (сборка и тесты зелёные). Статус задачи: `[x] (верифицировано владельцем)`.
 
+### DR-M1.4-2 — номинальный ChangeOrder (ADR-0001, N-20)
+
+**Норма.** §1.3.2: «send an XJDF that contains only the modified values». §1.6.5: «all elements and attributes that are not required to identify the context of the change order become optional». Table 7.56: `@JobID` SHALL совпасть с исходным тикетом. §9.8.2.1.1: совпадение по `@JobID` + `@JobPartID`.
+
+**Решение (PR-10).** Вариант C: `final case class ChangeOrder` с полями `jobId`, `jobPartId?`, `productList?` (replace), `auditPool?` (append), `resourceSets*` (upsert по `clashesWith`), `comments*` (append). `compile` → `Patch`; `applyChange` применяет патч и ревалидирует результат. `trait Partial` и `type ChangeOrder = XJDF & Partial` удалены. Набор полей закрыт сверкой (см. `docs/adr/0001-change-order.md`); `@Types` и Complete/Remove отложены в M4.
+
+**Migration impact.** `ChangeOrder` больше не является `XJDF`. Call sites: `Ticket.scala` (удаление alias), `TicketLaws.scala` (удалён тест пересечения), `SpecExamples.scala` / `Main.scala` (демо на новом типе), `README.md`, `docs/02`, `docs/04`.
+
+**Верификация.** Цикл ADR-0002 не вернулся (`ChangeOrder → TicketValidator`, обратного ребра нет). Статус `[~]` до прогона владельца.
+
