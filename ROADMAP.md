@@ -1333,7 +1333,7 @@ test("Table A.40: Sides wire tokens"):
 
 Прогон владельца (Приложение D: `sbt -batch clean scalafmtCheckAll compile test examples/run`) — чистый, ошибок и предупреждений нет; статус переведён в `[x] (верифицировано владельцем)`. Попутно исправлен тест расширяемости `Catalog.NamedColor`: фикстура заменена с `MintCream` (стандартный цвет SVG 1.1, входит в 147 значений каталога — тест был логически несостоятелен) на `Pantone185C` (валидный NMTOKEN вне списка); отдельный коммит `4e3515a`.
 
-#### M1.2-3. Кардинальность `PartAmount` (P1) — закрывает N-10
+#### M1.2-3. Кардинальность `PartAmount` (P1) — закрывает N-10 — `[~]` реализовано (PR-6; ожидает прогона владельца)
 
 **Файлы:** `model/Amounts.scala`, `model/Resource.scala`, `model/Validation.scala`, `dsl/XjdfDsl.scala`, `laws/Arbitraries.scala`, `examples/SpecExamples.scala`.
 
@@ -1352,6 +1352,8 @@ final case class PartAmount(
 ```
 
 Миграция затрагивает `Show[PartAmount]` (сейчас печатает единственный `part`), DSL, примеры, генераторы и валидатор. Переходный аксессор допустим только как `@deprecated` и удаляется до M2.
+
+**Статус сессии (PR-6).** `PartAmount.parts: Chain[Part]` внедрено (коммит `784c4b4`); переходный аксессор `def part: Option[Part] = parts.headOption` помечен `@deprecated("transitional accessor; removed before M2", "M1")`. Мигрированы `Show[PartAmount]` (печатает все `parts`), генератор `arbPartAmount` (порождает `Chain` из 0..* `Part`) и сообщение валидатора. Call sites уже, чем ожидалось: `dsl/XjdfDsl.scala` и `examples/SpecExamples.scala` не используют `PartAmount.part` (единственное вхождение `PartAmount(amount = …)` в `SpecExamples.changeOrder` на `part` не ссылается), поэтому правки в них не потребовались. Ожидает прогона владельца (Приложение D).
 
 #### M1.2-4. Bodyless `Resource` (P1) — закрывает N-11
 
@@ -1447,7 +1449,7 @@ Validation | Domain tests | XML | JSON | Status | Notes
 
 **Тесты:** `[CPI=[0], CPI=[0,1]]` → invalid; `[no-CPI, CPI=[1]]` → invalid; `[CPI=[0], CPI=[1]]` → valid (это ровно текущий Example 3.6); `Chain(a, a)` → invalid; точное совпадение ключа → invalid.
 
-#### M1.3-2. Оба правила §6.1.2.1 (P1) — закрывает N-17
+#### M1.3-2. Оба правила §6.1.2.1 (P1) — закрывает N-17 — `[~]` реализовано (PR-6; ожидает прогона владельца)
 
 Для всех родительских `Resource/Part` и всех `PartAmount.parts`:
 
@@ -1463,6 +1465,8 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 Ветка `case 1 => …; case _ => Nil` удаляется: несколько родительских `Part` больше не отключают проверку. Сообщение об ошибке использует `PartitionKey.attributeName`, поэтому пишет `@Option`, а не `@OptionKey`.
 
 **Тесты:** положительный пример и оба отрицательных из §6.1.2.1; случай с несколькими родительскими `Part` (Example 6.1: «Versioned Set Of Plates with Multiple Part Elements»).
+
+**Статус сессии (PR-6).** Оба правила реализованы (коммит `a79abe2`): ветка `case _ => Nil` удалена — несколько родительских `Part` больше не отключают проверку; добавлен helper `parentValues(parts, key)` (все различные значения ключа по родительским Resource/Part). Правило 1 (ключ, однозначно заданный родителем, не переопределяется) и правило 2 (повторённый ключ обязан совпадать с одним из значений родителя) проверяются для всех `PartAmount.parts`; сообщения используют `PartitionKey.attributeName`. В `TicketLaws` добавлены: Example 6.1 (несколько родительских `Part` `Separation="Cyan" PartVersion="English|French"` + отдельная Black-пластина) как валидный кейс; правило 2 положительное (совпадение с одним из нескольких значений); правило 1 отрицательное (повтор однозначного ключа); правило 2 отрицательное (значение вне списка родителя). Ожидает прогона владельца (Приложение D).
 
 #### M1.3-3. Шина `DomainRule` и подключение локальных правил (P1) — закрывает N-18, N-38
 
@@ -2536,4 +2540,4 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-5 (M1.0 + M1.1 + M1.2-1/M1.2-2) выполнены и верифицированы владельцем (сборка чистая, тесты зелёные); CI отложен решением владельца, `scalafmt`-гейт подтверждается на его стороне. Следующий по плану — PR-6 (M1.2-3 кардинальность `PartAmount` + M1.3-2 оба правила §6.1.2.1), зависит от PR-4 (достигнут).
+**Краткий следующий шаг:** PR-1…PR-5 (M1.0 + M1.1 + M1.2-1/M1.2-2) выполнены и верифицированы владельцем; PR-6 (M1.2-3 кардинальность `PartAmount` + M1.3-2 оба правила §6.1.2.1) реализован и запушен, ожидает гейта владельца (`sbt -batch clean scalafmtCheckAll compile test examples/run`). Следующий по плану — PR-7 (M1.2-4 bodyless `Resource` + M1.2-5 `DropItem`/`Notification`/ID-скоупы), зависит от PR-3 (достигнут).
