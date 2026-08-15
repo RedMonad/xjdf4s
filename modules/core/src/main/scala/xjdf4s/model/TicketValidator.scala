@@ -2,6 +2,7 @@ package xjdf4s
 package model
 
 import xjdf4s.intents.{BindingIntent, IntentPayload, VariableIntent}
+import xjdf4s.model.elements.Disposition
 import xjdf4s.prim.*
 import cats.Show
 import cats.data.{Chain, NonEmptyChain, Validated}
@@ -390,8 +391,7 @@ object TicketValidator:
     else Chain.one(Issue.errorC(code, location, message))
 
   /** Table 8.23: `Disposition/@MinDuration` and `@Until` are mutually exclusive.
-   *  Defined here rather than on the `prim.Disposition` companion to avoid a
-   *  dependency from `prim` onto the validation layer (ADR-0002, M1.4-1).
+   *  M1.4-8 relocates the data type only; validation behavior remains here unchanged.
    */
   def dispositionLaw: DomainRule[Disposition] =
     (d: Disposition, at: XPath) =>

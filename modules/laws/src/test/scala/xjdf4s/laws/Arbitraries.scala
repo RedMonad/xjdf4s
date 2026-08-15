@@ -1,6 +1,7 @@
 package xjdf4s.laws
 
 import xjdf4s.model.*
+import xjdf4s.model.elements.Comment
 import xjdf4s.prim.*
 import cats.data.{Chain, NonEmptyChain}
 import org.scalacheck.{Arbitrary, Gen}

@@ -3,6 +3,7 @@ package xjdf4s.laws
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
+import xjdf4s.model.elements.{Comment, Milestone}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}

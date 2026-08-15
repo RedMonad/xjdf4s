@@ -1,6 +1,7 @@
 package xjdf4s
 package model
 
+import xjdf4s.model.elements.{Comment, Dependent, GeneralID}
 import xjdf4s.prim.*
 import xjdf4s.resources.ResourcePayload
 import cats.Show

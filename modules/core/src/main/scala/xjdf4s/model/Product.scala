@@ -1,6 +1,7 @@
 package xjdf4s
 package model
 
+import xjdf4s.model.elements.{Comment, GeneralID}
 import xjdf4s.prim.*
 import cats.{Eval, Functor, Show}
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}

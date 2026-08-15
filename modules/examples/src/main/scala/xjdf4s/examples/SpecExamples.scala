@@ -3,6 +3,7 @@ package xjdf4s.examples
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
+import xjdf4s.model.elements.FileSpec
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show

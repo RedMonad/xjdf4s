@@ -1,6 +1,7 @@
 package xjdf4s
 package resources
 
+import xjdf4s.model.elements.FileSpec
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq

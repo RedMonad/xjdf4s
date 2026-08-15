@@ -3,6 +3,7 @@ package dsl
 
 import xjdf4s.intents.*
 import xjdf4s.model.*
+import xjdf4s.model.elements.{Comment, GeneralID}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show
