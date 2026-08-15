@@ -541,8 +541,8 @@ object AmountBounds:
   given Show[AmountBounds] =
     Show.show { bounds =>
       val parts = List(
-        bounds.min.map(value => s"min ${fmtDouble(value)}"),
-        bounds.max.map(value => s"max ${fmtDouble(value)}")
+        bounds.min.map(value => s"min ${fmtDouble(value.value)}"),
+        bounds.max.map(value => s"max ${fmtDouble(value.value)}")
       ).flatten
       if parts.isEmpty then "unbounded" else parts.mkString(", ")
     }
