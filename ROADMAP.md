@@ -1837,7 +1837,7 @@ AlgebraLaws 50); `examples/run` — exit 0, вывод содержит нову
 `Creasing job (Table 8.17): XJDF(job=creaseJob, types=Folding)` и не
 содержит регрессий. Статус `[x]` — закрыт полностью.
 
-#### M1.6-3. `Glue` (Table 8.29, ADR-0011) — `[~]` реализовано, ожидает верификации владельца
+#### M1.6-3. `Glue` (Table 8.29, ADR-0011) — `[x]` выполнено (верифицировано владельцем; PR-16)
 
 Полный вертикальный срез по ADR-0011:
 - **Модель элемента `Glue`** в `model/elements/CommonElements.scala`: 10 атрибутов
@@ -1861,16 +1861,23 @@ AlgebraLaws 50); `examples/run` — exit 0, вывод содержит нову
   `GluingTechnique`; `SpecExamples.gluingJob` + conformance-тест.
 - **Строки в `docs/SPEC-COVERAGE.md`:** `Glue`, `EnumGlue`, `GlueType`,
   `GluingTechnique`; обновлены `BindIn`, `StickOn`, `AdhesiveNote`.
+- **Дополнительно:** `ProcessType.Binding` добавлен в `model/Resource.scala`
+  (стандартный процесс главы 5, отсутствовал в наборе).
 
 **Файлы:** `prim/Enums.scala`, `model/elements/CommonElements.scala`,
-`model/ValidationTypes.scala`, `intents/Binding.scala`,
+`model/ValidationTypes.scala`, `model/Resource.scala`,
+`intents/Binding.scala`,
 `intents/FoldingVariable.scala`, `model/TicketValidator.scala`,
 `laws/GlueLaws.scala` (новый), `laws/EnumLaws.scala`, `laws/SpecExamplesSuite.scala`,
-`examples/SpecExamples.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+`examples/SpecExamples.scala`, `docs/SPEC-COVERAGE.md`,
+`docs/adr/0011-glue-enumerations.md`, `ROADMAP.md`.
 
-**Критерии приёмки:** чистая сборка `sbt -batch clean compile test examples/run`;
-224+ тестов (209 + `GlueLaws` 15, `EnumLaws` 3, `SpecExamplesSuite` 1);
-`examples/run` exit 0.
+**Прогон владельца (2026-08-16).** `clean`/`compile` — чисто;
+`testFull` — **228/0** (CreaseLaws 5, PatchLaws 13, AlignmentLaws 6,
+GlueLaws 15, ChangeOrderLaws 8, SpecExamplesSuite 17, EnumLaws 20,
+TicketLaws 59, BomLaws 8, PartitionLaws 27, AlgebraLaws 50);
+`examples/run` — exit 0, вывод содержит `Gluing job (Table 8.29): XJDF(job=glueJob,
+types=Binding, ProductList(Product(?×100, root)))`. Статус `[x]` — закрыт полностью.
 
 **Шаблон одного вертикального среза:**
 
@@ -1906,7 +1913,8 @@ AlgebraLaws 50); `examples/run` — exit 0, вывод содержит нову
 | 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | `[x]` верифицировано владельцем: 201 тест, 0 предупреждений, `examples/run` exit 0, циклов = 0 |
 | 15 | `Crease` + `WorkingDirection` (Table A.50) + N-50/ADR-0011 | M1.6-2 | 13 | `[x]` верифицировано владельцем: 209 тестов, `examples/run` exit 0 |
 | 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
-| 17+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-3 … M1.6-15) | M1.6 | 15 | шаблон среза выполнен |
+| 16 | `Glue` (Table 8.29) + ADR-0011 + N-50 | M1.6-3 | 15 | `[x]` верифицировано владельцем: 228 тестов, `examples/run` exit 0 |
+| 17+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4 … M1.6-15) | M1.6 | 16 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -2825,6 +2833,11 @@ M1.4-8/N-28: общие элементы глав 3/8 verbatim перенесе�
 научен парсить `Table A.NN`), зарегистрировал находку N-50 и зафиксировал
 ADR-0011 (подготовка M1.6-3, Glue); верифицировано владельцем: **209 тестов
 зелёных (209/0)**, `examples/run` exit 0, статус `[x]` — закрыт полностью.
-Следующий по плану — PR-16+ (M1.6-3 Glue по ADR-0011 или M1.6-1
-Certification — выбор подтверждается владельцем). LICENSE остаётся `BLOCKED`
-до решения владельца; возврат обязательного CI — открытая часть M1.0-1.
+PR-16 (M1.6-3) реализовал вертикальный срез `Glue` + ADR-0011 + N-50:
+элемент `Glue` (Table 8.29, 10 атрибутов, 2 SHALL-правила), разрешение конфликта
+двух Glue-энумераций (`EnumGlue` 3 значения + `GlueType` 5 значений +
+`GluingTechnique` 3 значения), breaking change 7 полей в intents, IDREF `@GlueRef`;
+верифицировано владельцем: **228 тестов зелёных (228/0)**, `examples/run` exit 0,
+статус `[x]` — закрыт полностью. Следующий по плану — PR-17+ (M1.6-1 Certification
+или другие срезы глав 4/8 — выбор подтверждается владельцем). LICENSE остаётся
+`BLOCKED` до решения владельца; возврат обязательного CI — открытая часть M1.0-1.
