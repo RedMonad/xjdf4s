@@ -146,8 +146,8 @@ PR-3  общий conflict-predicate §3.4 + Patch.mergeResourceSets
 │ Категория                                    │ Кол-во │ Идентификаторы  │
 ├──────────────────────────────────────────────┼────────┼─────────────────┤
 │ Функциональные дефекты ядра (P0)             │   2    │ N-01 … N-02     │
-│ Расхождения со спецификацией XJDF 2.2 (P1)   │  16    │ N-03 … N-15,    │
-│                                              │        │ N-47 … N-49     │
+│ Расхождения со спецификацией XJDF 2.2 (P1)   │  17    │ N-03 … N-15,    │
+│                                              │        │ N-47 … N-50     │
 │ Неполнота корневого валидатора (P1)          │   7    │ N-16 … N-19,    │
 │                                              │        │ N-36 … N-38     │
 │ Архитектурные дефекты (P2)                   │  10    │ N-20 … N-25,    │
@@ -514,6 +514,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 | N-47 | `ISOPaperSubstrate` неполон: 8 значений из 15 | Table A.26 — 15 значений; отсутствуют `LWCPlus`, `LWCStandard`, `NewsPlus`, `SCPlus`, `SCStandard`, `SNP` *(New in XJDF 2.1)* и `PS9` *(New in XJDF 2.2)* | `prim/Enums.scala`: `case PS1 … PS8` | M1.2-2 |
 | N-48 | `MediaType` неполон: 13 значений из 21 | Table A.30 — 21 значение; отсутствует `Synthetic` *(New in XJDF 2.1)*, а также 7 значений с пометкой Deprecated (`EmbossingFoil`, `Foil`, `LaminatingFoil`, `MountingTape`, `SelfAdhesive`, `ShrinkFoil`, `Vinyl`), которые обязаны декодироваться | `prim/Enums.scala`: `case Blanket … Transparency` | M1.2-2 |
 | N-49 | `Scope` неполон: 4 значения из 5 | Table A.36 — 5 значений; отсутствует `Device` *(New in XJDF 2.2)*: «The amount of resources is an absolute measurement that is currently available within the scope of a Device.» | `prim/Enums.scala`: `case Allowed, Estimate, Job, Present` | M1.2-2 |
+| N-50 | Glue-энумерации смешаны: `prim.GlueType` (3 значения) используется и для полей, которые по Table 4.5/4.7/4.9 и XSD являются **элементом** `Glue` (`BindIn.glue`, `StickOn.glue`, `AdhesiveNote.glue`); набор `Glue/@GlueType` из 5 значений не смоделирован | Внутренний конфликт спецификации: Table A.24 (§A.2.23) — 3 значения (`ColdGlue`, `Hotmelt`, `PUR`); Table 8.29 `@GlueType` — 5 значений («Allowed values are: … `Permanent` … `Removable`»); `schema.xsd`: `EnumGlue` (3) для «from: Glue»-атрибутов vs inline-ограничение `Glue/@GlueType` (5); Example 8.15: `GlueType="Removable"`. По §1.2 приоритет — prose Table 8.29 и пример → **два разных закрытых набора** | `prim/Enums.scala:180-185` (`GlueType`, 3 значения); `intents/Binding.scala:111,117,137,213`; `intents/FoldingVariable.scala:119,143` | ADR-0011, M1.6-3 (PR-16) |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -633,6 +634,7 @@ def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
 | ADR-0008 | Масштабируемое представление `ResourcePayload` | до массового M3 | M3.1 | `docs/adr/0008-resource-payload-representation.md` (PR-13) |
 | ADR-0009 | Law-инфраструктура: `cats-laws`/`discipline-munit` или локальные сьюты | до M1.4-6 — `[x]` (зафиксирован в `docs/adr/0009-law-infrastructure.md`; рукописные сьюты сохранены; верифицировано владельцем в PR-12) | M1.4-6 | `docs/adr/0009-law-infrastructure.md` (PR-12) |
 | ADR-0010 | Нормализация кодеков и сохранение расширений | до заморозки API M2 | M2.2 | `docs/adr/0010-codec-normalization.md` (PR-13) |
+| ADR-0011 | Две Glue-энумерации: элемент `Glue` (Table 8.29) vs «Allowed value is from: Glue» (Table A.24); N-50 | до M1.6-3 | M1.6-3 | `docs/adr/0011-glue-enumerations.md` (зафиксирован в PR-15 при регистрации N-50) |
 
 ### ADR-0001 — ChangeOrder как номинальный partial-документ
 
@@ -1764,34 +1766,64 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 ### M1.6 — Закрыть заявленные пробелы главы 4 и общих элементов главы 8
 
 Выполняется после стабилизации общих абстракций, маленькими вертикальными срезами.
+Идентификаторы задач закреплены за срезами в порядке исполнения (см. §9, PR-15+).
 
 **Интенты главы 4** (отсутствуют в модели):
 
-| Интент | Таблицы | Подэлементы |
-| --- | --- | --- |
-| ContentCheckIntent | Table 4.22 (§4.5) | `PreflightItem` (Table 4.23), `ProofItem` (Table 4.24), переиспользование `FileSpec` |
-| EmbossingIntent | Table 4.25 (§4.6) | `EmbossingItem` (Table 4.26) |
-| HoleMakingIntent | Table 4.29 (§4.8) | `HolePattern` (Table 8.30), каталог `Appendix F – Hole Pattern Catalog` |
-| LaminatingIntent | Table 4.30 (§4.9) | — |
-| ShapeCuttingIntent | Table 4.34 (§4.13) | `ShapeCut` (Table 4.35), `CutBox`/`CutPath` (PDFPath) |
+| Задача | Интент | Таблицы | Подэлементы |
+| --- | --- | --- | --- |
+| M1.6-9 | LaminatingIntent | Table 4.30 (§4.9) | — |
+| M1.6-10 | EmbossingIntent | Table 4.25 (§4.6) | `EmbossingItem` (Table 4.26) |
+| M1.6-11 | ContentCheckIntent | Table 4.22 (§4.5) | `PreflightItem` (Table 4.23), `ProofItem` (Table 4.24), переиспользование `FileSpec` |
+| M1.6-12 | HoleMakingIntent | Table 4.29 (§4.8) | `HolePattern` (Table 8.30), каталог `Appendix F – Hole Pattern Catalog` |
+| M1.6-13 | ShapeCuttingIntent | Table 4.34 (§4.13) | `ShapeCut` (Table 4.35), `CutBox`/`CutPath` (PDFPath) |
 
 **Общие элементы главы 8** (отсутствуют в модели):
 
-| Элемент | Раздел | Таблица |
-| --- | --- | --- |
-| Certification | §8.7 | Table 8.8 |
-| Crease | §8.14 | Table 8.17 |
-| GangSource | §8.22 | Table 8.27 |
-| Glue | §8.24 | Table 8.29 |
-| HolePattern | §8.25 | Table 8.30 |
-| IdentificationField | §8.26 | Table 8.31 |
-| MISDetails | §8.30 | Table 8.48 |
+| Задача | Элемент | Раздел | Таблица |
+| --- | --- | --- | --- |
+| M1.6-1 | Certification | §8.7 | Table 8.8 |
+| M1.6-2 | Crease | §8.14 | Table 8.17 |
+| M1.6-3 | Glue | §8.24 | Table 8.29 |
+| M1.6-4 | GangSource | §8.22 | Table 8.27 |
+| M1.6-5 | HolePattern | §8.25 | Table 8.30 |
+| M1.6-6 | IdentificationField | §8.26 | Table 8.31 |
+| M1.6-7 | MISDetails | §8.30 | Table 8.48 |
 
 **Дополнительно:**
 
-- `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?`;
-- NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — реализовать модель и правило приоритета явных Traits;
-- полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1).
+- M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?`;
+- M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — реализовать модель и правило приоритета явных Traits;
+- M1.6-15: полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1).
+
+#### M1.6-2. `Crease` (Table 8.17) — `[~]` реализовано, ожидает прогона владельца (PR-15)
+
+Полный вертикальный срез: `Crease` в `model/elements/CommonElements.scala`
+(4 атрибута, `@Depth` → `Microns`, `@StartPosition`/`@WorkingPath` → `XYPair`,
+`@WorkingDirection` → новый закрытый enum `WorkingDirection`); `WorkingDirection`
+(Table A.50: `Bottom`, `Top`) добавлен в `prim/Enums.scala` с golden-проверками и
+машинной сверкой в `EnumLaws`; `FoldingParams.creases: Chain[Crease]` (`Crease*`,
+Table 6.74); сьют `laws/CreaseLaws.scala` (позитивные тесты, mapping);
+фикстура `SpecExamples.creasingJob` + conformance/golden-тесты в
+`SpecExamplesSuite`; строки в `docs/SPEC-COVERAGE.md` (Crease, WorkingDirection,
+новый раздел «Enumerations (Appendix A)», заметка FoldingParams).
+`scripts/check-spec-coverage.sh` научен парсить номера таблиц Appendix A
+(`Table A.NN`) — иначе строка WorkingDirection не проверяема.
+SHALL-правил на самом `Crease` нет (все атрибуты опциональны) — негативные
+тесты не требуются; контейнерное правило отсутствует.
+В этом же PR по решению владельца зарегистрирована находка N-50 и
+зафиксирован ADR-0011 (подготовка среза M1.6-3, Glue).
+
+**Файлы:** `prim/Enums.scala`, `model/elements/CommonElements.scala`,
+`resources/Finishing.scala`, `laws/EnumLaws.scala`, `laws/CreaseLaws.scala`
+(новый), `examples/SpecExamples.scala`, `laws/SpecExamplesSuite.scala`,
+`docs/SPEC-COVERAGE.md`, `scripts/check-spec-coverage.sh`,
+`docs/adr/0011-glue-enumerations.md` (новый), `ROADMAP.md`.
+
+**Критерии приёмки:** чистая сборка `sbt -batch clean scalafmtCheckAll compile
+test examples/run`; 209 тестов зелёных (201 + `CreaseLaws` 5, `EnumLaws` 1,
+`SpecExamplesSuite` 2); `examples/run` exit 0; `check-spec-coverage.sh` —
+`RESULT: OK`.
 
 **Шаблон одного вертикального среза:**
 
@@ -1825,8 +1857,9 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 | 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 — `[x]` (верифицировано владельцем: чистая сборка, 180 тестов, 0 предупреждений) |
 | 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate — `[x]` (верифицировано владельцем: 201 тест зелёный, `examples/run` exit 0, golden совпали) |
 | 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | `[x]` верифицировано владельцем: 201 тест, 0 предупреждений, `examples/run` exit 0, циклов = 0 |
-| 15+ | Пробелы глав 4/8 — один вертикальный срез на PR | M1.6 | 13 | шаблон среза выполнен |
+| 15 | `Crease` + `WorkingDirection` (Table A.50) + N-50/ADR-0011 | M1.6-2 | 13 | `[~]` шаблон среза выполнен; сборка и тесты — на прогоне владельца |
 | 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
+| 17+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-3 … M1.6-15) | M1.6 | 15 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -2196,6 +2229,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-47 | `ISOPaperSubstrate` неполон (8/15) | ✅ пополнен по Table A.26 | M1.2-2 | P1 |
 | N-48 | `MediaType` неполон (13/21) | ✅ пополнен по Table A.30 | M1.2-2 | P1 |
 | N-49 | `Scope` неполон (4/5) | ✅ пополнен по Table A.36 | M1.2-2 | P1 |
+| N-50 | Glue-энумерации смешаны; `Glue/@GlueType` (5 значений) не смоделирован | ✅ ADR-0011: элемент `Glue` + два закрытых набора (Table A.24 — 3, Table 8.29 — 5); реализация — PR-16 (M1.6-3), регистрация — PR-15 (M1.6-2) | M1.6-3 | P1 |
 | N-10 | `PartAmount.part` единственный | ✅ `Chain[Part]` | M1.2-3 | P1 |
 | N-11 | `Resource.specific` обязателен | ✅ `Option` | M1.2-4 | P1 |
 | N-12 | `DropItem` неполон | ✅ три поля Table 6.55 | M1.2-5 | P1 |
@@ -2546,6 +2580,44 @@ M1: одна обязательная быстрая платформа — Temu
 </ResourceSet>
 ```
 
+### Table A.50 (WorkingDirection)
+
+> `WorkingDirection` specifies the direction of an action or of the application of a resource.
+>
+> `Bottom` — From below. `Top` — From above.
+
+### Table 8.17 (Crease)
+
+> `Depth?` | float | Depth of the crease, measured in microns [µm].
+>
+> `StartPosition?` | XYPair | Starting position of the tool.
+>
+> `WorkingDirection?` | enumeration | Direction from which the tool is working. Allowed value is from: WorkingDirection.
+>
+> `WorkingPath?` | XYPair | Working path of the tool beginning at `@StartPosition`.
+
+### Table A.24 (§A.2.23 Glue) и Table 8.29 (`Glue/@GlueType`) — внутренний конфликт спецификации (N-50)
+
+Table A.24:
+
+> `Glue` specifies the type of glue to be used.
+>
+> `ColdGlue`; `Hotmelt`; `PUR` — Polyurethane rubber.
+
+Table 8.29 (`@GlueType`):
+
+> `GlueType?` | enumeration | Glue type. Allowed values are: `ColdGlue` – Any type of glue that needs no heat treatment. `Hotmelt` – Hotmelt EVA (Ethylene-vinyl acetate). `Permanent` – Any glue that is designed not to be removed. `PUR` – Polyurethane. `Removable` – Any glue that is designed to be removed.
+
+Пример (Example 8.15, фрагмент):
+
+```xml
+<Glue AreaGlue="true" GlueType="Removable"/>
+```
+
+Разрешение: по §1.2 приоритет prose Table 8.29 и примера; XSD подтверждает два набора
+(`EnumGlue` — 3 значения для «Allowed value is from: Glue»-атрибутов; inline
+`Glue/@GlueType` — 5 значений). Модель содержит оба набора (ADR-0011, M1.6-3).
+
 ---
 
 ## Приложение B. Карта затрагиваемых файлов M1
@@ -2575,15 +2647,16 @@ M1: одна обязательная быстрая платформа — Temu
 | `docs/adr/0008-resource-payload-representation.md` | M3.1 (файл создан в PR-13) |
 | `docs/adr/0009-law-infrastructure.md` | M1.4-6 (создан в PR-12) |
 | `docs/adr/0010-codec-normalization.md` | M2.2 (файл создан в PR-13) |
-| `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4 |
-| `scripts/check-spec-coverage.sh` (новый) | M1.2-6 (создан в PR-13; в CI подключается вместе с возвратом CI) |
+| `docs/adr/0011-glue-enumerations.md` (новый) | M1.6-3 (ADR зафиксирован в PR-15 при регистрации N-50) |
+| `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4, M1.6-2 (строки Crease/WorkingDirection, раздел Enumerations) |
+| `scripts/check-spec-coverage.sh` (новый) | M1.2-6 (создан в PR-13; в CI подключается вместе с возвратом CI); M1.6-2 (поддержка номеров таблиц Appendix A `Table A.NN`) |
 | `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги |
-| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`) |
+| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`); M1.6-2 (`WorkingDirection`) |
 | `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountBounds`), M1.4-6 (алгебры) |
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
 | `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only, PR-13) |
 | `prim/Common.scala` | M1.4-8: элементы удалены, оставлены `Url` и открытые каталоги; M1.2-2 (`Catalog.NamedColor`) |
-| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition` |
+| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`; M1.6-2: `Crease` |
 | `model/Partition.scala` | M1.2-1, M1.4-3, M1.0-5 (scaladoc-ссылка) |
 | `model/Amounts.scala` | M1.2-3, M1.3-3 (`PartWaste`) |
 | `model/Product.scala` | M1.1-1, M1.3-3, M1.3-4, M1.4-7 |
@@ -2606,11 +2679,13 @@ M1: одна обязательная быстрая платформа — Temu
 | `laws/AlgebraLaws.scala` | M1.0-3, M1.1-4, M1.4-5, M1.4-6 |
 | `laws/PartitionLaws.scala` | M1.2-1, M1.5-1 (законы толерантности и merge-порядка, PR-13) |
 | `laws/TicketLaws.scala` | M1.0-2, M1.1-1, M1.1-3, M1.3-*, M1.5-3 (негативное property на `Invalid`, PR-13) |
-| `laws/SpecExamplesSuite.scala` (новый) | M1.5-3 (conformance + golden, создан в PR-13) |
+| `laws/SpecExamplesSuite.scala` (новый) | M1.5-3 (conformance + golden, создан в PR-13); M1.6-2 (creasingJob, PR-15) |
+| `laws/CreaseLaws.scala` (новый) | M1.6-2 (создан в PR-15) |
 | `laws/ChangeOrderLaws.scala` (новый) | M1.4-2 |
 | `laws/AlignmentLaws.scala` | M1.4-6 |
-| `laws/EnumLaws.scala` (новый) | M1.2-2 (golden-токены, открытые каталоги, сверка с Appendix A), M1.5-2 (тест `XjdfVersion`, PR-13) |
-| `examples/SpecExamples.scala` | M1.1-1, M1.2-3, M1.2-4, M1.4-2, M1.5-3 |
+| `laws/EnumLaws.scala` (новый) | M1.2-2 (golden-токены, открытые каталоги, сверка с Appendix A), M1.5-2 (тест `XjdfVersion`, PR-13), M1.6-2 (`WorkingDirection`, PR-15) |
+| `examples/SpecExamples.scala` | M1.1-1, M1.2-3, M1.2-4, M1.4-2, M1.5-3, M1.6-2 (creasingJob, PR-15) |
+| `resources/Finishing.scala` | M1.6-2 (`FoldingParams.creases`, PR-15) |
 | `examples/Main.scala` | M1.1-1, M1.5-3 |
 | `examples/src/test/SpecExamplesSuite.scala` (удалён) | M1.5-3 (переехал в `laws/SpecExamplesSuite.scala`, PR-13) |
 
@@ -2698,6 +2773,10 @@ M1.4-8/N-28: общие элементы глав 3/8 verbatim перенесе�
 в `model/elements/CommonElements.scala`; `Url` и открытые каталоги оставлены в
 `prim`; импорты и документация обновлены; повторный анализ показывает 0 циклов
 и 0 рёбер `prim → domain`; владелец подтвердил 201 тест, 0 предупреждений и
-`examples/run` exit 0. Следующий по плану — PR-15+ (M1.6, пробелы глав 4/8).
-LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
-открытая часть M1.0-1.
+`examples/run` exit 0. PR-15 (M1.6-2) реализовал вертикальный срез `Crease` +
+`WorkingDirection` (модель, тесты, фикстура `creasingJob`, coverage; чекер
+научен парсить `Table A.NN`), зарегистрировал находку N-50 и зафиксировал
+ADR-0011 (подготовка M1.6-3, Glue); статус `[~]` — ожидает прогона владельца.
+Следующий по плану — PR-16+ (M1.6-1 Certification, затем M1.6-3 Glue по
+ADR-0011). LICENSE остаётся `BLOCKED` до решения владельца; возврат
+обязательного CI — открытая часть M1.0-1.
