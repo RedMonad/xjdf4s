@@ -131,7 +131,12 @@ object Arbitraries:
       for
         amount <- Gen.option(arbAmount.arbitrary)
         waste  <- Gen.option(arbAmount.arbitrary)
-        parts  <- Gen.listOf(arbPart.arbitrary)
+        // Bound the `Part*` cardinality: an unbounded `Gen.listOf` here (default
+        // size ~100) is squared again by `arbAmountPool`'s own `Gen.listOf`,
+        // exploding the AmountPool semigroup law in AlgebraLaws. 0..3 still
+        // exercises the empty, single and multiple Part cases (N-10).
+        n     <- Gen.choose(0, 3)
+        parts <- Gen.listOfN(n, arbPart.arbitrary)
       yield PartAmount(amount = amount, waste = waste, parts = Chain.fromSeq(parts))
 
   implicit val arbAmountPool: Arbitrary[AmountPool] =
