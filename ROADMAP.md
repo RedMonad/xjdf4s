@@ -2055,7 +2055,7 @@ PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0, вывод сод�
 ProductList(Product(?×200, root)))`; `check-spec-coverage.sh` — `RESULT: OK`.
 Статус `[x]` — закрыт полностью.
 
-#### M1.6-11. `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (Table 4.23) + `ProofItem` (Table 4.24) — `[~]` реализовано, ожидает прогона владельца (PR-21)
+#### M1.6-11. `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (Table 4.23) + `ProofItem` (Table 4.24) — `[x]` выполнено (верифицировано владельцем; PR-21)
 
 Вертикальный срез продолжает паттерн интентов главы 4 (PR-18/19/20) и впервые
 масштабирует его на два подэлемента и на переиспользование общего элемента
@@ -2153,12 +2153,21 @@ examples/run`; 300 тестов зелёных (284 + `ContentCheckIntentLaws` 1
 Preflight, ProductList(Product(?×100, root)))`; `check-spec-coverage.sh` —
 `RESULT: OK`.
 
-**Статус:** `[~]` — код и тесты внесены статически (среда без JVM/sbt);
-ожидается прогон владельца: `sbt -batch clean compile test examples/run`.
+**Статус:** верифицировано владельцем (2026-08-16): `compile` — чисто
+(cache 83%, 78 disk cache hits); `testFull` — **300/0**
+(GlueLaws 15, HolePatternLaws 14, LaminatingIntentLaws 7, HoleMakingIntentLaws 8,
+EmbossingIntentLaws 12, AlignmentLaws 6, PatchLaws 13, ChangeOrderLaws 8,
+CreaseLaws 5, ContentCheckIntentLaws 12, SpecExamplesSuite 28, EnumLaws 28,
+BomLaws 8, TicketLaws 59, PartitionLaws 27, AlgebraLaws 50);
+`examples/run` — exit 0, вывод содержит
+`Content check intent (Table 4.22): XJDF(job=contentCheckJob, types=Approval
+Preflight, ProductList(Product(?×100, root)))`; `check-spec-coverage.sh` —
+`RESULT: OK`. Статус `[x]` — закрыт полностью.
 Исправление по итогам первого прогона владельца: E008 — `.toChain` вызывался
 на поле типа `Chain` (метод существует только на `NonEmptyChain`); убран в
 `ContentCheckIntent.declaredIds` и `checkContentCheckLaws` — по образцу
-`checkAssemblyGlueLaws` (`Chain`/`NonEmptyChain.zipWithIndex` напрямую).
+`checkAssemblyGlueLaws` (`Chain`/`NonEmptyChain.zipWithIndex` напрямую),
+коммит `203b372`.
 
 #### M1.6-12. `HoleMakingIntent` (Table 4.29, §4.8) — `[x]` выполнено (верифицировано владельцем; PR-18)
 
@@ -2253,7 +2262,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 18 | `HoleMakingIntent` (Table 4.29, §4.8) + `HolePattern+` + wiring SHALL + fixture | M1.6-12 | 17 | `[x]` верифицировано владельцем: 258 тестов, `examples/run` exit 0 |
 | 19 | `LaminatingIntent` (Table 4.30, §4.9) + `LaminatingTemperature` + открытый `Catalog.Texture` | M1.6-9 | 18 | `[x]` верифицировано владельцем: 268 тестов, `examples/run` exit 0 |
 | 20 | `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) + `EmbossDirection`/`EmbossType` + SHALL `@Separation`↔`Color/@ColorType="DieLine"` | M1.6-10 | 19 | `[x]` верифицировано владельцем: 284 теста, `examples/run` exit 0 |
-| 21 | `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (4.23) + `ProofItem` (4.24) + `ProofColorType` + `ProcessType.Preflight` + `IntentPayload.declaredIds`-wiring + подключение `dispositionLaw` (Table 8.23) | M1.6-11 | 20 | `[~]` внесено статически; ожидается прогон владельца: 300 тестов, `examples/run` exit 0 |
+| 21 | `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (4.23) + `ProofItem` (4.24) + `ProofColorType` + `ProcessType.Preflight` + `IntentPayload.declaredIds`-wiring + подключение `dispositionLaw` (Table 8.23) | M1.6-11 | 20 | `[x]` верифицировано владельцем: 300 тестов, `examples/run` exit 0 |
 | 22+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/11/12; плюс N-51 `FileSpec.law`) | M1.6 | 21 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -3213,7 +3222,7 @@ PR-19 (M1.6-9) реализовал `LaminatingIntent` (Table 4.30): обяза�
 фикстура `embossingJob` + conformance/golden, coverage
 (`check-spec-coverage.sh` — `RESULT: OK`); верифицировано владельцем:
 **284 теста зелёных (284/0)**, `examples/run` exit 0, статус `[x]`.
-PR-21 (M1.6-11) реализует `ContentCheckIntent` (Table 4.22, §4.5) +
+PR-21 (M1.6-11) реализовал `ContentCheckIntent` (Table 4.22, §4.5) +
 `PreflightItem` (Table 4.23) + `ProofItem` (Table 4.24): обе кардинальности
 `*` → `Chain` (пустой интент валиден), закрытый `ProofColorType`
 (`Monochrome`/`BasicColor`/`MatchedColor`), переиспользование `FileSpec`
@@ -3224,9 +3233,10 @@ PR-21 (M1.6-11) реализует `ContentCheckIntent` (Table 4.22, §4.5) +
 (Table 8.23), 12 тестов `ContentCheckIntentLaws` + 2 golden `EnumLaws`
 (включая закрытие пробела `PreflightLevel`) + фикстура `contentCheckJob`;
 зарегистрирована находка N-51 (неполнота `FileSpec`, M1.6/M3 follow-up).
-Статус `[~]` — ожидает прогона владельца (ожидается 300 тестов,
-`examples/run` exit 0). Следующий срез PR-22+ выбирается из
-M1.6-1 Certification, M1.6-4/7/8 GangSource+MISDetails+NodeInfo,
+Верифицировано владельцем: **300 тестов зелёных (300/0)**, `examples/run`
+exit 0, статус `[x]` (включая фикс E008 `.toChain` на `Chain`-поле, коммит
+`203b372`). Закрыты 4 из 5 интентов главы 4. Следующий срез PR-22+
+выбирается из M1.6-1 Certification, M1.6-4/7/8 GangSource+MISDetails+NodeInfo,
 M1.6-6 IdentificationField, M1.6-13 ShapeCuttingIntent (требует примитива
 `PDFPath`), M1.6-14 NamedFeatures, M1.6-15 Part audit или N-51 `FileSpec.law`.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
