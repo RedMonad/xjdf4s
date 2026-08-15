@@ -1796,7 +1796,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — реализовать модель и правило приоритета явных Traits;
 - M1.6-15: полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1).
 
-#### M1.6-2. `Crease` (Table 8.17) — `[~]` реализовано, ожидает прогона владельца (PR-15)
+#### M1.6-2. `Crease` (Table 8.17) — `[x]` выполнено (верифицировано владельцем; PR-15)
 
 Полный вертикальный срез: `Crease` в `model/elements/CommonElements.scala`
 (4 атрибута, `@Depth` → `Microns`, `@StartPosition`/`@WorkingPath` → `XYPair`,
@@ -1824,6 +1824,16 @@ SHALL-правил на самом `Crease` нет (все атрибуты оп
 test examples/run`; 209 тестов зелёных (201 + `CreaseLaws` 5, `EnumLaws` 1,
 `SpecExamplesSuite` 2); `examples/run` exit 0; `check-spec-coverage.sh` —
 `RESULT: OK`.
+
+**Прогон владельца (2026-08-16).** `clean`/`compile` — чисто (39 core + 2
+examples источников, 0 предупреждений); `testFull` — **209/0** (EnumLaws 17,
+CreaseLaws 5, AlignmentLaws 6, PatchLaws 13, ChangeOrderLaws 8,
+SpecExamplesSuite 16, BomLaws 8, TicketLaws 59, PartitionLaws 27,
+AlgebraLaws 50); `examples/run` — exit 0, вывод содержит новую строку
+`Creasing job (Table 8.17): XJDF(job=creaseJob, types=Folding)` и не
+содержит регрессий. `scalafmtCheckAll` в логе владельца отсутствует —
+финальная проверка форматирования остаётся за владельцем (команда в
+Приложении D).
 
 **Шаблон одного вертикального среза:**
 
@@ -1857,7 +1867,7 @@ test examples/run`; 209 тестов зелёных (201 + `CreaseLaws` 5, `Enum
 | 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 — `[x]` (верифицировано владельцем: чистая сборка, 180 тестов, 0 предупреждений) |
 | 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate — `[x]` (верифицировано владельцем: 201 тест зелёный, `examples/run` exit 0, golden совпали) |
 | 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | `[x]` верифицировано владельцем: 201 тест, 0 предупреждений, `examples/run` exit 0, циклов = 0 |
-| 15 | `Crease` + `WorkingDirection` (Table A.50) + N-50/ADR-0011 | M1.6-2 | 13 | `[~]` шаблон среза выполнен; сборка и тесты — на прогоне владельца |
+| 15 | `Crease` + `WorkingDirection` (Table A.50) + N-50/ADR-0011 | M1.6-2 | 13 | `[x]` верифицировано владельцем: 209 тестов, `examples/run` exit 0; `scalafmtCheckAll` — отдельно |
 | 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
 | 17+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-3 … M1.6-15) | M1.6 | 15 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
@@ -2776,7 +2786,8 @@ M1.4-8/N-28: общие элементы глав 3/8 verbatim перенесе�
 `examples/run` exit 0. PR-15 (M1.6-2) реализовал вертикальный срез `Crease` +
 `WorkingDirection` (модель, тесты, фикстура `creasingJob`, coverage; чекер
 научен парсить `Table A.NN`), зарегистрировал находку N-50 и зафиксировал
-ADR-0011 (подготовка M1.6-3, Glue); статус `[~]` — ожидает прогона владельца.
-Следующий по плану — PR-16+ (M1.6-1 Certification, затем M1.6-3 Glue по
-ADR-0011). LICENSE остаётся `BLOCKED` до решения владельца; возврат
-обязательного CI — открытая часть M1.0-1.
+ADR-0011 (подготовка M1.6-3, Glue); верифицировано владельцем: **209 тестов
+зелёных (209/0)**, `examples/run` exit 0, статус `[x]` (осталось
+`scalafmtCheckAll`). Следующий по плану — PR-16+ (M1.6-1 Certification,
+затем M1.6-3 Glue по ADR-0011). LICENSE остаётся `BLOCKED` до решения
+владельца; возврат обязательного CI — открытая часть M1.0-1.
