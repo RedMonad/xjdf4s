@@ -7,6 +7,7 @@ import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}
 import munit.ScalaCheckSuite
+import org.scalacheck.Prop.*
 
 /** Structural validation against the XJDF specification, driven by the examples
  *  of Chapter 3 and 5 (valid tickets stay valid; every violation is detected).
@@ -245,6 +246,12 @@ class TicketLaws extends ScalaCheckSuite:
     val a = ResourceSet(ResourceSetName.unsafe("Media"), usage = Some(Usage.Input))
     val invalid = ticket(NonEmptyChain.one(ProcessType.Cutting), Chain(a, a))
     assert(invalid.validate.isInvalid)
+
+  property("§3.4: every intentionally invalid duplicate-keys ticket is rejected (Invalid generator)"):
+    forAll(Arbitraries.Invalid.arbDuplicateResourceSets) { t =>
+      val report = t.validateReport
+      !report.isValid && report.errors.exists(_.code.contains(IssueCode.ResourceSetClash))
+    }
 
   test("§3.4 / N-16: partial CPI overlap [0] vs [0,1] is rejected"):
     val rs0 = ResourceSet(

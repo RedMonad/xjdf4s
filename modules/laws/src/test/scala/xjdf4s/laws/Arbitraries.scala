@@ -5,7 +5,13 @@ import xjdf4s.prim.*
 import cats.data.{Chain, NonEmptyChain}
 import org.scalacheck.{Arbitrary, Gen}
 
-/** ScalaCheck generators for the domain types. */
+/** ScalaCheck generators for the domain types.
+ *
+ *  ROADMAP §12.2: lawful and *intentionally invalid* generators are kept apart.
+ *  Everything in this object is lawful by construction and drives the algebraic
+ *  laws; deliberately law-breaking values live in `Arbitraries.Invalid` and
+ *  drive the negative properties (the validator MUST reject them).
+ */
 object Arbitraries:
 
   implicit val arbNmToken: Arbitrary[NmToken] =
@@ -209,4 +215,33 @@ object Arbitraries:
         types = NonEmptyChain.fromChainUnsafe(Chain.fromSeq(types)),
         resourceSets = Chain.fromSeq(sets)
       )
+
+  /** Intentionally law-breaking generators (ROADMAP §12.2). None of these
+   *  values is valid by construction; negative properties assert that the
+   *  model or the validator REJECTS them. Kept separate from the lawful
+   *  generators above so a defect in the model cannot hide behind a generator
+   *  that never reaches the boundary.
+   */
+  object Invalid:
+
+    /** A ticket with two `ResourceSet`s that clash under the §3.4 predicate
+     *  (identical `@Name`/`@Usage`/`@ProcessUsage`, overlapping Combined
+     *  Process Index) — the validator must report `RESOURCESET-CLASH`.
+     */
+    val arbDuplicateResourceSets: Arbitrary[XJDF] =
+      Arbitrary:
+        for
+          name  <- Gen.oneOf("Media", "Component", "NodeInfo")
+          usage <- Gen.option(Gen.oneOf(Usage.Input, Usage.Output))
+          types <- Gen.oneOf(
+            NonEmptyChain.one(ProcessType.Product),
+            NonEmptyChain(ProcessType.Cutting, ProcessType.Folding)
+          )
+          rs = ResourceSet(ResourceSetName.unsafe(name), usage = usage)
+        yield XJDF(
+          jobId = JobId.unsafe("invalid-duplicate-keys"),
+          types = types,
+          resourceSets = Chain(rs, rs)
+        )
+
 end Arbitraries

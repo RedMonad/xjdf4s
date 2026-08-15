@@ -32,11 +32,13 @@ lazy val core = project
   )
 
 // ---------------------------------------------------------------------------
-// xjdf4s-laws — law checking for the algebraic structures of the model
+// xjdf4s-laws — law checking for the algebraic structures of the model and
+// conformance suites for the specification examples (M1.5-3, PR-13: the suite
+// references xjdf4s.examples.SpecExamples, hence the `examples` dependency).
 // ---------------------------------------------------------------------------
 lazy val laws = project
   .in(file("modules/laws"))
-  .dependsOn(core)
+  .dependsOn(core, examples)
   .settings(
     name := "xjdf4s-laws",
     libraryDependencies ++= Seq(
@@ -52,15 +54,14 @@ lazy val laws = project
   )
 
 // ---------------------------------------------------------------------------
-// xjdf4s-examples — runnable examples built from the XJDF specification
+// xjdf4s-examples — runnable examples built from the XJDF specification.
+// Demo only (M1.5-3): its conformance suite moved to `laws/SpecExamplesSuite`.
 // ---------------------------------------------------------------------------
 lazy val examples = project
   .in(file("modules/examples"))
   .dependsOn(core)
   .settings(
-    name := "xjdf4s-examples",
-    libraryDependencies += "org.scalameta" %% "munit" % munitVersion % Test,
-    testFrameworks += new TestFramework("munit.Framework")
+    name := "xjdf4s-examples"
   )
 
 lazy val root = project

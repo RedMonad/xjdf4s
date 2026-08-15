@@ -10,8 +10,10 @@ xjdf4s/
 ├── project/build.properties   # sbt.version=2.0.2
 ├── modules/
 │   ├── core/                  # xjdf4s-core: весь домен
-│   ├── laws/                  # xjdf4s-laws: проверка законов (Test)
-│   └── examples/              # xjdf4s-examples: примеры из спецификации
+│   ├── laws/                  # xjdf4s-laws: законы + conformance-сьюты (Test);
+│   │                          # зависит от core и examples (M1.5-3, PR-13)
+│   └── examples/              # xjdf4s-examples: только демо примеров
+│                              # спецификации (conformance — в laws)
 ├── docs/                      # 01-category-theory-view, 02-scala3-features,
 │                              # 03-cats-mapping, 04-architecture,
 │                              # SPEC-COVERAGE.md (реестр покрытия),
@@ -84,6 +86,13 @@ cats; `model/TicketValidator.scala` — корневой валидатор, а�
 локальные правила (`DomainRule`) и глобальные проверки (ID/IDREF, §3.4, BOM,
 хронология), предоставляет extension-методы `XJDF.validate` /
 `XJDF.validateReport`.
+
+**Межмодульный граф (M1.5-3).** `core ← {laws, examples}`; дополнительно
+`laws → examples`: conformance-сьют `laws/SpecExamplesSuite.scala` исполняет
+примеры `examples.SpecExamples` как именованные тесты с номерами
+разделов/таблиц. `examples` остаётся демонстрационным (`Main` + построители
+примеров), тестового кода в нём нет. Цикла нет: `examples → core` и
+`laws → {core, examples}`.
 
 ## Принципы
 
