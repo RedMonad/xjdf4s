@@ -3,6 +3,7 @@ package xjdf4s.laws
 import xjdf4s.laws.Arbitraries.given
 import xjdf4s.model.*
 import xjdf4s.prim.*
+import cats.data.ValidatedNec
 import cats.kernel.{Monoid, Semigroup, Semilattice}
 import munit.ScalaCheckSuite
 import org.scalacheck.Arbitrary
@@ -117,6 +118,23 @@ class AlgebraLaws extends ScalaCheckSuite:
 
   property("IntegerRange 1 2 selects the middle"):
     IntegerRange(1, 2).select(List("a", "b", "c")) == List("b", "c")
+
+  // --- M1.0-3: compile-probes for the contested findings -------------------
+  test("cats provides Monoid[ValidatedNec[Issue, Unit]] (X-01)"):
+    // X-01: no hand-written given is needed — cats derives this instance from
+    // Semigroup[NonEmptyChain[Issue]] and Monoid[Unit]; compilation is the proof.
+    val _ = summon[Monoid[ValidatedNec[Issue, Unit]]]
+
+  test("§1.10.2: IntegerRange(-1, 0) selects everything in reverse (X-02)"):
+    assertEquals(
+      IntegerRange(-1, 0).select(List("a", "b", "c")),
+      List("c", "b", "a")
+    )
+
+  test("regression: overlay is right-biased (X-03)"):
+    val l = Part(docIndex = Some(IntegerRange.single(3)))
+    val r = Part(docIndex = Some(IntegerRange.single(-10)))
+    assertEquals(Part.combine(l, r).docIndex, r.docIndex)
 end AlgebraLaws
 
 /** A wrapper so the matrix-application property gets an arbitrary point. */

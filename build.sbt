@@ -52,7 +52,9 @@ lazy val examples = project
   .in(file("modules/examples"))
   .dependsOn(core)
   .settings(
-    name := "xjdf4s-examples"
+    name := "xjdf4s-examples",
+    libraryDependencies += "org.scalameta" %% "munit" % munitVersion % Test,
+    testFrameworks += new TestFramework("munit.Framework")
   )
 
 lazy val root = project

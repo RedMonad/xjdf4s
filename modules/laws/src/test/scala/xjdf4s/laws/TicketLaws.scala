@@ -1,9 +1,10 @@
 package xjdf4s.laws
 
+import xjdf4s.dsl.dsl
 import xjdf4s.model.*
 import xjdf4s.prim.*
 import xjdf4s.resources.*
-import cats.data.{Chain, NonEmptyChain}
+import cats.data.{Chain, NonEmptyChain, ValidatedNec}
 import munit.ScalaCheckSuite
 
 /** Structural validation against the XJDF specification, driven by the examples
@@ -167,4 +168,9 @@ class TicketLaws extends ScalaCheckSuite:
     val changeOrder: ChangeOrder = ticket(NonEmptyChain.one(ProcessType.Product))
     val asXjdf: XJDF = changeOrder // the refinement is erased at the value level
     assert(asXjdf.validate.isValid)
+
+  test("README example compiles and validates"):
+    val ticket: ValidatedNec[Issue, XJDF] =
+      dsl.TicketDraft.of("J1", ProcessType.Product).andThen(_.build)
+    assert(ticket.isValid)
 end TicketLaws
