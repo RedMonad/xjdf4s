@@ -96,11 +96,13 @@ final case class ValidationReport(errors: Chain[Issue], warnings: Chain[Issue]):
 
   /** Escalates only the warnings carrying the given codes. */
   def escalate(codes: Set[IssueCode]): ValidationReport =
-    val (escalated, remaining) = warnings.partition(i => i.code.exists(codes.contains))
-    copy(
-      errors = errors ++ escalated.map(_.copy(severity = SeverityClass.Error)),
-      warnings = remaining
-    )
+    val (escalated, remaining) = warnings.foldLeft((Chain.empty[Issue], Chain.empty[Issue])) {
+      case ((up, rest), i) =>
+        if i.code.exists(codes.contains) then
+          (up :+ i.copy(severity = SeverityClass.Error), rest)
+        else (up, rest :+ i)
+    }
+    copy(errors = errors ++ escalated, warnings = remaining)
 end ValidationReport
 
 object ValidationReport:
@@ -113,9 +115,13 @@ object ValidationReport:
    *  `Warning`, `Information`, `Event`) is a non-invalidating warning.
    */
   def fromIssues(issues: Chain[Issue]): ValidationReport =
-    val (errors, warnings) = issues.partition { i =>
-      i.severity == SeverityClass.Error || i.severity == SeverityClass.Fatal
-    }
+    val (errors, warnings) =
+      issues.foldLeft((Chain.empty[Issue], Chain.empty[Issue])) {
+        case ((errs, warns), i) if i.severity == SeverityClass.Error || i.severity == SeverityClass.Fatal =>
+          (errs :+ i, warns)
+        case ((errs, warns), i) =>
+          (errs, warns :+ i)
+      }
     ValidationReport(errors, warnings)
 end ValidationReport
 
@@ -211,9 +217,11 @@ object TicketValidator:
     resourceIssues ++ productIssues ++ notificationIssues
 
   private def checkResourceLocalLaws(resource: Resource, at: XPath): Chain[Issue] =
-    resource.amountPool.fold(Chain.empty[Issue])(_.toList.flatMap { pa =>
-      pa.partWaste.flatMap(pw => PartWaste.law.check(pw, at))
-    })
+    resource.amountPool.fold(Chain.empty[Issue]) { pool =>
+      pool.toList.foldLeft(Chain.empty[Issue]) { (acc, pa) =>
+        acc ++ pa.partWaste.foldLeft(Chain.empty[Issue])((w, pw) => w ++ PartWaste.law.check(pw, at))
+      }
+    }
     // Note: Disposition (Table 8.23) is a child of FileSpec inside chapter-6
     // resources; once resources carrying FileSpec are implemented, the
     // traversal extends here with `TicketValidator.dispositionLaw.check(d, at)`.
@@ -369,7 +377,7 @@ object TicketValidator:
                 val code = issue.message match
                   case msg if msg.startsWith("Cycle")         => IssueCode.BomCycle
                   case msg if msg.startsWith("Unresolved")    => IssueCode.BomUnresolvedChildRef
-                  case _ if msg.contains("at least one root") => IssueCode.BomNoRoot
+                  case msg if msg.contains("at least one root") => IssueCode.BomNoRoot
                   case _                                      => IssueCode.LocalLawViolation
                 issue.copy(code = Some(code))
             Chain.one(retagged)

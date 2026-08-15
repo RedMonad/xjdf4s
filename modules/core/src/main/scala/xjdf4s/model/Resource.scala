@@ -216,21 +216,22 @@ object ResourceSetLaw:
    */
   val children: DomainRule[ResourceSet] =
     (rs: ResourceSet, at: XPath) =>
-      val bad = rs.resources.filterNot(r => r.elementName.forall(_ == rs.name.toNmToken))
-      Chain.fromSeq(bad).map { r =>
-        val actual = r.elementName.fold("<bodyless>")(_.value)
-        Issue.errorC(
-          IssueCode.ResourceSetChildNameMismatch,
-          at,
-          s"Resource element '$actual' does not match ResourceSet/@Name='${rs.name.toNmToken.value}' (Table 6.1)"
-        )
-      }
+      rs.resources
+        .filterNot(r => r.elementName.forall(_ == rs.name.toNmToken))
+        .map { r =>
+          val actual = r.elementName.fold("<bodyless>")(_.value)
+          Issue.errorC(
+            IssueCode.ResourceSetChildNameMismatch,
+            at,
+            s"Resource element '$actual' does not match ResourceSet/@Name='${rs.name.toNmToken.value}' (Table 6.1)"
+          )
+        }
 
   /** Table 6.1: `@Status` SHALL NOT be specified if `ResourceSet/@Usage="Output"`. */
   val statuses: DomainRule[ResourceSet] =
     (rs: ResourceSet, at: XPath) =>
       if rs.usage.contains(Usage.Output) then
-        Chain.fromSeq(rs.resources.filter(_.status.isDefined)).map { r =>
+        rs.resources.filter(_.status.isDefined).map { r =>
           Issue.errorC(
             IssueCode.ResourceStatusOnOutput,
             at,
