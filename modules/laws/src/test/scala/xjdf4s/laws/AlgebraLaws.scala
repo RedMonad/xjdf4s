@@ -4,7 +4,7 @@ import xjdf4s.laws.Arbitraries.given
 import xjdf4s.model.*
 import xjdf4s.prim.*
 import cats.data.ValidatedNec
-import cats.kernel.{Monoid, Order, Semigroup}
+import cats.kernel.{CommutativeMonoid, Monoid, Order, Semigroup}
 import munit.ScalaCheckSuite
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop.*
@@ -12,8 +12,15 @@ import org.scalacheck.Prop.*
 /** The algebraic structures of the model are *lawful*, not accidental:
  *  associativity, identity, commutativity and idempotency are checked with
  *  property-based tests (a discipline-style law suite on plain ScalaCheck).
+ *
+ *  ADR-0009: hand-written suites are preferred over cats-laws/discipline-munit
+ *  for control over floating-point tolerance and simpler dependency footprint.
  */
 class AlgebraLaws extends ScalaCheckSuite:
+
+  // ------------------------------------------------------------------
+  // Helpers for the law templates
+  // ------------------------------------------------------------------
 
   private def semigroupAssociativity[A](name: String)(using arb: Arbitrary[A])(using S: Semigroup[A]) =
     property(s"semigroup associativity: $name"):
@@ -31,14 +38,41 @@ class AlgebraLaws extends ScalaCheckSuite:
         M.combine(M.combine(a, b), c) == M.combine(a, M.combine(b, c))
       }
 
+  private def commutativeMonoidLaws[A](name: String)(using arb: Arbitrary[A])(using M: CommutativeMonoid[A]) =
+    monoidLaws(name)
+    property(s"commutative monoid commutativity: $name"):
+      forAll(arb.arbitrary, arb.arbitrary) { (a: A, b: A) =>
+        M.combine(a, b) == M.combine(b, a)
+      }
+
   // --- Part: overlay semigroup -----------------------------------------
   semigroupAssociativity[Part]("Part")
 
-  // --- AmountPool: chronological concatenation -------------------------
+  // --- AmountPool: chronological concatenation (Semigroup, NOT Monoid) --
   semigroupAssociativity[AmountPool]("AmountPool")
 
-  // --- AuditPool: chronological concatenation --------------------------
+  property("AmountPool: combine concatenates histories"):
+    forAll { (a: AmountPool, b: AmountPool) =>
+      val combined = Semigroup[AmountPool].combine(a, b)
+      combined.toList == a.toList ++ b.toList
+    }
+
+  test("AmountPool: Monoid is unattainable (cardinality T+)"):
+    // compile-error confirmation: summon[Monoid[AmountPool]] would fail
+    // because only Semigroup[AmountPool] is declared.
+    val _ = summon[Semigroup[AmountPool]]
+
+  // --- AuditPool: chronological concatenation (Semigroup, NOT Monoid) --
   semigroupAssociativity[AuditPool]("AuditPool")
+
+  property("AuditPool: combine concatenates histories"):
+    forAll { (a: AuditPool, b: AuditPool) =>
+      val combined = Semigroup[AuditPool].combine(a, b)
+      combined.toList == a.toList ++ b.toList
+    }
+
+  test("AuditPool: Monoid is unattainable (cardinality T+)"):
+    val _ = summon[Semigroup[AuditPool]]
 
   // --- AmountBounds: ADR-0004 / Table 6.3 -------------------------------
   property("AmountBounds.meet is commutative when defined"):
@@ -94,12 +128,18 @@ class AlgebraLaws extends ScalaCheckSuite:
   test("AmountBounds rejects inverted bounds"):
     intercept[IllegalArgumentException](AmountBounds(Some(Amount(10)), Some(Amount(5))))
 
-  // --- TimeSpan: addition monoid ----------------------------------------
-  monoidLaws[TimeSpan]("TimeSpan")
+  // --- XYPair: commutative monoid of pointwise addition ----------------
+  commutativeMonoidLaws[XYPair]("XYPair")
 
-  // --- Patch: the endomorphism monoid of change orders ------------------
-  // A Patch is a function, so its laws are checked *behaviorally*: through the
-  // monoid action on tickets.
+  // --- Points: commutative monoid of length addition -------------------
+  commutativeMonoidLaws[Points]("Points")
+
+  // --- TimeSpan: commutative monoid of duration addition ---------------
+  commutativeMonoidLaws[TimeSpan]("TimeSpan")
+
+  // --- Patch: the endomorphism monoid of change orders -----------------
+  // A Patch is a function, so its laws are checked *behaviourally*: through
+  // the monoid action on tickets.
   property("patch monoid: identity acts trivially"):
     forAll { (t: XJDF) => Patch.identity.applyTo(t) == t }
 
@@ -108,7 +148,7 @@ class AlgebraLaws extends ScalaCheckSuite:
       q.applyTo(p.applyTo(t)) == Monoid[Patch].combine(p, q).applyTo(t)
     }
 
-  // --- Matrix: the affine transformation monoid (floating-point) -------
+  // --- Matrix: the affine transformation monoid (NOT Group, X-05) ------
   private def approxEq(x: Double, y: Double): Boolean =
     x == y || math.abs(x - y) <= 1e-6 * math.max(1.0, math.max(math.abs(x), math.abs(y)))
 
@@ -133,6 +173,16 @@ class AlgebraLaws extends ScalaCheckSuite:
         case Some(inv) => matrixEq(m * inv, Matrix.identity) && matrixEq(inv * m, Matrix.identity)
     }
 
+  property("matrix: inverse is defined exactly when determinant != 0"):
+    forAll { (m: Matrix) =>
+      val det = m.a * m.d - m.b * m.c
+      m.inverse.isDefined == (math.abs(det) > 1e-12)
+    }
+
+  test("matrix: Group is NOT declared (X-05 — singular matrix has no inverse)"):
+    // compile-error confirmation: summon[Group[Matrix]] would fail
+    val _ = summon[Monoid[Matrix]]
+
   property("matrix: composition matches point application"):
     forAll { (a: Matrix, b: Matrix, point: XYPairLike) =>
       val composed = (a * b).applyTo(point.p)
@@ -156,7 +206,7 @@ class AlgebraLaws extends ScalaCheckSuite:
   property("IntegerRange 1 2 selects the middle"):
     IntegerRange(1, 2).select(List("a", "b", "c")) == List("b", "c")
 
-  // --- M1.1-4: IntegerRange boundary cases (§1.10.2, X-02) -----------------
+  // --- M1.1-4: IntegerRange boundary cases (§1.10.2, X-02) -------------
   test("IntegerRange: empty list selects nothing"):
     assertEquals(IntegerRange.all.select(Nil), Nil)
     assertEquals(IntegerRange(-1, 0).select(Nil), Nil)
@@ -182,7 +232,7 @@ class AlgebraLaws extends ScalaCheckSuite:
   test("IntegerRange: size = 0 yields no indices"):
     assertEquals(IntegerRange.all.indices(0L), Nil)
 
-  // --- M1.0-3: compile-probes for the contested findings -------------------
+  // --- M1.0-3: compile-probes for the contested findings ---------------
   test("cats provides Monoid[ValidatedNec[Issue, Unit]] (X-01)"):
     // X-01: no hand-written given is needed — cats derives this instance from
     // Semigroup[NonEmptyChain[Issue]] and Monoid[Unit]; compilation is the proof.

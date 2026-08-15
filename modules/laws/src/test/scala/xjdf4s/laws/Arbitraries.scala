@@ -51,6 +51,15 @@ object Arbitraries:
         y <- Gen.choose(-1000.0, 1000.0)
       yield XYPair(x, y)
 
+  implicit val arbPoints: Arbitrary[Points] =
+    Arbitrary(Gen.choose(-10000.0, 10000.0).map(Points.apply))
+
+  implicit val arbCoverage: Arbitrary[Coverage] =
+    Arbitrary(Gen.choose(0.0, 100.0).map(Coverage.unsafe))
+
+  implicit val arbUnitInterval: Arbitrary[UnitInterval] =
+    Arbitrary(Gen.choose(0.0, 1.0).map(UnitInterval.unsafe))
+
   implicit val arbRegExp: Arbitrary[RegExp] =
     Arbitrary(Gen.alphaNumStr.suchThat(_.nonEmpty).map(RegExp.unsafe))
 
