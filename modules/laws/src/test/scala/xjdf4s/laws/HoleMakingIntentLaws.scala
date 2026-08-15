@@ -50,7 +50,7 @@ class HoleMakingIntentLaws extends FunSuite:
 
   test("Table 4.29: HolePattern+ cardinality is NonEmptyChain (single element constructs)"):
     val intent = HoleMakingIntent(NonEmptyChain.one(validPattern))
-    assertEquals(intent.holePatterns.size.toInt, 1)
+    assertEquals(intent.holePatterns.toChain.size.toInt, 1)
 
   // --- Positive -------------------------------------------------------------
 
