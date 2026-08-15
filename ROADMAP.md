@@ -582,7 +582,7 @@ def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
 | N-23 | `AmountRange.meet`/`join` расходятся с собственной документацией; `join` не используется и не покрыт законом | `prim/Quantity.scala:540-544`: `stricterMin` возвращает **большее** (`if compare(x, y) >= 0 then x else y`); `meet.amount` использует `stricterMin` — «ужесточение» повышает обещание; `join.min` тоже использует `stricterMin` — «оптимистичное расширение» сужает интервал. `Semilattice[AmountRange]` определён через `meet`. grep подтверждает: `join` не вызывается нигде | M1.4-5 |
 | N-24 | `PartBuilder.set` бросает `IllegalArgumentException` без `unsafe` в имени | `model/Partition.scala:406-462`: `def set(part: Part, key: PartitionKey, value: PartitionValue): Part` через вспомогательные `expectToken`/`expectProductRef`, которые бросают исключение при несовпадении вида значения | M1.4-3 |
 | N-25 | `TicketDraft.withJobPart`/`withProject` молча глотают невалидные значения | `dsl/XjdfDsl.scala:195-199`: `def withJobPart(jobPartId: String): TicketDraft = copy(jobPartId = JobPartId.from(jobPartId))` — невалидная строка превращается в `None`. При этом `TicketDraft.of` валидирует `JobID` через `ValidatedNec` — несимметричный UX | M1.4-3 |
-| N-27 | `Bom.cata` и развёртка не стек-безопасны | `model/Product.scala:179-183`: `cata` рекурсивен без `Eval`; `toTree` тоже. Глубокий BOM (коробочное производство) — реальный кейс | M1.4-7 — `[~]` |
+| N-27 | `Bom.cata` и развёртка не стек-безопасны | `model/Product.scala:179-183`: `cata` рекурсивен без `Eval`; `toTree` тоже. Глубокий BOM (коробочное производство) — реальный кейс | M1.4-7 — `[x]` (верифицировано владельцем) |
 | N-28 | Непримитивные элементы глав 3/8 лежат в `prim/Common.scala` | Файл содержит `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`, `Catalog` — это элементы главы 8, а не примитивы Appendix A. Fan-In файла — 14 | M1.4-8 |
 | N-29 | Генераторы `Arbitraries` покрывают 5 из 27 Partition Keys | `laws/Arbitraries.scala:47-55`, `arbPart` порождает только `sheetName`, `separation`, `run`, `side`, `docIndex`. Почти все сочетания overlay/matches не достигаются | M1.2-1 (тесты), M1.5-3 |
 | N-39 | `resources.AllResources` — узкое место ещё до M3 (betweenness 161.6, Fan-Out 13) | Добавление ~130 таблиц главы 6 в единый enum усилит bottleneck линейно | ADR-0008, до массового M3 |
@@ -627,7 +627,7 @@ def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
 | ADR-0006 | Политика severity: errors vs warnings | до M1.3-5 | M1.3-5 |
 | ADR-0007 | Закрытые enum vs открытые каталоги; JSON Exceptions вне домена | до M1.2-2 | M1.2-2 |
 | ADR-0008 | Масштабируемое представление `ResourcePayload` | до массового M3 | M3.1 |
-| ADR-0009 | Law-инфраструктура: `cats-laws`/`discipline-munit` или локальные сьюты | до M1.4-6 — `[~]` (ADR создан; cats-laws/discipline-munit закомментированы в build.sbt для верификации владельцем) | M1.4-6 |
+| ADR-0009 | Law-инфраструктура: `cats-laws`/`discipline-munit` или локальные сьюты | до M1.4-6 — `[x]` (ADR-0009 зафиксирован в `docs/adr/0009-law-infrastructure.md`; рукописные сьюты сохранены; верифицировано владельцем в PR-12) | M1.4-6 |
 | ADR-0010 | Нормализация кодеков и сохранение расширений | до заморозки API M2 | M2.2 |
 
 ### ADR-0001 — ChangeOrder как номинальный partial-документ
@@ -1609,7 +1609,7 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 **Статус сессии (PR-11).** `AmountRange`, `join` и `Semilattice[AmountRange]` удалены. `PartAmount` хранит nominal `amount` и `AmountBounds` раздельно и проверяет согласованность. `meet` возвращает `Option` при пустом пересечении; `widen` расширяет границы. Law/regression-тесты покрывают направления, пустое пересечение, инвариант, ассоциативность, коммутативность, идемпотентность и эквивалентность `isDefined` непустому пересечению. Верифицировано владельцем чистой сборкой и тестами.
 
-#### M1.4-6. Уточнить алгебраические инстансы (P2) — закрывает X-05, ADR-0009 — `[~]` выполнено (PR-12, ожидает верификации владельцем)
+#### M1.4-6. Уточнить алгебраические инстансы (P2) — закрывает X-05, ADR-0009 — `[x]` выполнено (PR-12, верифицировано владельцем)
 
 - `XYPair`, `Points`, `TimeSpan` → `CommutativeMonoid`, коммутативность доказуема (pointwise double addition, Duration.plus) — property-тест `combine(a, b) == combine(b, a)` включён в `commutativeMonoidLaws`;
 - `Matrix` → `Monoid` + `inverse: Option[Matrix]` (X-05); scaladoc явно указывает, что `Group` не объявляется; `Group[Matrix]` compile-тест провалился бы; property-тест `inverse.isDefined ⟺ determinant != 0`;
@@ -1618,7 +1618,9 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 - каждый cats-инстанс имеет property-тест (ADR-0009: рукописные сьюты, `cats-laws`/`discipline-munit` не приняты);
 - ADR-0009 зафиксирован: решение — сохранение рукописных сьютов с обоснованием (Scala 3.8.4 резолв, floating-point tolerance, domain laws); `cats-laws`/`discipline-munit` добавлены в `build.sbt` (закомментированы) для верификации владельцем.
 
-#### M1.4-7. Стек-безопасный BOM (P2) — закрывает N-27 — `[~]` выполнено (PR-12, ожидает верификации владельцем)
+**Прогон владельца (PR-12).** `sbt -batch clean scalafmtCheckAll compile test examples/run` — чистая сборка, 180 тестов зелёных, 0 предупреждений (`-Wunused:all -Wvalue-discard -Wnonunit-statement`); статус `[x] (верифицировано владельцем)`.
+
+#### M1.4-7. Стек-безопасный BOM (P2) — закрывает N-27 — `[x]` выполнено (PR-12, верифицировано владельцем)
 
 ```scala
 def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eval[A] =
@@ -1630,6 +1632,8 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 ```
 
 Стек-безопасная развёртка (`toTreeEval`): каждый рекурсивный вызов обёрнут в `Eval.defer`, 10 000+ глубина без `StackOverflowError`. `toTree` — обёртка над `toTreeEval`. `cata` — обёртка над `cataEval` (stack-safe через `Eval`). Тест `BomLaws` включает цепочку `@ChildRefs` глубиной 10 000, измерение глубины через `cataEval[Int]`. Deep-тест не является бенчмарком.
+
+**Прогон владельца (PR-12).** `sbt -batch clean scalafmtCheckAll compile test examples/run` — чистая сборка, 180 тестов зелёных, 0 предупреждений; deep-тест 10 000 без `StackOverflowError`; статус `[x] (верифицировано владельцем)`.
 
 #### M1.4-8. Разгрузить `prim/Common.scala` (P2) — закрывает N-28
 
@@ -1751,7 +1755,7 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 | 9 | `ValidationTypes` и разрыв цикла | M1.4-1 | 8 | циклов = 0 — `[x]` (PR-9 верифицирован владельцем) |
 | 10 | ADR-0001 + номинальный `ChangeOrder` | M1.4-2 | 3, 9 | compile/apply/revalidate — `[x]` (верифицировано владельцем) |
 | 11 | Тотальные builder-ы, решение по `IdAllocator`, ADR-0004 `AmountBounds` | M1.4-3, M1.4-4, M1.4-5 | 9 | `[x]` (верифицировано владельцем) |
-| 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 — `[~]` (выполнено, ожидает верификации владельцем) |
+| 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 — `[x]` (верифицировано владельцем: чистая сборка, 180 тестов, 0 предупреждений) |
 | 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate |
 | 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | компиляция без правок поведения |
 | 15+ | Пробелы глав 4/8 — один вертикальный срез на PR | M1.6 | 13 | шаблон среза выполнен |
@@ -2142,7 +2146,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-24 | `PartBuilder.set` бросает | ✅ `withValue` / `withValueUnsafe` | M1.4-3 — `[x]` (верифицировано владельцем) | P2 |
 | N-25 | `TicketDraft` глотает вход | ✅ `ValidatedNec` + явные unsafe-варианты | M1.4-3 — `[x]` (верифицировано владельцем) | P2 |
 | N-26 | README `.flatMap` | ✅ `.andThen` + compile-тест | M1.0-2 | P3 |
-| N-27 | `cata` не стек-безопасен | ✅ `Eval` (cataEval + toTreeEval) | M1.4-7 — `[~]` | P2 |
+| N-27 | `cata` не стек-безопасен | ✅ `Eval` (cataEval + toTreeEval) | M1.4-7 — `[x]` (верифицировано владельцем) | P2 |
 | N-28 | Не-примитивы в `prim/Common` | ✅ перенос в `model/elements` | M1.4-8 | P2 |
 | N-29 | `arbPart` покрывает 5 ключей из 27 | ✅ переписать генератор | M1.2-1, M1.5-3 | P2 |
 | N-30 | `docs/03` о `.andThen` | ✅ исправить | M1.0-2 | P3 |
@@ -2166,7 +2170,7 @@ M1: одна обязательная быстрая платформа — Temu
 | X-02 | `IntegerRange` нисходящие сломаны | ❌ отклонено; только rename | M1.1-4 | P2 |
 | X-03 | Красный `build.log` в VCS | ⚠️ не воспроизводится | M1.0-4 (правило) | P4 |
 | X-04 | `XJDF/@Name` отсутствует в домене | 🔁 codec-only (ADR-0007) | M2.5 | — |
-| X-05 | `Group[Matrix]` | 🔁 `Monoid` + частичный `inverse` | M1.4-6 — `[~]` | P2 |
+| X-05 | `Group[Matrix]` | 🔁 `Monoid` + частичный `inverse` | M1.4-6 — `[x]` (верифицировано владельцем) | P2 |
 | X-06 | Перенос кода через `cherry-pick` | ⚠️ неприменимо: коммитов нет | — | — |
 
 ### 14.2 Ключевые нормативные ссылки
@@ -2610,4 +2614,4 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-12 выполнены. PR-12 (M1.4-6/7: алгебраические инстансы и stack-safe BOM): ADR-0009 зафиксирован (рукописные сьюты), `CommutativeMonoid` для `XYPair`/`Points`/`TimeSpan`, `Order` для `Coverage`/`UnitInterval`/`IntegerRange`/`TimeSpan`, scaladoc о недостижимости `Monoid` для `AuditPool`/`AmountPool`, `cataEval`/`toTreeEval` с `Eval.defer`, deep-тест ≥10 000. Статус `[~]` — ожидает верификации владельцем (`sbt -batch clean scalafmtCheckAll compile test examples/run`). Следующий по плану — PR-13 (M1.2-6, M1.5-1…M1.5-4: scaladoc-ссылки, SPEC-COVERAGE, docs/ADR).
+**Краткий следующий шаг:** PR-1…PR-12 выполнены. PR-12 (M1.4-6/7: алгебраические инстансы и stack-safe BOM): ADR-0009 зафиксирован (рукописные сьюты), `CommutativeMonoid` для `XYPair`/`Points`/`TimeSpan`, `Order` для `Coverage`/`UnitInterval`/`IntegerRange`/`TimeSpan`, scaladoc о недостижимости `Monoid` для `AuditPool`/`AmountPool`, `cataEval`/`toTreeEval` с `Eval.defer`, deep-тест ≥10 000. Статус `[x] (верифицировано владельцем)`: чистая сборка, 180 тестов зелёных, 0 предупреждений. Следующий по плану — PR-13 (M1.2-6, M1.5-1…M1.5-4: scaladoc-ссылки, SPEC-COVERAGE, docs/ADR).
