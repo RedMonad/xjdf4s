@@ -1,28 +1,133 @@
-# SPEC-COVERAGE — Реестр покрытия спецификации XJDF 2.2 и сознательных отклонений
+# Specification Coverage Report
 
-Настоящий документ ведёт реестр соответствия доменного ядра спецификации CIP4 XJDF 2.2 и фиксирует все сознательные архитектурные отклонения с их обоснованием и компенсацией (ROADMAP §1.2, Приложение C, ADR-0007).
+Generated: 2026-08-15 (PR-13)
+Checker: `scripts/check-spec-coverage.sh` (запускается в CI, переиспользуется генератором M3)
 
-## Реестр сознательных отклонений
+Сводка покрытия **вычисляется** чекером, а не хранится приблизительным числом:
+README ссылается на этот документ, числа — в выводе чекера.
 
-| Отклонение | Причина | Компенсация | Статус |
-| --- | --- | --- | --- |
+**Конвенция ссылок.** Нумерация разделов и таблиц спецификации независима
+(именно эта путаница породила семь ошибок N-15). В scaladoc используется
+формат `§x.y / Table z`; чекер сверяет существование каждой таблицы с
+заголовками `**Table N.M: …**` / `### Table N.M …` в `reference/xjdf/*`.
+
+**Семантика колонок.**
+
+- **Cardinality** — словарь Table 1.2: `1`, `?`, `*`, `+` (в рамках родительского элемента);
+- **Validation** — `✅` если тип охвачен `DomainRule`/проверкой корневого валидатора
+  (включая контейнерные законы `@Name ↔ elementName`); `❌` — нет;
+- **Domain tests** — `✅` если тип прямо упражняется хотя бы одним тестом в
+  `modules/laws` или conformance-сьютом примеров; `❌` — нет;
+- **XML / JSON** — канонические кодеки; появляются в M2;
+- **Status** — `Implemented` / `Planned` / `codec-only (M2)` / `Not modelled`;
+- **Notes** — version notes (`New in XJDF 2.x`), решения и ссылки на находки.
+
+## Resources (Chapter 6)
+
+| Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
+|---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
+| §6.1 | Table 6.1 | Resource | `Resource` | `+` | ✅ | ✅ | ❌ | ❌ | Implemented | bodyless `<Resource/>` представим (N-11); `Specific Resource?` → `Option`; `@Name ↔ payload` — `ResourceSetLaw`; New in XJDF 2.1: `@Expires` — не моделируется до M3 |
+| §6.1 | Table 6.1 | Resource payload dispatch | `ResourcePayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 12 payload + `Foreign` escape hatch (ADR-0008) |
+| §3.4 | Table 3.12 | ResourceSet | `ResourceSet` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | уникальность §3.4 попарно через `clashesWith` (N-16, `IssueCode.ResourceSetClash`) |
+| §6.1.2 | Table 6.3 | PartAmount | `PartAmount` | `+` | ✅ | ✅ | ❌ | ❌ | Implemented | `parts: Chain[Part]` (N-10); nominal/`AmountBounds` разделены (ADR-0004) |
+| §6.1.3 | Table 6.4 | Part | `Part` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | все 27 ключей; `matches` — отношение толерантности (ADR-0005); New in XJDF 2.1: `@Product` → `Part.product` |
+| §6.1.4 | Table 6.5 | PartWaste | `PartWaste` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | law: задан `@ModuleIDs` или `@WasteDetails` |
+| §6.1.1 | Table 6.2 | AmountPool | `AmountPool` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `Semigroup` — кардинальность `T+` запрещает `Monoid` (ADR-0006/§6) |
+| §6.14 | Table 6.27 | Color | `Color` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@Spectrum`, `ColorMeasurementConditions` — не моделируются (M3) |
+| §6.18 | Table 6.37 | Component | `Component` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
+| §6.19 | Table 6.38 | Contact | `Contact` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
+| §6.19.1 | Table 6.39 | ComChannel | `ComChannel` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §6.19.2 | Table 6.40 | Company | `Company` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §6.19.4 | Table 6.42 | Person | `Person` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §8.1 | Table 8.1 | Address | `Address` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §6.25 | Table 6.53 | CuttingParams | `CuttingParams` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
+| §8.16 | Table 8.19 | CutBlock | `CutBlock` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §6.26 | Table 6.54 | DeliveryParams | `DeliveryParams` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
+| §6.26.1 | Table 6.55 | DropItem | `DropItem` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | полон по Table 6.55: `@TotalDimensions`, `@TotalVolume`, `@TotalWeight` (N-12) |
+| §6.28 | Table 6.57 | Device | `Device` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@MaxRunSpeed`, FileSpec CurrentSchema/Schema; New in XJDF 2.2: `@RestApiBaseURL` (JSON Exception — доменное `Url`-поле, обработка в codec M2) |
+| §6.36 | Table 6.74 | FoldingParams | `FoldingParams` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
+| §6.52 | Table 6.95 | Layout | `Layout` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@Anchor`, `@SheetLay` — моделируются; `@ExpansionBox`, `Position/@PositionOrd` — не моделируются (M3) |
+| §6.57 | Table 6.114 | Media | `Media` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@BackCIE*`, `@Spectrum`, `ColorMeasurementConditions` — не моделируются (M3) |
+| §6.59 | Table 6.119 | NodeInfo | `NodeInfo` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
+| §6.66 | Table 6.134 | Preview | `Preview` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
+| §6.73 | Table 6.148 | RunList | `RunList` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@DocPages` → `RunList.docPages`; упражняется структурно conformance-сьютом (brochureJob) |
+| §6.73 | Table 6.148 | ByteMap | `ByteMap` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+
+## Intents (Chapter 4)
+
+| Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
+|---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
+| §4.1 | Table 4.1 | Intent | `Intent` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | `@Name == payload.elementName` (`Intent.nameLaw`) |
+| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 8 payload + `Extension` escape hatch |
+| §4.2 | Table 4.3 | AssemblingIntent | `AssemblingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
+| §4.2 | Table 4.4 | AssemblyItem | `AssemblyItem` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.2 | Table 4.5 | BindIn | `BindIn` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.2 | Table 4.6 | BlowIn | `BlowIn` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.2 | Table 4.7 | StickOn | `StickOn` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.3 | Table 4.8 | BindingIntent | `BindingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | law: парность details ↔ `@BindingType`; запрет `@BindingSide` при `@BindingOrder="None"` |
+| §4.3 | Table 4.9 | AdhesiveNote | `AdhesiveNote` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.3 | Table 4.10 | EdgeGluing | `EdgeGluing` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
+| §4.3 | Table 4.11 | HardCoverBinding | `HardCoverBinding` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | wire-токен `Glue` (регрессия N-08) |
+| §4.3 | Table 4.12 | LooseBinding | `LooseBinding` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.3 | Table 4.13 | CoilBinding | `CoilBinding` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.3 | Table 4.14 | CombBinding | `CombBinding` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.3 | Table 4.15 | RingBinding | `RingBinding` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.3 | Table 4.16 | SaddleStitching | `SaddleStitching` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
+| §4.3 | Table 4.17 | SideStitching | `SideStitching` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.3 | Table 4.18 | SoftCoverBinding | `SoftCoverBinding` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | токен `None` → `Unscored` (Приложение C ROADMAP, реестр отклонений) |
+| §4.3 | Table 4.19 | Tabs | `Tabs` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.4 | Table 4.20 | ColorIntent | `ColorIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
+| §4.4 | Table 4.21 | SurfaceColor | `SurfaceColor` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.7 | Table 4.27 | FoldingIntent | `FoldingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
+| §8.21 | Table 8.26 | Fold | `Fold` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation; общий для `FoldingIntent` и `FoldingParams` |
+| §8.34 | Table 8.53 | Perforate | `Perforate` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.10 | Table 4.31 | LayoutIntent | `LayoutIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
+| §4.11 | Table 4.32 | MediaIntent | `MediaIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
+| §4.12 | Table 4.33 | ProductionIntent | `ProductionIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | New in XJDF 2.1: `Certification*` — не моделируется (M1.6) |
+| §4.14 | Table 4.36 | VariableIntent | `VariableIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | law: `@MinPages ≤ @AveragePages ≤ @MaxPages` |
+
+## Deliberate Deviations
+
+Ведётся по ROADMAP, Приложение C. Каждое сознательное отклонение имеет
+владельца, обоснование, нормативный источник, тест и срок пересмотра;
+статус покрытия не может быть «есть case class».
+
+| Deviation | Reason | Compensation | Статус |
+|-----------|--------|--------------|--------|
 | `PartitionKey.OptionKey` вместо `Option` | коллизия имени со `scala.Option` | `attributeName = "Option"` + тест на wire-имя | реализовано (PR-4) |
 | `SeverityClass` вместо `Severity` | коллизия с `@Severity: Int [0..100]` из §5.3.4.1 | документировано в scaladoc | реализовано (PR-5) |
 | `HardCoverJacket.GlueApplied` / `Unjacketed` | Scala-имена не совпадают с токенами `Glue` / `None` (Table 4.11) | явный `def token` + golden-множество токенов | реализовано (PR-5) |
-| Семейство «→ `None`»: `BindingType.NoBinding` (Table A.8), `BindingOrder.Unbound` (§4.3), `Coating.Uncoated` (Table A.11), `SoftCoverScoring.Unscored` (Table 4.18), `HardCoverJacket.Unjacketed` (Table 4.11) | `None` — зарезервированное имя `scala.None` | явные `token`-маппинги + golden-тест «`→ None` token family» в `laws/EnumLaws.scala` | реализовано (PR-5) |
-| `HardCoverJacket.GlueApplied` | Scala-имя не совпадает с токеном `Glue` (Table 4.11, Sheet 1); имя `Glue` уже занято смыслом «тип клея» (`GlueType`, Table A.24) | явный `def token` без fallback-ветки + golden-тест на токен `Glue` (регрессия N-08) | реализовано (PR-5) |
-| `DeviceStatus.Cleanup` / `.Setup` и `Status.Cleanup` / `.Setup` — одинаковые имена в разных enum | это два разных типа спецификации (Table A.15 и Table A.46), совпадение имён нормативно | обращение только с явной квалификацией (`DeviceStatus.Setup`); член спецификации не удаляется (ADR-0007) | реализовано (PR-5) |
-| `Scope.Device` совпадает по имени с ресурсом `Device` (Table 6.57) | нормативное значение Table A.36 *(New in XJDF 2.2)* | обращение с явной квалификацией `Scope.Device`; коллизии нет, типы живут в разных пакетах | реализовано (PR-5) |
-| `MediaType` содержит 7 значений с пометкой Deprecated | декодер обязан читать документы, использующие их (ADR-0010: неизвестные/устаревшие данные не отбрасываются молча) | пометки только в scaladoc; аннотация `@deprecated` не ставится — она сделала бы предупреждающим сам список `all`, а сборка держится warning-free | реализовано (PR-5) |
-| `NamedColor` — открытый `NmToken` + `Catalog.NamedColor`, а не закрытый тип | prose (§1.10.3.1) и `schema.xsd` (147 `xs:pattern`) указывают на закрытый список, но §A.2.30 делегирует набор внешнему каталогу `[Color Names]` (SVG 1.1) | зафиксировано в ADR-0007; 147 значений в `Catalog.NamedColor` + тест на расширяемость; лексическая проверка — в кодеках M2 | реализовано (PR-5) |
-| `Sides.Unprinted` и `Scope.Device` отсутствуют в `schema.xsd` | XSD отстаёт от нормативного текста Appendix A (обе пометки *New* присутствуют в prose) | по §1.2 приоритет за текстом; зафиксировано в ADR-0007 | реализовано (PR-5) |
+| Семейство «→ `None`»: `BindingType.NoBinding` (Table A.8), `BindingOrder.Unbound` (§4.3), `Coating.Uncoated` (Table A.11), `SoftCoverScoring.Unscored` (Table 4.18), `HardCoverJacket.Unjacketed` (Table 4.11) | `None` — зарезервированное имя `scala.None` | явные `token`-маппинги + golden-тест «`→ None` token family» в `laws/EnumLaws.scala`; список полон (машинная сверка M1.2-2) | реализовано (PR-5) |
+| `HardCoverJacket.GlueApplied` | Scala-имя не совпадает с токеном `Glue` (Table 4.11, Sheet 1); имя `Glue` занято смыслом «тип клея» (`GlueType`, Table A.24) | явный `def token` без fallback + golden-тест на токен `Glue` (регрессия N-08) | реализовано (PR-5) |
+| `DeviceStatus.Cleanup` / `.Setup` и `Status.Cleanup` / `.Setup` — одинаковые имена в разных enum | два разных типа спецификации (Table A.15 и Table A.46), совпадение нормативно | обращение только с явной квалификацией (`DeviceStatus.Setup`); член спецификации не удаляется (ADR-0007) | реализовано (PR-5) |
+| `Scope.Device` совпадает по имени с ресурсом `Device` (Table 6.57) | нормативное значение Table A.36 *(New in XJDF 2.2)* | обращение с явной квалификацией `Scope.Device` | реализовано (PR-5) |
+| `MediaType` содержит 7 значений с пометкой Deprecated | декодер обязан читать документы с ними (ADR-0010: устаревшие данные не отбрасываются) | пометки только в scaladoc; `@deprecated` не ставится (сборка warning-free) | реализовано (PR-5) |
+| `NamedColor` — открытый `NmToken` + `Catalog.NamedColor` | prose (§1.10.3.1) и `schema.xsd` (147 `xs:pattern`) указывают на закрытый список, но §A.2.30 делегирует набор внешнему каталогу `[Color Names]` (SVG 1.1) | зафиксировано в ADR-0007 (часть 3); 147 значений + тест расширяемости; лексическая проверка — в кодеках M2 | реализовано (PR-5) |
+| `Sides.Unprinted` и `Scope.Device` отсутствуют в `schema.xsd` | XSD отстаёт от prose Appendix A (обе пометки *New*) | по §1.2 приоритет за текстом; расхождение зафиксировано в ADR-0007 | реализовано (PR-5) |
 | `XJDF/@Name` и `@$schema` отсутствуют в домене | JSON Exception, в XML запрещены (Table 3.1, X-04) | реализуются в `codec-json` (M2); статус **codec-only** | codec-only (M2) |
 | `Comment/@Text` отсутствует в домене | JSON Exception (Table 8.14) | реализуется в `codec-json` (M2); статус **codec-only** | codec-only (M2) |
-| Валидация `RegExp` — только непустота | Appendix A (Table A.1): «Regular expression as defined by `[XMLSchema]`» — грамматика XSD-regex | M1.2-1: валидация непустотой; полная XSD-грамматика — на стороне кодеков M2 | реализовано (PR-4) |
-| `XjdfVersion.from` принимает только `"2.2"` | Table 3.1 требует `"2.2"` для соответствующих спецификации документов, хотя Table A.52 перечисляет `2.0`/`2.1`/`2.2` | scaladoc-объяснение (M1.5-2); при поддержке 2.0/2.1 — отдельное решение | запланировано (M1.5-2) |
-| `Monoid[Matrix]` вместо `Group` | вырожденная матрица необратима | `inverse: Option[Matrix]` + задокументированная причина; опциональный `InvertibleMatrix` вне M1 | реализовано |
-| `Semigroup` (не `Monoid`) для `AuditPool`, `AmountPool`, `NmTokens`, `ProcessPath` | носитель `NonEmptyChain`, кардинальность `T+` запрещает пустое значение | явная запись в scaladoc и в `docs/01` | реализовано |
+| Валидация `RegExp` — только непустота | грамматика XSD-regex несовместима с `java.util.regex`; `schema.xsd` (`regExp`) — `restriction base="xs:string"` без ограничений | валидация непустотой (M1.2-1); полная XSD-грамматика — на стороне кодеков M2 | реализовано (PR-4) |
+| `XjdfVersion.from` принимает только `"2.2"` | Table 3.1 требует `"2.2"` для соответствующих спецификации документов, хотя Table A.52 перечисляет `2.0`/`2.1`/`2.2` | scaladoc-объяснение (M1.5-2, PR-13); поддержка 2.0/2.1 — отдельное решение | реализовано (PR-13) |
+| `Monoid[Matrix]` вместо `Group` | вырожденная матрица необратима | `inverse: Option[Matrix]` + задокументированная причина; опциональный `InvertibleMatrix` вне M1 | реализовано (PR-12) |
+| `Semigroup` (не `Monoid`) для `AuditPool`, `AmountPool`, `NmTokens`, `ProcessPath` | носитель `NonEmptyChain`, кардинальность `T+` запрещает пустое значение | явная запись в scaladoc и в `docs/01`; compile-тест | реализовано (PR-12) |
 | Дубликат `"Product"` в `@Types` считается нарушением | §3.1.3 говорит «additional process type tokens»; трактовка «любой второй токен» | зафиксировано как интерпретация + негативный тест (N-36, `XJDF-TYPES-PRODUCT-DUPLICATE`) | реализовано (PR-8, M1.3-4) |
+
+## Version notes
+
+Пометки `New in XJDF 2.1/2.2` в покрытых таблицах (чекер требует их
+упоминания в строках реестра):
+
+| Table | Пометка | Статус в модели |
+|-------|---------|-----------------|
+| Table 6.1 | `@Expires` (2.1) | не моделируется до M3 |
+| Table 6.4 | `@Product` (2.1) | моделируется (`Part.product`) |
+| Table 6.27 | `@Spectrum`, `ColorMeasurementConditions` (2.1) | не моделируются (M3) |
+| Table 6.57 | `@MaxRunSpeed` (2.1), FileSpec CurrentSchema/Schema (2.1), `@RestApiBaseURL` (2.2, JSON Exception) | `@MaxRunSpeed`, `@RestApiBaseURL` моделируются; FileSpec-схемы — M3 |
+| Table 6.95 | `@Anchor`, `@ExpansionBox`, `@SheetLay` (2.1) | `@Anchor`, `@SheetLay` моделируются; `@ExpansionBox` — M3 |
+| Table 6.114 | `@BackCIE*`, `@BackSpectrum`, `@Spectrum`, `ColorMeasurementConditions` (2.1) | не моделируются (M3) |
+| Table 6.148 | `@DocPages` (2.1) | моделируется (`RunList.docPages`) |
+| Table 8.19 | `@DescriptiveName`, `@ExternalID`, `@Operations` (2.1) | моделируются (`CutBlock`) |
+| Table 4.33 | `Certification*` (2.1) | не моделируется (M1.6) |
 
 ## Decision records (короткие)
 
@@ -46,21 +151,15 @@
 
 **Норма.** ADR-0002: фундамент валидации — файл с Fan-Out 0; `Ticket.scala` не зависит от реализации `Patch`; корневой валидатор агрегирует правила; повторный анализ зависимостей — 0 циклов.
 
-**Решение (PR-9).** `model/ValidationTypes.scala` создан и содержит `Issue`, `IssueCode`, `SeverityClass`, `XPath`, `trait DomainRule[-A]`, `type ValidationResult[A] = ValidatedNec[Issue, A]`, `ValidationReport`; импортирует только `prim.*` и cats. По решению владельца список ADR-0002 выполнен буквально: `IssueCode`, `SeverityClass`, `XPath` перенесены из `prim` (`Tokens.scala`, `Enums.scala`) в слой валидации. `Validation.scala` переименован в `TicketValidator.scala`. Для нуля циклов из `Ticket.scala` убраны `XJDF.validate`, `XJDF.validateReport` (стали extension-методами в `TicketValidator.scala`) и `XJDF.withPatch` (extension в `Patch.scala`).
+**Решение (PR-9).** `model/ValidationTypes.scala` создан и содержит `Issue`, `IssueCode`, `SeverityClass`, `XPath`, `trait DomainRule[-A]`, `type ValidationResult[A] = ValidatedNec[Issue, A]`, `ValidationReport`; импортирует только `prim.*` и cats. По решению владельца список ADR-0002 выполнен буквально: `IssueCode`, `SeverityClass`, `XPath` перенесены из `prim` (`Tokens.scala`, `Enums.scala`) в слой валидации. `Validation.scala` переименован в `TicketValidator.scala`. Для нуля циклов из `Ticket.scala` убраны `XJDF.validate`, `XJDF.validateReport` (стали extension-методами в `TicketValidator.scala`) и `XJDF.withPatch` (extension в `Patch.scala`). Повторный анализ зависимостей: 0 циклов.
 
-**Migration impact.** Типы `XPath`, `SeverityClass`, `IssueCode` сменили пакет `xjdf4s.prim` → `xjdf4s.model`; потребители, импортировавшие их через `prim.*` без `xjdf4s.model.*`, обновлены: `intents/Binding.scala`, `intents/FoldingVariable.scala`, `laws/EnumLaws.scala`. Методы `XJDF.validate`/`validateReport`/`withPatch` — теперь extension-методы; call sites с точечным импортом обязаны добавить их в импорт (в репозитории такой один — `examples/SpecExamplesSuite.scala`, добавлен `validate`). Все прочие call sites используют `import xjdf4s.model.*` и не менялись: `dsl/XjdfDsl.scala`, `examples/SpecExamples.scala`, `laws/{TicketLaws,BomLaws,PatchLaws,AlignmentLaws}.scala`.
+## Сопровождение
 
-**Верификация.** Анализатор файловых зависимостей (top-level-символы, package-aware резолвинг, комментарии/строки исключены): до PR-9 — 1 цикл (SCC с `Validation/Product/Ticket/Patch`), после — 0 циклов. Межмодульный граф не изменился (`examples → core`, `laws → core`). Прогон владельца — Приложение D ROADMAP.
-
-**Компиляция (прогоны владельца).** Первый прогон дал единственную ошибку — E008 в теле `withPatch`: extension-синтаксис `patch.applyTo(ticket)` не резолвится для opaque `Patch` из тела top-level extension-блока в файле-определителе. Исправлено статической формой `Patch.applyTo(patch)(ticket)`; повторный прогон владельца — чистый (сборка и тесты зелёные). Статус задачи: `[x] (верифицировано владельцем)`.
-
-### DR-M1.4-2 — номинальный ChangeOrder (ADR-0001, N-20)
-
-**Норма.** §1.3.2: «send an XJDF that contains only the modified values». §1.6.5: «all elements and attributes that are not required to identify the context of the change order become optional». Table 7.56: `@JobID` SHALL совпасть с исходным тикетом. §9.8.2.1.1: совпадение по `@JobID` + `@JobPartID`.
-
-**Решение (PR-10).** Вариант C: `final case class ChangeOrder` с полями `jobId`, `jobPartId?`, `productList?` (replace), `auditPool?` (append), `resourceSets*` (upsert по `clashesWith`), `comments*` (append). `compile` → `Patch`; `applyChange` применяет патч и ревалидирует результат. `trait Partial` и `type ChangeOrder = XJDF & Partial` удалены. Набор полей закрыт сверкой (см. `docs/adr/0001-change-order.md`); `@Types` и Complete/Remove отложены в M4.
-
-**Migration impact.** `ChangeOrder` больше не является `XJDF`. Call sites: `Ticket.scala` (удаление alias), `TicketLaws.scala` (удалён тест пересечения), `SpecExamples.scala` / `Main.scala` (демо на новом типе), `README.md`, `docs/02`, `docs/04`.
-
-**Верификация.** Цикл ADR-0002 не вернулся (`ChangeOrder → TicketValidator`, обратного ребра нет). Владелец подтвердил чистый прогон `sbt -batch clean scalafmtCheckAll compile test examples/run`; статус `[x]` (верифицировано владельцем).
-
+- Чекер: `bash scripts/check-spec-coverage.sh` (exit 0 = OK). Запускается в CI,
+  как только CI вернётся по решению владельца (M1.0-1).
+- Новый ресурс/интент (шаблон вертикального среза M1.6/M3) обязан добавить
+  строку реестра в том же PR — обратная проверка чекера это ловит.
+- Каждое изменение публичного API с изменением spec-mapping обновляет этот
+  документ и scaladoc в том же PR (§15).
+- Golden-покрытие канонических XML/JSON рендеров появляется в M2 и заменит
+  временные `Show`-golden conformance-сьюта примеров (M1.5-3).

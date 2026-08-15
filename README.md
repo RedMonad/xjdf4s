@@ -61,7 +61,9 @@ val ticket: ValidatedNec[Issue, XJDF] =
 - `docs/01-category-theory-view.md` — XJDF через призму теории категорий;
 - `docs/02-scala3-features.md` — соответствие «спецификация → Scala 3»;
 - `docs/03-cats-mapping.md` — какие абстракции cats и зачем;
-- `docs/04-architecture.md` — модули, пакеты, принципы.
+- `docs/04-architecture.md` — модули, пакеты, принципы;
+- `docs/SPEC-COVERAGE.md` — реестр покрытия спецификации; сводка **вычисляется**
+  чекером `scripts/check-spec-coverage.sh`, приблизительные числа не хранятся.
 
 Вся модель сверена с `./reference/xjdf/*` (каждый тип в scaladoc ссылается на
 таблицу/раздел спецификации); языковые фичи — с `./reference/scala/*`;
