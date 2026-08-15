@@ -26,6 +26,23 @@ class TicketLaws extends ScalaCheckSuite:
       auditPool = auditPool
     )
 
+  /** A `Part` carrying `@Separation` and `@PartVersion` (Example 6.1). */
+  private def sepVersionPart(separation: String, partVersion: String): Part =
+    PartBuilder.empty
+      .withToken(PartitionKey.Separation, NmToken.unsafe(separation))
+      .withToken(PartitionKey.PartVersion, NmToken.unsafe(partVersion))
+      .build
+
+  /** An `ExposedMedia` resource. The specific `ExposedMedia` resource is outside
+   *  the implemented Chapter 6 subset, so it is modelled through the `Foreign`
+   *  escape hatch; the `PartAmount`/`Part` validation under test is unaffected.
+   */
+  private def exposedMedia(parts: Part*): Resource =
+    Resource(
+      specific = ResourcePayload.Foreign(NsPrefix.unsafe("ex"), NmToken.unsafe("ExposedMedia")),
+      parts = Chain.fromSeq(parts)
+    )
+
   test("Example 3.1: the minimal product ticket is valid"):
     val minimal = ticket(NonEmptyChain.one(ProcessType.Product))
     assert(minimal.validate.isValid)
@@ -188,6 +205,62 @@ class TicketLaws extends ScalaCheckSuite:
       case Right(_)     => fail("expected the shadowing PartAmount to be rejected")
     assert(messages.exists(_.contains("@Option")), messages.mkString("; "))
     assert(!messages.exists(_.contains("@OptionKey")), messages.mkString("; "))
+
+  test("§6.1.2.1 / Example 6.1: Versioned Set Of Plates with multiple parent Part elements is valid"):
+    val cyanEnglish = sepVersionPart("Cyan", "English")
+    val cyanFrench  = sepVersionPart("Cyan", "French")
+    val blackEnglish = sepVersionPart("Black", "English")
+    val rs = ResourceSet(
+      name = ResourceSetName.unsafe("ExposedMedia"),
+      usage = Some(Usage.Output),
+      resources = Chain(
+        exposedMedia(cyanEnglish, cyanFrench),
+        exposedMedia(blackEnglish)
+      )
+    )
+    val t = ticket(NonEmptyChain.one(ProcessType.Cutting), resourceSets = Chain.one(rs))
+    assert(t.validate.isValid)
+
+  test("§6.1.2.1 Rule 2: a PartAmount/Part may repeat a parent key when it matches one of several parent values"):
+    val cyanEnglish = sepVersionPart("Cyan", "English")
+    val cyanFrench  = sepVersionPart("Cyan", "French")
+    val child = PartBuilder.empty.withToken(PartitionKey.PartVersion, NmToken.unsafe("English")).build
+    val resource = exposedMedia(cyanEnglish, cyanFrench)
+      .copy(amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child)))))
+    val rs = ResourceSet(
+      name = ResourceSetName.unsafe("ExposedMedia"),
+      usage = Some(Usage.Output),
+      resources = Chain.one(resource)
+    )
+    val t = ticket(NonEmptyChain.one(ProcessType.Cutting), resourceSets = Chain.one(rs))
+    assert(t.validate.isValid)
+
+  test("§6.1.2.1 Rule 1: a PartAmount/Part SHALL NOT repeat a Partition Key uniquely specified by the parent"):
+    val parent = PartBuilder.empty.withToken(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
+    val child = PartBuilder.empty.withToken(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
+    val resource = exposedMedia(parent)
+      .copy(amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child)))))
+    val rs = ResourceSet(
+      name = ResourceSetName.unsafe("ExposedMedia"),
+      usage = Some(Usage.Output),
+      resources = Chain.one(resource)
+    )
+    val t = ticket(NonEmptyChain.one(ProcessType.Cutting), resourceSets = Chain.one(rs))
+    assert(t.validate.isInvalid)
+
+  test("§6.1.2.1 Rule 2: a repeated key value SHALL match one of the parent values (mismatch is rejected)"):
+    val cyanEnglish = sepVersionPart("Cyan", "English")
+    val cyanFrench  = sepVersionPart("Cyan", "French")
+    val child = PartBuilder.empty.withToken(PartitionKey.PartVersion, NmToken.unsafe("German")).build
+    val resource = exposedMedia(cyanEnglish, cyanFrench)
+      .copy(amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child)))))
+    val rs = ResourceSet(
+      name = ResourceSetName.unsafe("ExposedMedia"),
+      usage = Some(Usage.Output),
+      resources = Chain.one(resource)
+    )
+    val t = ticket(NonEmptyChain.one(ProcessType.Cutting), resourceSets = Chain.one(rs))
+    assert(t.validate.isInvalid)
 
   test("README example compiles and validates"):
     val ticket: ValidatedNec[Issue, XJDF] =

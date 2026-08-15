@@ -164,19 +164,40 @@ object TicketValidator:
       Issue.error(XPath("/XJDF/AuditPool"), "AuditPool is not ordered chronologically")
     )
 
-  /** §6.1.2.1: PartAmount/Part SHALL NOT include Partition Keys that are
-   *  already uniquely specified in the parent Resource/Part.
+  /** Every distinct value of a Partition Key across the parent Resource/Part
+   *  elements (Table 6.3 / §6.1.2.1).
+   */
+  private def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
+    parts.toList.flatMap(_.valueOf(key)).distinct
+
+  /** §6.1.2.1 (Table 6.3, `Part*`), both clauses:
+   *
+   *   1. a PartAmount/Part SHALL NOT include a Partition Key that the parent
+   *      Resource/Part elements already specify *uniquely* (a single value);
+   *   2. if a PartAmount/Part repeats a Partition Key that the parent specifies
+   *      with more than one value, the child value SHALL match one of the parent
+   *      values.
    */
   private def checkPartAmountKeys(ticket: XJDF): ValidatedNec[Issue, Unit] =
     val violations = ticket.resourceSets.toList.flatMap: rs =>
       rs.resources.toList.flatMap: r =>
-        val parentKeys = r.parts.size match
-          case 1 => r.parts.headOption.toList.flatMap(_.keys)
-          case _ => Nil
         r.amountPool.toList.flatMap: pool =>
           pool.toList.flatMap: pa =>
-            val overlap = pa.parts.toList.flatMap(_.keys).distinct.filter(parentKeys.contains)
-            overlap.map(k => s"${rs.name.toNmToken.value}/@${k.attributeName}")
+            pa.parts.toList.flatMap: child =>
+              child.keys.flatMap: key =>
+                parentValues(r.parts, key) match
+                  case _ :: Nil =>
+                    List(
+                      s"${rs.name.toNmToken.value}/@${key.attributeName} overrides a Partition Key already uniquely specified by the parent Resource/Part"
+                    )
+                  case parents if parents.nonEmpty =>
+                    child.valueOf(key) match
+                      case Some(v) if !parents.contains(v) =>
+                        List(
+                          s"${rs.name.toNmToken.value}/@${key.attributeName}=${Show[PartitionValue].show(v)} does not match a parent Resource/Part value"
+                        )
+                      case _ => Nil
+                  case Nil => Nil
     Validated.condNec(
       violations.isEmpty,
       (),
