@@ -4,6 +4,7 @@ package elements
 
 import xjdf4s.prim.*
 import cats.Show
+import cats.data.Chain
 import cats.kernel.Eq
 
 /** The `Comment` element (Table 8.14): human-readable text with an optional
@@ -213,3 +214,69 @@ object Crease:
   given Eq[Crease] = Eq.fromUniversalEquals
 
 end Crease
+
+/** The `Glue` element (Table 8.29): details of glue application on a
+ *  component. Used by `BindIn` (Table 4.5), `StickOn` (Table 4.7),
+ *  `AdhesiveNote` (Table 4.9) and finishing resources
+ *  (`GluingParams`, `EndSheetGluingParams`, etc.).
+ *
+ *  `@GlueType` uses the 5-value enumeration (Table 8.29), distinct from
+ *  the 3-value `EnumGlue` of Table A.24 (see ADR-0011, N-50).
+ *
+ *  SHALL rules (Table 8.29):
+ *  - `@GluingPattern` SHALL contain an even number of entries.
+ *  - `@MeltingTemperature` SHALL NOT be specified unless
+ *    `@GlueType` is `Hotmelt` or `PUR`.
+ */
+final case class Glue(
+    areaGlue: Option[Boolean] = None,
+    glueLineWidth: Option[Double] = None,
+    glueRef: Option[IdRef] = None,
+    glueType: Option[GlueType] = None,
+    gluingPattern: Option[FloatList] = None,
+    gluingTechnique: Option[GluingTechnique] = None,
+    meltingTemperature: Option[Long] = None,
+    startPosition: Option[XYPair] = None,
+    workingDirection: Option[Face] = None,
+    workingPath: Option[XYPair] = None
+)
+
+object Glue:
+
+  /** IDREF: `@GlueRef` references a `MiscConsumable` resource. */
+  def references(glue: Glue): Chain[IdRef] =
+    Chain.fromOption(glue.glueRef)
+
+  /** Local SHALL rules for the `Glue` element (Table 8.29, ADR-0003). */
+  def law(glue: Glue, at: XPath): Chain[Issue] =
+    Chain.fromOption(gluingPatternEven(glue, at)) ++
+      Chain.fromOption(meltingTemperatureRule(glue, at))
+
+  private def gluingPatternEven(glue: Glue, at: XPath): Option[Issue] =
+    glue.gluingPattern.flatMap { pattern =>
+      if pattern.size % 2 != 0 then
+        Some(Issue.errorC(
+          IssueCode.GluePatternOdd,
+          at,
+          "Glue/@GluingPattern SHALL contain an even number of entries (Table 8.29)"
+        ))
+      else None
+    }
+
+  private def meltingTemperatureRule(glue: Glue, at: XPath): Option[Issue] =
+    glue.meltingTemperature.flatMap { _ =>
+      glue.glueType match
+        case Some(GlueType.Hotmelt) | Some(GlueType.PUR) => None
+        case _ =>
+          Some(Issue.errorC(
+            IssueCode.GlueMeltingTempWithoutHeat,
+            at,
+            "Glue/@MeltingTemperature SHALL NOT be specified unless @GlueType is Hotmelt or PUR (Table 8.29)"
+          ))
+    }
+
+  given Show[Glue] = Show.fromToString
+
+  given Eq[Glue] = Eq.fromUniversalEquals
+
+end Glue

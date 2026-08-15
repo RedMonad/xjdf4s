@@ -136,6 +136,12 @@ object IssueCode:
   /** Change order `@JobPartID` does not match the base ticket (§9.8.2.1.1). */
   val ChangeOrderJobPartIdMismatch: IssueCode = unsafe("CHANGE-ORDER-JOBPARTID-MISMATCH")
 
+  /** `Glue/@GluingPattern` has an odd number of entries (Table 8.29). */
+  val GluePatternOdd: IssueCode = unsafe("GLUE-PATTERN-ODD")
+
+  /** `Glue/@MeltingTemperature` specified without `Hotmelt` or `PUR` (Table 8.29). */
+  val GlueMeltingTempWithoutHeat: IssueCode = unsafe("GLUE-MELTING-TEMP-WITHOUT-HEAT")
+
 end IssueCode
 
 /** A validation finding: a stable machine-readable code, the severity class,

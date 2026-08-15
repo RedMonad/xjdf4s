@@ -47,6 +47,7 @@ README ссылается на этот документ, числа — в вы
 | §6.28 | Table 6.57 | Device | `Device` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@MaxRunSpeed`, FileSpec CurrentSchema/Schema; New in XJDF 2.2: `@RestApiBaseURL` (JSON Exception — доменное `Url`-поле, обработка в codec M2) |
 | §6.36 | Table 6.74 | FoldingParams | `FoldingParams` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `Crease*` (Table 8.17) моделируется (M1.6-2); `Cut*` — M3 |
 | §8.14 | Table 8.17 | Crease | `Crease` | `*` | ❌ | ✅ | ❌ | ❌ | Implemented | structural; container-level validation; контейнеры — `FoldingParams` (`Crease*`, моделируется), `CreasingParams` (`Crease+`, M3); `@Depth` в µm → `Microns` |
+| §8.24 | Table 8.29 | Glue | `Glue` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | SHALL: `@GluingPattern` even entries, `@MeltingTemperature` only with Hotmelt/PUR (M1.6-3, ADR-0011); `@GlueRef` → IDREF (collected); контейнеры — `BindIn`, `StickOn`, `AdhesiveNote` (глава 4), `GluingParams` etc. (M3) |
 | §6.52 | Table 6.95 | Layout | `Layout` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@Anchor`, `@SheetLay` — моделируются; `@ExpansionBox`, `Position/@PositionOrd` — не моделируются (M3) |
 | §6.57 | Table 6.114 | Media | `Media` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@BackCIE*`, `@Spectrum`, `ColorMeasurementConditions` — не моделируются (M3) |
 | §6.59 | Table 6.119 | NodeInfo | `NodeInfo` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
@@ -59,6 +60,9 @@ README ссылается на этот документ, числа — в вы
 | Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
 |---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
 | §A.2.49 | Table A.50 | WorkingDirection | `WorkingDirection` | 1 | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`Bottom`, `Top`); golden и машинная сверка — `EnumLaws`; тип XSD — `EnumTopBottom` (имя таблицы и атрибута нормативны); потребители — `Crease` (M1.6-2), `Cut` (M3) |
+| §A.2.23 | Table A.24 | EnumGlue | `EnumGlue` | 1 | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (3 значения: `ColdGlue`, `Hotmelt`, `PUR`); XSD `simpleType EnumGlue`; для атрибутов «Allowed value is from: Glue» (`EdgeGlue`, `SpineGlue`); переименован из `GlueType` в M1.6-3 (ADR-0011) |
+| §8.24 | Table 8.29 | GlueType | `GlueType` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (5 значений: `ColdGlue`, `Hotmelt`, `Permanent`, `PUR`, `Removable`); атрибут `Glue/@GlueType`; новый в M1.6-3 (ADR-0011, N-50) |
+| §8.24 | Table 8.29 | GluingTechnique | `GluingTechnique` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (3 значения: `SideGluingBack`, `SideGluingFront`, `SpineGluing`); атрибут `Glue/@GluingTechnique`; новый в M1.6-3 |
 
 ## Intents (Chapter 4)
 
@@ -68,11 +72,11 @@ README ссылается на этот документ, числа — в вы
 | §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 8 payload + `Extension` escape hatch |
 | §4.2 | Table 4.3 | AssemblingIntent | `AssemblingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.2 | Table 4.4 | AssemblyItem | `AssemblyItem` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
-| §4.2 | Table 4.5 | BindIn | `BindIn` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.2 | Table 4.5 | BindIn | `BindIn` | `*` | ✅ | ❌ | ❌ | ❌ | Implemented | `Glue?` → `Option[Glue]` (элемент, M1.6-3/ADR-0011); `Glue/@GlueRef` собирается; SHALL-правила Glue подключены через валидатор |
 | §4.2 | Table 4.6 | BlowIn | `BlowIn` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
-| §4.2 | Table 4.7 | StickOn | `StickOn` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.2 | Table 4.7 | StickOn | `StickOn` | `*` | ✅ | ❌ | ❌ | ❌ | Implemented | `Glue?` → `Option[Glue]` (элемент, M1.6-3/ADR-0011); `Glue/@GlueRef` собирается; SHALL-правила Glue подключены через валидатор |
 | §4.3 | Table 4.8 | BindingIntent | `BindingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | law: парность details ↔ `@BindingType`; запрет `@BindingSide` при `@BindingOrder="None"` |
-| §4.3 | Table 4.9 | AdhesiveNote | `AdhesiveNote` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.3 | Table 4.9 | AdhesiveNote | `AdhesiveNote` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | `Glue?` → `Option[Glue]` (элемент, M1.6-3/ADR-0011); `Glue/@GlueRef` собирается; SHALL-правила Glue подключены через валидатор |
 | §4.3 | Table 4.10 | EdgeGluing | `EdgeGluing` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
 | §4.3 | Table 4.11 | HardCoverBinding | `HardCoverBinding` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | wire-токен `Glue` (регрессия N-08) |
 | §4.3 | Table 4.12 | LooseBinding | `LooseBinding` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |

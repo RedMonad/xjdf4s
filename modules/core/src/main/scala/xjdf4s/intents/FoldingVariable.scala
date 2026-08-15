@@ -2,6 +2,7 @@ package xjdf4s
 package intents
 
 import xjdf4s.model.{DomainRule, Issue, IssueCode, XPath}
+import xjdf4s.model.elements.{Glue => GlueElement}
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
@@ -97,8 +98,10 @@ final case class AssemblingIntent(
     Chain.one(container) ++
       assemblyItems.map(_.childRef) ++
       bindIns.map(_.childRef) ++
+      bindIns.flatMap(bi => bi.glue.fold(Chain.empty[IdRef])(GlueElement.references)) ++
       blowIns.map(_.childRef) ++
-      stickOns.map(_.childRef)
+      stickOns.map(_.childRef) ++
+      stickOns.flatMap(so => so.glue.fold(Chain.empty[IdRef])(GlueElement.references))
 end AssemblingIntent
 
 object AssemblingIntent:
@@ -116,7 +119,7 @@ final case class BindIn(
     folio: Option[Long] = None,
     orientation: Option[Orientation] = None,
     position: Option[XYPair] = None,
-    glue: Option[GlueType] = None
+    glue: Option[GlueElement] = None
 )
 
 object BindIn:
@@ -140,7 +143,7 @@ final case class StickOn(
     folio: Option[Long] = None,
     orientation: Option[Orientation] = None,
     position: Option[XYPair] = None,
-    glue: Option[GlueType] = None
+    glue: Option[GlueElement] = None
 )
 
 object StickOn:

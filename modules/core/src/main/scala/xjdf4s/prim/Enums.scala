@@ -176,13 +176,45 @@ enum StapleShape extends XjdfEnum:
 object StapleShape extends XjdfEnumCompanion[StapleShape]:
   val all: List[StapleShape] = List(Butted, ClinchOut, Crown, Eyelet, Overlap)
 
-/** `Glue`: glue types (Table A.2.23). */
-enum GlueType extends XjdfEnum:
+/** `Glue` (Table A.24, §A.2.23): glue type values used by «Allowed value is
+ *  from: Glue» attributes (`EdgeGlue`, `SpineGlue`). XSD `simpleType EnumGlue`.
+ *
+ *  Migration note (M1.6-3, ADR-0011): renamed from `GlueType` to `EnumGlue`
+ *  to free the `GlueType` name for the 5-value Table 8.29 `@GlueType` attribute
+ *  and to avoid collision with the `Glue` element in `model.elements`.
+ */
+enum EnumGlue extends XjdfEnum:
   case ColdGlue, Hotmelt, PUR
   def token: NmToken = NmToken.unsafe(this.toString)
 
+object EnumGlue extends XjdfEnumCompanion[EnumGlue]:
+  val all: List[EnumGlue] = List(ColdGlue, Hotmelt, PUR)
+
+/** `Glue/@GlueType` (Table 8.29): glue type values for the `Glue` element's
+ *  `@GlueType` attribute — a wider set than Table A.24.
+ *
+ *  `ColdGlue` – Any type of glue that needs no heat treatment.
+ *  `Hotmelt` – Hotmelt EVA (Ethylene-vinyl acetate).
+ *  `Permanent` – Any glue that is designed not to be removed.
+ *  `PUR` – Polyurethane.
+ *  `Removable` – Any glue that is designed to be removed.
+ */
+enum GlueType extends XjdfEnum:
+  case ColdGlue, Hotmelt, Permanent, PUR, Removable
+  def token: NmToken = NmToken.unsafe(this.toString)
+
 object GlueType extends XjdfEnumCompanion[GlueType]:
-  val all: List[GlueType] = List(ColdGlue, Hotmelt, PUR)
+  val all: List[GlueType] = List(ColdGlue, Hotmelt, Permanent, PUR, Removable)
+
+/** `Glue/@GluingTechnique` (Table 8.29): technique of the gluing operation
+ *  when glue is specified in the context of hardcover binding.
+ */
+enum GluingTechnique extends XjdfEnum:
+  case SideGluingBack, SideGluingFront, SpineGluing
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object GluingTechnique extends XjdfEnumCompanion[GluingTechnique]:
+  val all: List[GluingTechnique] = List(SideGluingBack, SideGluingFront, SpineGluing)
 
 /** `TightBacking`: the geometry of the back of a book block (Table A.2.46). */
 enum TightBacking extends XjdfEnum:

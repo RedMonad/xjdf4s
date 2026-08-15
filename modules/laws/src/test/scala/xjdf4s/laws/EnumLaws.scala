@@ -105,6 +105,24 @@ class EnumLaws extends FunSuite:
   test("Table A.50: WorkingDirection wire tokens"):
     assertEquals(tokensOf(WorkingDirection.all), Set("Bottom", "Top"))
 
+  test("Table 8.29: GlueType (5 values for Glue/@GlueType) wire tokens"):
+    assertEquals(
+      tokensOf(GlueType.all),
+      Set("ColdGlue", "Hotmelt", "Permanent", "PUR", "Removable")
+    )
+
+  test("Table A.24: EnumGlue (3 values for 'Allowed value is from: Glue') wire tokens"):
+    assertEquals(
+      tokensOf(EnumGlue.all),
+      Set("ColdGlue", "Hotmelt", "PUR")
+    )
+
+  test("Table 8.29: GluingTechnique wire tokens"):
+    assertEquals(
+      tokensOf(GluingTechnique.all),
+      Set("SideGluingBack", "SideGluingFront", "SpineGluing")
+    )
+
   test("Table A.8 / A.11 / A.46: the '→ None' token family"):
     // Scala reserves `None`, so four enumerations rename the case and map the
     // token explicitly (ROADMAP Appendix C).
@@ -126,7 +144,10 @@ class EnumLaws extends FunSuite:
         ("BindingType", BindingType.all, BindingType.fromToken),
         ("Coating", Coating.all, Coating.fromToken),
         ("SoftCoverScoring", SoftCoverScoring.all, SoftCoverScoring.fromToken),
-        ("WorkingDirection", WorkingDirection.all, WorkingDirection.fromToken)
+        ("WorkingDirection", WorkingDirection.all, WorkingDirection.fromToken),
+        ("GlueType", GlueType.all, GlueType.fromToken),
+        ("EnumGlue", EnumGlue.all, EnumGlue.fromToken),
+        ("GluingTechnique", GluingTechnique.all, GluingTechnique.fromToken)
       )
     companions.foreach: (name, all, fromToken) =>
       all.foreach: v =>
@@ -143,7 +164,10 @@ class EnumLaws extends FunSuite:
         "Scope"             -> Scope.all,
         "Status"            -> Status.all,
         "BindingType"       -> BindingType.all,
-        "WorkingDirection"  -> WorkingDirection.all
+        "WorkingDirection"  -> WorkingDirection.all,
+        "GlueType"          -> GlueType.all,
+        "EnumGlue"          -> EnumGlue.all,
+        "GluingTechnique"   -> GluingTechnique.all
       )
     closed.foreach: (name, all) =>
       assertEquals(all.map(_.token.value).distinct.size, all.size, s"$name has duplicate tokens")
@@ -196,7 +220,7 @@ class EnumLaws extends FunSuite:
       "Edge"              -> Edge.all,
       "Face"              -> Face.all,
       "FitPolicy"         -> FitPolicy.all,
-      "Glue"              -> GlueType.all,
+      "Glue"              -> EnumGlue.all,
       "ISOPaperSubstrate" -> ISOPaperSubstrate.all,
       "MediaDirection"    -> MediaDirection.all,
       "MediaType"         -> MediaType.all,

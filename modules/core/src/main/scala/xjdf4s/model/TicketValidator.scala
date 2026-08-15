@@ -1,8 +1,8 @@
 package xjdf4s
 package model
 
-import xjdf4s.intents.{BindingIntent, IntentPayload, VariableIntent}
-import xjdf4s.model.elements.Disposition
+import xjdf4s.intents.{AdhesiveNote, AssemblingIntent, BindingIntent, IntentPayload, VariableIntent}
+import xjdf4s.model.elements.{Disposition, Glue => GlueElement}
 import xjdf4s.prim.*
 import cats.Show
 import cats.data.{Chain, NonEmptyChain, Validated}
@@ -121,10 +121,34 @@ object TicketValidator:
     val path = XPath(s"$parentPath/Intent[@Name='${intent.name.toNmToken.value}']")
     val nameIssues = Intent.nameLaw.check(intent, path)
     val payloadIssues = intent.specific match
-      case IntentPayload.Binding(b)  => BindingIntent.law.check(b, path)
+      case IntentPayload.Binding(b)  => BindingIntent.law.check(b, path) ++ checkBindingGlueLaws(b, path)
+      case IntentPayload.Assembly(a) => checkAssemblyGlueLaws(a, path)
       case IntentPayload.Variable(v) => VariableIntent.law.check(v, path)
       case _                         => Chain.empty
     nameIssues ++ payloadIssues
+
+  /** Validates `Glue` elements nested inside `BindingIntent/AdhesiveNote` (Table 8.29). */
+  private def checkBindingGlueLaws(b: BindingIntent, path: XPath): Chain[Issue] =
+    b.details match
+      case Some(an: AdhesiveNote) =>
+        an.glue.fold(Chain.empty[Issue]) { g =>
+          GlueElement.law(g, XPath(s"$path/AdhesiveNote/Glue"))
+        }
+      case _ => Chain.empty
+
+  /** Validates `Glue` elements nested inside `AssemblingIntent/BindIn` and `StickOn` (Table 8.29). */
+  private def checkAssemblyGlueLaws(a: AssemblingIntent, path: XPath): Chain[Issue] =
+    val bindInIssues = a.bindIns.zipWithIndex.flatMap { (bi, i) =>
+      bi.glue.fold(Chain.empty[Issue]) { g =>
+        GlueElement.law(g, XPath(s"$path/BindIn[$i]/Glue"))
+      }
+    }
+    val stickOnIssues = a.stickOns.zipWithIndex.flatMap { (so, i) =>
+      so.glue.fold(Chain.empty[Issue]) { g =>
+        GlueElement.law(g, XPath(s"$path/StickOn[$i]/Glue"))
+      }
+    }
+    bindInIssues ++ stickOnIssues
 
   // --- Global checks -------------------------------------------------------
 

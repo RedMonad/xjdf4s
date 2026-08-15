@@ -963,11 +963,15 @@ flowchart LR
 
 Без этой фазы все дальнейшие утверждения о корректности остаются гипотезами.
 
-#### M1.0-1. Обязательный CI и `sbt-scalafmt` (P4) — закрывает N-43, N-44 — `[~]` частично
+#### M1.0-1. Обязательный CI и `sbt-scalafmt` (P4) — закрывает N-43, N-44 — `[~]` частично (CI не возвращён)
 
-**Решение владельца (PR-1):** интеграция CI-файла `.github/workflows/ci.yml` отложена — токен среды исполнения не имеет permission `workflows`, а сборка и проверка (компиляция, тесты, `scalafmt`) выполняются на стороне владельца. `project/plugins.sbt` (sbt-scalafmt) включён в сборку; gate-команда `sbt -batch clean scalafmtCheckAll compile test examples/run` фиксируется первым же доступным прогоном.
+**Решение владельца (PR-1):** интеграция CI-файла `.github/workflows/ci.yml` отложена — токен среды исполнения не имеет permission `workflows`, а сборка и проверка (компиляция, тесты) выполняются на стороне владельца. `project/plugins.sbt` (sbt-scalafmt) включён в сборку.
 
-**Статус сессии:** `project/plugins.sbt` добавлен (`org.scalameta:sbt-scalafmt:2.6.2`); CI отложен решением владельца; компиляция и тесты верифицированы владельцем (сборка чистая, тесты зелёные). `scalafmtCheckAll` и CI-гейт остаются на стороне владельца — пункт не закрывается `[x]` до зелёного прогона с форматированием.
+**Решение владельца (2026-08-16):** `scalafmtCheckAll` **НЕ является частью обязательного гейта**. Форматирование выполняется владельцем вручную в IntelliJ IDE с использованием `.scalafmt.conf`. Файл `.scalafmt.conf` остаётся в репозитории для IDE, но не контролируется в сборке. Зафиксировано в Приложении C.
+
+**Финальный гейт фазы:** `sbt -batch clean compile test examples/run` (без `scalafmtCheckAll`).
+
+**Статус сессии:** `project/plugins.sbt` добавлен (`org.scalameta:sbt-scalafmt:2.6.2`); CI отложен решением владельца; компиляция и тесты верифицированы владельцем (сборка чистая, тесты зелёные). Пункт не закрывается `[x]` до возврата обязательного CI.
 
 **Файлы:** `.github/workflows/ci.yml` (новый, отложен), `project/plugins.sbt` (новый).
 
@@ -993,10 +997,10 @@ jobs:
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "<версия, совместимая с sbt 2.0.2>")
 ```
 
-Точная версия плагина подбирается при реализации и фиксируется в PR: она зависит от совместимости с sbt 2.0.2 и не может быть выбрана заочно. Первый диагностический прогон допускается без `scalafmtCheckAll`; финальный gate фазы обязан включать его:
+Точная версия плагина подбирается при реализации и фиксируется в PR: она зависит от совместимости с sbt 2.0.2 и не может быть выбрана заочно. Финальный gate фазы (решение владельца 2026-08-16 — без `scalafmtCheckAll`):
 
 ```
-sbt -batch clean scalafmtCheckAll compile test examples/run
+sbt -batch clean compile test examples/run
 ```
 
 **Зафиксировать в первом прогоне:** результат резолва версий (`cats-core 2.13.0`, `munit 1.3.0`, `munit-scalacheck 1.3.0`, Scala 3.8.4, sbt 2.0.2), полный список предупреждений `-Wunused:all -Wvalue-discard -Wnonunit-statement`, вывод демо `examples/run`.
@@ -1009,7 +1013,7 @@ sbt -batch clean scalafmtCheckAll compile test examples/run
 - `examples/run` завершается с exit code 0;
 - предупреждений от строгих флагов нет;
 - логи — CI-артефакты, не файлы репозитория;
-- проверена идемпотентность форматирования (в `.scalafmt.conf` включены rewrite-правила).
+- `.scalafmt.conf` остаётся в репозитории для IDE (форматирование — ответственность владельца, см. Приложение C).
 
 **Не делать.** Не включать `-Werror` до очистки baseline (это отдельный шаг после первого зелёного прогона без предупреждений). Не лечить возможные compile-ошибки спекулятивными implicit-ами до минимального reproducer.
 
@@ -1820,8 +1824,8 @@ SHALL-правил на самом `Crease` нет (все атрибуты оп
 `docs/SPEC-COVERAGE.md`, `scripts/check-spec-coverage.sh`,
 `docs/adr/0011-glue-enumerations.md` (новый), `ROADMAP.md`.
 
-**Критерии приёмки:** чистая сборка `sbt -batch clean scalafmtCheckAll compile
-test examples/run`; 209 тестов зелёных (201 + `CreaseLaws` 5, `EnumLaws` 1,
+**Критерии приёмки:** чистая сборка `sbt -batch clean compile test
+examples/run`; 209 тестов зелёных (201 + `CreaseLaws` 5, `EnumLaws` 1,
 `SpecExamplesSuite` 2); `examples/run` exit 0; `check-spec-coverage.sh` —
 `RESULT: OK`.
 
@@ -1831,9 +1835,42 @@ CreaseLaws 5, AlignmentLaws 6, PatchLaws 13, ChangeOrderLaws 8,
 SpecExamplesSuite 16, BomLaws 8, TicketLaws 59, PartitionLaws 27,
 AlgebraLaws 50); `examples/run` — exit 0, вывод содержит новую строку
 `Creasing job (Table 8.17): XJDF(job=creaseJob, types=Folding)` и не
-содержит регрессий. `scalafmtCheckAll` в логе владельца отсутствует —
-финальная проверка форматирования остаётся за владельцем (команда в
-Приложении D).
+содержит регрессий. Статус `[x]` — закрыт полностью.
+
+#### M1.6-3. `Glue` (Table 8.29, ADR-0011) — `[~]` реализовано, ожидает верификации владельца
+
+Полный вертикальный срез по ADR-0011:
+- **Модель элемента `Glue`** в `model/elements/CommonElements.scala`: 10 атрибутов
+  (`@AreaGlue`, `@GlueLineWidth`, `@GlueRef`, `@GlueType`, `@GluingPattern`,
+  `@GluingTechnique`, `@MeltingTemperature`, `@StartPosition`, `@WorkingDirection`,
+  `@WorkingPath`); все опциональны.
+- **Разрешение N-50:** `prim.GlueType` (3 значения) переименован в `prim.EnumGlue`
+  (XSD `simpleType EnumGlue`, Table A.24); новый `prim.GlueType` (5 значений)
+  для `Glue/@GlueType` (Table 8.29); новый `prim.GluingTechnique` (3 значения).
+- **Breaking change:** `BindIn.glue`, `StickOn.glue`, `AdhesiveNote.glue`:
+  `Option[GlueType]` → `Option[GlueElement]` (элемент, а не enum);
+  `EdgeGluing.edgeGlue`, `HardCoverBinding.spineGlue`, `SoftCoverBinding.spineGlue`:
+  `Option[GlueType]` → `Option[EnumGlue]`.
+- **SHALL-правила:** `@GluingPattern` чётность (`IssueCode.GluePatternOdd`);
+  `@MeltingTemperature` только с Hotmelt/PUR (`IssueCode.GlueMeltingTempWithoutHeat`);
+  подключены к `TicketValidator.checkIntentLocalLaws`.
+- **IDREF `@GlueRef`:** собирается через `Glue.references`; подключён к
+  `AssemblingIntent.references` и `BindingIntent.references`.
+- **Тесты:** `GlueLaws.scala` (15 тестов — позитивные, негативные на SHALL,
+  IDREF, ADR-0011 регрессия); `EnumLaws` golden для `GlueType`, `EnumGlue`,
+  `GluingTechnique`; `SpecExamples.gluingJob` + conformance-тест.
+- **Строки в `docs/SPEC-COVERAGE.md`:** `Glue`, `EnumGlue`, `GlueType`,
+  `GluingTechnique`; обновлены `BindIn`, `StickOn`, `AdhesiveNote`.
+
+**Файлы:** `prim/Enums.scala`, `model/elements/CommonElements.scala`,
+`model/ValidationTypes.scala`, `intents/Binding.scala`,
+`intents/FoldingVariable.scala`, `model/TicketValidator.scala`,
+`laws/GlueLaws.scala` (новый), `laws/EnumLaws.scala`, `laws/SpecExamplesSuite.scala`,
+`examples/SpecExamples.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** чистая сборка `sbt -batch clean compile test examples/run`;
+224+ тестов (209 + `GlueLaws` 15, `EnumLaws` 3, `SpecExamplesSuite` 1);
+`examples/run` exit 0.
 
 **Шаблон одного вертикального среза:**
 
@@ -1867,7 +1904,7 @@ AlgebraLaws 50); `examples/run` — exit 0, вывод содержит нову
 | 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 — `[x]` (верифицировано владельцем: чистая сборка, 180 тестов, 0 предупреждений) |
 | 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate — `[x]` (верифицировано владельцем: 201 тест зелёный, `examples/run` exit 0, golden совпали) |
 | 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | `[x]` верифицировано владельцем: 201 тест, 0 предупреждений, `examples/run` exit 0, циклов = 0 |
-| 15 | `Crease` + `WorkingDirection` (Table A.50) + N-50/ADR-0011 | M1.6-2 | 13 | `[x]` верифицировано владельцем: 209 тестов, `examples/run` exit 0; `scalafmtCheckAll` — отдельно |
+| 15 | `Crease` + `WorkingDirection` (Table A.50) + N-50/ADR-0011 | M1.6-2 | 13 | `[x]` верифицировано владельцем: 209 тестов, `examples/run` exit 0 |
 | 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
 | 17+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-3 … M1.6-15) | M1.6 | 15 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
@@ -1913,7 +1950,7 @@ PR 2 и 3, PR 4 и 5 могут идти параллельно после PR 1.
 
 M1 закрыт, когда выполнено одновременно:
 
-1. **Сборка.** `sbt -batch clean scalafmtCheckAll compile test examples/run` зелёный на Temurin JDK 21 в обязательном CI, а не локально «на словах».
+1. **Сборка.** `sbt -batch clean compile test examples/run` зелёный на Temurin JDK 21 в обязательном CI, а не локально «на словах».
 2. **Предупреждения.** Ни одного при `-Wunused:all`, `-Wvalue-discard`, `-Wnonunit-statement`.
 3. **BOM.** Проходят тесты: лист без ID, валидное дерево, DAG с общим ребёнком, самоцикл, косвенный цикл, неразрешённый `ChildRef`, глубина ≥ 10 000 без `StackOverflowError`; все примеры спецификации со `@ChildRefs` разворачиваются.
 4. **Конформность.**
@@ -2724,20 +2761,20 @@ Table 8.29 (`@GlueType`):
 | `Monoid[Matrix]` вместо `Group` | вырожденная матрица необратима | `inverse: Option[Matrix]` + задокументированная причина; опциональный `InvertibleMatrix` вне M1 |
 | `Semigroup` (не `Monoid`) для `AuditPool`, `AmountPool`, `NmTokens`, `ProcessPath` | носитель `NonEmptyChain`, кардинальность `T+` запрещает пустое значение | явная запись в scaladoc и в `docs/01` |
 | Дубликат `"Product"` в `@Types` считается нарушением | §3.1.3 говорит «additional process type tokens»; трактовка «любой второй токен» | зафиксировано как интерпретация + тест (M1.3-4, N-36) |
+| `scalafmtCheckAll` не является частью обязательного гейта сборки | решение владельца (2026-08-16): форматирование выполняется владельцем вручную в IntelliJ IDE | `.scalafmt.conf` остаётся в репозитории для IDE; финальный гейт — `sbt -batch clean compile test examples/run` (без `scalafmtCheckAll`); sbt-scalafmt доступен для ручного вызова |
 
 ---
 
 ## Приложение D. Команды локальной проверки
 
 ```bash
-# после M1.0-1 (добавлен sbt-scalafmt)
-sbt -batch scalafmtCheckAll
+# после M1.0-1 (добавлен sbt-scalafmt; форматирование — ответственность владельца, см. Приложение C)
 sbt -batch compile
 sbt -batch test
 sbt -batch examples/run
 
 # финальный гейт (он же — команда CI)
-sbt -batch clean scalafmtCheckAll compile test examples/run
+sbt -batch clean compile test examples/run
 ```
 
 Строгие флаги компилятора зафиксированы в `build.sbt` и обязательны:
@@ -2776,7 +2813,7 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-14 выполнены и верифицированы
+**Краткий следующий шаг:** PR-1…PR-15 выполнены и верифицированы
 владельцем. PR-13 закрыл M1.2-6 и M1.5-1…M1.5-4 (201 тест,
 `examples/run` exit 0, `check-spec-coverage.sh` — `RESULT: OK`). PR-14 закрыл
 M1.4-8/N-28: общие элементы глав 3/8 verbatim перенесены из `prim/Common.scala`
@@ -2787,7 +2824,7 @@ M1.4-8/N-28: общие элементы глав 3/8 verbatim перенесе�
 `WorkingDirection` (модель, тесты, фикстура `creasingJob`, coverage; чекер
 научен парсить `Table A.NN`), зарегистрировал находку N-50 и зафиксировал
 ADR-0011 (подготовка M1.6-3, Glue); верифицировано владельцем: **209 тестов
-зелёных (209/0)**, `examples/run` exit 0, статус `[x]` (осталось
-`scalafmtCheckAll`). Следующий по плану — PR-16+ (M1.6-1 Certification,
-затем M1.6-3 Glue по ADR-0011). LICENSE остаётся `BLOCKED` до решения
-владельца; возврат обязательного CI — открытая часть M1.0-1.
+зелёных (209/0)**, `examples/run` exit 0, статус `[x]` — закрыт полностью.
+Следующий по плану — PR-16+ (M1.6-3 Glue по ADR-0011 или M1.6-1
+Certification — выбор подтверждается владельцем). LICENSE остаётся `BLOCKED`
+до решения владельца; возврат обязательного CI — открытая часть M1.0-1.

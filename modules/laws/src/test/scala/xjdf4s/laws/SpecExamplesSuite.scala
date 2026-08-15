@@ -61,6 +61,9 @@ class SpecExamplesSuite extends FunSuite:
   test("Fixture (Tables 8.17/6.74): creasingJob constructs and validates"):
     assertValidTicket("creasingJob")(SpecExamples.creasingJob)
 
+  test("Fixture (Table 8.29, Example 8.15): gluingJob constructs and validates"):
+    assertValidTicket("gluingJob")(SpecExamples.gluingJob)
+
   test("Example 3.3 (Table 3.3): mediaConsumptionAudit constructs"):
     assertConstructs("Example 3.3")(SpecExamples.mediaConsumptionAudit)
 

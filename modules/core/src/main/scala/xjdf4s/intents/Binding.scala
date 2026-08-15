@@ -2,6 +2,7 @@ package xjdf4s
 package intents
 
 import xjdf4s.model.{DomainRule, Issue, IssueCode, XPath}
+import xjdf4s.model.elements.{Glue => GlueElement}
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
@@ -29,7 +30,10 @@ final case class BindingIntent(
     tabs: Option[Tabs] = None
 ):
 
-  def references: Chain[IdRef] = Chain.fromSeq(childRefs.toList.flatMap(_.toList))
+  def references: Chain[IdRef] =
+    Chain.fromSeq(childRefs.toList.flatMap(_.toList)) ++
+      details.collect { case an: AdhesiveNote => AdhesiveNote.references(an) }
+        .fold(Chain.empty[IdRef])(identity)
 
   /** The pairing rules between `@BindingType` and the detail elements (Table 4.8),
    *  plus the rule `@BindingSide` SHALL NOT be provided when `@BindingOrder="None"`.
@@ -108,13 +112,18 @@ type BindingDetails =
   AdhesiveNote | EdgeGluing | HardCoverBinding | LooseBinding | SaddleStitching | SideStitching | SoftCoverBinding
 
 /** Details of adhesive note binding (Table 4.9). */
-final case class AdhesiveNote(glue: Option[GlueType] = None)
+final case class AdhesiveNote(glue: Option[GlueElement] = None)
 
 object AdhesiveNote:
+
+  /** IDREFs from the contained `Glue/@GlueRef` (Table 8.29). */
+  def references(an: AdhesiveNote): Chain[IdRef] =
+    an.glue.fold(Chain.empty[IdRef])(GlueElement.references)
+
   given Eq[AdhesiveNote] = Eq.fromUniversalEquals
 
 /** Details of EdgeGluing (Table 4.10). */
-final case class EdgeGluing(edgeGlue: Option[GlueType] = None)
+final case class EdgeGluing(edgeGlue: Option[EnumGlue] = None)
 
 object EdgeGluing:
   given Eq[EdgeGluing] = Eq.fromUniversalEquals
@@ -134,7 +143,7 @@ final case class HardCoverBinding(
     jacket: Option[HardCoverJacket] = None,
     jacketFoldingWidth: Option[Points] = None,
     japanBind: Option[Boolean] = None,
-    spineGlue: Option[GlueType] = None,
+    spineGlue: Option[EnumGlue] = None,
     spineOperations: Option[NmTokens] = None,
     thickness: Option[Points] = None,
     tightBacking: Option[TightBacking] = None
@@ -210,7 +219,7 @@ final case class SoftCoverBinding(
     foldingWidthBack: Option[Points] = None,
     glueProcedure: Option[SoftCoverGlueProcedure] = None,
     scoring: Option[SoftCoverScoring] = None,
-    spineGlue: Option[GlueType] = None,
+    spineGlue: Option[EnumGlue] = None,
     spineOperations: Option[NmTokens] = None
 )
 

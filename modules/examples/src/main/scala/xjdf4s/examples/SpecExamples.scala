@@ -3,7 +3,7 @@ package xjdf4s.examples
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.{Crease, FileSpec}
+import xjdf4s.model.elements.{Crease, FileSpec, Glue => GlueElement}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show
@@ -114,6 +114,36 @@ object SpecExamples:
       chainV(dsl.TicketDraft.of("creaseJob", ProcessType.Folding)) { draft =>
         draft.withResources(foldingParams).build
       }
+    }
+
+  /** Example 8.15 (Table 8.29): a binding ticket demonstrating the `Glue`
+   *  element with `@GlueType="Removable"` inside `AdhesiveNote`.
+   */
+  val gluingJob: ValidatedNec[Issue, XJDF] =
+    chainV(dsl.TicketDraft.of("glueJob", ProcessType.Binding)) { draft =>
+      val binding = BindingIntent(
+        bindingType = BindingType.AdhesiveNote,
+        details = Some(AdhesiveNote(
+          glue = Some(GlueElement(
+            areaGlue = Some(true),
+            glueType = Some(GlueType.Removable)
+          ))
+        ))
+      )
+      val intent = Intent(
+        name = IntentPayload.Binding(binding).elementName,
+        specific = IntentPayload.Binding(binding)
+      )
+      // Add a product with the binding intent
+      val product = Product(
+        id = Some(Id.unsafe("P1")),
+        isRoot = Some(true),
+        amount = Some(100L),
+        intents = Chain.one(intent)
+      )
+      draft
+        .withProductList(ProductList(products = NonEmptyChain.one(product)))
+        .build
     }
 
   /** Example 5.2: Split delivery — thirty books, ten to Drop1, twenty to Drop2. */
@@ -299,6 +329,7 @@ object SpecExamples:
       "Example 3.4 (notebook BOM):" -> notebook.map(Show[ProductList].show),
       "Example 3.6 (combined):" -> combinedProcesses.map(Show[XJDF].show),
       "Creasing job (Table 8.17):" -> creasingJob.map(Show[XJDF].show),
+      "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
       "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
       "Brochure job:" -> brochureJob.map(Show[XJDF].show),
       "Brochure job after change:" -> updatedBrochureJob.map(Show[XJDF].show)
