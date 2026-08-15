@@ -1,249 +1,59 @@
-[error] -- [E173] Reference Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Ids.scala:66:48
-[error] 66 |  given Show[IdRefs] = Show.show(_.toList.map(_.value).mkString(" "))
-[error]    |                                              ^^^^^^^
-[error]    |method value in class String cannot be accessed as a member of (_$5 : xjdf4s.prim.IdRef) from object IdRefs.
-[error]    |  private[lang] method value can only be accessed from package java.lang in package java.
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:455:45
-[error] 455 |    Show.show(color => s"${fmtDouble(color.c.value)} ${fmtDouble(color.m.value)} ${fmtDouble(color.y.value)} ${fmtDouble(color.k.value)}")
-[error]     |                                     ^^^^^^^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.UnitInterval, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:455:73
-[error] 455 |    Show.show(color => s"${fmtDouble(color.c.value)} ${fmtDouble(color.m.value)} ${fmtDouble(color.y.value)} ${fmtDouble(color.k.value)}")
-[error]     |                                                                 ^^^^^^^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.UnitInterval, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:455:101
-[error] 455 |    Show.show(color => s"${fmtDouble(color.c.value)} ${fmtDouble(color.m.value)} ${fmtDouble(color.y.value)} ${fmtDouble(color.k.value)}")
-[error]     |                                                                                             ^^^^^^^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.UnitInterval, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:455:129
-[error] 455 |    Show.show(color => s"${fmtDouble(color.c.value)} ${fmtDouble(color.m.value)} ${fmtDouble(color.y.value)} ${fmtDouble(color.k.value)}")
-[error]     |                                                                                                                         ^^^^^^^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.UnitInterval, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:482:45
-[error] 482 |    Show.show(color => s"${fmtDouble(color.r.value)} ${fmtDouble(color.g.value)} ${fmtDouble(color.b.value)}")
-[error]     |                                     ^^^^^^^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.UnitInterval, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:482:73
-[error] 482 |    Show.show(color => s"${fmtDouble(color.r.value)} ${fmtDouble(color.g.value)} ${fmtDouble(color.b.value)}")
-[error]     |                                                                 ^^^^^^^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.UnitInterval, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:482:101
-[error] 482 |    Show.show(color => s"${fmtDouble(color.r.value)} ${fmtDouble(color.g.value)} ${fmtDouble(color.b.value)}")
-[error]     |                                                                                             ^^^^^^^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.UnitInterval, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:592:43
-[error] 592 |        r.min.map(m => s"min ${fmtDouble(m.value)}"),
-[error]     |                                         ^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.Amount, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:593:49
-[error] 593 |        r.amount.map(a => s"amount ${fmtDouble(a.value)}"),
-[error]     |                                               ^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.Amount, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Quantity.scala:594:43
-[error] 594 |        r.max.map(m => s"max ${fmtDouble(m.value)}")
-[error]     |                                         ^^^^^^^
-[error]     |value value is not a member of xjdf4s.prim.Amount, but could be made available as an extension method.
-[error]     |
-[error]     |One of the following imports might fix the problem:
-[error]     |
-[error]     |  import xjdf4s.prim.Amount.value
-[error]     |  import xjdf4s.prim.Coverage.value
-[error]     |  import xjdf4s.prim.Grammage.value
-[error]     |  import xjdf4s.prim.Microns.value
-[error]     |  import xjdf4s.prim.Points.value
-[error]     |  import xjdf4s.prim.UnitInterval.value
-[error]     |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Time.scala:17:28
-[error] 17 |    catch case _: java.time.DateTimeParseException => None
-[error]    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                type DateTimeParseException is not a member of java.time
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Time.scala:32:57
-[error] 32 |    def plus(d: TimeSpan): Timestamp          = t.plus(d.toJava)
-[error]    |                                                       ^^^^^^^^
-[error]    |      value toJava is not a member of xjdf4s.prim.TimeSpan.
-[error]    |      An extension method was tried, but could not be fully constructed:
-[error]    |
-[error]    |          xjdf4s.prim.Timestamp.toJava(d)
-[error]    |
-[error]    |          failed with:
-[error]    |
-[error]    |              Found:    (d : xjdf4s.prim.TimeSpan)
-[error]    |              Required: xjdf4s.prim.Timestamp
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Time.scala:33:58
-[error] 33 |    def minus(d: TimeSpan): Timestamp         = t.minus(d.toJava)
-[error]    |                                                        ^^^^^^^^
-[error]    |      value toJava is not a member of xjdf4s.prim.TimeSpan.
-[error]    |      An extension method was tried, but could not be fully constructed:
-[error]    |
-[error]    |          xjdf4s.prim.Timestamp.toJava(d)
-[error]    |
-[error]    |          failed with:
-[error]    |
-[error]    |              Found:    (d : xjdf4s.prim.TimeSpan)
-[error]    |              Required: xjdf4s.prim.Timestamp
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Time.scala:55:28
-[error] 55 |    catch case _: java.time.DateTimeParseException => None
-[error]    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                type DateTimeParseException is not a member of java.time
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Time.scala:92:64
-[error] 92 |    def duration: TimeSpan = java.time.Duration.between(r.start.toJava.toInstant, r.end.toJava.toInstant)
-[error]    |                                                        ^^^^^^^^^^^^^^
-[error]    |value toJava is not a member of xjdf4s.prim.Timestamp, but could be made available as an extension method.
-[error]    |
-[error]    |The following import might fix the problem:
-[error]    |
-[error]    |  import xjdf4s.prim.Timestamp.toJava
-[error]    |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Time.scala:92:88
-[error] 92 |    def duration: TimeSpan = java.time.Duration.between(r.start.toJava.toInstant, r.end.toJava.toInstant)
-[error]    |                                                                                  ^^^^^^^^^^^^
-[error]    |value toJava is not a member of xjdf4s.prim.Timestamp, but could be made available as an extension method.
-[error]    |
-[error]    |The following import might fix the problem:
-[error]    |
-[error]    |  import xjdf4s.prim.Timestamp.toJava
-[error]    |
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Time.scala:96:38
-[error] 96 |    Show.show(r => s"${Show[Timestamp].show(r.start)} .. ${Show[Timestamp].show(r.end)}")
-[error]    |                                      ^
-[error]    |No given instance of type cats.Show[xjdf4s.prim.Timestamp] was found for parameter instance of method apply in object Show
-[error]    |
-[error]    |The following import might fix the problem:
-[error]    |
-[error]    |  import xjdf4s.prim.Timestamp.given_Show_Timestamp
-[error]    |
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Time.scala:96:74
-[error] 96 |    Show.show(r => s"${Show[Timestamp].show(r.start)} .. ${Show[Timestamp].show(r.end)}")
-[error]    |                                                                          ^
-[error]    |No given instance of type cats.Show[xjdf4s.prim.Timestamp] was found for parameter instance of method apply in object Show
-[error]    |
-[error]    |The following import might fix the problem:
-[error]    |
-[error]    |  import xjdf4s.prim.Timestamp.given_Show_Timestamp
-[error]    |
-[error] -- [E173] Reference Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Tokens.scala:73:50
-[error] 73 |  given Show[NmTokens] = Show.show(_.toList.map(_.value).mkString(" "))
-[error]    |                                                ^^^^^^^
-[error]    |method value in class String cannot be accessed as a member of (_$6 : xjdf4s.prim.NmToken) from object NmTokens.
-[error]    |  private[lang] method value can only be accessed from package java.lang in package java.
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/resources/Color.scala:32:52
-[error] 32 |  def cyan: Color    = Color(cmyk = CMYKColor.unsafe(1, 0, 0, 0), colorName = XjdfString.from("Cyan"))
-[error]    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                                 Found:    xjdf4s.prim.CMYKColor
-[error]    |                                 Required: Option[xjdf4s.prim.CMYKColor]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/resources/Color.scala:33:52
-[error] 33 |  def magenta: Color = Color(cmyk = CMYKColor.unsafe(0, 1, 0, 0), colorName = XjdfString.from("Magenta"))
-[error]    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                                 Found:    xjdf4s.prim.CMYKColor
-[error]    |                                 Required: Option[xjdf4s.prim.CMYKColor]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/resources/Color.scala:34:52
-[error] 34 |  def yellow: Color  = Color(cmyk = CMYKColor.unsafe(0, 0, 1, 0), colorName = XjdfString.from("Yellow"))
-[error]    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                                 Found:    xjdf4s.prim.CMYKColor
-[error]    |                                 Required: Option[xjdf4s.prim.CMYKColor]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/resources/Color.scala:35:52
-[error] 35 |  def black: Color   = Color(cmyk = CMYKColor.unsafe(0, 0, 0, 1), colorName = XjdfString.from("Black"))
-[error]    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                                 Found:    xjdf4s.prim.CMYKColor
-[error]    |                                 Required: Option[xjdf4s.prim.CMYKColor]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] stack trace is suppressed; run last core / Compile / compileIncremental for the full output
-[error] (core / Compile / compileIncremental) sbt.util.CachedCompileFailure$$anon$1: Compilation failed
-[error] elapsed time: 0 s, cache 100%, 1 cached-failure cache hit, 58 disk cache hits
+warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Amounts.scala:79:57 
+[warn] 79 |    def head: PartAmount                          = pool.head
+[warn]    |                                                    ^^^^^^^^^
+[warn]    |                                      Infinite loop in function body
+[warn]    |                                      xjdf4s.model.AmountPool.head(pool)
+[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:18:15 
+[error] 18 |  case Created(header: Header)
+[error]    |               ^
+[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
+[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
+[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:20:16 
+[error] 20 |  case Notified(header: Header, event: Notification)
+[error]    |                ^
+[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
+[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
+[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:22:11 
+[error] 22 |  case Run(header: Header, run: ProcessRun)
+[error]    |           ^
+[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
+[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
+[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:24:16 
+[error] 24 |  case Resource(header: Header, resourceInfo: ResourceInfo)
+[error]    |                ^
+[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
+[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
+[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:26:14 
+[error] 26 |  case Status(header: Header, deviceInfo: DeviceInfo)
+[error]    |              ^
+[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
+[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
+[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Intent.scala:16:2 
+[error] 16 |  name: IntentName,
+[error]    |  ^
+[error]    |error overriding value name in trait Named of type xjdf4s.model.IntentName;
+[error]    |  value name of type xjdf4s.model.IntentName needs `override` modifier
+[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Resource.scala:166:2 
+[error] 166 |  name: ResourceSetName,
+[error]     |  ^
+[error]     |error overriding value name in trait Named of type xjdf4s.model.ResourceSetName;
+[error]     |  value name of type xjdf4s.model.ResourceSetName needs `override` modifier
+[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Ids.scala:63:53 
+[warn] 63 |    def toList: List[IdRef]           = refs.toChain.toList
+[warn]    |                                        ^^^^^^^^^^^^^^^^^^^
+[warn]    |             Infinite loop in function body
+[warn]    |             xjdf4s.prim.IdRefs.toList(xjdf4s.prim.IdRefs.toChain(refs))
+[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Tokens.scala:69:57 
+[warn] 69 |    def toList: List[NmToken]           = tokens.toChain.toList
+[warn]    |                                          ^^^^^^^^^^^^^^^^^^^^^
+[warn]    |       Infinite loop in function body
+[warn]    |       xjdf4s.prim.NmTokens.toList(xjdf4s.prim.NmTokens.toChain(tokens))
+[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Tokens.scala:70:49 
+[warn] 70 |    def head: NmToken                   = tokens.head
+[warn]    |                                          ^^^^^^^^^^^
+[warn]    |                                       Infinite loop in function body
+[warn]    |                                       xjdf4s.prim.NmTokens.head(tokens)
+[warn] four warnings found
+[error] 7 errors found
+[error] (core / Compile / compileIncremental) Compilation failed
+[error] elapsed time: 4 s, cache 98%, 58 disk cache hits, 1 onsite task
