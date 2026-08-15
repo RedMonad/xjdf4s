@@ -197,8 +197,7 @@ end Disposition
 /** The `Crease` element (Table 8.17): an individual crease line on a
  *  component. Used by the `CreasingParams` (`Crease+`, Table 6.51) and
  *  `FoldingParams` (`Crease*`, Table 6.74) resources. `@Depth` is measured in
- *  microns, `@StartPosition` and `@WorkingPath` in the operation coordinate
- *  system.
+ *  microns; `@WorkingPath` runs from `@StartPosition`.
  */
 final case class Crease(
     depth: Option[Microns] = None,
