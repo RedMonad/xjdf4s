@@ -50,9 +50,6 @@ final case class XJDF(
   def resourceSetsNamed(name: ResourceSetName): Chain[ResourceSet] =
     resourceSets.filter(_.name == name)
 
-  /** Applies a change-order patch (monoid action of `Patch` on tickets). */
-  def withPatch(patch: Patch): XJDF = patch.applyTo(this)
-
   /** All document-scoped `@ID`s declared inside this ticket (§2.2.3).
    *  Header/@ID from AuditPool is messaging-scoped (Table 7.3) and excluded.
    */
@@ -78,23 +75,6 @@ final case class XJDF(
         if r.parts.isEmpty then Chain.one(WorkstepKey(jobId, jobPartId, Part.empty))
         else r.parts.map(part => WorkstepKey(jobId, jobPartId, part))
 
-  /** Validates this ticket against the structural requirements of the
-   *  specification (uniqueness of ResourceSet keys, index bounds, ID/IDREF
-   *  consistency, `@Types` rules, audit chronology, …). All violations are
-   *  accumulated — the applicative functor of errors.
-   *
-   *  This is the legacy entry point: every finding (error or warning) is
-   *  treated as invalid. Prefer `validateReport` for the errors/warnings
-   *  split (ADR-0006).
-   */
-  def validate: ValidatedNec[Issue, Unit] =
-    TicketValidator.validate(this)
-
-  /** Validates this ticket and returns a `ValidationReport` separating errors
-   *  (SHALL violations) from warnings (SHOULD/MAY findings) (ADR-0006).
-   */
-  def validateReport: ValidationReport =
-    TicketValidator.validateReport(this)
 end XJDF
 
 object XJDF:

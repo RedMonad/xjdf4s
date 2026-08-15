@@ -111,3 +111,13 @@ object Patch:
     )
 
 end Patch
+
+extension (ticket: XJDF)
+  /** Applies a change-order patch — the right monoid action of `Patch` on
+   *  tickets (§1.3.2).
+   *
+   *  M1.4-1 (ADR-0002): moved from a member of `XJDF` to an extension method
+   *  in `Patch.scala` so `Ticket.scala` does not depend on the `Patch`
+   *  implementation. Source-compatible wherever `xjdf4s.model.*` is imported.
+   */
+  def withPatch(patch: Patch): XJDF = patch.applyTo(ticket)

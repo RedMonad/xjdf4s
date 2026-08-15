@@ -4,16 +4,22 @@ package model
 import xjdf4s.intents.{BindingIntent, IntentPayload, VariableIntent}
 import xjdf4s.prim.*
 import cats.Show
-import cats.data.{Chain, NonEmptyChain, Validated, ValidatedNec}
+import cats.data.{Chain, NonEmptyChain, Validated}
 
 /** Structural validation of an XJDF ticket against the requirements of the
  *  specification. The validator is the single root traversal: global
  *  inter-node rules (ID uniqueness, §3.4 clashes, BOM integrity, audit
  *  chronology) live here; node-local rules are `DomainRule`s invoked from
- *  `checkLocalLaws`. Errors and warnings are separated by `ValidationReport`
- *  (ADR-0006); the legacy `ValidatedNec[Issue, Unit]` entry point
- *  `validate` is retained for call sites that predate M1.3-5 and treats any
- *  finding as invalid.
+ *  `checkLocalLaws`.
+ *
+ *  This file is the aggregation root of the validation layer (ADR-0002,
+ *  M1.4-1): it depends on the whole domain model, while the model depends
+ *  only on the fan-out-0 foundation `ValidationTypes`.
+ *
+ *  Errors and warnings are separated by `ValidationReport` (ADR-0006); the
+ *  legacy entry point `validate` treats any finding as invalid and is
+ *  retained for call sites that predate M1.3-5, including the
+ *  `XJDF.validate` extension defined below.
  */
 object TicketValidator:
 
@@ -26,9 +32,9 @@ object TicketValidator:
 
   /** Legacy entry point: treats every finding — error or warning — as a
    *  validation failure. Retained for call sites that predate M1.3-5 and for
-   *  the `XJDF.validate` forwarder.
+   *  the `XJDF.validate` extension (ADR-0006, ADR-0002).
    */
-  def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
+  def validate(ticket: XJDF): ValidationResult[Unit] =
     NonEmptyChain.fromChain(allIssues(ticket)) match
       case Some(nec) => Validated.invalid(nec)
       case None      => Validated.valid(())
@@ -104,11 +110,11 @@ object TicketValidator:
       }
     }
     // Note: Disposition (Table 8.23) is a child of FileSpec inside chapter-6
-    // resources; once resources carrying FileSpec are implemented, the
-    // traversal extends here with `TicketValidator.dispositionLaw.check(d, at)`.
-    // The rule itself is defined as `TicketValidator.dispositionLaw` to keep
-    // `prim` free of validation dependencies; the M1.4-1 cycle break moves
-    // the rules into the new layer where the hook stays a one-line addition.
+    // resources; once resources carrying FileSpec are implemented (M1.6/M3),
+    // the traversal extends here with `TicketValidator.dispositionLaw.check(d, at)`.
+    // The rule is defined as `TicketValidator.dispositionLaw` to keep `prim`
+    // free of validation dependencies (ADR-0002, M1.4-1); the hook stays a
+    // one-line addition.
 
   private def checkIntentLocalLaws(intent: Intent, parentPath: XPath): Chain[Issue] =
     val path = XPath(s"$parentPath/Intent[@Name='${intent.name.toNmToken.value}']")
@@ -385,8 +391,7 @@ object TicketValidator:
 
   /** Table 8.23: `Disposition/@MinDuration` and `@Until` are mutually exclusive.
    *  Defined here rather than on the `prim.Disposition` companion to avoid a
-   *  dependency from `prim` onto the validation layer (the cycle is broken
-   *  structurally in M1.4-1).
+   *  dependency from `prim` onto the validation layer (ADR-0002, M1.4-1).
    */
   def dispositionLaw: DomainRule[Disposition] =
     (d: Disposition, at: XPath) =>
@@ -399,3 +404,30 @@ object TicketValidator:
       else Chain.empty
 
 end TicketValidator
+
+extension (ticket: XJDF)
+
+  /** Validates this ticket against the structural requirements of the
+   *  specification (uniqueness of ResourceSet keys, index bounds, ID/IDREF
+   *  consistency, `@Types` rules, audit chronology, …). All violations are
+   *  accumulated — the applicative functor of errors.
+   *
+   *  This is the legacy entry point: every finding (error or warning) is
+   *  treated as invalid. Prefer `validateReport` for the errors/warnings
+   *  split (ADR-0006).
+   *
+   *  M1.4-1 (ADR-0002): moved from a member of `XJDF` to an extension method
+   *  in `TicketValidator.scala` so `Ticket.scala` does not depend on the
+   *  validator. Source-compatible wherever `xjdf4s.model.*` is imported.
+   */
+  def validate: ValidationResult[Unit] =
+    TicketValidator.validate(ticket)
+
+  /** Validates this ticket and returns a `ValidationReport` separating errors
+   *  (SHALL violations) from warnings (SHOULD/MAY findings) (ADR-0006).
+   *
+   *  M1.4-1 (ADR-0002): moved from `XJDF` to an extension method, see
+   *  `validate` above.
+   */
+  def validateReport: ValidationReport =
+    TicketValidator.validateReport(ticket)
