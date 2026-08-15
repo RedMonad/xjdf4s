@@ -71,11 +71,24 @@ final case class Notification(
     classification: SeverityClass,
     jobId: Option[JobId] = None,
     jobPartId: Option[JobPartId] = None,
+    moduleId: Option[NmToken] = None,
     queueEntryId: Option[NmToken] = None,
     detail: Option[NotificationDetail] = None,
     parts: Chain[Part] = Chain.empty,
     comments: Chain[Comment] = Chain.empty
-)
+):
+
+  /** Table 8.49: If Milestone is present, the value of `@Class` SHALL be `"Event"`. */
+  def hasLawfulMilestone: Boolean =
+    detail match
+      case Some(_: Milestone) => classification == SeverityClass.Event
+      case _                  => true
+
+  /** Table 8.49: If multiple Comment elements occur, they SHALL have different `Comment/@Language` values. */
+  def hasUniqueCommentLanguages: Boolean =
+    val langs = comments.toList.flatMap(_.language)
+    langs.distinct.size == langs.size
+end Notification
 
 /** `Event | Milestone` — a union type: the two alternative payloads of a Notification. */
 type NotificationDetail = Event | Milestone
@@ -131,7 +144,11 @@ final case class ResourceInfo(
     speed: Option[Double] = None,
     totalAmount: Option[Double] = None,
     types: Option[NmTokens] = None
-)
+):
+
+  /** All IDREFs referenced within this ResourceInfo's ResourceSet. */
+  def references: Chain[IdRef] = resourceSet.references
+end ResourceInfo
 
 object ResourceInfo:
 

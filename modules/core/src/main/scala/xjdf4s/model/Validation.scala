@@ -51,7 +51,8 @@ object TicketValidator:
       checkReferences(ticket),
       checkAuditChronology(ticket),
       checkPartAmountKeys(ticket),
-      checkIntentLawfulness(ticket)
+      checkIntentLawfulness(ticket),
+      checkNotifications(ticket)
     )
     checks.combineAll
 
@@ -189,13 +190,15 @@ object TicketValidator:
                   case Nil => Nil
                   case _ :: Nil =>
                     List(
-                      s"${rs.name.toNmToken.value}/@${key.attributeName} overrides a Partition Key already uniquely specified by the parent Resource/Part"
+                      s"${rs.name.toNmToken.value}/@${key.attributeName} overrides a Partition Key " +
+                        "already uniquely specified by the parent Resource/Part"
                     )
                   case parents =>
                     child.valueOf(key) match
                       case Some(v) if !parents.contains(v) =>
                         List(
-                          s"${rs.name.toNmToken.value}/@${key.attributeName}=${Show[PartitionValue].show(v)} does not match a parent Resource/Part value"
+                          s"${rs.name.toNmToken.value}/@${key.attributeName}=${Show[PartitionValue].show(v)} " +
+                            "does not match a parent Resource/Part value"
                         )
                       case _ => Nil
     Validated.condNec(
@@ -216,4 +219,32 @@ object TicketValidator:
       (),
       Issue.error(XPath("/XJDF/ProductList/Intent"), s"Intent @Name does not match its payload: ${bad.mkString(", ")}")
     )
+
+  /** Table 8.49:
+   *   - If Milestone is present, the value of `@Class` SHALL be `"Event"`.
+   *   - If multiple Comment elements occur, they SHALL have different `Comment/@Language` values (N-38).
+   */
+  private def checkNotifications(ticket: XJDF): ValidatedNec[Issue, Unit] =
+    val notifications = ticket.auditPool.toList.flatMap(_.toList).collect {
+      case Audit.Notified(_, n) => n
+    }
+    val badMilestones = notifications.filterNot(_.hasLawfulMilestone)
+    val badComments = notifications.filterNot(_.hasUniqueCommentLanguages)
+    val milestoneV = Validated.condNec(
+      badMilestones.isEmpty,
+      (),
+      Issue.error(
+        XPath("/XJDF/AuditPool/AuditNotification/@Class"),
+        "Notification with Milestone SHALL have @Class=\"Event\""
+      )
+    )
+    val commentV = Validated.condNec(
+      badComments.isEmpty,
+      (),
+      Issue.error(
+        XPath("/XJDF/AuditPool/AuditNotification/Comment"),
+        "Multiple Comment elements in Notification SHALL have distinct @Language values"
+      )
+    )
+    (milestoneV, commentV).mapN((_, _) => ())
 end TicketValidator
