@@ -260,4 +260,14 @@ class EnumLaws extends FunSuite:
       assert(specValues(name).nonEmpty, s"$name: parsed an empty table")
       assert(all.nonEmpty, s"$name: no modelled values")
 
+  test("Table 3.1 / Table A.52: XjdfVersion.from accepts only \"2.2\""):
+    // Table A.52 lists 2.0/2.1/2.2 as the type's vocabulary, but Table 3.1
+    // SHALLs "2.2" for conformant documents — the parser accepts only "2.2"
+    // (N-41, M1.5-2).
+    assertEquals(XjdfVersion.from("2.2"), Some(XjdfVersion.V2_2))
+    assertEquals(XjdfVersion.from("2.1"), None)
+    assertEquals(XjdfVersion.from("2.0"), None)
+    assertEquals(XjdfVersion.from("3.0"), None)
+    assertEquals(XjdfVersion.from(null), None)
+
 end EnumLaws
