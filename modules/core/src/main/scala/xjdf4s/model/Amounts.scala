@@ -36,9 +36,15 @@ final case class PartAmount(
     maxAmount: Option[Amount] = None,
     minAmount: Option[Amount] = None,
     waste: Option[Amount] = None,
-    part: Part = Part.empty,
+    parts: Chain[Part] = Chain.empty, // Table 6.3: Part* (0..*)
     partWaste: Chain[PartWaste] = Chain.empty
 ):
+
+  /** Transitional accessor over the former single-`Part` cardinality (N-10).
+   *  Returns the first of `parts`, if any. Removed before M2 — use `parts`.
+   */
+  @deprecated("transitional accessor; removed before M2", "M1")
+  def part: Option[Part] = parts.headOption
 
   /** The amount attributes viewed as one range. */
   def range: AmountRange = AmountRange(amount, maxAmount, minAmount)
@@ -49,8 +55,9 @@ object PartAmount:
   given Show[PartAmount] =
     Show.show { pa =>
       val base = Show[AmountRange].show(pa.range)
-      if pa.part.isEmpty then s"PartAmount($base)"
-      else s"PartAmount($base, ${Show[Part].show(pa.part)})"
+      val parts = pa.parts.toList.map(Show[Part].show)
+      if parts.isEmpty then s"PartAmount($base)"
+      else s"PartAmount($base, parts=[${parts.mkString(", ")}])"
     }
 
   given Eq[PartAmount] = Eq.fromUniversalEquals

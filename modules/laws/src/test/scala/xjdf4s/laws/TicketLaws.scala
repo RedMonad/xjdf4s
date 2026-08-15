@@ -178,7 +178,7 @@ class TicketLaws extends ScalaCheckSuite:
         Resource(
           specific = ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar")),
           parts = Chain.one(parent),
-          amountPool = Some(AmountPool.of(PartAmount(part = child)))
+          amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child))))
         )
       )
     )

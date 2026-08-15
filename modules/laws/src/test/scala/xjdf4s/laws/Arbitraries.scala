@@ -131,8 +131,8 @@ object Arbitraries:
       for
         amount <- Gen.option(arbAmount.arbitrary)
         waste  <- Gen.option(arbAmount.arbitrary)
-        part   <- arbPart.arbitrary
-      yield PartAmount(amount = amount, waste = waste, part = part)
+        parts  <- Gen.listOf(arbPart.arbitrary)
+      yield PartAmount(amount = amount, waste = waste, parts = Chain.fromSeq(parts))
 
   implicit val arbAmountPool: Arbitrary[AmountPool] =
     Arbitrary:
