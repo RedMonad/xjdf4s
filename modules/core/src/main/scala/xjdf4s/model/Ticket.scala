@@ -7,11 +7,6 @@ import cats.data.{Chain, NonEmptyChain, ValidatedNec}
 import cats.kernel.Eq
 import cats.syntax.all.*
 
-/** Marker of relaxed cardinality: a change order only conveys the modified
- *  values (§1.3.2, §1.6.5).
- */
-trait Partial
-
 /** `XJDF` (Table 3.1): the root element — a single transaction between two
  *  parties. There is exactly one `XJDF` element per ticket; multiple work steps
  *  SHALL be submitted as separate XJDF (§3).
@@ -19,6 +14,9 @@ trait Partial
  *  The ticket carries the three orthogonal concerns of the specification:
  *  `ProductList` (bill of materials), `ResourceSet`s (process resources) and
  *  `AuditPool` (recorded history) — the coproduct-style root of the model.
+ *
+ *  Change orders are a separate nominal type (`ChangeOrder`, ADR-0001 / §1.3.2,
+ *  §1.6.5); they are not a refinement of this class.
  */
 final case class XJDF(
     jobId: JobId,
@@ -38,7 +36,7 @@ final case class XJDF(
     auditPool: Option[AuditPool] = None,
     comments: Chain[Comment] = Chain.empty,
     generalIds: Chain[GeneralID] = Chain.empty
-) extends Partial:
+):
 
   /** The ordered list of processes executed by this ticket (§5.2). */
   def processPath: ProcessPath = ProcessPath(types)
