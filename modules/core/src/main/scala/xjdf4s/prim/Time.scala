@@ -2,7 +2,7 @@ package xjdf4s
 package prim
 
 import cats.Show
-import cats.kernel.{CommutativeMonoid, Eq, Monoid, Order}
+import cats.kernel.{CommutativeMonoid, Eq, Order}
 
 /** XJDF data type `dateTime` (Table A.1): a specific instant of time — UTC or a
  *  local time that includes the time zone. Backed by `java.time.OffsetDateTime`.
