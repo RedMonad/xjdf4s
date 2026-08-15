@@ -173,35 +173,34 @@ object SpecExamples:
             )
           )
         ) { bindingIntent =>
-          chainV((mediaIntent, layoutIntent, bindingIntent).mapN(Chain(_, _, _))) { intents =>
-            chainV(dsl.product(amount = Some(500), productType = Some("Brochure"))(intents.toList*)) { brochure =>
-              chainV(
-                dsl.runList(
-                  RunList(fileSpecs = Chain.one(FileSpec(url = Some(Url.unsafe("file:///artwork/brochure.pdf"))))),
-                  id = Some("runlist_1")
-                )
-              ) { runList =>
-                chainV(dsl.media(Media.paper(Grammage(115.0)), id = Some("media_1"))) { mediaRes =>
-                  chainV(dsl.resourceSet("RunList", usage = Some(Usage.Input))(runList)) { inputRunList =>
-                    chainV(dsl.resourceSet("Media", usage = Some(Usage.Input))(mediaRes)) { inputMedia =>
-                      chainV(dsl.component(Component.of(Catalog.ProductType.Brochure), id = Some("comp_1"))) { componentRes =>
-                        chainV(dsl.resourceSet("Component", usage = Some(Usage.Output))(componentRes)) { outputComponent =>
-                          chainV(dsl.TicketDraft.of("Brochure-2026", ProcessType.DigitalPrinting, ProcessType.Stitching)) { draft =>
-                            val run = ProcessRun(
-                              start = Timestamp.unsafe("2026-08-14T08:00:00+02:00"),
-                              end = Timestamp.unsafe("2026-08-14T08:37:00+02:00"),
-                              endStatus = EndStatus.Completed
-                            )
-                            val audits = AuditPool.of(
-                              Audit.Created(Header(NmToken.unsafe("MIS"), Timestamp.unsafe("2026-08-14T07:55:00+02:00"))),
-                              Audit.Run(Header(NmToken.unsafe("Press-7"), Timestamp.unsafe("2026-08-14T08:37:00+02:00")), run)
-                            )
-                            draft
-                              .withProductList(ProductList(NonEmptyChain.one(brochure)))
-                              .withResources(inputRunList, inputMedia, outputComponent)
-                              .withAuditPool(audits)
-                              .build
-                          }
+          val intents = Chain(mediaIntent, layoutIntent, bindingIntent)
+          chainV(dsl.product(amount = Some(500), productType = Some("Brochure"))(intents.toList*)) { brochure =>
+            chainV(
+              dsl.runList(
+                RunList(fileSpecs = Chain.one(FileSpec(url = Some(Url.unsafe("file:///artwork/brochure.pdf"))))),
+                id = Some("runlist_1")
+              )
+            ) { runList =>
+              chainV(dsl.media(Media.paper(Grammage(115.0)), id = Some("media_1"))) { mediaRes =>
+                chainV(dsl.resourceSet("RunList", usage = Some(Usage.Input))(runList)) { inputRunList =>
+                  chainV(dsl.resourceSet("Media", usage = Some(Usage.Input))(mediaRes)) { inputMedia =>
+                    chainV(dsl.component(Component.of(Catalog.ProductType.Brochure), id = Some("comp_1"))) { componentRes =>
+                      chainV(dsl.resourceSet("Component", usage = Some(Usage.Output))(componentRes)) { outputComponent =>
+                        chainV(dsl.TicketDraft.of("Brochure-2026", ProcessType.DigitalPrinting, ProcessType.Stitching)) { draft =>
+                          val run = ProcessRun(
+                            start = Timestamp.unsafe("2026-08-14T08:00:00+02:00"),
+                            end = Timestamp.unsafe("2026-08-14T08:37:00+02:00"),
+                            endStatus = EndStatus.Completed
+                          )
+                          val audits = AuditPool.of(
+                            Audit.Created(Header(NmToken.unsafe("MIS"), Timestamp.unsafe("2026-08-14T07:55:00+02:00"))),
+                            Audit.Run(Header(NmToken.unsafe("Press-7"), Timestamp.unsafe("2026-08-14T08:37:00+02:00")), run)
+                          )
+                          draft
+                            .withProductList(ProductList(NonEmptyChain.one(brochure)))
+                            .withResources(inputRunList, inputMedia, outputComponent)
+                            .withAuditPool(audits)
+                            .build
                         }
                       }
                     }

@@ -3,7 +3,7 @@ package xjdf4s.laws
 import xjdf4s.laws.Arbitraries.given
 import xjdf4s.model.*
 import xjdf4s.prim.*
-import cats.kernel.{Eq, Monoid, Semigroup, Semilattice}
+import cats.kernel.{Monoid, Semigroup, Semilattice}
 import munit.ScalaCheckSuite
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop.*
@@ -15,33 +15,33 @@ import org.scalacheck.Prop.*
  */
 class AlgebraLaws extends ScalaCheckSuite:
 
-  private def semigroupAssociativity[A](name: String)(using Arbitrary[A], S: Semigroup[A], Eq[A]) =
+  private def semigroupAssociativity[A](name: String)(using arb: Arbitrary[A])(using S: Semigroup[A]) =
     property(s"semigroup associativity: $name"):
-      forAll { (a: A, b: A, c: A) =>
+      forAll(arb.arbitrary, arb.arbitrary, arb.arbitrary) { (a: A, b: A, c: A) =>
         S.combine(S.combine(a, b), c) == S.combine(a, S.combine(b, c))
       }
 
-  private def monoidLaws[A](name: String)(using Arbitrary[A], M: Monoid[A], Eq[A]) =
+  private def monoidLaws[A](name: String)(using arb: Arbitrary[A])(using M: Monoid[A]) =
     property(s"monoid identity: $name"):
-      forAll { (a: A) =>
+      forAll(arb.arbitrary) { (a: A) =>
         M.combine(a, M.empty) == a && M.combine(M.empty, a) == a
       }
     property(s"monoid associativity: $name"):
-      forAll { (a: A, b: A, c: A) =>
+      forAll(arb.arbitrary, arb.arbitrary, arb.arbitrary) { (a: A, b: A, c: A) =>
         M.combine(M.combine(a, b), c) == M.combine(a, M.combine(b, c))
       }
 
-  private def semilatticeLaws[A](name: String)(using Arbitrary[A], S: Semilattice[A], Eq[A]) =
+  private def semilatticeLaws[A](name: String)(using arb: Arbitrary[A])(using S: Semilattice[A]) =
     property(s"semilattice commutativity: $name"):
-      forAll { (a: A, b: A) =>
+      forAll(arb.arbitrary, arb.arbitrary) { (a: A, b: A) =>
         S.combine(a, b) == S.combine(b, a)
       }
     property(s"semilattice idempotency: $name"):
-      forAll { (a: A) =>
+      forAll(arb.arbitrary) { (a: A) =>
         S.combine(a, a) == a
       }
     property(s"semilattice associativity: $name"):
-      forAll { (a: A, b: A, c: A) =>
+      forAll(arb.arbitrary, arb.arbitrary, arb.arbitrary) { (a: A, b: A, c: A) =>
         S.combine(S.combine(a, b), c) == S.combine(a, S.combine(b, c))
       }
 
