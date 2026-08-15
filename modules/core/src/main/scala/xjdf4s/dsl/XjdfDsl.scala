@@ -1,6 +1,7 @@
 package xjdf4s
 package dsl
 
+import xjdf4s.intents.*
 import xjdf4s.model.*
 import xjdf4s.prim.*
 import xjdf4s.resources.*
@@ -19,11 +20,18 @@ object dsl:
   // Partitions
   // ------------------------------------------------------------------
 
-  /** A single-key partition, e.g. `part(PartitionKey.SheetName, "S1")`. */
-  def part[K <: PartitionKey](key: K, value: ValueOf[K]): Part =
-    Part.of(key, value)
+  /** A single-key partition with a runtime-tagged value, e.g. `part(PartitionKey.SheetName, PartitionValue.Token("S1"))`. */
+  def part(key: PartitionKey, value: PartitionValue): Part =
+    Part.ofValue(key, value)
 
-  /** A partition builder: `.withKey(PartitionKey.SheetName, "S1").withKey(...)`. */
+  /** A single-key NMTOKEN partition, e.g. `partToken(PartitionKey.SheetName, "S1")`. */
+  def partToken(key: PartitionKey, value: String): ValidatedNec[Issue, Part] =
+    NmToken
+      .from(value)
+      .toValidNec(Issue.error(XPath("/XJDF/ResourceSet/Resource/Part"), s"Invalid partition value: '$value'"))
+      .map(Part.token(key, _))
+
+  /** A partition builder: `.withValue(PartitionKey.SheetName, PartitionValue.Token("S1"))`. */
   def partBuilder: PartBuilder = PartBuilder.empty
 
   // ------------------------------------------------------------------
@@ -69,13 +77,13 @@ object dsl:
 
   /** A resource carrying a Media payload. */
   def media(media: Media, id: Option[String] = None, parts: Part*): ValidatedNec[Issue, Resource] =
-    idV(id).map { idv =>
+    validateId(id).map { idv =>
       Resource(specific = ResourcePayload.MediaResource(media), id = idv, parts = Chain.fromSeq(parts))
     }
 
   /** A resource carrying a Component payload. */
   def component(component: Component, id: Option[String] = None, parts: Part*): ValidatedNec[Issue, Resource] =
-    idV(id).map { idv =>
+    validateId(id).map { idv =>
       Resource(specific = ResourcePayload.ComponentResource(component), id = idv, parts = Chain.fromSeq(parts))
     }
 
@@ -85,7 +93,7 @@ object dsl:
 
   /** A resource carrying a RunList payload. */
   def runList(runList: RunList, id: Option[String] = None, parts: Part*): ValidatedNec[Issue, Resource] =
-    idV(id).map { idv =>
+    validateId(id).map { idv =>
       Resource(specific = ResourcePayload.RunListResource(runList), id = idv, parts = Chain.fromSeq(parts))
     }
 
@@ -97,11 +105,11 @@ object dsl:
       .map { token =>
         Resource(
           specific = ResourcePayload.DeliveryParamsResource(params),
-          parts = Chain.one(Part.of(PartitionKey.DropID, token))
+          parts = Chain.one(Part.token(PartitionKey.DropID, token))
         )
       }
 
-  private def idV(id: Option[String]): ValidatedNec[Issue, Option[Id]] =
+  private def validateId(id: Option[String]): ValidatedNec[Issue, Option[Id]] =
     id match
       case None => None.validNec
       case Some(raw) =>
@@ -121,7 +129,7 @@ object dsl:
     id: Option[String] = None,
     externalId: Option[String] = None
   )(intents: Intent*): ValidatedNec[Issue, Product] =
-    val idV = idV(id)
+    val idValidated = validateId(id)
     val typeV = productType match
       case Some(raw) =>
         NmToken
@@ -142,7 +150,7 @@ object dsl:
       (),
       Issue.error(XPath("/XJDF/ProductList/Product/@Amount"), "Negative product amount")
     )
-    (idV, typeV, externalV, amountV).mapN { (idv, tv, ev, _) =>
+    (idValidated, typeV, externalV, amountV).mapN { (idv, tv, ev, _) =>
       Product(
         amount = amount,
         externalId = ev,

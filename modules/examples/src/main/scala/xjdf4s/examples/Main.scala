@@ -23,12 +23,12 @@ object Main:
     println("\n--- BOM: unfold the notebook, fold the amounts ---")
     SpecExamples.notebook match
       case cats.data.Validated.Invalid(issues) =>
-        println(s"invalid: ${issues.toList.map(_.message).mkString("; ")}")
+        println(s"invalid: ${issues.toChain.toList.map(_.message).mkString("; ")}")
       case cats.data.Validated.Valid(pl) =>
         Bom.fromProductList(pl) match
           case Left(issue) => println(s"unfold failed: ${issue.message}")
           case Right(forest) =>
-            forest.toList.foreach { tree =>
+            forest.toChain.toList.foreach { tree =>
               Bom.totalCopies(tree).foreach { case (p, copies) =>
                 println(s"  ${p.productType.fold("?")(_.value)}: $copies copies")
               }
@@ -40,11 +40,11 @@ object Main:
     println("\n--- Change order: Patch monoid action ---")
     SpecExamples.updatedBrochureJob match
       case cats.data.Validated.Invalid(issues) =>
-        println(s"invalid: ${issues.toList.map(_.message).mkString("; ")}")
+        println(s"invalid: ${issues.toChain.toList.map(_.message).mkString("; ")}")
       case cats.data.Validated.Valid(ticket) =>
         ticket.resourceSetsNamed(xjdf4s.prim.ResourceSetName.unsafe("Component")).toList.foreach { rs =>
           rs.resources.toList.foreach { r =>
-            println(s"  ${rs.name.value} amount = ${r.amountPool.fold("unset")(_.totalAmount.value.toString)}")
+            println(s"  ${rs.name.toNmToken.value} amount = ${r.amountPool.fold("unset")(_.totalAmount.value.toString)}")
           }
         }
 

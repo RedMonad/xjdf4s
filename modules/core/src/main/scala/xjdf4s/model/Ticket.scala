@@ -5,7 +5,7 @@ import xjdf4s.prim.*
 import cats.Show
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}
 import cats.kernel.Eq
-import cats.syntax.validated.*
+import cats.syntax.all.*
 
 /**
  * Marker of relaxed cardinality: a change order only conveys the modified
@@ -60,7 +60,8 @@ final case class XJDF(
     val resourceIds =
       resourceSets.flatMap(rs => Chain.fromOption(rs.id) ++ rs.resources.flatMap(r => Chain.fromOption(r.id)))
     val productIds = productList.fold(Chain.empty[Id])(_.declaredIds)
-    val headerIds  = auditPool.fold(Chain.empty[Id])(_.toChain.flatMap(a => Chain.fromOption(a.header.id)))
+    val headerIds =
+      auditPool.fold(Chain.empty[Id])(_.toNonEmptyChain.toChain.flatMap(a => Chain.fromOption(a.header.id)))
     resourceIds ++ productIds ++ headerIds
 
   /** All IDREFs used inside this ticket. */
@@ -95,15 +96,19 @@ object XJDF:
     JobId.from(jobId).toValidNec(Issue.error(XPath("/XJDF"), s"Invalid JobID: '$jobId'")).map(XJDF(_, types))
 
   given Show[XJDF] =
-    Show.show: x =>
-      val parts = List(
+    Show.show { x =>
+      val mandatory = List(
         s"job=${x.jobId.value}",
-        s"types=${Show[ProcessPath].show(x.processPath)}",
+        s"types=${Show[ProcessPath].show(x.processPath)}"
+      )
+      val optional: List[Option[String]] = List(
         x.jobPartId.map(jp => s"part=${jp.value}"),
         x.productList.map(pl => Show[ProductList].show(pl)),
         x.auditPool.map(ap => s"audits=${ap.toList.size}")
-      ).flatten
+      )
+      val parts = mandatory ++ optional.flatten
       s"XJDF(${parts.mkString(", ")})"
+    }
 
   given Eq[XJDF] = Eq.fromUniversalEquals
 

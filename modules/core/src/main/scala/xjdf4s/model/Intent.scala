@@ -28,7 +28,7 @@ final case class Intent(
 object Intent:
 
   given Show[Intent] =
-    Show.show(i => s"Intent(${i.name.value})")
+    Show.show(i => s"Intent(${i.name.toNmToken.value})")
 
   given Eq[Intent] = Eq.fromUniversalEquals
 

@@ -39,18 +39,25 @@ class PartitionLaws extends ScalaCheckSuite:
   property("merging a Part with itself never conflicts"):
     forAll { (p: Part) => p.mergeWith(p).isRight }
 
-  property("match-type accessor round-trips typed values"):
+  property("runtime-tagged accessor round-trips NMTOKEN values"):
     forAll { (name: NmToken) =>
-      Part.of(PartitionKey.SheetName, name).get(PartitionKey.SheetName).contains(name)
+      Part.token(PartitionKey.SheetName, name).valueOf(PartitionKey.SheetName).contains(PartitionValue.Token(name))
     }
 
-  property("the ValueOf match type: range keys carry IntegerRange"):
+  property("runtime-tagged accessor round-trips range values"):
     forAll { (r: IntegerRange) =>
-      Part.of(PartitionKey.DocIndex, r).get(PartitionKey.DocIndex).contains(r)
+      Part.range(PartitionKey.DocIndex, r).valueOf(PartitionKey.DocIndex).contains(PartitionValue.Range(r))
     }
 
-  property("the ValueOf match type: Side carries the Side enum"):
-    Part.of(PartitionKey.Side, Side.Front).get(PartitionKey.Side).contains(Side.Front)
+  property("typed constructor bySide carries the Side enum"):
+    Part.bySide(Side.Front).valueOf(PartitionKey.Side).contains(PartitionValue.BySide(Side.Front))
+
+  property("the ValueOf match type agrees with the typed fields at the type level"):
+    // `sheetName` is Option[NmToken] == Option[ValueOf[PartitionKey.SheetName.type]]:
+    // the match type is used here as a *type-level* witness, since GADT
+    // refinement of abstract keys is not available (see Partition.scala).
+    val sheet: Option[ValueOf[PartitionKey.SheetName.type]] = Part.sheetName("S1").flatMap(_.sheetName)
+    sheet.contains(NmToken.unsafe("S1"))
 
   property("selection: a Resource without parts applies to the entire set"):
     forAll { (selector: Part) =>

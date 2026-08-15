@@ -1,6 +1,7 @@
 package xjdf4s
 package model
 
+import xjdf4s.prim.*
 import cats.Show
 import cats.data.{Chain, Ior, NonEmptyChain}
 import cats.kernel.{Monoid, Semigroup}

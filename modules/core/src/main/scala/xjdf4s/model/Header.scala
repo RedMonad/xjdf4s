@@ -140,7 +140,7 @@ final case class ResourceInfo(
 object ResourceInfo:
 
   given Show[ResourceInfo] =
-    Show.show(r => s"ResourceInfo(${r.resourceSet.name.value})")
+    Show.show(r => s"ResourceInfo(${r.resourceSet.name.toNmToken.value})")
 
   given Eq[ResourceInfo] = Eq.fromUniversalEquals
 

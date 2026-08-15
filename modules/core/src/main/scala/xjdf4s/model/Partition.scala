@@ -18,7 +18,8 @@ enum PartitionKey:
 
 object PartitionKey:
 
-  def values: List[PartitionKey] =
+  /** All keys, in Table 6.4 order. (`all`, not `values`: enums synthesize `values`.) */
+  def all: List[PartitionKey] =
     List(BinderySignatureID, BlockName, ContactType, DocIndex, DropID, Location, LotID,
       Metadata, OptionKey, PageNumber, PartVersion, PreviewType, PrintCondition, Product,
       ProductPart, QualityMeasurement, Run, RunIndex, Separation, SetIndex, SheetIndex,
@@ -32,8 +33,9 @@ end PartitionKey
 
 /**
  * The runtime-tagged value of a Partition Key. Used when the key is not known
- * at compile time; for literal keys the match-type-typed `Part.get` returns the
- * exact value type instead.
+ * at compile time; for compile-time-known keys the typed fields of `Part`
+ * (e.g. `part.docIndex: Option[IntegerRange]`, `part.side: Option[Side]`) and
+ * the typed constructors of the `Part` companion are the primary interface.
  */
 enum PartitionValue:
   case Token(value: NmToken)
@@ -48,24 +50,33 @@ object PartitionValue:
 
   given Show[PartitionValue] =
     Show.show:
-      case Token(v)               => v.value
-      case Range(v)               => Show[IntegerRange].show(v)
-      case BySide(v)              => v.token.value
-      case Tile(v)                => Show[XYPair].show(v)
-      case ByPreviewType(v)       => v.token.value
+      case Token(v)                => v.value
+      case Range(v)                => Show[IntegerRange].show(v)
+      case BySide(v)               => v.token.value
+      case Tile(v)                 => Show[XYPair].show(v)
+      case ByPreviewType(v)        => v.token.value
       case ByTransferCurveTarget(v) => v.token.value
-      case ProductRef(v)          => v.value
+      case ProductRef(v)           => v.value
 
   given Eq[PartitionValue] = Eq.fromUniversalEquals
 
 end PartitionValue
 
 /**
- * A *match type*: the value type of each partition key (Table 6.4). Keys that
- * select ranges of items carry an `IntegerRange`; `Side`, `PreviewType` and
- * `TransferCurveName` carry their closed enums; `TileID` carries an `XYPair` of
- * integers; `ProductPart` carries an `IdRef`; everything else is an open
- * `NmToken`.
+ * The *type-level* reference mapping of Partition Keys to their value types
+ * (Table 6.4), as a match type:
+ *
+ *  - range keys (`DocIndex`, `PageNumber`, `RunIndex`, `SetIndex`, `SheetIndex`)
+ *    carry `IntegerRange`;
+ *  - `Side`, `PreviewType`, `TransferCurveName` carry their closed enums;
+ *  - `TileID` carries an `XYPair` of integers, `ProductPart` an `IdRef`;
+ *  - everything else is an open `NmToken`.
+ *
+ * Exposed for type-level programming downstream; the value-level accessors of
+ * `Part` are the typed case-class fields and `PartitionValue` (the compiler
+ * does not refine abstract keys in match-type scrutinees, so a generic
+ * `get[K <: PartitionKey](key: K): Option[ValueOf[K]]` cannot be implemented
+ * without casts — see ROADMAP, "Риски", item 3).
  */
 type ValueOf[K <: PartitionKey] = K match
   case PartitionKey.DocIndex.type | PartitionKey.PageNumber.type | PartitionKey.RunIndex.type
@@ -152,7 +163,7 @@ final case class Part(
       Option.when(webName.isDefined)(PartitionKey.WebName)
     ).flatten
 
-  /** Runtime-safe accessor for a key that is not a compile-time literal. */
+  /** Runtime accessor for a key that is not a compile-time literal. */
   def valueOf(key: PartitionKey): Option[PartitionValue] =
     key match
       case PartitionKey.BinderySignatureID => binderySignatureId.map(PartitionValue.Token.apply)
@@ -182,42 +193,6 @@ final case class Part(
       case PartitionKey.TileID             => tileId.map(PartitionValue.Tile.apply)
       case PartitionKey.TransferCurveName  => transferCurveName.map(PartitionValue.ByTransferCurveTarget.apply)
       case PartitionKey.WebName            => webName.map(PartitionValue.Token.apply)
-
-  /**
-   * Type-safe accessor for literal keys. The return type is computed by the
-   * `ValueOf` match type: `part.get(PartitionKey.DocIndex): Option[IntegerRange]`
-   * and `part.get(PartitionKey.Separation): Option[NmToken]` are both checked at
-   * compile time.
-   */
-  def get[K <: PartitionKey](key: K): Option[ValueOf[K]] =
-    key match
-      case PartitionKey.BinderySignatureID  => binderySignatureId
-      case PartitionKey.BlockName           => blockName
-      case PartitionKey.ContactType         => contactType
-      case PartitionKey.DocIndex            => docIndex
-      case PartitionKey.DropID              => dropId
-      case PartitionKey.Location            => location
-      case PartitionKey.LotID               => lotId
-      case PartitionKey.Metadata            => metadata
-      case PartitionKey.OptionKey           => optionKey
-      case PartitionKey.PageNumber          => pageNumber
-      case PartitionKey.PartVersion         => partVersion
-      case PartitionKey.PreviewType         => previewType
-      case PartitionKey.PrintCondition      => printCondition
-      case PartitionKey.Product             => product
-      case PartitionKey.ProductPart         => productPart
-      case PartitionKey.QualityMeasurement  => qualityMeasurement
-      case PartitionKey.Run                 => run
-      case PartitionKey.RunIndex            => runIndex
-      case PartitionKey.Separation          => separation
-      case PartitionKey.SetIndex            => setIndex
-      case PartitionKey.SheetIndex          => sheetIndex
-      case PartitionKey.SheetName           => sheetName
-      case PartitionKey.Side                => side
-      case PartitionKey.StationName         => stationName
-      case PartitionKey.TileID              => tileId
-      case PartitionKey.TransferCurveName   => transferCurveName
-      case PartitionKey.WebName             => webName
 
   /** Keys present on both sides with *different* values. */
   def conflictingKeys(other: Part): List[PartitionKey] =
@@ -282,24 +257,88 @@ object Part:
       webName            = a.webName.orElse(b.webName)
     )
 
-  /** Builds a Part with exactly one key. */
-  def of[K <: PartitionKey](key: K, value: ValueOf[K]): Part =
-    PartBuilder.empty.withKey(key, value).build
+  /** Builds a Part with exactly one runtime-tagged key value. */
+  def ofValue(key: PartitionKey, value: PartitionValue): Part =
+    PartBuilder.empty.withValue(key, value).build
+
+  // ------------------------------------------------------------------
+  // Typed constructors, one per value kind
+  // ------------------------------------------------------------------
+
+  /** Builds a Part with one NMTOKEN-valued key. */
+  def token(key: PartitionKey, value: NmToken): Part =
+    ofValue(key, PartitionValue.Token(value))
+
+  /** Builds a Part with one IntegerRange-valued key. */
+  def range(key: PartitionKey, value: IntegerRange): Part =
+    ofValue(key, PartitionValue.Range(value))
+
+  /** `@Side` partition — e.g. the Front side of a sheet. */
+  def bySide(value: Side): Part =
+    ofValue(PartitionKey.Side, PartitionValue.BySide(value))
+
+  /** `@TileID` partition — a tile of a surface split by the Imposition process. */
+  def byTile(value: XYPair): Part =
+    ofValue(PartitionKey.TileID, PartitionValue.Tile(value))
+
+  /** `@PreviewType` partition — e.g. `ThumbNail` or `Viewable` previews. */
+  def byPreviewType(value: PreviewType): Part =
+    ofValue(PartitionKey.PreviewType, PartitionValue.ByPreviewType(value))
+
+  /** `@TransferCurveName` partition — the destination system of a TransferCurve. */
+  def byTransferCurveTarget(value: TransferCurveTarget): Part =
+    ofValue(PartitionKey.TransferCurveName, PartitionValue.ByTransferCurveTarget(value))
+
+  /** `@ProductPart` partition — references the `Product/@ID` this Part applies to. */
+  def byProductRef(value: IdRef): Part =
+    ofValue(PartitionKey.ProductPart, PartitionValue.ProductRef(value))
+
+  // ------------------------------------------------------------------
+  // Typed constructors, one per common key
+  // ------------------------------------------------------------------
 
   /** `@SheetName` partition — the classic sheet-partitioned resource. */
   def sheetName(name: String): Option[Part] =
-    NmToken.from(name).map(t => of(PartitionKey.SheetName, t))
+    NmToken.from(name).map(token(PartitionKey.SheetName, _))
 
   /** `@Separation` partition — e.g. the Cyan plate. */
   def separation(name: String): Option[Part] =
-    NmToken.from(name).map(t => of(PartitionKey.Separation, t))
-
-  /** `@Side` partition — e.g. the Front side of a sheet. */
-  def side(s: Side): Part = of(PartitionKey.Side, s)
+    NmToken.from(name).map(token(PartitionKey.Separation, _))
 
   /** `@Run` partition — an individual RunList resource. */
   def run(name: String): Option[Part] =
-    NmToken.from(name).map(t => of(PartitionKey.Run, t))
+    NmToken.from(name).map(token(PartitionKey.Run, _))
+
+  /** `@ContactType` partition — the role of a contact (Table 6.4, §5.1). */
+  def contactType(name: String): Option[Part] =
+    NmToken.from(name).map(token(PartitionKey.ContactType, _))
+
+  /** `@DropID` partition — one drop within a Delivery (§5.3.2). */
+  def dropId(name: String): Option[Part] =
+    NmToken.from(name).map(token(PartitionKey.DropID, _))
+
+  /** `@BlockName` partition — a CutBlock produced by Cutting (Table 6.4). */
+  def blockName(name: String): Option[Part] =
+    NmToken.from(name).map(token(PartitionKey.BlockName, _))
+
+  /** `@WebName` partition — a web on a web press. */
+  def webName(name: String): Option[Part] =
+    NmToken.from(name).map(token(PartitionKey.WebName, _))
+
+  /** `@DocIndex` partition — a selection of logical Instance Documents (§6.1.3). */
+  def docIndex(r: IntegerRange): Part = range(PartitionKey.DocIndex, r)
+
+  /** `@PageNumber` partition — a zero-based page selection. */
+  def pageNumber(r: IntegerRange): Part = range(PartitionKey.PageNumber, r)
+
+  /** `@RunIndex` partition — a selection of logical pages of a RunList. */
+  def runIndex(r: IntegerRange): Part = range(PartitionKey.RunIndex, r)
+
+  /** `@SetIndex` partition — a selection of Instance Document Sets. */
+  def setIndex(r: IntegerRange): Part = range(PartitionKey.SetIndex, r)
+
+  /** `@SheetIndex` partition — a selection of imposed sheets or surfaces. */
+  def sheetIndex(r: IntegerRange): Part = range(PartitionKey.SheetIndex, r)
 
   given Semigroup[Part] with
     def combine(a: Part, b: Part): Part = Part.combine(a, b)
@@ -320,45 +359,84 @@ object Part:
 end Part
 
 /**
- * Incremental, type-safe constructor of `Part` values. Every `withKey` call is
- * checked against the `ValueOf` match type, so an incompatible key/value pair
- * (e.g. `PartitionKey.DocIndex` with an `NmToken`) does not compile.
+ * Incremental constructor of `Part` values for runtime-tagged keys. The typed
+ * alternative is the per-key constructors of the `Part` companion.
  */
 final case class PartBuilder private (part: Part):
 
-  def withKey[K <: PartitionKey](key: K, value: ValueOf[K]): PartBuilder =
-    PartBuilder(
-      key match
-        case PartitionKey.BinderySignatureID  => part.copy(binderySignatureId = Some(value))
-        case PartitionKey.BlockName           => part.copy(blockName = Some(value))
-        case PartitionKey.ContactType         => part.copy(contactType = Some(value))
-        case PartitionKey.DocIndex            => part.copy(docIndex = Some(value))
-        case PartitionKey.DropID              => part.copy(dropId = Some(value))
-        case PartitionKey.Location            => part.copy(location = Some(value))
-        case PartitionKey.LotID               => part.copy(lotId = Some(value))
-        case PartitionKey.Metadata            => part.copy(metadata = Some(value))
-        case PartitionKey.OptionKey           => part.copy(optionKey = Some(value))
-        case PartitionKey.PageNumber          => part.copy(pageNumber = Some(value))
-        case PartitionKey.PartVersion         => part.copy(partVersion = Some(value))
-        case PartitionKey.PreviewType         => part.copy(previewType = Some(value))
-        case PartitionKey.PrintCondition      => part.copy(printCondition = Some(value))
-        case PartitionKey.Product             => part.copy(product = Some(value))
-        case PartitionKey.ProductPart         => part.copy(productPart = Some(value))
-        case PartitionKey.QualityMeasurement  => part.copy(qualityMeasurement = Some(value))
-        case PartitionKey.Run                 => part.copy(run = Some(value))
-        case PartitionKey.RunIndex            => part.copy(runIndex = Some(value))
-        case PartitionKey.Separation          => part.copy(separation = Some(value))
-        case PartitionKey.SetIndex            => part.copy(setIndex = Some(value))
-        case PartitionKey.SheetIndex          => part.copy(sheetIndex = Some(value))
-        case PartitionKey.SheetName           => part.copy(sheetName = Some(value))
-        case PartitionKey.Side                => part.copy(side = Some(value))
-        case PartitionKey.StationName         => part.copy(stationName = Some(value))
-        case PartitionKey.TileID              => part.copy(tileId = Some(value))
-        case PartitionKey.TransferCurveName   => part.copy(transferCurveName = Some(value))
-        case PartitionKey.WebName             => part.copy(webName = Some(value))
-    )
+  /** Sets (overrides) one runtime-tagged key value. */
+  def withValue(key: PartitionKey, value: PartitionValue): PartBuilder =
+    PartBuilder(PartBuilder.set(part, key, value))
+
+  /** Sets one NMTOKEN-valued key. */
+  def withToken(key: PartitionKey, value: NmToken): PartBuilder =
+    withValue(key, PartitionValue.Token(value))
+
+  /** Sets one IntegerRange-valued key. */
+  def withRange(key: PartitionKey, value: IntegerRange): PartBuilder =
+    withValue(key, PartitionValue.Range(value))
 
   def build: Part = part
 
 object PartBuilder:
+
   val empty: PartBuilder = PartBuilder(Part.empty)
+
+  /** The field assignment of one PartitionValue onto a Part. */
+  def set(part: Part, key: PartitionKey, value: PartitionValue): Part =
+    key match
+      case PartitionKey.BinderySignatureID => part.copy(binderySignatureId = Some(expectToken(value)))
+      case PartitionKey.BlockName          => part.copy(blockName = Some(expectToken(value)))
+      case PartitionKey.ContactType        => part.copy(contactType = Some(expectToken(value)))
+      case PartitionKey.DocIndex           => part.copy(docIndex = Some(expectRange(value)))
+      case PartitionKey.DropID             => part.copy(dropId = Some(expectToken(value)))
+      case PartitionKey.Location           => part.copy(location = Some(expectToken(value)))
+      case PartitionKey.LotID              => part.copy(lotId = Some(expectToken(value)))
+      case PartitionKey.Metadata           => part.copy(metadata = Some(expectToken(value)))
+      case PartitionKey.OptionKey          => part.copy(optionKey = Some(expectToken(value)))
+      case PartitionKey.PageNumber         => part.copy(pageNumber = Some(expectRange(value)))
+      case PartitionKey.PartVersion        => part.copy(partVersion = Some(expectToken(value)))
+      case PartitionKey.PreviewType        => part.copy(previewType = Some(expectPreviewType(value)))
+      case PartitionKey.PrintCondition     => part.copy(printCondition = Some(expectToken(value)))
+      case PartitionKey.Product            => part.copy(product = Some(expectToken(value)))
+      case PartitionKey.ProductPart        => part.copy(productPart = Some(expectProductRef(value)))
+      case PartitionKey.QualityMeasurement => part.copy(qualityMeasurement = Some(expectToken(value)))
+      case PartitionKey.Run                => part.copy(run = Some(expectToken(value)))
+      case PartitionKey.RunIndex           => part.copy(runIndex = Some(expectRange(value)))
+      case PartitionKey.Separation         => part.copy(separation = Some(expectToken(value)))
+      case PartitionKey.SetIndex           => part.copy(setIndex = Some(expectRange(value)))
+      case PartitionKey.SheetIndex         => part.copy(sheetIndex = Some(expectRange(value)))
+      case PartitionKey.SheetName          => part.copy(sheetName = Some(expectToken(value)))
+      case PartitionKey.Side               => part.copy(side = Some(expectSide(value)))
+      case PartitionKey.StationName        => part.copy(stationName = Some(expectToken(value)))
+      case PartitionKey.TileID             => part.copy(tileId = Some(expectTile(value)))
+      case PartitionKey.TransferCurveName  => part.copy(transferCurveName = Some(expectTransferCurveTarget(value)))
+      case PartitionKey.WebName            => part.copy(webName = Some(expectToken(value)))
+
+  private def expectToken(value: PartitionValue): NmToken = value match
+    case PartitionValue.Token(t) => t
+    case other => throw new IllegalArgumentException(s"Expected an NMTOKEN partition value, got $other")
+
+  private def expectRange(value: PartitionValue): IntegerRange = value match
+    case PartitionValue.Range(r) => r
+    case other => throw new IllegalArgumentException(s"Expected an IntegerRange partition value, got $other")
+
+  private def expectSide(value: PartitionValue): Side = value match
+    case PartitionValue.BySide(s) => s
+    case other => throw new IllegalArgumentException(s"Expected a Side partition value, got $other")
+
+  private def expectTile(value: PartitionValue): XYPair = value match
+    case PartitionValue.Tile(t) => t
+    case other => throw new IllegalArgumentException(s"Expected a Tile partition value, got $other")
+
+  private def expectPreviewType(value: PartitionValue): PreviewType = value match
+    case PartitionValue.ByPreviewType(p) => p
+    case other => throw new IllegalArgumentException(s"Expected a PreviewType partition value, got $other")
+
+  private def expectTransferCurveTarget(value: PartitionValue): TransferCurveTarget = value match
+    case PartitionValue.ByTransferCurveTarget(t) => t
+    case other => throw new IllegalArgumentException(s"Expected a TransferCurveTarget partition value, got $other")
+
+  private def expectProductRef(value: PartitionValue): IdRef = value match
+    case PartitionValue.ProductRef(r) => r
+    case other => throw new IllegalArgumentException(s"Expected a ProductPart partition value, got $other")

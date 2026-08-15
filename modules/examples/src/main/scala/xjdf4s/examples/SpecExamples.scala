@@ -64,12 +64,12 @@ object SpecExamples:
   /** Example 5.2: Split delivery — thirty books, ten to Drop1, twenty to Drop2. */
   val splitDelivery: ValidatedNec[Issue, XJDF] =
     val drop1 = PartBuilder.empty
-      .withKey(PartitionKey.ContactType, Catalog.ContactType.Delivery)
-      .withKey(PartitionKey.DropID, NmToken.unsafe("Drop1"))
+      .withToken(PartitionKey.ContactType, Catalog.ContactType.Delivery)
+      .withToken(PartitionKey.DropID, NmToken.unsafe("Drop1"))
       .build
     val drop2 = PartBuilder.empty
-      .withKey(PartitionKey.ContactType, Catalog.ContactType.Delivery)
-      .withKey(PartitionKey.DropID, NmToken.unsafe("Drop2"))
+      .withToken(PartitionKey.ContactType, Catalog.ContactType.Delivery)
+      .withToken(PartitionKey.DropID, NmToken.unsafe("Drop2"))
       .build
     val contact1 = Resource(
       specific = ResourcePayload.ContactResource(
@@ -87,13 +87,13 @@ object SpecExamples:
       specific = ResourcePayload.DeliveryParamsResource(
         DeliveryParams(dropItems = Chain.one(DropItem(10, IdRef.unsafe("IDBook"))))
       ),
-      parts = Chain.one(Part.of(PartitionKey.DropID, NmToken.unsafe("Drop1")))
+      parts = Chain.one(Part.token(PartitionKey.DropID, NmToken.unsafe("Drop1")))
     )
     val delivery2 = Resource(
       specific = ResourcePayload.DeliveryParamsResource(
         DeliveryParams(dropItems = Chain.one(DropItem(20, IdRef.unsafe("IDBook"))))
       ),
-      parts = Chain.one(Part.of(PartitionKey.DropID, NmToken.unsafe("Drop2")))
+      parts = Chain.one(Part.token(PartitionKey.DropID, NmToken.unsafe("Drop2")))
     )
     val book = Product(amount = Some(30), id = Some(Id.unsafe("IDBook")), productType = Some(Catalog.ProductType.Book))
     dsl.TicketDraft
@@ -180,7 +180,7 @@ object SpecExamples:
   /** A change order: raise the amount of the brochure run (a `Patch`). */
   val changeOrder: Patch =
     Patch.updateResourceSets { rs =>
-      if rs.name.value == "Component" && rs.usage.contains(Usage.Output) then
+      if rs.name == ResourceSetName.unsafe("Component") && rs.usage.contains(Usage.Output) then
         Some(
           rs.copy(resources = rs.resources.map { r =>
             r.copy(amountPool = Some(AmountPool.of(PartAmount(amount = Some(Amount(650.0))))))
@@ -203,5 +203,5 @@ object SpecExamples:
       "Brochure job:"                  -> brochureJob.map(Show[XJDF].show),
       "Brochure job after change:"     -> updatedBrochureJob.map(Show[XJDF].show)
     ).map { case (label, result) =>
-      s"$label\n  ${result.fold(_.map(Show[Issue].show).mkString_(", "), identity)}"
+      s"$label\n  ${result.fold(_.toChain.toList.map(Show[Issue].show).mkString(", "), identity)}"
     }

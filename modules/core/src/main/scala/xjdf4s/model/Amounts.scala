@@ -73,22 +73,25 @@ object AmountPool:
   def from(chain: NonEmptyChain[PartAmount]): AmountPool = chain
 
   extension (pool: AmountPool)
-    def toChain: NonEmptyChain[PartAmount] = pool
-    def toList: List[PartAmount]           = pool.toList
-    def head: PartAmount                   = pool.head
+    /** The underlying non-empty chain (representation). */
+    def toNonEmptyChain: NonEmptyChain[PartAmount] = pool
+    def toList: List[PartAmount]                  = pool.toChain.toList
+    def head: PartAmount                          = pool.head
 
     /** Total planned amount across all PartAmount entries. */
-    def totalAmount: Amount = pool.toList.foldLeft(Amount.zero)((acc, pa) => acc + pa.amount.getOrElse(Amount.zero))
+    def totalAmount: Amount =
+      pool.toChain.toList.foldLeft(Amount.zero)((acc, pa) => acc + pa.amount.getOrElse(Amount.zero))
 
     /** Total waste across all PartAmount entries. */
-    def totalWaste: Amount = pool.toList.foldLeft(Amount.zero)((acc, pa) => acc + pa.waste.getOrElse(Amount.zero))
+    def totalWaste: Amount =
+      pool.toChain.toList.foldLeft(Amount.zero)((acc, pa) => acc + pa.waste.getOrElse(Amount.zero))
 
   given Semigroup[AmountPool] with
     def combine(a: AmountPool, b: AmountPool): AmountPool =
-      NonEmptyChain.fromChainUnsafe(a.toChain ++ b.toChain)
+      NonEmptyChain.fromChainUnsafe(a.toNonEmptyChain.toChain ++ b.toNonEmptyChain.toChain)
 
   given Show[AmountPool] =
-    Show.show(pool => pool.toList.map(Show[PartAmount].show).mkString("[", ", ", "]"))
+    Show.show(pool => pool.toChain.toList.map(Show[PartAmount].show).mkString("[", ", ", "]"))
 
   given Eq[AmountPool] = Eq.fromUniversalEquals
 

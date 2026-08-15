@@ -56,25 +56,25 @@ class TicketLaws extends ScalaCheckSuite:
       specific = ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city1")))))
       ),
-      parts = Chain.one(PartBuilder.empty.withKey(PartitionKey.ContactType, Catalog.ContactType.Delivery).withKey(PartitionKey.DropID, NmToken.unsafe("Drop1")).build)
+      parts = Chain.one(PartBuilder.empty.withToken(PartitionKey.ContactType, Catalog.ContactType.Delivery).withToken(PartitionKey.DropID, NmToken.unsafe("Drop1")).build)
     )
     val contact2 = Resource(
       specific = ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city2")))))
       ),
-      parts = Chain.one(PartBuilder.empty.withKey(PartitionKey.ContactType, Catalog.ContactType.Delivery).withKey(PartitionKey.DropID, NmToken.unsafe("Drop2")).build)
+      parts = Chain.one(PartBuilder.empty.withToken(PartitionKey.ContactType, Catalog.ContactType.Delivery).withToken(PartitionKey.DropID, NmToken.unsafe("Drop2")).build)
     )
     val drop1 = Resource(
       specific = ResourcePayload.DeliveryParamsResource(
         DeliveryParams(dropItems = Chain.one(DropItem(10, IdRef.unsafe("IDBook"))))
       ),
-      parts = Chain.one(Part.of(PartitionKey.DropID, NmToken.unsafe("Drop1")))
+      parts = Chain.one(Part.token(PartitionKey.DropID, NmToken.unsafe("Drop1")))
     )
     val drop2 = Resource(
       specific = ResourcePayload.DeliveryParamsResource(
         DeliveryParams(dropItems = Chain.one(DropItem(20, IdRef.unsafe("IDBook"))))
       ),
-      parts = Chain.one(Part.of(PartitionKey.DropID, NmToken.unsafe("Drop2")))
+      parts = Chain.one(Part.token(PartitionKey.DropID, NmToken.unsafe("Drop2")))
     )
     val book = Product(amount = Some(30), id = Some(Id.unsafe("IDBook")), productType = Some(Catalog.ProductType.Book))
     val delivery = ticket(

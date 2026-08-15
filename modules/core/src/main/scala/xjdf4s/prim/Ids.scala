@@ -60,7 +60,7 @@ object IdRefs:
 
   extension (refs: IdRefs)
     def toChain: NonEmptyChain[IdRef] = refs
-    def toList: List[IdRef]           = refs.toList
+    def toList: List[IdRef]           = refs.toChain.toList
     def contains(ref: IdRef): Boolean = refs.exists(_ == ref)
 
   given Show[IdRefs] = Show.show(_.toList.map(_.value).mkString(" "))

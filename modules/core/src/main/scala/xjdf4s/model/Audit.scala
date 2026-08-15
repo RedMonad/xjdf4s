@@ -76,31 +76,32 @@ object AuditPool:
   def from(chain: NonEmptyChain[Audit]): AuditPool = chain
 
   extension (pool: AuditPool)
-    def toChain: NonEmptyChain[Audit] = pool
-    def toList: List[Audit]           = pool.toList
-    def latest: Audit                 = pool.last
-    def oldest: Audit                 = pool.head
+    /** The underlying non-empty chain (representation). */
+    def toNonEmptyChain: NonEmptyChain[Audit] = pool
+    def toList: List[Audit]                  = pool.toChain.toList
+    def latest: Audit                        = pool.last
+    def oldest: Audit                        = pool.head
 
     /** True when the audits are ordered chronologically from oldest to newest. */
     def isChronological: Boolean =
-      pool.toList.sliding(2).forall {
+      pool.toChain.toList.sliding(2).forall {
         case a :: b :: Nil => !b.time.isBefore(a.time)
         case _             => true
       }
 
     /** The process runs recorded in this pool, in order. */
     def processRuns: Chain[ProcessRun] =
-      Chain.fromSeq(pool.toList.collect { case Audit.Run(_, run) => run })
+      Chain.fromSeq(pool.toChain.toList.collect { case Audit.Run(_, run) => run })
 
     /** The `AuditProcessRun` that finalizes the newest workstep. */
     def latestProcessRun: Option[ProcessRun] = processRuns.lastOption
 
   given Semigroup[AuditPool] with
     def combine(a: AuditPool, b: AuditPool): AuditPool =
-      NonEmptyChain.fromChainUnsafe(a.toChain ++ b.toChain)
+      NonEmptyChain.fromChainUnsafe(a.toNonEmptyChain.toChain ++ b.toNonEmptyChain.toChain)
 
   given Show[AuditPool] =
-    Show.show(pool => pool.toList.map(Show[Audit].show).mkString("[", "\n, ", "]"))
+    Show.show(pool => pool.toChain.toList.map(Show[Audit].show).mkString("[", "\n, ", "]"))
 
   given Eq[AuditPool] = Eq.fromUniversalEquals
 
@@ -191,7 +192,7 @@ object Alignment:
 
   /** A stream of signal pulses becomes the chronological audit pool. */
   def foldSignals(pulses: NonEmptyChain[Pulse[Signal]]): AuditPool =
-    val logs = pulses.map(toAuditLog)
-    NonEmptyChain.fromChainUnsafe(logs.toChain.flatMap(_.toChain))
+    val audits = pulses.map(toAuditLog).flatMap(_.toNonEmptyChain)
+    AuditPool.from(audits)
 
 end Alignment

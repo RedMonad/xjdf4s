@@ -18,7 +18,7 @@ class AlignmentLaws extends ScalaCheckSuite:
     forAll { (i: Int, f: Int => String) =>
       val left  = Alignment.snapshot(Functor[Pulse].map(Pulse.beat(i))(f))
       val right = Alignment.snapshot(Pulse.beat(i)).map(f)
-      left.toList == right.toList
+      left.toChain.toList == right.toChain.toList
     }
 
   property("alignment of Table 3.2: SignalNotification → AuditNotification"):

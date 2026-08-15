@@ -60,14 +60,14 @@ final case class ProcessPath(steps: NonEmptyChain[ProcessType]):
 
   def contains(pt: ProcessType): Boolean = steps.exists(_ == pt)
 
-  def size: Int = steps.size
+  def size: Int = steps.toChain.size.toInt
 
   /** The process at a zero-based position of the path. */
-  def at(index: Int): Option[ProcessType] = steps.toList.lift(index)
+  def at(index: Int): Option[ProcessType] = steps.toChain.toList.lift(index)
 
   /** The zero-based positions at which `pt` occurs. */
   def indicesOf(pt: ProcessType): Chain[Int] =
-    Chain.fromSeq(steps.toList.zipWithIndex.collect { case (`pt`, i) => i })
+    Chain.fromSeq(steps.toChain.toList.zipWithIndex.collect { case (`pt`, i) => i })
 
 object ProcessPath:
 
@@ -77,7 +77,7 @@ object ProcessPath:
   /** A product ticket: the single word `"Product"`. */
   val product: ProcessPath = ProcessPath(NonEmptyChain.one(ProcessType.Product))
 
-  given Show[ProcessPath] = Show.show(_.steps.toList.map(Show[ProcessType].show).mkString(" "))
+  given Show[ProcessPath] = Show.show(_.steps.toChain.toList.map(Show[ProcessType].show).mkString(" "))
 
   given Eq[ProcessPath] = Eq.fromUniversalEquals
 
@@ -207,7 +207,7 @@ final case class ResourceSet(
 object ResourceSet:
 
   given Show[ResourceSet] =
-    Show.show(rs => s"ResourceSet(${rs.name.value}${rs.usage.fold("")(u => s", ${u.token.value}")})")
+    Show.show(rs => s"ResourceSet(${rs.name.toNmToken.value}${rs.usage.fold("")(u => s", ${u.token.value}")})")
 
   given Eq[ResourceSet] = Eq.fromUniversalEquals
 

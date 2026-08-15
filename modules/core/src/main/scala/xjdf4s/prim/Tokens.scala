@@ -66,7 +66,7 @@ object NmTokens:
 
   extension (tokens: NmTokens)
     def toChain: NonEmptyChain[NmToken] = tokens
-    def toList: List[NmToken]           = tokens.toList
+    def toList: List[NmToken]           = tokens.toChain.toList
     def head: NmToken                   = tokens.head
     def contains(token: NmToken): Boolean = tokens.exists(_ == token)
 

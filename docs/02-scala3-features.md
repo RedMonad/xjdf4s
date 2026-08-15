@@ -102,10 +102,17 @@ type ValueOf[K <: PartitionKey] = K match
   case _ => NmToken
 ```
 
-`Part.get(PartitionKey.DocIndex): Option[IntegerRange]` и
-`PartBuilder.withKey(PartitionKey.Side, Side.Front)` проверяются компилятором
-(уточнение типа в GADT-ветках матча). Рантайм-доступ — `Part.valueOf` с
-тегованным `PartitionValue`.
+`ValueOf` — **type-level** отображение «ключ → тип значения» (Table 6.4),
+доступное для программирования на уровне типов (например, как свидетель
+`Option[ValueOf[PartitionKey.SheetName.type]] = Option[NmToken]`).
+На уровне значений типизированный интерфейс — это поля case class
+(`part.docIndex: Option[IntegerRange]`, `part.side: Option[Side]`) и
+типизированные конструкторы `Part.docIndex(r)`, `Part.bySide(s)`,
+`Part.sheetName("S1")`; рантайм-доступ по нелитеральному ключу —
+`Part.valueOf: PartitionKey => Option[PartitionValue]` с тегованным значением.
+(Обобщённый `get[K <: PartitionKey](key: K): Option[ValueOf[K]]` не
+реализуем без кастов: компилятор не уточняет абстрактный ключ в ветках матча
+при редукции match type — подтверждено сборкой; см. ROADMAP, «Риски», п. 3.)
 
 Ссылка: `reference/new-types/match-types.md`.
 

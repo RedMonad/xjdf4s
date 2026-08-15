@@ -18,7 +18,7 @@ object IdSource:
 
   /** Allocates the next ID with the given prefix, e.g. `r_000007`. */
   def fresh(prefix: String): State[Counter, Id] =
-    State(c => (c + 1L, Id.unsafe(s"${prefix}_${c + 1L}"))
+    State(c => (c + 1L, Id.unsafe(s"${prefix}_${c + 1L}")))
 
   /** Runs an ID-allocation program, discarding the final counter. */
   def run[A](program: State[Counter, A]): A =

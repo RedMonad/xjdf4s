@@ -158,8 +158,8 @@ final case class FileSpec(
 
   /** The resolved location: URL, UID, a template or an (empty) pipe. */
   def location: Option[FileLocation] =
-    url.map(FileLocation.Url.apply)
-      .orElse(uid.map(FileLocation.Uid.apply))
+    url.map(FileLocation.UrlLocation.apply)
+      .orElse(uid.map(FileLocation.UidLocation.apply))
       .orElse {
         for
           format   <- fileFormat
@@ -170,8 +170,6 @@ final case class FileSpec(
 
   private def allLocationAttributesAbsent: Boolean =
     url.isEmpty && uid.isEmpty && fileFormat.isEmpty && fileTemplate.isEmpty
-
-  def refs: Chain[IdRef] = Chain.empty
 
 object FileSpec:
 
@@ -189,10 +187,13 @@ object FileSpec:
 
 end FileSpec
 
-/** The closed location alternatives of a FileSpec (Table 8.22). */
+/**
+ * The closed location alternatives of a FileSpec (Table 8.22). The case names
+ * carry a suffix so they do not clash with the opaque type `Url`.
+ */
 enum FileLocation:
-  case Url(value: Url)
-  case Uid(value: NmToken)
+  case UrlLocation(value: Url)
+  case UidLocation(value: NmToken)
   case Template(fileFormat: XjdfString, fileTemplate: NmTokens)
   case Pipe
 

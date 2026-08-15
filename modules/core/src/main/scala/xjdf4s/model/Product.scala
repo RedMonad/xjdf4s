@@ -5,6 +5,7 @@ import xjdf4s.prim.*
 import cats.{Functor, Show}
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}
 import cats.kernel.Eq
+import cats.syntax.all.*
 
 /**
  * The `Product` element (Table 3.11): an individual product or product part of
@@ -57,14 +58,14 @@ final case class ProductList(products: NonEmptyChain[Product]):
 
   /** The root products (`@IsRoot="true"`); more than one implies a Gang job. */
   def roots: Chain[Product] =
-    Chain.fromSeq(products.toList.filter(_.isRoot))
+    Chain.fromSeq(products.toChain.toList.filter(_.isRoot))
 
   def parts: Chain[Product] =
-    Chain.fromSeq(products.toList.filterNot(_.isRoot))
+    Chain.fromSeq(products.toChain.toList.filterNot(_.isRoot))
 
   /** Looks a product up by its document-scoped `@ID`. */
   def byId(id: Id): Option[Product] =
-    products.toList.find(_.id.contains(id))
+    products.toChain.toList.find(_.id.contains(id))
 
   /** Resolves an IDREF against this product list. */
   def resolve(ref: IdRef): Option[Product] =
@@ -72,7 +73,7 @@ final case class ProductList(products: NonEmptyChain[Product]):
 
   /** All document-scoped IDs declared by the products. */
   def declaredIds: Chain[Id] =
-    Chain.fromSeq(products.toList.flatMap(_.id))
+    Chain.fromSeq(products.toChain.toList.flatMap(_.id))
 
   /** All IDREFs used by the products (e.g. binding child references). */
   def references: Chain[IdRef] =
@@ -84,7 +85,7 @@ object ProductList:
     ProductList(NonEmptyChain(head, tail*))
 
   given Show[ProductList] =
-    Show.show(pl => pl.products.toList.map(Show[Product].show).mkString("ProductList(", ", ", ")"))
+    Show.show(pl => pl.products.toChain.toList.map(Show[Product].show).mkString("ProductList(", ", ", ")"))
 
   given Eq[ProductList] = Eq.fromUniversalEquals
 
@@ -134,23 +135,25 @@ object Bom:
     byId: Map[String, Product],
     seen: Set[String]
   ): Either[Issue, Fix[ProductTree]] =
-    if product.id.exists(id => seen.contains(id.value)) then
-      Left(Issue.error(XPath("/XJDF/ProductList"), s"Cycle in product structure at ID '${id.value}'"))
-    else
-      val childRefs = product.references.toList.distinct
-      childRefs match
-        case Nil =>
-          Right(Fix(ProductTree.Leaf(product)))
-        case refs =>
-          val children = refs.foldLeft(Right(Chain.empty[Fix[ProductTree]]): Either[Issue, Chain[Fix[ProductTree]]]) {
-            case (acc, ref) =>
-              for
-                kids <- acc
-                child = byId.get(ref.value).toRight(Issue.error(XPath("/XJDF/ProductList"), s"Unresolved ChildRef '$ref'"))
-                kid  <- child.flatMap(c => toTree(c, byId, seen + c.id.fold("")(_.value)))
-              yield kids :+ kid
-          }
-          children.map(cs => Fix(ProductTree.Node(product, cs)))
+    val cycleIssue = product.id.collect { case id if seen.contains(id.value) => id }
+    cycleIssue match
+      case Some(id) =>
+        Left(Issue.error(XPath("/XJDF/ProductList"), s"Cycle in product structure at ID '${id.value}'"))
+      case None =>
+        val childRefs = product.references.toList.distinct
+        childRefs match
+          case Nil =>
+            Right(Fix(ProductTree.Leaf(product)))
+          case refs =>
+            val children = refs.foldLeft(Right(Chain.empty[Fix[ProductTree]]): Either[Issue, Chain[Fix[ProductTree]]]) {
+              case (acc, ref) =>
+                for
+                  kids <- acc
+                  child = byId.get(ref.value).toRight(Issue.error(XPath("/XJDF/ProductList"), s"Unresolved ChildRef '$ref'"))
+                  kid  <- child.flatMap(c => toTree(c, byId, seen + c.id.fold("")(_.value)))
+                yield kids :+ kid
+            }
+            children.map(cs => Fix(ProductTree.Node(product, cs)))
 
   /**
    * Unfolds a ProductList into a forest of product trees. Fails on unresolved
@@ -158,7 +161,7 @@ object Bom:
    */
   def fromProductList(pl: ProductList): Either[Issue, NonEmptyChain[Fix[ProductTree]]] =
     val byId: Map[String, Product] =
-      pl.products.toList.flatMap(p => p.id.map(id => id.value -> p)).toMap
+      pl.products.toChain.toList.flatMap(p => p.id.map(id => id.value -> p)).toMap
     val roots = pl.roots
     if roots.isEmpty then
       Left(Issue.error(XPath("/XJDF/ProductList"), "A ProductList SHALL contain at least one root product"))
@@ -187,7 +190,6 @@ object Bom:
    * errors — so the fold reports every unlawful amount in the BOM at once.
    */
   def validateAmounts(tree: Fix[ProductTree]): ValidatedNec[Issue, Unit] =
-    import cats.syntax.all.*
     cata[ValidatedNec[Issue, Unit]] {
       case ProductTree.Leaf(p)       => checkAmounts(p)
       case ProductTree.Node(p, kids) => checkAmounts(p) |+| kids.combineAll

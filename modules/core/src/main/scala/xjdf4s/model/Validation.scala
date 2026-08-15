@@ -103,7 +103,7 @@ object TicketValidator:
     Validated.condNec(
       bad.isEmpty,
       (),
-      Issue.error(XPath("/XJDF/ResourceSet"), s"ResourceSet children do not match @Name: ${bad.map(_.name.value).mkString(", ")}")
+      Issue.error(XPath("/XJDF/ResourceSet"), s"ResourceSet children do not match @Name: ${bad.map(_.name.toNmToken.value).mkString(", ")}")
     )
 
   /** `Resource/@Status` SHALL NOT be specified for `@Usage="Output"` (Table 6.1). */
@@ -112,15 +112,15 @@ object TicketValidator:
     Validated.condNec(
       bad.isEmpty,
       (),
-      Issue.error(XPath("/XJDF/ResourceSet"), s"Resource @Status specified for output ResourceSet: ${bad.map(_.name.value).mkString(", ")}")
+      Issue.error(XPath("/XJDF/ResourceSet"), s"Resource @Status specified for output ResourceSet: ${bad.map(_.name.toNmToken.value).mkString(", ")}")
     )
 
   /** `@CombinedProcessIndex` SHALL reference existing positions of `@Types` (§3.4). */
   private def checkCombinedProcessIndices(ticket: XJDF): ValidatedNec[Issue, Unit] =
-    val size = ticket.types.size
+    val size = ticket.types.toChain.size.toInt
     val bad = ticket.resourceSets.toList.flatMap: rs =>
       rs.combinedProcessIndex.toList.flatMap: indices =>
-        indices.toList.filter(_.value >= size).map(i => s"${rs.name.value}@${i.value}")
+        indices.toChain.toList.filter(_.value >= size).map(i => s"${rs.name.toNmToken.value}@${i.value}")
     Validated.condNec(
       bad.isEmpty,
       (),
@@ -168,7 +168,7 @@ object TicketValidator:
         r.amountPool.toList.flatMap: pool =>
           pool.toList.flatMap: pa =>
             val overlap = pa.part.keys.filter(parentKeys.contains)
-            overlap.map(k => s"${rs.name.value}/@${k.toString}")
+            overlap.map(k => s"${rs.name.toNmToken.value}/@${k.toString}")
     Validated.condNec(
       violations.isEmpty,
       (),
@@ -177,8 +177,8 @@ object TicketValidator:
 
   /** `Intent/@Name` SHALL match the payload element name, and the payloads SHALL be lawful. */
   private def checkIntentLawfulness(ticket: XJDF): ValidatedNec[Issue, Unit] =
-    val bad = ticket.productList.toList.flatMap(_.products.toList).flatMap: p =>
-      p.intents.toList.filterNot(_.isLawful).map(i => s"${p.productType.fold("?")(_.value)}/${i.name.value}")
+    val bad = ticket.productList.toList.flatMap(_.products.toChain.toList).flatMap: p =>
+      p.intents.toList.filterNot(_.isLawful).map(i => s"${p.productType.fold("?")(_.value)}/${i.name.toNmToken.value}")
     Validated.condNec(
       bad.isEmpty,
       (),

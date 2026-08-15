@@ -13,12 +13,18 @@ trait XjdfEnum:
   /** The machine-readable token of this value, exactly as written in XJDF. */
   def token: NmToken
 
-/** Mix-in for enumeration companions. */
+/**
+ * Mix-in for enumeration companions.
+ *
+ * The member is called `all` (not `values`): every Scala 3 enum companion
+ * already defines a synthetic `values: Array[E]`, and the two would clash
+ * after erasure.
+ */
 trait XjdfEnumCompanion[E <: XjdfEnum]:
   /** All values, in specification order. */
-  def values: List[E]
+  def all: List[E]
 
-  def fromToken(token: NmToken): Option[E] = values.find(_.token == token)
+  def fromToken(token: NmToken): Option[E] = all.find(_.token == token)
 
   given Show[E] = Show.show(_.token.value)
 
@@ -30,7 +36,7 @@ enum Usage extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Usage extends XjdfEnumCompanion[Usage]:
-  val values: List[Usage] = List(Input, Output)
+  val all: List[Usage] = List(Input, Output)
 
 /** `Side`: the side of a sheet or surface (Table A.2.39). */
 enum Side extends XjdfEnum:
@@ -38,7 +44,7 @@ enum Side extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Side extends XjdfEnumCompanion[Side]:
-  val values: List[Side] = List(Front, Back)
+  val all: List[Side] = List(Front, Back)
 
 /** `Sides`: which side of the product SHALL be printed (Table A.2.40). */
 enum Sides extends XjdfEnum:
@@ -46,7 +52,7 @@ enum Sides extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Sides extends XjdfEnumCompanion[Sides]:
-  val values: List[Sides] = List(OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead)
+  val all: List[Sides] = List(OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead)
 
 /** `Edge`: an edge of a product in its coordinate system (Table A.2.16). */
 enum Edge extends XjdfEnum:
@@ -54,7 +60,7 @@ enum Edge extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Edge extends XjdfEnumCompanion[Edge]:
-  val values: List[Edge] = List(Bottom, Left, Right, Top)
+  val all: List[Edge] = List(Bottom, Left, Right, Top)
 
 /** `Face`: a named position on a product (Table A.2.19). */
 enum Face extends XjdfEnum:
@@ -62,7 +68,7 @@ enum Face extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Face extends XjdfEnumCompanion[Face]:
-  val values: List[Face] = List(Back, Bottom, Front, Left, Right, Top)
+  val all: List[Face] = List(Back, Bottom, Front, Left, Right, Top)
 
 /**
  * `Orientation`: named orientation of a resource or product (Table A.2.32).
@@ -90,7 +96,7 @@ enum Orientation extends XjdfEnum:
       case Flip270   => Matrix(0, 1, 1, 0, 0, 0)
 
 object Orientation extends XjdfEnumCompanion[Orientation]:
-  val values: List[Orientation] =
+  val all: List[Orientation] =
     List(Rotate0, Rotate90, Rotate180, Rotate270, Flip0, Flip90, Flip180, Flip270)
 
 /** `Status`: the state of a process or queue entry (Table A.2.45). */
@@ -99,7 +105,7 @@ enum Status extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Status extends XjdfEnumCompanion[Status]:
-  val values: List[Status] = List(Aborted, Cleanup, Completed, InProgress, Setup, Stopped, Suspended, Waiting)
+  val all: List[Status] = List(Aborted, Cleanup, Completed, InProgress, Setup, Stopped, Suspended, Waiting)
 
 /** `DeviceStatus`: the overall status of a Device (Table A.2.14). */
 enum DeviceStatus extends XjdfEnum:
@@ -107,7 +113,7 @@ enum DeviceStatus extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object DeviceStatus extends XjdfEnumCompanion[DeviceStatus]:
-  val values: List[DeviceStatus] = List(Idle, NonProductive, Offline, Production, Stopped)
+  val all: List[DeviceStatus] = List(Idle, NonProductive, Offline, Production, Stopped)
 
 /** `Severity`: class of a notification (Table A.2.37). */
 enum SeverityClass extends XjdfEnum:
@@ -115,7 +121,7 @@ enum SeverityClass extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object SeverityClass extends XjdfEnumCompanion[SeverityClass]:
-  val values: List[SeverityClass] = List(Event, Information, Warning, Error, Fatal)
+  val all: List[SeverityClass] = List(Event, Information, Warning, Error, Fatal)
 
 /** `BindingType`: the required style of binding (Table A.2.7). */
 enum BindingType extends XjdfEnum:
@@ -128,7 +134,7 @@ enum BindingType extends XjdfEnum:
     case other     => NmToken.unsafe(other.toString)
 
 object BindingType extends XjdfEnumCompanion[BindingType]:
-  val values: List[BindingType] =
+  val all: List[BindingType] =
     List(AdhesiveNote, ChannelBinding, CoilBinding, CombBinding, CornerStitch, EdgeGluing,
       HardCover, LooseBinding, NoBinding, RingBinding, SaddleStitch, SideStitch, SoftCover,
       StripBinding, Tape, WireComb)
@@ -141,7 +147,7 @@ enum BindingOrder extends XjdfEnum:
     case other   => NmToken.unsafe(other.toString)
 
 object BindingOrder extends XjdfEnumCompanion[BindingOrder]:
-  val values: List[BindingOrder] = List(Unbound, Collecting, Gathering)
+  val all: List[BindingOrder] = List(Unbound, Collecting, Gathering)
 
 /** `StapleShape`: the shape of staples used for stitching (Table A.2.44). */
 enum StapleShape extends XjdfEnum:
@@ -149,7 +155,7 @@ enum StapleShape extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object StapleShape extends XjdfEnumCompanion[StapleShape]:
-  val values: List[StapleShape] = List(Butted, ClinchOut, Crown, Eyelet, Overlap)
+  val all: List[StapleShape] = List(Butted, ClinchOut, Crown, Eyelet, Overlap)
 
 /** `Glue`: glue types (Table A.2.23). */
 enum GlueType extends XjdfEnum:
@@ -157,7 +163,7 @@ enum GlueType extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object GlueType extends XjdfEnumCompanion[GlueType]:
-  val values: List[GlueType] = List(ColdGlue, Hotmelt, PUR)
+  val all: List[GlueType] = List(ColdGlue, Hotmelt, PUR)
 
 /** `TightBacking`: the geometry of the back of a book block (Table A.2.46). */
 enum TightBacking extends XjdfEnum:
@@ -165,7 +171,7 @@ enum TightBacking extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object TightBacking extends XjdfEnumCompanion[TightBacking]:
-  val values: List[TightBacking] = List(Round, RoundBacked, Flat, FlatBacked)
+  val all: List[TightBacking] = List(Round, RoundBacked, Flat, FlatBacked)
 
 /** `Coating`: the pre-process coating of media (Table A.2.10). */
 enum Coating extends XjdfEnum:
@@ -175,7 +181,7 @@ enum Coating extends XjdfEnum:
     case other    => NmToken.unsafe(other.toString)
 
 object Coating extends XjdfEnumCompanion[Coating]:
-  val values: List[Coating] = List(Coated, Gloss, Matte, Uncoated, Satin)
+  val all: List[Coating] = List(Coated, Gloss, Matte, Uncoated, Satin)
 
 /** `Opacity`: the opacity of media (Table A.2.31). */
 enum Opacity extends XjdfEnum:
@@ -183,7 +189,7 @@ enum Opacity extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Opacity extends XjdfEnumCompanion[Opacity]:
-  val values: List[Opacity] = List(Opaque, Translucent, Transparent)
+  val all: List[Opacity] = List(Opaque, Translucent, Transparent)
 
 /** `MediaDirection`: direction relative to the product coordinate system (Table A.2.28). */
 enum MediaDirection extends XjdfEnum:
@@ -191,7 +197,7 @@ enum MediaDirection extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object MediaDirection extends XjdfEnumCompanion[MediaDirection]:
-  val values: List[MediaDirection] = List(Any, SameDirection, XDirection, YDirection)
+  val all: List[MediaDirection] = List(Any, SameDirection, XDirection, YDirection)
 
 /** `ISOPaperSubstrate`: paper surface classification (Table A.2.25). */
 enum ISOPaperSubstrate extends XjdfEnum:
@@ -199,7 +205,7 @@ enum ISOPaperSubstrate extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object ISOPaperSubstrate extends XjdfEnumCompanion[ISOPaperSubstrate]:
-  val values: List[ISOPaperSubstrate] = List(PS1, PS2, PS3, PS4, PS5, PS6, PS7, PS8)
+  val all: List[ISOPaperSubstrate] = List(PS1, PS2, PS3, PS4, PS5, PS6, PS7, PS8)
 
 /** `MediaType`: the medium being employed (Table A.2.29). */
 enum MediaType extends XjdfEnum:
@@ -208,7 +214,7 @@ enum MediaType extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object MediaType extends XjdfEnumCompanion[MediaType]:
-  val values: List[MediaType] =
+  val all: List[MediaType] =
     List(Blanket, CorrugatedBoard, Disc, Film, GravureCylinder, ImagingCylinder, Other,
       Paper, Plate, Screen, Sleeve, Textile, Transparency)
 
@@ -218,7 +224,7 @@ enum Automation extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Automation extends XjdfEnumCompanion[Automation]:
-  val values: List[Automation] = List(Dynamic, Static)
+  val all: List[Automation] = List(Dynamic, Static)
 
 /** `SheetLay`: the lay of the sheet relative to the machine (Table A.2.38). */
 enum SheetLay extends XjdfEnum:
@@ -226,7 +232,7 @@ enum SheetLay extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object SheetLay extends XjdfEnumCompanion[SheetLay]:
-  val values: List[SheetLay] = List(Center, Left, Right)
+  val all: List[SheetLay] = List(Center, Left, Right)
 
 /**
  * `NamedColor`: a machine-readable color name (Table A.2.30). The full closed
@@ -239,7 +245,7 @@ enum NamedColor extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object NamedColor extends XjdfEnumCompanion[NamedColor]:
-  val values: List[NamedColor] =
+  val all: List[NamedColor] =
     List(Black, Blue, Cyan, DarkBlue, DarkGreen, DarkRed, Gold, Gray, Green, Magenta,
       Orange, Red, Silver, Violet, White, Yellow)
 
@@ -252,7 +258,7 @@ enum EndStatus extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object EndStatus extends XjdfEnumCompanion[EndStatus]:
-  val values: List[EndStatus] = List(Aborted, Completed)
+  val all: List[EndStatus] = List(Aborted, Completed)
 
 /** `PrintPreference`: the manufacturing goal (Table 4.33). */
 enum PrintPreference extends XjdfEnum:
@@ -260,7 +266,7 @@ enum PrintPreference extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object PrintPreference extends XjdfEnumCompanion[PrintPreference]:
-  val values: List[PrintPreference] = List(Balanced, CostEffective, Fastest, HighestQuality)
+  val all: List[PrintPreference] = List(Balanced, CostEffective, Fastest, HighestQuality)
 
 /** `PreflightLevel`: level of content data checking (Table 4.23). */
 enum PreflightLevel extends XjdfEnum:
@@ -268,7 +274,7 @@ enum PreflightLevel extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object PreflightLevel extends XjdfEnumCompanion[PreflightLevel]:
-  val values: List[PreflightLevel] = List(Basic, Extended, Premium)
+  val all: List[PreflightLevel] = List(Basic, Extended, Premium)
 
 /** `PreviewType`: the type and usage of a Preview (Table 6.4). */
 enum PreviewType extends XjdfEnum:
@@ -277,7 +283,7 @@ enum PreviewType extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object PreviewType extends XjdfEnumCompanion[PreviewType]:
-  val values: List[PreviewType] =
+  val all: List[PreviewType] =
     List(Animation, Identification, SeparatedThumbNail, Separation, SeparationRaw,
       Static3D, ThumbNail, Viewable)
 
@@ -287,7 +293,7 @@ enum TransferCurveTarget extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object TransferCurveTarget extends XjdfEnumCompanion[TransferCurveTarget]:
-  val values: List[TransferCurveTarget] = List(Film, Plate, Press, Proof, Substrate)
+  val all: List[TransferCurveTarget] = List(Film, Plate, Press, Proof, Substrate)
 
 /** `VariableType`: the type of variable content (Table 4.36). */
 enum VariableType extends XjdfEnum:
@@ -295,7 +301,7 @@ enum VariableType extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object VariableType extends XjdfEnumCompanion[VariableType]:
-  val values: List[VariableType] = List(OneLine, AddressField, IdentificationField, Area)
+  val all: List[VariableType] = List(OneLine, AddressField, IdentificationField, Area)
 
 /** `VariableQuality`: the desired quality of the variable data (Table 4.36). */
 enum VariableQuality extends XjdfEnum:
@@ -303,7 +309,7 @@ enum VariableQuality extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object VariableQuality extends XjdfEnumCompanion[VariableQuality]:
-  val values: List[VariableQuality] = List(Simple, Imprint, Full)
+  val all: List[VariableQuality] = List(Simple, Imprint, Full)
 
 /** `ColorType`: a name that characterizes the colorant (Color resource, §6.14). */
 enum ColorType extends XjdfEnum:
@@ -311,7 +317,7 @@ enum ColorType extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object ColorType extends XjdfEnumCompanion[ColorType]:
-  val values: List[ColorType] = List(DieLine, Normal, Opaque, OpaqueIgnore, Primer, Transparent)
+  val all: List[ColorType] = List(DieLine, Normal, Opaque, OpaqueIgnore, Primer, Transparent)
 
 /** `SpreadType`: treatment of individual PDF pages for imposition (Table A.2.43). */
 enum SpreadType extends XjdfEnum:
@@ -319,7 +325,7 @@ enum SpreadType extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object SpreadType extends XjdfEnumCompanion[SpreadType]:
-  val values: List[SpreadType] = List(SinglePage, Spread)
+  val all: List[SpreadType] = List(SinglePage, Spread)
 
 /** `Scope`: the context of resources defined in a ResourceInfo (Table A.2.36). */
 enum Scope extends XjdfEnum:
@@ -327,7 +333,7 @@ enum Scope extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Scope extends XjdfEnumCompanion[Scope]:
-  val values: List[Scope] = List(Allowed, Estimate, Job, Present)
+  val all: List[Scope] = List(Allowed, Estimate, Job, Present)
 
 /** `FitPolicy`: how artwork is fitted into its target box (Table A.2.21). */
 enum FitPolicy extends XjdfEnum:
@@ -335,7 +341,7 @@ enum FitPolicy extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object FitPolicy extends XjdfEnumCompanion[FitPolicy]:
-  val values: List[FitPolicy] = List(NoRepeat, RepeatToFill, RepeatUnclipped, StretchToFit, UndistortedScaleToFit)
+  val all: List[FitPolicy] = List(NoRepeat, RepeatToFill, RepeatUnclipped, StretchToFit, UndistortedScaleToFit)
 
 /** `Anchor`: the reference point of a placed object (Table A.2.3). */
 enum Anchor extends XjdfEnum:
@@ -344,7 +350,7 @@ enum Anchor extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Anchor extends XjdfEnumCompanion[Anchor]:
-  val values: List[Anchor] =
+  val all: List[Anchor] =
     List(BottomCenter, BottomLeft, BottomRight, Center, CenterLeft, CenterRight,
       TopCenter, TopLeft, TopRight)
 
@@ -354,7 +360,7 @@ enum CommandResult extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object CommandResult extends XjdfEnumCompanion[CommandResult]:
-  val values: List[CommandResult] = List(Merged, New, Rejected, Removed, Replaced)
+  val all: List[CommandResult] = List(Merged, New, Rejected, Removed, Replaced)
 
 /** `Level`: the level of a consumable or output bin (Table 7.53). */
 enum ResourceLevel extends XjdfEnum:
@@ -362,7 +368,7 @@ enum ResourceLevel extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object ResourceLevel extends XjdfEnumCompanion[ResourceLevel]:
-  val values: List[ResourceLevel] = List(Empty, Full, High, Low, OK)
+  val all: List[ResourceLevel] = List(Empty, Full, High, Low, OK)
 
 /** `OverwritePolicy`: the policy when an output file already exists (Table 8.22). */
 enum OverwritePolicy extends XjdfEnum:
@@ -370,7 +376,7 @@ enum OverwritePolicy extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object OverwritePolicy extends XjdfEnumCompanion[OverwritePolicy]:
-  val values: List[OverwritePolicy] = List(Abort, NewVersion, OperatorIntervention, Overwrite, RenameNew, RenameOld)
+  val all: List[OverwritePolicy] = List(Abort, NewVersion, OperatorIntervention, Overwrite, RenameNew, RenameOld)
 
 /** `DispositionAction`: what to do with an asset at disposition time (Table 8.23). */
 enum DispositionAction extends XjdfEnum:
@@ -378,7 +384,7 @@ enum DispositionAction extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object DispositionAction extends XjdfEnumCompanion[DispositionAction]:
-  val values: List[DispositionAction] = List(Archive, Delete)
+  val all: List[DispositionAction] = List(Archive, Delete)
 
 /** `WasteDetails`: how waste was produced (Table 6.6). */
 enum WasteDetail extends XjdfEnum:
@@ -388,7 +394,7 @@ enum WasteDetail extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object WasteDetail extends XjdfEnumCompanion[WasteDetail]:
-  val values: List[WasteDetail] =
+  val all: List[WasteDetail] =
     List(AuxiliarySheet, BadFeedWaste, BindingQualityTest, CaliperWaste, DoubleFeedWaste,
       IncorrectComponentWaste, ObliqueSheetWaste, Overrun, PaperJamWaste, Rejected,
       Reusable, Waste, WhitePaperWaste)
@@ -399,14 +405,14 @@ enum FoldFrom extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object FoldFrom extends XjdfEnumCompanion[FoldFrom]:
-  val values: List[FoldFrom] = List(Front, Left)
+  val all: List[FoldFrom] = List(Front, Left)
 
 enum FoldTo extends XjdfEnum:
   case Up, Down
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object FoldTo extends XjdfEnumCompanion[FoldTo]:
-  val values: List[FoldTo] = List(Up, Down)
+  val all: List[FoldTo] = List(Up, Down)
 
 /** `Resource/@Status`: availability of a resource for processing (Table 6.1). */
 enum ResourceStatus extends XjdfEnum:
@@ -414,7 +420,7 @@ enum ResourceStatus extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object ResourceStatus extends XjdfEnumCompanion[ResourceStatus]:
-  val values: List[ResourceStatus] = List(Available, Unavailable)
+  val all: List[ResourceStatus] = List(Available, Unavailable)
 
 /** `SoftCoverBinding/@GlueProcedure` (Table 4.18). */
 enum SoftCoverGlueProcedure extends XjdfEnum:
@@ -422,7 +428,7 @@ enum SoftCoverGlueProcedure extends XjdfEnum:
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object SoftCoverGlueProcedure extends XjdfEnumCompanion[SoftCoverGlueProcedure]:
-  val values: List[SoftCoverGlueProcedure] = List(Spine, SideOnly, SingleSide, SideSpine)
+  val all: List[SoftCoverGlueProcedure] = List(Spine, SideOnly, SingleSide, SideSpine)
 
 /** `SoftCoverBinding/@Scoring` (Table 4.18). */
 enum SoftCoverScoring extends XjdfEnum:
@@ -432,7 +438,7 @@ enum SoftCoverScoring extends XjdfEnum:
     case other    => NmToken.unsafe(other.toString)
 
 object SoftCoverScoring extends XjdfEnumCompanion[SoftCoverScoring]:
-  val values: List[SoftCoverScoring] = List(TwiceScored, QuadScored, Unscored)
+  val all: List[SoftCoverScoring] = List(TwiceScored, QuadScored, Unscored)
 
 /** `HardCoverBinding/@Jacket` (Table 4.11). */
 enum HardCoverJacket extends XjdfEnum:
@@ -442,4 +448,4 @@ enum HardCoverJacket extends XjdfEnum:
     case other      => NmToken.unsafe(other.toString)
 
 object HardCoverJacket extends XjdfEnumCompanion[HardCoverJacket]:
-  val values: List[HardCoverJacket] = List(Unjacketed, Loose, Glued)
+  val all: List[HardCoverJacket] = List(Unjacketed, Loose, Glued)

@@ -81,10 +81,10 @@ object Arbitraries:
     Arbitrary(Gen.oneOf(Usage.Input, Usage.Output))
 
   implicit val arbMediaType: Arbitrary[MediaType] =
-    Arbitrary(Gen.oneOf(MediaType.values))
+    Arbitrary(Gen.oneOf(MediaType.all))
 
   implicit val arbBindingType: Arbitrary[BindingType] =
-    Arbitrary(Gen.oneOf(BindingType.values))
+    Arbitrary(Gen.oneOf(BindingType.all))
 
   implicit val arbPatch: Arbitrary[Patch] =
     Arbitrary:
