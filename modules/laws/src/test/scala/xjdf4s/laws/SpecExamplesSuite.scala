@@ -32,15 +32,12 @@ class SpecExamplesSuite extends FunSuite:
       case Validated.Invalid(es) =>
         fail(s"$label failed to construct: ${es.toChain.toList.map(_.message).mkString("; ")}")
 
-  private def assertValid[A](label: String)(v: ValidatedNec[Issue, A]): Unit =
+  private def assertValidTicket(label: String)(v: ValidatedNec[Issue, XJDF]): Unit =
     assertConstructs(label)(v)
-    v.toOption.foreach {
-      case t: XJDF => assert(t.validate.isValid, s"$label validates")
-      case _       => ()
-    }
+    v.toOption.foreach(t => assert(t.validate.isValid, s"$label validates"))
 
   test("Example 3.1 (Table 3.1): minimalProduct constructs and validates"):
-    assertValid("Example 3.1")(SpecExamples.minimalProduct)
+    assertValidTicket("Example 3.1")(SpecExamples.minimalProduct)
 
   test("Example 3.4 (Table 3.11): notebook BOM unfolds and totalCopies is computed (N-01)"):
     val pl = SpecExamples.notebook
@@ -56,20 +53,20 @@ class SpecExamplesSuite extends FunSuite:
     }
 
   test("Example 3.6 (Table 3.12): combinedProcesses constructs and validates"):
-    assertValid("Example 3.6")(SpecExamples.combinedProcesses)
+    assertValidTicket("Example 3.6")(SpecExamples.combinedProcesses)
 
   test("Example 5.2 (Tables 6.38/6.54/6.55): splitDelivery constructs and validates"):
-    assertValid("Example 5.2")(SpecExamples.splitDelivery)
+    assertValidTicket("Example 5.2")(SpecExamples.splitDelivery)
 
   test("Example 3.3 (Table 3.3): mediaConsumptionAudit constructs"):
     assertConstructs("Example 3.3")(SpecExamples.mediaConsumptionAudit)
 
   test("brochureJob (Tables 4.8/4.31/4.32/6.148): constructs and validates"):
-    assertValid("brochureJob")(SpecExamples.brochureJob)
+    assertValidTicket("brochureJob")(SpecExamples.brochureJob)
 
   test("ADR-0001: updatedBrochureJob applies a nominal ChangeOrder and revalidates"):
     val t = SpecExamples.updatedBrochureJob
-    assertValid("updatedBrochureJob")(t)
+    assertValidTicket("updatedBrochureJob")(t)
     t.toOption.foreach { x =>
       val amount = x
         .resourceSetsNamed(ResourceSetName.unsafe("Component"))

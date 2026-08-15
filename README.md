@@ -34,8 +34,8 @@ Table 3.2), `Ior`, `State`, `Show`/`Eq`/`Order`.
 | Модуль | Артефакт | Содержимое |
 |---|---|---|
 | `modules/core` | `xjdf4s-core` | примитивы, модель, ресурсы, интенты, DSL, валидатор |
-| `modules/laws` | `xjdf4s-laws` | законы структур (munit + ScalaCheck) |
-| `modules/examples` | `xjdf4s-examples` | примеры из спецификации + демо `sbt examples/run` |
+| `modules/laws` | `xjdf4s-laws` | законы структур (munit + ScalaCheck) и conformance-сьюты примеров |
+| `modules/examples` | `xjdf4s-examples` | демо примеров спецификации: `sbt examples/run` |
 
 ## Быстрый старт
 
