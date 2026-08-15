@@ -45,13 +45,20 @@ README ссылается на этот документ, числа — в вы
 | §6.26 | Table 6.54 | DeliveryParams | `DeliveryParams` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
 | §6.26.1 | Table 6.55 | DropItem | `DropItem` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | полон по Table 6.55: `@TotalDimensions`, `@TotalVolume`, `@TotalWeight` (N-12) |
 | §6.28 | Table 6.57 | Device | `Device` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@MaxRunSpeed`, FileSpec CurrentSchema/Schema; New in XJDF 2.2: `@RestApiBaseURL` (JSON Exception — доменное `Url`-поле, обработка в codec M2) |
-| §6.36 | Table 6.74 | FoldingParams | `FoldingParams` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
+| §6.36 | Table 6.74 | FoldingParams | `FoldingParams` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `Crease*` (Table 8.17) моделируется (M1.6-2); `Cut*` — M3 |
+| §8.14 | Table 8.17 | Crease | `Crease` | `*` | ❌ | ✅ | ❌ | ❌ | Implemented | structural; container-level validation; контейнеры — `FoldingParams` (`Crease*`, моделируется), `CreasingParams` (`Crease+`, M3); `@Depth` в µm → `Microns` |
 | §6.52 | Table 6.95 | Layout | `Layout` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@Anchor`, `@SheetLay` — моделируются; `@ExpansionBox`, `Position/@PositionOrd` — не моделируются (M3) |
 | §6.57 | Table 6.114 | Media | `Media` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@BackCIE*`, `@Spectrum`, `ColorMeasurementConditions` — не моделируются (M3) |
 | §6.59 | Table 6.119 | NodeInfo | `NodeInfo` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
 | §6.66 | Table 6.134 | Preview | `Preview` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §6.73 | Table 6.148 | RunList | `RunList` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@DocPages` → `RunList.docPages`; упражняется структурно conformance-сьютом (brochureJob) |
 | §6.73 | Table 6.148 | ByteMap | `ByteMap` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+
+## Enumerations (Appendix A)
+
+| Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
+|---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
+| §A.2.49 | Table A.50 | WorkingDirection | `WorkingDirection` | 1 | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`Bottom`, `Top`); golden и машинная сверка — `EnumLaws`; тип XSD — `EnumTopBottom` (имя таблицы и атрибута нормативны); потребители — `Crease` (M1.6-2), `Cut` (M3) |
 
 ## Intents (Chapter 4)
 

@@ -9,7 +9,9 @@
 # Проверки:
 #   1. Каждая ссылка `Table N.M` в modules/**/*.scala, docs/* и README.md
 #      существует в reference/xjdf/* (заголовки `**Table N.M: …**` глав 1–9
-#      и Appendix, `### Table N.M …` главы 3).
+#      и Appendix, `### Table N.M …` главы 3). Номера таблиц Appendix A
+#      имеют вид `A.NN` — они поддерживаются тем же регулярным выражением
+#      (M1.6-2, PR-15).
 #   2. Реестр содержит три обязательных раздела.
 #   3. Каждый Scala-тип из колонки «Scala type» объявлен в modules/core
 #      (доменный тип без нормативной ссылки / выдуманный тип).
@@ -44,9 +46,9 @@ trap 'rm -rf "$tmp"' EXIT
 # 1. Известные таблицы: `**Table N.M: …**` (главы 1–9, Appendix A) и
 #    `### Table N.M …` (глава 3). Номера нормализуются к `N.M`.
 # ---------------------------------------------------------------------------
-grep -rhoE '^[*][*]Table [A-Z]?[0-9]+\.[0-9]+' "$REF"/*.md \
+grep -rhoE '^[*][*]Table [A-Z]?[0-9]*\.[0-9]+' "$REF"/*.md \
   | sed -E 's/^[*][*]Table //' | sort -u > "$tmp/known"
-grep -rhoE '^#+ ?Table [A-Z]?[0-9]+\.[0-9]+' "$REF"/*.md \
+grep -rhoE '^#+ ?Table [A-Z]?[0-9]*\.[0-9]+' "$REF"/*.md \
   | sed -E 's/^#+ ?Table //' | sort -u >> "$tmp/known"
 sort -u "$tmp/known" -o "$tmp/known"
 
@@ -57,7 +59,7 @@ fi
 # ---------------------------------------------------------------------------
 # 2. Ссылки `Table N.M` в коде и документах обязаны существовать.
 # ---------------------------------------------------------------------------
-grep -rhoE 'Table [A-Z]?[0-9]+\.[0-9]+' modules docs README.md 2>/dev/null \
+grep -rhoE 'Table [A-Z]?[0-9]*\.[0-9]+' modules docs README.md 2>/dev/null \
   | sed -E 's/Table //' | sort -u > "$tmp/used"
 while IFS= read -r t; do
   grep -qxF "$t" "$tmp/known" \
@@ -100,7 +102,7 @@ table_has_new_in() { # $1 = номер таблицы
     line="$(grep -nE "^[*][*]Table $pattern:|^#+ ?Table $pattern:" "$f" | head -1 | cut -d: -f1)"
     [ -n "$line" ] || continue
     end="$(awk -v s="$line" '
-      NR > s && (/^[*][*]Table [A-Z]?[0-9]+\.[0-9]+:/ || /^#+ /) { print NR; exit }' "$f")"
+      NR > s && (/^[*][*]Table [A-Z]?[0-9]*\.[0-9]+:/ || /^#+ /) { print NR; exit }' "$f")"
     end="${end:-999999}"
     if sed -n "$line,$((end - 1))p" "$f" | grep -q 'New in XJDF'; then
       return 0
@@ -143,7 +145,7 @@ while IFS= read -r row; do
 
   # 4.1 Таблица строки существует (уже проверено на шаге 2, дублируем для
   #     ясности диагностики).
-  t="$(printf '%s\n' "$tbl" | sed -nE 's/.*Table ([A-Z]?[0-9]+\.[0-9]+).*/\1/p')"
+  t="$(printf '%s\n' "$tbl" | sed -nE 's/.*Table ([A-Z]?[0-9]*\.[0-9]+).*/\1/p')"
   if [ -z "$t" ]; then
     err "row '$elem' has no parseable Table cell ('$tbl')"
   elif ! grep -qxF "$t" "$tmp/known"; then
@@ -213,8 +215,8 @@ done < "$tmp/declared_payloads"
 # 6. Version notes: каждая покрытая таблица с пометками `New in XJDF` обязана
 #    иметь запись в разделе «Version notes» реестра (потерянная version note).
 # ---------------------------------------------------------------------------
-grep -E '^\| Table [A-Z]?[0-9]+\.[0-9]+ \|' "$COVERAGE" \
-  | sed -nE 's/^\| Table ([A-Z]?[0-9]+\.[0-9]+) \|.*/\1/p' \
+grep -E '^\| Table [A-Z]?[0-9]*\.[0-9]+ \|' "$COVERAGE" \
+  | sed -nE 's/^\| Table ([A-Z]?[0-9]*\.[0-9]+) \|.*/\1/p' \
   | sort -u > "$tmp/noted" || true
 sort -u "$new_in_tables" -o "$new_in_tables"
 comm -23 "$new_in_tables" "$tmp/noted" | while IFS= read -r t; do

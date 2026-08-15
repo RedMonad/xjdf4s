@@ -3,7 +3,7 @@ package xjdf4s.examples
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.FileSpec
+import xjdf4s.model.elements.{Crease, FileSpec}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show
@@ -85,6 +85,34 @@ object SpecExamples:
             }
           }
         }
+      }
+    }
+
+  /** Fixture (Table 8.17 / Table 6.74): a FoldingParams resource carrying a
+   *  crease line. Not a numbered spec example — it exercises the `Crease`
+   *  element mapping end-to-end (M1.6-2).
+   */
+  val creasingJob: ValidatedNec[Issue, XJDF] =
+    chainV(
+      dsl.resourceSet("FoldingParams", usage = Some(Usage.Input))(
+        Resource.of(
+          ResourcePayload.FoldingParamsResource(
+            FoldingParams(
+              creases = Chain.one(
+                Crease(
+                  depth = Some(Microns(150.0)),
+                  startPosition = Some(XYPair(0.0, 0.0)),
+                  workingDirection = Some(WorkingDirection.Top),
+                  workingPath = Some(XYPair(595.28, 0.0))
+                )
+              )
+            )
+          )
+        )
+      )
+    ) { foldingParams =>
+      chainV(dsl.TicketDraft.of("creaseJob", ProcessType.Folding)) { draft =>
+        draft.withResources(foldingParams).build
       }
     }
 
@@ -270,6 +298,7 @@ object SpecExamples:
       "Example 3.1 (minimal product):" -> minimalProduct.map(Show[XJDF].show),
       "Example 3.4 (notebook BOM):" -> notebook.map(Show[ProductList].show),
       "Example 3.6 (combined):" -> combinedProcesses.map(Show[XJDF].show),
+      "Creasing job (Table 8.17):" -> creasingJob.map(Show[XJDF].show),
       "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
       "Brochure job:" -> brochureJob.map(Show[XJDF].show),
       "Brochure job after change:" -> updatedBrochureJob.map(Show[XJDF].show)

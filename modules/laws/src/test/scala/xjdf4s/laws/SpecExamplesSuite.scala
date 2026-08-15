@@ -58,6 +58,9 @@ class SpecExamplesSuite extends FunSuite:
   test("Example 5.2 (Tables 6.38/6.54/6.55): splitDelivery constructs and validates"):
     assertValidTicket("Example 5.2")(SpecExamples.splitDelivery)
 
+  test("Fixture (Tables 8.17/6.74): creasingJob constructs and validates"):
+    assertValidTicket("creasingJob")(SpecExamples.creasingJob)
+
   test("Example 3.3 (Table 3.3): mediaConsumptionAudit constructs"):
     assertConstructs("Example 3.3")(SpecExamples.mediaConsumptionAudit)
 
@@ -107,6 +110,12 @@ class SpecExamplesSuite extends FunSuite:
     assertEquals(
       showOf("Example 5.2")(SpecExamples.splitDelivery),
       "XJDF(job=splitDelivery, types=Product, ProductList(Product(Book×30, root)))"
+    )
+
+  test("golden: creasingJob Show render (Table 8.17 fixture)"):
+    assertEquals(
+      showOf("creasingJob")(SpecExamples.creasingJob),
+      "XJDF(job=creaseJob, types=Folding)"
     )
 
   test("golden: Example 3.3 mediaConsumptionAudit Show render"):
