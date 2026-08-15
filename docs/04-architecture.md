@@ -13,7 +13,11 @@ xjdf4s/
 │   ├── laws/                  # xjdf4s-laws: проверка законов (Test)
 │   └── examples/              # xjdf4s-examples: примеры из спецификации
 ├── docs/                      # 01-category-theory-view, 02-scala3-features,
-│                              # 03-cats-mapping, 04-architecture
+│                              # 03-cats-mapping, 04-architecture,
+│                              # SPEC-COVERAGE.md (реестр покрытия),
+│                              # adr/ (архитектурные решения)
+├── scripts/check-spec-coverage.sh
+│                              # чекер согласованности реестра покрытия
 └── ROADMAP.md (консолидированный)
 ```
 
@@ -25,8 +29,9 @@ prim/        базовые типы-значения (без зависимос
   Ids        Id/IdRef/IdRefs, JobId/JobPartId/ProjectId
   Versions   IcsVersion, XjdfVersion
   Quantity   XYPair, Shape, Rectangle, Matrix, Points, Microns, Grammage,
-             Amount, Coverage, UnitInterval, Severity, IntegerRange, LabColor,
-             CMYKColor, RGBColor, FloatList, IntegerList, AmountRange
+             Amount, AmountBounds, Coverage, UnitInterval, Severity,
+             IntegerRange, LabColor, CMYKColor, RGBColor, FloatList,
+             IntegerList
   Time       Timestamp, TimeSpan, TimeRange
   Enums      закрытые перечисления Appendix A + XjdfEnum/XjdfEnumCompanion
   Common     Comment, GeneralID, Event, Milestone, Dependent, FileSpec,
@@ -63,11 +68,22 @@ dsl/         декларативные конструкторы, возвращ
 
 Зависимости пакетов: `prim ← {model, intents, resources}`,
 `model ← {intents, resources}` (только для закрытых перечислений полезных
-нагрузок), `dsl ← все`. Циклов файловых зависимостей нет (ADR-0002,
-M1.4-1 / PR-9): `ValidationTypes` — фундамент с Fan-Out 0; `intents` и
-`resources` ссылаются на `model.ValidationTypes` и закрытые перечисления
-payload; корневой `TicketValidator` импортирует модель интентов —
-файловый граф ацикличен.
+нагрузок `IntentPayload`/`ResourcePayload`), **`resources ← intents`**:
+`resources/Finishing.scala` импортирует `xjdf4s.intents.{Fold, Perforate}`
+(`FoldingParams` переиспользует элементы главы 8, объявленные рядом с
+`FoldingIntent`; N-40), `dsl ← все`. Циклов файловых зависимостей нет
+(ADR-0002, M1.4-1 / PR-9): `ValidationTypes` — фундамент с Fan-Out 0;
+`intents` и `resources` ссылаются на `model.ValidationTypes` и закрытые
+перечисления payload; корневой `TicketValidator` импортирует модель
+интентов — файловый граф ацикличен.
+
+**Слой валидации** (ADR-0002, PR-9): `model/ValidationTypes.scala` (`Issue`,
+`IssueCode`, `SeverityClass`, `XPath`, `DomainRule`, `ValidationResult`,
+`ValidationReport`) — фундамент с Fan-Out 0, импортирует только `prim.*` и
+cats; `model/TicketValidator.scala` — корневой валидатор, агрегирует
+локальные правила (`DomainRule`) и глобальные проверки (ID/IDREF, §3.4, BOM,
+хронология), предоставляет extension-методы `XJDF.validate` /
+`XJDF.validateReport`.
 
 ## Принципы
 

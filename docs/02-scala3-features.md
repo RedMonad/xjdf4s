@@ -9,9 +9,11 @@
 Каждый XJDF-тип данных (Appendix A, Table A.1) — отдельный номинальный тип:
 
 - `NmToken`, `NmTokens`, `Id`, `IdRef`, `IdRefs`, `JobId`, `JobPartId`,
-  `ProjectId`, `Url`, `XjdfString`, `LanguageTag`, `CommentText`, `XPath`,
-  `IcsVersion`, `XjdfVersion` — строковые лексемы с валидацией;
-- `XYPair`, `Shape`, `Rectangle`, `Matrix`, `AmountRange`, `TimeRange`,
+  `ProjectId`, `Url`, `XjdfString`, `LanguageTag`, `CommentText`,
+  `IcsVersion`, `XjdfVersion` — строковые лексемы с валидацией
+  (`XPath` — исключение: это тип слоя валидации, `model/ValidationTypes.scala`,
+  PR-9);
+- `XYPair`, `Shape`, `Rectangle`, `Matrix`, `TimeRange`,
   `WorkstepKey` — **opaque поверх named tuple** (см. ниже);
 - `Amount`, `Points`, `Microns`, `Grammage`, `Coverage`, `UnitInterval`,
   `Severity`, `Timestamp`, `TimeSpan`, `ProcessIndex` — числовые/временны́е
@@ -19,7 +21,7 @@
 
 Это не «анемичные обёртки»: в компаньонах живут конструкторы с валидацией
 (`from: … => Option`, `unsafe`), законы-инварианты и cats-инстансы
-(`Show`, `Eq`, `Order`, `Monoid`, `Semigroup`, `Semilattice`).
+(`Show`, `Eq`, `Order`, `Monoid`, `Semigroup`, `CommutativeMonoid`).
 Ссылка: `reference/other-new-features/opaques.md`.
 
 > **Урок прозрачности (подтверждён сборкой).** Внутри файла, где определён
@@ -46,10 +48,14 @@
   `Rectangle = (llx, lly, urx, ury)`, `Matrix = (a, b, c, d, tx, ty)` —
   точное отражение синтаксиса значений спецификации («`595.27559055
   822.04724409`» — это и есть пара x y);
-- `AmountRange = (amount, max, min)` — трио «обещание ± допуски»;
 - `TimeRange = (start, end)` — интервал исполнения;
 - `WorkstepKey = (jobId, jobPartId, part)` — §2.2.2: рабочая операция
   однозначно идентифицируется тройкой JobID/JobPartID/Partition Keys.
+
+*(Бывшее трио `AmountRange = (amount, max, min)` удалено в PR-11: после
+ADR-0004 nominal `Amount` и контракт `AmountBounds(min, max)` — разные
+величины; `AmountBounds` — обычный `final case class` с инвариантом
+`MinAmount <= MaxAmount`.)*
 
 Имена полей живут на уровне представления; наружу типы смотрят как
 номинальные (opaque), с расширениями `x`/`y`, `start`/`end` и т.п.
@@ -59,18 +65,22 @@
 `enum Usage`, `Side`, `Sides`, `Edge`, `Face`, `Orientation`, `Status`,
 `DeviceStatus`, `SeverityClass`, `BindingType`, `BindingOrder`, `StapleShape`,
 `GlueType`, `TightBacking`, `Coating`, `Opacity`, `MediaDirection`,
-`ISOPaperSubstrate`, `MediaType`, `Automation`, `SheetLay`, `NamedColor`,
+`ISOPaperSubstrate`, `MediaType`, `Automation`, `SheetLay`,
 `EndStatus`, `PrintPreference`, `PreflightLevel`, `PreviewType`,
 `TransferCurveTarget`, `VariableType`, `VariableQuality`, `ColorType`,
 `SpreadType`, `Scope`, `FitPolicy`, `Anchor`, `CommandResult`, `ResourceLevel`,
 `OverwritePolicy`, `DispositionAction`, `WasteDetail`, `FoldFrom`, `FoldTo`,
 `ResourceStatus`, `SoftCoverGlueProcedure`, `SoftCoverScoring`,
-`HardCoverJacket` — все со значениями ровно из таблиц спецификации.
+`HardCoverJacket` — все со значениями ровно из таблиц спецификации
+(ADR-0007: машинная сверка `EnumLaws` против Appendix A).
 
 Открытость XJDF-списков (§1.1.1, §1.10.3.2: NMTOKEN-списки расширяемы)
 моделируется **парой механизмов**: закрытый `enum` (для «Allowed values are»)
-и открытый `NmToken` + каталоги `Catalog.*` (для «Values include»). Расширения
-вендоров — через namespace-префиксы (`NsPrefix`, `Foreign`, `Extension`).
+и открытый `NmToken` + каталоги `Catalog.*` (для «Values include»). Пример
+открытого типа — `NamedColor` (бывший закрытый enum из 16 значений; заменён в
+PR-5 на `NmToken` + `Catalog.NamedColor` со 147 значениями SVG 1.1 и тестом
+расширяемости, ADR-0007). Расширения вендоров — через namespace-префиксы
+(`NsPrefix`, `Foreign`, `Extension`).
 
 Каждый enum реализует `XjdfEnum` (токен из спецификации) и наследует `Show`/
 `Eq`/`fromToken` из `XjdfEnumCompanion` — миксин-трейт для компаньонов.
@@ -151,11 +161,24 @@ case-class-параметром `name` подкласса (E164: «needs `overri
 `reference/other-new-features/trait-parameters.md`,
 `reference/changed-features/…`.
 
-## context functions — окружение сборки тикета
+## context functions — сознательно не используются с PR-11
 
-`IdAllocator ?=> A` (псевдоним `WithIds[A]`) — код внутри такого контекста
-может выделять свежие `@ID` через `summon[IdAllocator]`; чистая версия того же
-эффекта — `IdSource.fresh: State[Counter, Id]`. Ссылка:
+До M1.4-4 выделение `@ID` было оформлено как context function
+`IdAllocator ?=> A` с псевдонимом `WithIds[A]`. После ревизии (N-22) оба
+удалены: реальные потребители не зависели от контекстной возможности, а
+мёртвый API не заслуживает фичи языка. Сейчас выделение ID — **чистая
+`State`-программа**:
+
+```scala
+type IdAllocator[A] = State[Map[String, Int], A]  // по счётчику на префикс
+def freshId(prefix: String): IdAllocator[Id]      // deterministic, P_0, P_1, …
+def run[A](program: IdAllocator[A]): A            // runA(Map.empty).value
+```
+
+Императивная интеграционная граница `StatefulIdAllocator` (не потокобезопасна)
+оставлена только как явно документированный escape hatch; `dsl.productWithFreshId`
+использует чистую программу. Честная демонстрация context functions отложена
+до задачи, которой они реально нужны. Ссылка:
 `reference/contextual/context-functions.md`.
 
 ## case class + параметры по умолчанию — таблицы спецификации один-в-один
