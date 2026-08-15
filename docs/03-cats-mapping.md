@@ -16,6 +16,14 @@
 интегратору. `NonEmptyChain[Issue]` гарантирует непустой список ошибок.
 Ссылка: `docs/typeclasses/applicative.md`, `docs/datatypes/validated.md`.
 
+> **Важно:** `Validated` — **не монада**: у него сознательно нет `flatMap`
+> (см. validated.md: «Validated isn't a monad, but an Applicative Functor»).
+> Поэтому ни for-comprehensions, ни `.flatMap`/`.andThen` на `Validated` не
+> компилируются; последовательная композиция — либо через `mapN`
+> (аппликативно, параллельно), либо через явный паттерн-матч по
+> `Valid`/`Invalid` (в примерах — хелпер `SpecExamples.chainV`), либо через
+> конверсию `.toEither`.
+
 Катаморфизм BOM использует тот же носитель: `cata: ProductTree[ValidatedNec]
 => ValidatedNec` — «свёртка дерева в аккумулятор ошибок».
 

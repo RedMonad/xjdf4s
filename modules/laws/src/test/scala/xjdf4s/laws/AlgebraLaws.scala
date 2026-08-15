@@ -5,6 +5,7 @@ import xjdf4s.model.*
 import xjdf4s.prim.*
 import cats.kernel.{Eq, Monoid, Semigroup, Semilattice}
 import munit.ScalaCheckSuite
+import org.scalacheck.Arbitrary
 import org.scalacheck.Prop.*
 
 /**
@@ -14,40 +15,34 @@ import org.scalacheck.Prop.*
  */
 class AlgebraLaws extends ScalaCheckSuite:
 
-  private def semigroupAssociativity[A: Arbitrary](name: String)(using Semigroup[A], Eq[A]) =
+  private def semigroupAssociativity[A](name: String)(using Arbitrary[A], S: Semigroup[A], Eq[A]) =
     property(s"semigroup associativity: $name"):
       forAll { (a: A, b: A, c: A) =>
-        val s = summon[Semigroup[A]]
-        s.combine(s.combine(a, b), c) == s.combine(a, s.combine(b, c))
+        S.combine(S.combine(a, b), c) == S.combine(a, S.combine(b, c))
       }
 
-  private def monoidLaws[A: Arbitrary](name: String)(using Monoid[A], Eq[A]) =
+  private def monoidLaws[A](name: String)(using Arbitrary[A], M: Monoid[A], Eq[A]) =
     property(s"monoid identity: $name"):
       forAll { (a: A) =>
-        val m = summon[Monoid[A]]
-        m.combine(a, m.empty) == a && m.combine(m.empty, a) == a
+        M.combine(a, M.empty) == a && M.combine(M.empty, a) == a
       }
     property(s"monoid associativity: $name"):
       forAll { (a: A, b: A, c: A) =>
-        val m = summon[Monoid[A]]
-        m.combine(m.combine(a, b), c) == m.combine(a, m.combine(b, c))
+        M.combine(M.combine(a, b), c) == M.combine(a, M.combine(b, c))
       }
 
-  private def semilatticeLaws[A: Arbitrary](name: String)(using Semilattice[A], Eq[A]) =
+  private def semilatticeLaws[A](name: String)(using Arbitrary[A], S: Semilattice[A], Eq[A]) =
     property(s"semilattice commutativity: $name"):
       forAll { (a: A, b: A) =>
-        val s = summon[Semilattice[A]]
-        s.combine(a, b) == s.combine(b, a)
+        S.combine(a, b) == S.combine(b, a)
       }
     property(s"semilattice idempotency: $name"):
       forAll { (a: A) =>
-        val s = summon[Semilattice[A]]
-        s.combine(a, a) == a
+        S.combine(a, a) == a
       }
     property(s"semilattice associativity: $name"):
       forAll { (a: A, b: A, c: A) =>
-        val s = summon[Semilattice[A]]
-        s.combine(s.combine(a, b), c) == s.combine(a, s.combine(b, c))
+        S.combine(S.combine(a, b), c) == S.combine(a, S.combine(b, c))
       }
 
   // --- Part: overlay semigroup -----------------------------------------

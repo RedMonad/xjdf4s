@@ -50,7 +50,7 @@ class AlignmentLaws extends ScalaCheckSuite:
     val t1 = Timestamp.ofEpochSecond(10)
     val header = Header(NmToken.unsafe("Dev1"), t0)
     val pulses = cats.data.NonEmptyChain(
-      Pulse.beat(Signal(header, SignalPayload.Status(DeviceInfo(DeviceStatus.Setup)))),
+      Pulse.beat(Signal(header, SignalPayload.Status(DeviceInfo(DeviceStatus.Idle)))),
       Pulse.beat(Signal(header.copy(time = t1), SignalPayload.Status(DeviceInfo(DeviceStatus.Production))))
     )
     val pool = Alignment.foldSignals(pulses)

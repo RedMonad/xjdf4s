@@ -61,11 +61,13 @@ XJDF: тикет, который невозможно построить нев�
 
 - [x] **Feedback-итерация сборки.** Прогнать CI-сборку (sbt 2.0.2, Scala 3.8.4)
       по результатам ревью этого PR; зафиксировать все замечания компилятора
-      в этом пункте и закрыть их. *(Закрыто в два захода: исправления по
-      первому `build.log` — коммит "M1: fix compilation errors…"; исправления
-      по второму `build.log` (прозрачность opaque-типов внутри определяющего
-      файла, `DateTimeParseException`, `Option[CMYKColor]`) — коммит
-      "M1b: fix remaining compilation errors from the updated build.log".)*
+      в этом пункте и закрыть их. *(Закрыто в четыре захода: M1/M1b/M1c —
+      ошибки core (скобка, match types, enum-члены, прозрачность opaque,
+      DateTimeParseException); M1d — ошибки модулей laws/examples: у
+      `Validated` нет `flatMap` (он не монада), `Arbitrary`-импорт и
+      неоднозначные summon в законах, `DeviceStatus.Setup` → `Idle`,
+      пакет `ResourceSetName`, `.value` у enum-типа `Pulse`, импорт
+      `cats.Show` в demo).*
 - [ ] **Полный Part.** Добить недостающие поля, если ревью спецификации
       (Table 6.4) покажет расхождения (проверка против `schema.xsd`).
 - [ ] **Оставшиеся интенты главы 4:** ContentCheckIntent (+PreflightItem/
