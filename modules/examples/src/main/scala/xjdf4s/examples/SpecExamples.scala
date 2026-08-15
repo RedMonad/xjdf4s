@@ -3,7 +3,7 @@ package xjdf4s.examples
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.{Crease, FileSpec, Glue => GlueElement}
+import xjdf4s.model.elements.{Crease, FileSpec, Glue => GlueElement, HolePattern}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show
@@ -140,6 +140,43 @@ object SpecExamples:
         id = Some(Id.unsafe("P1")),
         isRoot = true,
         amount = Some(100L),
+        intents = Chain.one(intent)
+      )
+      draft
+        .withProductList(ProductList(products = NonEmptyChain.one(product)))
+        .build
+    }
+
+  /** Fixture (Table 8.30 / Appendix F): a binding ticket demonstrating the
+   *  `HolePattern` element (M1.6-5). The pattern uses a predefined catalog
+   *  value `R2m-DIN` (Appendix F) and is carried by `LooseBinding`
+   *  (Table 4.12) — a container that already exists in the model.
+   */
+  val holePunchingJob: ValidatedNec[Issue, XJDF] =
+    chainV(dsl.TicketDraft.of("holeJob", ProcessType.Binding)) { draft =>
+      val holePattern = HolePattern(
+        pattern = Some(Catalog.HolePattern.R2mDIN),
+        referenceEdge = Some(HoleReferenceEdge.Left),
+        shape = Some(HoleShape.Round),
+        center = Some(XYPair(0.0, 0.0)),
+        extent = Some(XYPair(6.0, 6.0))
+      )
+      val binding = BindingIntent(
+        bindingType = BindingType.RingBinding,
+        details = Some(LooseBinding(
+          brand = Some(XjdfString.unsafe("RingBinder-A")),
+          holePattern = Some(holePattern)
+        ))
+      )
+      val payload = IntentPayload.Binding(binding)
+      val intent = Intent(
+        name = IntentName.of(payload.elementName),
+        specific = payload
+      )
+      val product = Product(
+        id = Some(Id.unsafe("P1")),
+        isRoot = true,
+        amount = Some(50L),
         intents = Chain.one(intent)
       )
       draft
@@ -331,6 +368,7 @@ object SpecExamples:
       "Example 3.6 (combined):" -> combinedProcesses.map(Show[XJDF].show),
       "Creasing job (Table 8.17):" -> creasingJob.map(Show[XJDF].show),
       "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
+      "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
       "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
       "Brochure job:" -> brochureJob.map(Show[XJDF].show),
       "Brochure job after change:" -> updatedBrochureJob.map(Show[XJDF].show)

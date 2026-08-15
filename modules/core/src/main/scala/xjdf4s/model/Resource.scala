@@ -38,6 +38,7 @@ object ProcessType:
   val DigitalPrinting: ProcessType = NmToken.unsafe("DigitalPrinting")
   val Folding: ProcessType = NmToken.unsafe("Folding")
   val Gathering: ProcessType = NmToken.unsafe("Gathering")
+  val HoleMaking: ProcessType = NmToken.unsafe("HoleMaking")
   val Imposition: ProcessType = NmToken.unsafe("Imposition")
   val Interpreting: ProcessType = NmToken.unsafe("Interpreting")
   val ManualLabor: ProcessType = NmToken.unsafe("ManualLabor")

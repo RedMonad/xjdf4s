@@ -2,7 +2,7 @@ package xjdf4s
 package model
 
 import xjdf4s.intents.{AdhesiveNote, AssemblingIntent, BindingIntent, IntentPayload, VariableIntent}
-import xjdf4s.model.elements.{Disposition, Glue => GlueElement}
+import xjdf4s.model.elements.{Disposition, Glue => GlueElement, HolePattern => HolePatternElement}
 import xjdf4s.prim.*
 import cats.Show
 import cats.data.{Chain, NonEmptyChain, Validated}
@@ -121,7 +121,8 @@ object TicketValidator:
     val path = XPath(s"$parentPath/Intent[@Name='${intent.name.toNmToken.value}']")
     val nameIssues = Intent.nameLaw.check(intent, path)
     val payloadIssues = intent.specific match
-      case IntentPayload.Binding(b)  => BindingIntent.law.check(b, path) ++ checkBindingGlueLaws(b, path)
+      case IntentPayload.Binding(b)  =>
+        BindingIntent.law.check(b, path) ++ checkBindingGlueLaws(b, path) ++ checkBindingHolePatternLaws(b, path)
       case IntentPayload.Assembly(a) => checkAssemblyGlueLaws(a, path)
       case IntentPayload.Variable(v) => VariableIntent.law.check(v, path)
       case _                         => Chain.empty
@@ -133,6 +134,15 @@ object TicketValidator:
       case Some(an: AdhesiveNote) =>
         an.glue.fold(Chain.empty[Issue]) { g =>
           GlueElement.law(g, XPath(s"$path/AdhesiveNote/Glue"))
+        }
+      case _ => Chain.empty
+
+  /** Validates `HolePattern` elements nested inside `BindingIntent/LooseBinding` (Table 8.30). */
+  private def checkBindingHolePatternLaws(b: BindingIntent, path: XPath): Chain[Issue] =
+    b.details match
+      case Some(lb: xjdf4s.intents.LooseBinding) =>
+        lb.holePattern.fold(Chain.empty[Issue]) { hp =>
+          HolePatternElement.law(hp, XPath(s"$path/LooseBinding/HolePattern"))
         }
       case _ => Chain.empty
 

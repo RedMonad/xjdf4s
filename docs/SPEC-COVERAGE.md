@@ -48,6 +48,7 @@ README ссылается на этот документ, числа — в вы
 | §6.36 | Table 6.74 | FoldingParams | `FoldingParams` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `Crease*` (Table 8.17) моделируется (M1.6-2); `Cut*` — M3 |
 | §8.14 | Table 8.17 | Crease | `Crease` | `*` | ❌ | ✅ | ❌ | ❌ | Implemented | structural; container-level validation; контейнеры — `FoldingParams` (`Crease*`, моделируется), `CreasingParams` (`Crease+`, M3); `@Depth` в µm → `Microns` |
 | §8.24 | Table 8.29 | Glue | `Glue` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | SHALL: `@GluingPattern` even entries, `@MeltingTemperature` only with Hotmelt/PUR (M1.6-3, ADR-0011); `@GlueRef` → IDREF (collected); контейнеры — `BindIn`, `StickOn`, `AdhesiveNote` (глава 4), `GluingParams` etc. (M3) |
+| §8.25 | Table 8.30 | HolePattern | `HolePattern` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | SHALL: `@Pattern` SHALL be supplied when `@Center`, `@Extent` or `@Shape` missing (M1.6-5); контейнеры — `HoleMakingIntent` (`+`, M1.6/M3), `HoleMakingParams` (`+`, M3), `LooseBinding` (`?`, моделируется), `Media` (`*`, M3); открытый каталог `Catalog.HolePattern` (Appendix F, 34 значения incl. None из XSD); `Catalog.HoleReinforcement` (Grommet) |
 | §6.52 | Table 6.95 | Layout | `Layout` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@Anchor`, `@SheetLay` — моделируются; `@ExpansionBox`, `Position/@PositionOrd` — не моделируются (M3) |
 | §6.57 | Table 6.114 | Media | `Media` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@BackCIE*`, `@Spectrum`, `ColorMeasurementConditions` — не моделируются (M3) |
 | §6.59 | Table 6.119 | NodeInfo | `NodeInfo` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
@@ -63,6 +64,11 @@ README ссылается на этот документ, числа — в вы
 | §A.2.23 | Table A.24 | EnumGlue | `EnumGlue` | 1 | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (3 значения: `ColdGlue`, `Hotmelt`, `PUR`); XSD `simpleType EnumGlue`; для атрибутов «Allowed value is from: Glue» (`EdgeGlue`, `SpineGlue`); переименован из `GlueType` в M1.6-3 (ADR-0011) |
 | §8.24 | Table 8.29 | GlueType | `GlueType` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (5 значений: `ColdGlue`, `Hotmelt`, `Permanent`, `PUR`, `Removable`); атрибут `Glue/@GlueType`; новый в M1.6-3 (ADR-0011, N-50) |
 | §8.24 | Table 8.29 | GluingTechnique | `GluingTechnique` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (3 значения: `SideGluingBack`, `SideGluingFront`, `SpineGluing`); атрибут `Glue/@GluingTechnique`; новый в M1.6-3 |
+| §8.25 | Table 8.30 | HoleCenterReference | `HoleCenterReference` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (2 значения: `RegistrationMark`, `TrailingEdge`); атрибут `HolePattern/@CenterReference`; новый в M1.6-5 |
+| §8.25 | Table 8.30 | HoleReferenceEdge | `HoleReferenceEdge` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (5 значений: `Bottom`, `Left`, `Pattern`, `Right`, `Top`); атрибут `HolePattern/@ReferenceEdge`; новый в M1.6-5 |
+| §8.25 | Table 8.30 | HoleShape | `HoleShape` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (3 значения: `Elliptic`, `Rectangular`, `Round`); атрибут `HolePattern/@Shape`; новый в M1.6-5 |
+| §8.25 | Table 8.30 | HolePattern catalog | `NmToken` | `?` | ❌ | ✅ | ❌ | ❌ | Implemented | открытый каталог Appendix F (34 значения incl. `None` из XSD) `Catalog.HolePattern`; данные — NMTOKEN, allowed from Section F; новый в M1.6-5 |
+| §8.25 | Table 8.30 | HoleReinforcement | `NmToken` | `?` | ❌ | ✅ | ❌ | ❌ | Implemented | открытый каталог `Grommet` `Catalog.HoleReinforcement`; `@Reinforcement` NMTOKEN, Values include: Grommet; новый в M1.6-5 |
 
 ## Intents (Chapter 4)
 
@@ -79,7 +85,7 @@ README ссылается на этот документ, числа — в вы
 | §4.3 | Table 4.9 | AdhesiveNote | `AdhesiveNote` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | `Glue?` → `Option[Glue]` (элемент, M1.6-3/ADR-0011); `Glue/@GlueRef` собирается; SHALL-правила Glue подключены через валидатор |
 | §4.3 | Table 4.10 | EdgeGluing | `EdgeGluing` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | |
 | §4.3 | Table 4.11 | HardCoverBinding | `HardCoverBinding` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | wire-токен `Glue` (регрессия N-08) |
-| §4.3 | Table 4.12 | LooseBinding | `LooseBinding` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
+| §4.3 | Table 4.12 | LooseBinding | `LooseBinding` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | `HolePattern?` моделируется (M1.6-5); SHALL-правило HolePattern подключено через валидатор |
 | §4.3 | Table 4.13 | CoilBinding | `CoilBinding` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.3 | Table 4.14 | CombBinding | `CombBinding` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.3 | Table 4.15 | RingBinding | `RingBinding` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |

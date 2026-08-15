@@ -599,3 +599,32 @@ enum WorkingDirection extends XjdfEnum:
 
 object WorkingDirection extends XjdfEnumCompanion[WorkingDirection]:
   val all: List[WorkingDirection] = List(Bottom, Top)
+
+/** `HolePattern/@CenterReference` (Table 8.30): reference coordinate system
+ *  for `@Center`.
+ */
+enum HoleCenterReference extends XjdfEnum:
+  case RegistrationMark, TrailingEdge
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object HoleCenterReference extends XjdfEnumCompanion[HoleCenterReference]:
+  val all: List[HoleCenterReference] = List(RegistrationMark, TrailingEdge)
+
+/** `HolePattern/@ReferenceEdge` (Table 8.30): the edge of the Component
+ *  relative to where the holes SHALL be placed. The token `Pattern` means
+ *  the reference edge implied by the value of `@Pattern` (Appendix F).
+ */
+enum HoleReferenceEdge extends XjdfEnum:
+  case Bottom, Left, Pattern, Right, Top
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object HoleReferenceEdge extends XjdfEnumCompanion[HoleReferenceEdge]:
+  val all: List[HoleReferenceEdge] = List(Bottom, Left, Pattern, Right, Top)
+
+/** `HolePattern/@Shape` (Table 8.30): shape of the holes. */
+enum HoleShape extends XjdfEnum:
+  case Elliptic, Rectangular, Round
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object HoleShape extends XjdfEnumCompanion[HoleShape]:
+  val all: List[HoleShape] = List(Elliptic, Rectangular, Round)

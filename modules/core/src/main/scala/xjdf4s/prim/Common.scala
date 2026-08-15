@@ -490,6 +490,65 @@ object Catalog:
     val Varnish: NmToken = NmToken.unsafe("Varnish")
     val WaterResistant: NmToken = NmToken.unsafe("WaterResistant")
 
+  /** Hole Pattern Catalog (Appendix F, Table 8.30 `@Pattern`): predefined hole
+   *  patterns. Data type `NMTOKEN`, allowed from Section F. The list here
+   *  is the XSD enumeration (34 values, including `None`) — the normative
+   *  text references Appendix F, the XSD is the structural oracle. Open
+   *  catalog per ADR-0007: any NMTOKEN outside the list remains legal.
+   */
+  object HolePattern:
+    val NonePattern: NmToken = NmToken.unsafe("None")
+    val S1Generic: NmToken = NmToken.unsafe("S1-generic")
+    val SGeneric: NmToken = NmToken.unsafe("S-generic")
+    val R2Generic: NmToken = NmToken.unsafe("R2-generic")
+    val R2mDIN: NmToken = NmToken.unsafe("R2m-DIN")
+    val R2mISO: NmToken = NmToken.unsafe("R2m-ISO")
+    val R2mMIB: NmToken = NmToken.unsafe("R2m-MIB")
+    val R2iUSa: NmToken = NmToken.unsafe("R2i-US-a")
+    val R2iUSb: NmToken = NmToken.unsafe("R2i-US-b")
+    val R3Generic: NmToken = NmToken.unsafe("R3-generic")
+    val R3iUS: NmToken = NmToken.unsafe("R3i-US")
+    val R4Generic: NmToken = NmToken.unsafe("R4-generic")
+    val R4mDINA4: NmToken = NmToken.unsafe("R4m-DIN-A4")
+    val R4mDINA5: NmToken = NmToken.unsafe("R4m-DIN-A5")
+    val R4mSwedish: NmToken = NmToken.unsafe("R4m-swedish")
+    val R4iUS: NmToken = NmToken.unsafe("R4i-US")
+    val R5Generic: NmToken = NmToken.unsafe("R5-generic")
+    val R5iUSa: NmToken = NmToken.unsafe("R5i-US-a")
+    val R5iUSb: NmToken = NmToken.unsafe("R5i-US-b")
+    val R5iUSc: NmToken = NmToken.unsafe("R5i-US-c")
+    val R6Generic: NmToken = NmToken.unsafe("R6-generic")
+    val R6m4h2s: NmToken = NmToken.unsafe("R6m-4h2s")
+    val R6mDINA5: NmToken = NmToken.unsafe("R6m-DIN-A5")
+    val R7Generic: NmToken = NmToken.unsafe("R7-generic")
+    val R7iUSa: NmToken = NmToken.unsafe("R7i-US-a")
+    val R7iUSb: NmToken = NmToken.unsafe("R7i-US-b")
+    val R7iUSc: NmToken = NmToken.unsafe("R7i-US-c")
+    val R11m7h4s: NmToken = NmToken.unsafe("R11m-7h4s")
+    val P16_9iRect0t: NmToken = NmToken.unsafe("P16_9i-rect-0t")
+    val P12mRect0t: NmToken = NmToken.unsafe("P12m-rect-0t")
+    val W2_1iRound0t: NmToken = NmToken.unsafe("W2_1i-round-0t")
+    val W2_1iSquare0t: NmToken = NmToken.unsafe("W2_1i-square-0t")
+    val W3_1iSquare0t: NmToken = NmToken.unsafe("W3_1i-square-0t")
+    val C9_5mRound0t: NmToken = NmToken.unsafe("C9.5m-round-0t")
+
+    val recommended: List[NmToken] = List(
+      NonePattern, S1Generic, SGeneric, R2Generic, R2mDIN, R2mISO, R2mMIB, R2iUSa, R2iUSb,
+      R3Generic, R3iUS, R4Generic, R4mDINA4, R4mDINA5, R4mSwedish, R4iUS,
+      R5Generic, R5iUSa, R5iUSb, R5iUSc, R6Generic, R6m4h2s, R6mDINA5,
+      R7Generic, R7iUSa, R7iUSb, R7iUSc, R11m7h4s, P16_9iRect0t, P12mRect0t,
+      W2_1iRound0t, W2_1iSquare0t, W3_1iSquare0t, C9_5mRound0t
+    )
+  end HolePattern
+
+  /** Hole reinforcement (Table 8.30 `@Reinforcement`): `NMTOKEN`, values
+   *  include `Grommet`. Open catalog — any NMTOKEN remains legal.
+   */
+  object HoleReinforcement:
+    val Grommet: NmToken = NmToken.unsafe("Grommet")
+    val recommended: List[NmToken] = List(Grommet)
+  end HoleReinforcement
+
   /** Pipe protocols of `Dependent/@PipeProtocol` (Table 3.13). */
   object PipeProtocol:
     val IdentificationField: NmToken = NmToken.unsafe("IdentificationField")

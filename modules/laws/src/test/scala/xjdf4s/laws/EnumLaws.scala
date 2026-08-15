@@ -123,6 +123,15 @@ class EnumLaws extends FunSuite:
       Set("SideGluingBack", "SideGluingFront", "SpineGluing")
     )
 
+  test("Table 8.30: HoleCenterReference wire tokens"):
+    assertEquals(tokensOf(HoleCenterReference.all), Set("RegistrationMark", "TrailingEdge"))
+
+  test("Table 8.30: HoleReferenceEdge wire tokens"):
+    assertEquals(tokensOf(HoleReferenceEdge.all), Set("Bottom", "Left", "Pattern", "Right", "Top"))
+
+  test("Table 8.30: HoleShape wire tokens"):
+    assertEquals(tokensOf(HoleShape.all), Set("Elliptic", "Rectangular", "Round"))
+
   test("Table A.8 / A.11 / A.46: the '→ None' token family"):
     // Scala reserves `None`, so four enumerations rename the case and map the
     // token explicitly (ROADMAP Appendix C).
@@ -147,7 +156,10 @@ class EnumLaws extends FunSuite:
         ("WorkingDirection", WorkingDirection.all, WorkingDirection.fromToken),
         ("GlueType", GlueType.all, GlueType.fromToken),
         ("EnumGlue", EnumGlue.all, EnumGlue.fromToken),
-        ("GluingTechnique", GluingTechnique.all, GluingTechnique.fromToken)
+        ("GluingTechnique", GluingTechnique.all, GluingTechnique.fromToken),
+        ("HoleCenterReference", HoleCenterReference.all, HoleCenterReference.fromToken),
+        ("HoleReferenceEdge", HoleReferenceEdge.all, HoleReferenceEdge.fromToken),
+        ("HoleShape", HoleShape.all, HoleShape.fromToken)
       )
     companions.foreach: (name, all, fromToken) =>
       all.foreach: v =>
@@ -156,18 +168,21 @@ class EnumLaws extends FunSuite:
   test("closed enumerations have no duplicate wire tokens"):
     val closed: List[(String, List[XjdfEnum])] =
       List(
-        "Sides"             -> Sides.all,
-        "DeviceStatus"      -> DeviceStatus.all,
-        "HardCoverJacket"   -> HardCoverJacket.all,
-        "ISOPaperSubstrate" -> ISOPaperSubstrate.all,
-        "MediaType"         -> MediaType.all,
-        "Scope"             -> Scope.all,
-        "Status"            -> Status.all,
-        "BindingType"       -> BindingType.all,
-        "WorkingDirection"  -> WorkingDirection.all,
-        "GlueType"          -> GlueType.all,
-        "EnumGlue"          -> EnumGlue.all,
-        "GluingTechnique"   -> GluingTechnique.all
+        "Sides"               -> Sides.all,
+        "DeviceStatus"        -> DeviceStatus.all,
+        "HardCoverJacket"     -> HardCoverJacket.all,
+        "ISOPaperSubstrate"   -> ISOPaperSubstrate.all,
+        "MediaType"           -> MediaType.all,
+        "Scope"               -> Scope.all,
+        "Status"              -> Status.all,
+        "BindingType"         -> BindingType.all,
+        "WorkingDirection"    -> WorkingDirection.all,
+        "GlueType"            -> GlueType.all,
+        "EnumGlue"            -> EnumGlue.all,
+        "GluingTechnique"     -> GluingTechnique.all,
+        "HoleCenterReference" -> HoleCenterReference.all,
+        "HoleReferenceEdge"   -> HoleReferenceEdge.all,
+        "HoleShape"           -> HoleShape.all
       )
     closed.foreach: (name, all) =>
       assertEquals(all.map(_.token.value).distinct.size, all.size, s"$name has duplicate tokens")

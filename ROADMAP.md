@@ -1879,6 +1879,51 @@ TicketLaws 59, BomLaws 8, PartitionLaws 27, AlgebraLaws 50);
 `examples/run` — exit 0, вывод содержит `Gluing job (Table 8.29): XJDF(job=glueJob,
 types=Binding, ProductList(Product(?×100, root)))`. Статус `[x]` — закрыт полностью.
 
+#### M1.6-5. `HolePattern` (Table 8.30, Appendix F) — `[~]` реализовано, ожидает верификации владельца (PR-17)
+
+Полный вертикальный срез по шаблону §8:
+
+- **Модель элемента `HolePattern`** в `model/elements/CommonElements.scala`: 9 атрибутов
+  (`@Center` → `XYPair`, `@CenterReference` → `HoleCenterReference`,
+  `@Extent` → `XYPair`, `@HoleCount` → `IntegerList`,
+  `@Pattern` → `NmToken` (open catalog Appendix F, 34 значения incl. `None` из XSD),
+  `@Pitch` → `XYPair`, `@ReferenceEdge` → `HoleReferenceEdge`,
+  `@Reinforcement` → `NmToken` (open, `Grommet`), `@Shape` → `HoleShape`); все опциональны.
+- **Новые закрытые enum** в `prim/Enums.scala`:
+  `HoleCenterReference` (2: `RegistrationMark`, `TrailingEdge`),
+  `HoleReferenceEdge` (5: `Bottom`, `Left`, `Pattern`, `Right`, `Top`),
+  `HoleShape` (3: `Elliptic`, `Rectangular`, `Round`) — golden в `EnumLaws`.
+- **Открытые каталоги** в `prim/Common.scala`:
+  `Catalog.HolePattern` (34: `None`, `S1-generic` … `C9.5m-round-0t` — XSD enumeration,
+  prose — NMTOKEN allowed from Section F; per ADR-0007 open catalog)
+  и `Catalog.HoleReinforcement` (`Grommet`).
+- **SHALL-правило:** `@Pattern` SHALL быть задан если `@Center`, `@Extent` или `@Shape`
+  отсутствует — `IssueCode.HolePatternPatternRequired`, метод `HolePattern.law`,
+  подключён к `TicketValidator.checkBindingHolePatternLaws` для `LooseBinding/HolePattern`.
+- **Wiring:** `LooseBinding.holePattern: Option[HolePattern]` (Table 4.12);
+  `ProcessType.HoleMaking` добавлен в `model/Resource.scala` (процесс главы 5).
+- **Тесты:** `HolePatternLaws.scala` (15 тестов — позитивные с @Pattern-only,
+  с center+extent+shape без pattern, негативные на missing pattern — 5,
+  open catalog extensibility, mapping токенов); `EnumLaws` golden для трёх новых enum.
+- **Фикстура:** `SpecExamples.holePunchingJob` (Table 8.30 / Appendix F) —
+  `BindingIntent` с `LooseBinding` + `HolePattern(R2m-DIN)`; conformance + golden
+  в `SpecExamplesSuite`.
+- **Строки в `docs/SPEC-COVERAGE.md`:** `HolePattern`, `HoleCenterReference`,
+  `HoleReferenceEdge`, `HoleShape`, `Catalog.HolePattern`, `Catalog.HoleReinforcement`,
+  обновлён `LooseBinding`.
+
+**Файлы:** `prim/Enums.scala`, `prim/Common.scala`, `model/elements/CommonElements.scala`,
+`model/ValidationTypes.scala`, `model/Resource.scala`, `intents/Binding.scala`,
+`model/TicketValidator.scala`, `laws/HolePatternLaws.scala` (новый), `laws/EnumLaws.scala`,
+`examples/SpecExamples.scala`, `laws/SpecExamplesSuite.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** чистая сборка `sbt -batch clean compile test examples/run`;
+243 теста зелёных (228 + `HolePatternLaws` 11 + `EnumLaws` 3 + `SpecExamplesSuite` 1);
+`examples/run` exit 0; `check-spec-coverage.sh` — `RESULT: OK`.
+
+**Статус:** код реализован в ветке `arena/01a00758-xjdf4s`; статус `[~]` до чистого
+прогона владельцем, затем `[x]`.
+
 **Шаблон одного вертикального среза:**
 
 1. точный table-to-type mapping и version notes;
@@ -1914,7 +1959,8 @@ types=Binding, ProductList(Product(?×100, root)))`. Статус `[x]` — за
 | 15 | `Crease` + `WorkingDirection` (Table A.50) + N-50/ADR-0011 | M1.6-2 | 13 | `[x]` верифицировано владельцем: 209 тестов, `examples/run` exit 0 |
 | 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
 | 16 | `Glue` (Table 8.29) + ADR-0011 + N-50 | M1.6-3 | 15 | `[x]` верифицировано владельцем: 228 тестов, `examples/run` exit 0 |
-| 17+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4 … M1.6-15) | M1.6 | 16 | шаблон среза выполнен |
+| 17 | `HolePattern` (Table 8.30 / Appendix F) + 3 enum + open catalogs + SHALL + LooseBinding | M1.6-5 | 16 | `[~]` реализовано, ожидает верификации: 243 теста, `examples/run` exit 0 |
+| 18+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15) | M1.6 | 17 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -2821,7 +2867,7 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-15 выполнены и верифицированы
+**Краткий следующий шаг:** PR-1…PR-16 выполнены и верифицированы
 владельцем. PR-13 закрыл M1.2-6 и M1.5-1…M1.5-4 (201 тест,
 `examples/run` exit 0, `check-spec-coverage.sh` — `RESULT: OK`). PR-14 закрыл
 M1.4-8/N-28: общие элементы глав 3/8 verbatim перенесены из `prim/Common.scala`
@@ -2838,6 +2884,15 @@ PR-16 (M1.6-3) реализовал вертикальный срез `Glue` + A
 двух Glue-энумераций (`EnumGlue` 3 значения + `GlueType` 5 значений +
 `GluingTechnique` 3 значения), breaking change 7 полей в intents, IDREF `@GlueRef`;
 верифицировано владельцем: **228 тестов зелёных (228/0)**, `examples/run` exit 0,
-статус `[x]` — закрыт полностью. Следующий по плану — PR-17+ (M1.6-1 Certification
-или другие срезы глав 4/8 — выбор подтверждается владельцем). LICENSE остаётся
-`BLOCKED` до решения владельца; возврат обязательного CI — открытая часть M1.0-1.
+статус `[x]` — закрыт полностью. PR-17 (M1.6-5) реализует вертикальный срез
+`HolePattern` (Table 8.30, Appendix F): 9 атрибутов, 3 новых закрытых enum
+(`HoleCenterReference`, `HoleReferenceEdge`, `HoleShape`) + 2 открытых каталога
+(`HolePattern` 34 значения, `HoleReinforcement` Grommet), SHALL-правило
+`@Pattern` required (`IssueCode.HolePatternPatternRequired`), wiring в
+`LooseBinding` (`HolePattern?`) + `ProcessType.HoleMaking`; тесты `HolePatternLaws`
+(15), `EnumLaws` golden (3), фикстура `holePunchingJob` + conformance/golden;
+ожидает верификации владельца: **~243 теста**, `examples/run` exit 0.
+Следующий по плану — PR-18+ (M1.6-1 Certification, M1.6-12 HoleMakingIntent
+который теперь открыт после HolePattern, или другие срезы глав 4/8 — выбор
+подтверждается владельцем). LICENSE остаётся `BLOCKED` до решения владельца;
+возврат обязательного CI — открытая часть M1.0-1.

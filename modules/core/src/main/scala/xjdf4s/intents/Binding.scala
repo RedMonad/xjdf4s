@@ -2,7 +2,7 @@ package xjdf4s
 package intents
 
 import xjdf4s.model.{DomainRule, Issue, IssueCode, XPath}
-import xjdf4s.model.elements.{Glue => GlueElement}
+import xjdf4s.model.elements.{Glue => GlueElement, HolePattern}
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
@@ -152,10 +152,14 @@ final case class HardCoverBinding(
 object HardCoverBinding:
   given Eq[HardCoverBinding] = Eq.fromUniversalEquals
 
-/** Details of LooseBinding (Table 4.12). */
+/** Details of LooseBinding (Table 4.12): `HolePattern?` describes the hole
+ *  pattern that the binder requires (the media MAY have additional compatible
+ *  holes).
+ */
 final case class LooseBinding(
     brand: Option[XjdfString] = None,
     diameter: Option[Points] = None,
+    holePattern: Option[HolePattern] = None,
     coilBinding: Option[CoilBinding] = None,
     combBinding: Option[CombBinding] = None,
     ringBinding: Option[RingBinding] = None

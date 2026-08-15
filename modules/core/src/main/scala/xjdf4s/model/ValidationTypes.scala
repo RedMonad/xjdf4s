@@ -142,6 +142,9 @@ object IssueCode:
   /** `Glue/@MeltingTemperature` specified without `Hotmelt` or `PUR` (Table 8.29). */
   val GlueMeltingTempWithoutHeat: IssueCode = unsafe("GLUE-MELTING-TEMP-WITHOUT-HEAT")
 
+  /** `HolePattern/@Pattern` SHALL be supplied when `@Center`, `@Extent` or `@Shape` is missing (Table 8.30). */
+  val HolePatternPatternRequired: IssueCode = unsafe("HOLE-PATTERN-PATTERN-REQUIRED")
+
 end IssueCode
 
 /** A validation finding: a stable machine-readable code, the severity class,

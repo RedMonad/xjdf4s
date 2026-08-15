@@ -280,3 +280,59 @@ object Glue:
   given Eq[Glue] = Eq.fromUniversalEquals
 
 end Glue
+
+/** The `HolePattern` element (Table 8.30): a pattern of one or more holes.
+ *  Used by `HoleMakingIntent` (Table 4.29, `HolePattern+`), `HoleMakingParams`
+ *  (`HolePattern+`, Table 6.78), `LooseBinding` (Table 4.12), `Media`
+ *  (Table 6.114) and other finishing resources.
+ *
+ *  All nine attributes are optional per Table 8.30, but SHALL:
+ *  - `@Pattern` SHALL be supplied if `@Center`, `@Extent` or `@Shape` is
+ *    not specified — i.e. when any of those three is absent, `@Pattern`
+ *    is required (contrapositive: when `@Pattern` is absent, all three
+ *    SHALL be present).
+ *
+ *  Data types:
+ *  - `@Center`, `@Extent`, `@Pitch` → `XYPair`
+ *  - `@CenterReference` → `HoleCenterReference` (RegistrationMark, TrailingEdge)
+ *  - `@HoleCount` → `IntegerList`
+ *  - `@Pattern` → `NmToken` (Allowed value is from: Appendix F Hole Pattern Catalog)
+ *    open catalog `Catalog.HolePattern` (34 values, including `None` from XSD)
+ *  - `@ReferenceEdge` → `HoleReferenceEdge` (Bottom, Left, Pattern, Right, Top)
+ *  - `@Reinforcement` → `NmToken` (Values include: Grommet) open catalog
+ *    `Catalog.HoleReinforcement`
+ *  - `@Shape` → `HoleShape` (Elliptic, Rectangular, Round)
+ */
+final case class HolePattern(
+    center: Option[XYPair] = None,
+    centerReference: Option[HoleCenterReference] = None,
+    extent: Option[XYPair] = None,
+    holeCount: Option[IntegerList] = None,
+    pattern: Option[NmToken] = None,
+    pitch: Option[XYPair] = None,
+    referenceEdge: Option[HoleReferenceEdge] = None,
+    reinforcement: Option[NmToken] = None,
+    shape: Option[HoleShape] = None
+)
+
+object HolePattern:
+
+  /** Local SHALL rule for `HolePattern` (Table 8.30, ADR-0003):
+   *  `@Pattern` SHALL be supplied if `@Center`, `@Extent` or `@Shape`
+   *  is not specified.
+   */
+  def law(hole: HolePattern, at: XPath): Chain[Issue] =
+    val needsPattern = hole.center.isEmpty || hole.extent.isEmpty || hole.shape.isEmpty
+    if needsPattern && hole.pattern.isEmpty then
+      Chain.one(Issue.errorC(
+        IssueCode.HolePatternPatternRequired,
+        at,
+        \"HolePattern/@Pattern SHALL be supplied when @Center, @Extent or @Shape is missing (Table 8.30)\"
+      ))
+    else Chain.empty
+
+  given Show[HolePattern] = Show.fromToString
+
+  given Eq[HolePattern] = Eq.fromUniversalEquals
+
+end HolePattern
