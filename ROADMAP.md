@@ -1185,7 +1185,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet])
 
 ### M1.2 — Типы, токены и кардинальности XJDF 2.2
 
-#### M1.2-1. Полная модель `Part` по Table 6.4 (P1) — закрывает N-03, N-04, N-05, N-29
+#### M1.2-1. Полная модель `Part` по Table 6.4 (P1) — закрывает N-03, N-04, N-05, N-29 — `[~]` реализовано (PR-4; машинного evidence нет, верификация владельцем)
 
 **Файлы:** `prim/Tokens.scala` (новый тип), `model/Partition.scala`, `laws/Arbitraries.scala`, `laws/PartitionLaws.scala`.
 
@@ -1208,6 +1208,8 @@ object RegExp:
 ```
 
 ⚠️ **Предварительно сверить грамматику.** `schema.xsd` определяет `<xs:simpleType name="regExp"><xs:restriction base="xs:string"/></xs:simpleType>`, то есть на уровне схемы никаких ограничений нет. XSD-регулярные выражения и `java.util.regex.Pattern` — разные грамматики (Java является надмножеством с иным синтаксисом ряда конструкций). Если полная совместимость не подтверждается по Appendix A и `schema.xsd`, валидация ограничивается непустотой, а расхождение документируется строкой в `docs/SPEC-COVERAGE.md` и в Приложении C.
+
+**Решение (принято в M1.2-1, риск R5 → ослабление).** Appendix A (Table A.1) определяет `regExp` как «Regular expression as defined by `[XMLSchema]`» — то есть грамматика XSD-regex, а не `java.util.regex`; `schema.xsd` (строки 77–80) задаёт лишь `restriction base="xs:string"`. Полная совместимость с `java.util.regex` не подтверждается (XSD не поддерживает lookaround/backreferences, вычитание классов записывается `[a-z-[aeiou]]`, а не `&&`), поэтому `RegExp.from` проверяет только непустоту; расхождение зафиксировано в Приложении C. Грамматический парсер `regExp` по `[XMLSchema]` — задача кодеков M2 (M2.3).
 
 **Правки `model/Partition.scala`:**
 
@@ -1259,6 +1261,8 @@ test("regression: overlay is right-biased"):
 Также проверяется, что `attributeName` каждого ключа совпадает с именем атрибута Table 6.4, и что runtime-значение имеет ожидаемый тег.
 
 `Arbitraries.arbPart` **переписывается** так, чтобы порождать **все 27 ключей** по типу каждого (N-29). Нельзя маскировать дефект генератором, который никогда не достигает границы. Добавление нового Partition Key без обновления всех мест перечисления (`keys`, `valueOf`, `combine`, `PartBuilder`, `ValueOf`, `attributeName`) обязано ломать сборку **или** закон.
+
+**Статус сессии (PR-4):** реализация закоммичена (`65eb147`, `642a1fe`; ROADMAP-правки — третий коммит PR-4). Статически проверено: 27 ключей Table 6.4 сверены с текстом и `schema.xsd` (расхождений, кроме N-03/N-04, нет); call sites `byProductRef`/`ProductRef`/`productPart`/`metadata` вне `model/Partition.scala` отсутствуют; решение R5 зафиксировано выше и в Приложении C. Машинной верификации нет — ждём прогон владельца (Приложение D: `sbt -batch compile`, `sbt -batch test` — `PartitionLaws`), после зелёного прогона статус переводится в `[x] (верифицировано владельцем)`.
 
 #### M1.2-2. Закрытые enum и открытые каталоги (P1) — закрывает N-06, N-07, N-08, N-09
 
@@ -2441,7 +2445,7 @@ M1: одна обязательная быстрая платформа — Temu
 | `BindingType.NoBinding`, `Unbound`, `Uncoated`, `Unscored` и другие случаи «→ `None`» | `None` — зарезервированное имя `scala.None` | явные `token`-маппинги + golden-множество для каждого затронутого enum (полный список составляется при машинной сверке в M1.2-2) |
 | `XJDF/@Name` и `@$schema` отсутствуют в домене | JSON Exception, в XML запрещены (Table 3.1) | реализуются в `codec-json` (M2); строка со статусом codec-only |
 | `Comment/@Text` отсутствует в домене | JSON Exception (Table 8.14) | реализуется в `codec-json` (M2) |
-| Валидация `RegExp` через `java.util.regex` | грамматика XJDF `regExp` не выверена; `schema.xsd` задаёт лишь `xs:string` | сверить с Appendix A; при расхождении — ослабить до проверки непустоты и записать отклонение |
+| Валидация `RegExp` — только непустота | Appendix A (Table A.1): «Regular expression as defined by `[XMLSchema]`» — грамматика XSD-regex, несовместимая с `java.util.regex` (в XSD нет lookaround/backreferences; вычитание классов — `[a-z-[aeiou]]`, а не `&&`-пересечение); `schema.xsd` (`regExp`, строки 77–80) — `restriction base="xs:string"` без ограничений | M1.2-1: валидация непустотой; полная XSD-грамматика — на стороне кодеков M2 |
 | `XjdfVersion.from` принимает только `"2.2"` | Table 3.1 требует `"2.2"` для соответствующих спецификации документов, хотя Table A.52 перечисляет `2.0`/`2.1`/`2.2` | scaladoc-объяснение (M1.5-2); при поддержке 2.0/2.1 — отдельное решение |
 | `Monoid[Matrix]` вместо `Group` | вырожденная матрица необратима | `inverse: Option[Matrix]` + задокументированная причина; опциональный `InvertibleMatrix` вне M1 |
 | `Semigroup` (не `Monoid`) для `AuditPool`, `AmountPool`, `NmTokens`, `ProcessPath` | носитель `NonEmptyChain`, кардинальность `T+` запрещает пустое значение | явная запись в scaladoc и в `docs/01` |
