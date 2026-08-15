@@ -6,17 +6,16 @@ import cats.Functor
 import munit.ScalaCheckSuite
 import org.scalacheck.Prop.*
 
-/**
- * Table 3.2 “Alignment of Audits and Messages” and the categorical backbone
- * around it: `Pulse` (momentary observation), `NonEmptyChain` (accumulated
- * history, the free monoid) and the natural transformation `snapshot` between
- * them.
+/** Table 3.2 “Alignment of Audits and Messages” and the categorical backbone
+ *  around it: `Pulse` (momentary observation), `NonEmptyChain` (accumulated
+ *  history, the free monoid) and the natural transformation `snapshot` between
+ *  them.
  */
 class AlignmentLaws extends ScalaCheckSuite:
 
   property("naturality: snapshot ∘ map(f) == map(f) ∘ snapshot"):
     forAll { (i: Int, f: Int => String) =>
-      val left  = Alignment.snapshot(Functor[Pulse].map(Pulse.beat(i))(f))
+      val left = Alignment.snapshot(Functor[Pulse].map(Pulse.beat(i))(f))
       val right = Alignment.snapshot(Pulse.beat(i)).map(f)
       left.toChain.toList == right.toChain.toList
     }
@@ -27,7 +26,7 @@ class AlignmentLaws extends ScalaCheckSuite:
     val signal = Signal(header, SignalPayload.Notified(notification))
     Alignment.signalToAudit(signal) match
       case Audit.Notified(h, n) => h == header && n == notification
-      case _                    => false
+      case _ => false
 
   property("alignment of Table 3.2: SignalStatus → AuditStatus"):
     val header = Header(NmToken.unsafe("Dev1"), Timestamp.ofEpochSecond(0))
@@ -35,7 +34,7 @@ class AlignmentLaws extends ScalaCheckSuite:
     val signal = Signal(header, SignalPayload.Status(deviceInfo))
     Alignment.signalToAudit(signal) match
       case Audit.Status(h, d) => h == header && d == deviceInfo
-      case _                  => false
+      case _ => false
 
   property("alignment of Table 3.2: SignalResource → AuditResource"):
     val header = Header(NmToken.unsafe("Dev1"), Timestamp.ofEpochSecond(0))
@@ -43,7 +42,7 @@ class AlignmentLaws extends ScalaCheckSuite:
     val signal = Signal(header, SignalPayload.Resource(info))
     Alignment.signalToAudit(signal) match
       case Audit.Resource(h, r) => h == header && r == info
-      case _                    => false
+      case _ => false
 
   property("folding a stream of signal pulses yields a chronological audit pool"):
     val t0 = Timestamp.ofEpochSecond(0)
@@ -63,3 +62,4 @@ class AlignmentLaws extends ScalaCheckSuite:
     val p2 = AuditPool.of(b)
     val combined = cats.kernel.Semigroup[AuditPool].combine(p1, p2)
     combined.toList == List(a, b, b) && combined.isChronological
+end AlignmentLaws

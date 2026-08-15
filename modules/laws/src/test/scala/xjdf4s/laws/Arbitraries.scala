@@ -130,3 +130,4 @@ object Arbitraries:
         types = NonEmptyChain.fromChainUnsafe(Chain.fromSeq(types)),
         resourceSets = Chain.fromSeq(sets)
       )
+end Arbitraries

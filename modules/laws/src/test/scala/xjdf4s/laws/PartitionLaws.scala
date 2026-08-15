@@ -6,9 +6,8 @@ import xjdf4s.prim.*
 import munit.ScalaCheckSuite
 import org.scalacheck.Prop.*
 
-/**
- * The selection semantics of §6.1.3.2 “Selecting a Partition”, and the
- * overlay/merge algebra of `Part`, as properties.
+/** The selection semantics of §6.1.3.2 “Selecting a Partition”, and the
+ *  overlay/merge algebra of `Part`, as properties.
  */
 class PartitionLaws extends ScalaCheckSuite:
 
@@ -33,7 +32,7 @@ class PartitionLaws extends ScalaCheckSuite:
     forAll { (a: Part, b: Part) =>
       a.mergeWith(b) match
         case Left(conflicts) => conflicts == a.conflictingKeys(b)
-        case Right(merged)   => merged.matches(a) && merged.matches(b)
+        case Right(merged) => merged.matches(a) && merged.matches(b)
     }
 
   property("merging a Part with itself never conflicts"):
@@ -61,7 +60,8 @@ class PartitionLaws extends ScalaCheckSuite:
 
   property("selection: a Resource without parts applies to the entire set"):
     forAll { (selector: Part) =>
-      val resource = Resource(specific = xjdf4s.resources.ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar")))
+      val resource =
+        Resource(specific = xjdf4s.resources.ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar")))
       resource.matches(selector)
     }
 
@@ -89,3 +89,4 @@ class PartitionLaws extends ScalaCheckSuite:
     rs.byId(id) == Some(r) &&
     rs.select(Part.sheetName("S9").get) == Some(r) &&
     rs.select(Part.sheetName("other").get) == None
+end PartitionLaws

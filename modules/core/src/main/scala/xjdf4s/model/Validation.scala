@@ -7,15 +7,14 @@ import cats.data.{Chain, Validated, ValidatedNec}
 import cats.kernel.Eq
 import cats.syntax.all.*
 
-/**
- * A validation finding: the severity class, the XPath location of the trait
- * and a human-readable message. Issues are accumulated in a
- * `ValidatedNec[Issue, A]` — the applicative functor of collected errors.
+/** A validation finding: the severity class, the XPath location of the trait
+ *  and a human-readable message. Issues are accumulated in a
+ *  `ValidatedNec[Issue, A]` — the applicative functor of collected errors.
  */
 final case class Issue(
-  severity: SeverityClass,
-  location: XPath,
-  message: String
+    severity: SeverityClass,
+    location: XPath,
+    message: String
 )
 
 object Issue:
@@ -33,10 +32,9 @@ object Issue:
 
 end Issue
 
-/**
- * Structural validation of an XJDF ticket against the requirements of the
- * specification. Every check is a `ValidatedNec[Issue, Unit]`; combining them
- * accumulates *all* violations instead of failing fast.
+/** Structural validation of an XJDF ticket against the requirements of the
+ *  specification. Every check is a `ValidatedNec[Issue, Unit]`; combining them
+ *  accumulates *all* violations instead of failing fast.
  */
 object TicketValidator:
 
@@ -65,9 +63,8 @@ object TicketValidator:
       Issue.error(XPath("/XJDF/@Version"), s"Unsupported XJDF version: ${ticket.version.value}")
     )
 
-  /**
-   * §3.1.3: `@Types` of process XJDF SHALL NOT contain `"Product"` if any
-   * additional process type tokens are present.
+  /** §3.1.3: `@Types` of process XJDF SHALL NOT contain `"Product"` if any
+   *  additional process type tokens are present.
    */
   private def checkTypes(ticket: XJDF): ValidatedNec[Issue, Unit] =
     val hasProduct = ticket.types.exists(_ == ProcessType.Product)
@@ -94,7 +91,10 @@ object TicketValidator:
     Validated.condNec(
       duplicates.isEmpty,
       (),
-      Issue.error(XPath("/XJDF/ResourceSet"), s"Duplicate ResourceSet keys: ${duplicates.map(Show[ResourceSetKey].show).mkString("; ")}")
+      Issue.error(
+        XPath("/XJDF/ResourceSet"),
+        s"Duplicate ResourceSet keys: ${duplicates.map(Show[ResourceSetKey].show).mkString("; ")}"
+      )
     )
 
   /** `ResourceSet/@Name` SHALL match the specific resources of its children (§3.4). */
@@ -103,7 +103,10 @@ object TicketValidator:
     Validated.condNec(
       bad.isEmpty,
       (),
-      Issue.error(XPath("/XJDF/ResourceSet"), s"ResourceSet children do not match @Name: ${bad.map(_.name.toNmToken.value).mkString(", ")}")
+      Issue.error(
+        XPath("/XJDF/ResourceSet"),
+        s"ResourceSet children do not match @Name: ${bad.map(_.name.toNmToken.value).mkString(", ")}"
+      )
     )
 
   /** `Resource/@Status` SHALL NOT be specified for `@Usage="Output"` (Table 6.1). */
@@ -112,7 +115,10 @@ object TicketValidator:
     Validated.condNec(
       bad.isEmpty,
       (),
-      Issue.error(XPath("/XJDF/ResourceSet"), s"Resource @Status specified for output ResourceSet: ${bad.map(_.name.toNmToken.value).mkString(", ")}")
+      Issue.error(
+        XPath("/XJDF/ResourceSet"),
+        s"Resource @Status specified for output ResourceSet: ${bad.map(_.name.toNmToken.value).mkString(", ")}"
+      )
     )
 
   /** `@CombinedProcessIndex` SHALL reference existing positions of `@Types` (§3.4). */
@@ -124,7 +130,10 @@ object TicketValidator:
     Validated.condNec(
       bad.isEmpty,
       (),
-      Issue.error(XPath("/XJDF/ResourceSet/@CombinedProcessIndex"), s"Process index out of bounds: ${bad.mkString(", ")}")
+      Issue.error(
+        XPath("/XJDF/ResourceSet/@CombinedProcessIndex"),
+        s"Process index out of bounds: ${bad.mkString(", ")}"
+      )
     )
 
   /** `@ID` SHALL be unique within the scope of the XJDF document (§2.2.3). */
@@ -155,9 +164,8 @@ object TicketValidator:
       Issue.error(XPath("/XJDF/AuditPool"), "AuditPool is not ordered chronologically")
     )
 
-  /**
-   * §6.1.2.1: PartAmount/Part SHALL NOT include Partition Keys that are
-   * already uniquely specified in the parent Resource/Part.
+  /** §6.1.2.1: PartAmount/Part SHALL NOT include Partition Keys that are
+   *  already uniquely specified in the parent Resource/Part.
    */
   private def checkPartAmountKeys(ticket: XJDF): ValidatedNec[Issue, Unit] =
     val violations = ticket.resourceSets.toList.flatMap: rs =>
@@ -172,7 +180,10 @@ object TicketValidator:
     Validated.condNec(
       violations.isEmpty,
       (),
-      Issue.error(XPath("/XJDF/ResourceSet/Resource/AmountPool"), s"PartAmount keys shadow parent Part keys: ${violations.mkString(", ")}")
+      Issue.error(
+        XPath("/XJDF/ResourceSet/Resource/AmountPool"),
+        s"PartAmount keys shadow parent Part keys: ${violations.mkString(", ")}"
+      )
     )
 
   /** `Intent/@Name` SHALL match the payload element name, and the payloads SHALL be lawful. */
@@ -184,3 +195,4 @@ object TicketValidator:
       (),
       Issue.error(XPath("/XJDF/ProductList/Intent"), s"Intent @Name does not match its payload: ${bad.mkString(", ")}")
     )
+end TicketValidator

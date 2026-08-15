@@ -6,17 +6,16 @@ import xjdf4s.resources.*
 import cats.data.{Chain, NonEmptyChain}
 import munit.ScalaCheckSuite
 
-/**
- * Structural validation against the XJDF specification, driven by the examples
- * of Chapter 3 and 5 (valid tickets stay valid; every violation is detected).
+/** Structural validation against the XJDF specification, driven by the examples
+ *  of Chapter 3 and 5 (valid tickets stay valid; every violation is detected).
  */
 class TicketLaws extends ScalaCheckSuite:
 
   private def ticket(
-    types: NonEmptyChain[ProcessType],
-    resourceSets: Chain[ResourceSet] = Chain.empty,
-    productList: Option[ProductList] = None,
-    auditPool: Option[AuditPool] = None
+      types: NonEmptyChain[ProcessType],
+      resourceSets: Chain[ResourceSet] = Chain.empty,
+      productList: Option[ProductList] = None,
+      auditPool: Option[AuditPool] = None
   ): XJDF =
     XJDF(
       jobId = JobId.unsafe("TicketLaws"),
@@ -56,13 +55,19 @@ class TicketLaws extends ScalaCheckSuite:
       specific = ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city1")))))
       ),
-      parts = Chain.one(PartBuilder.empty.withToken(PartitionKey.ContactType, Catalog.ContactType.Delivery).withToken(PartitionKey.DropID, NmToken.unsafe("Drop1")).build)
+      parts = Chain.one(PartBuilder.empty.withToken(
+        PartitionKey.ContactType,
+        Catalog.ContactType.Delivery
+      ).withToken(PartitionKey.DropID, NmToken.unsafe("Drop1")).build)
     )
     val contact2 = Resource(
       specific = ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city2")))))
       ),
-      parts = Chain.one(PartBuilder.empty.withToken(PartitionKey.ContactType, Catalog.ContactType.Delivery).withToken(PartitionKey.DropID, NmToken.unsafe("Drop2")).build)
+      parts = Chain.one(PartBuilder.empty.withToken(
+        PartitionKey.ContactType,
+        Catalog.ContactType.Delivery
+      ).withToken(PartitionKey.DropID, NmToken.unsafe("Drop2")).build)
     )
     val drop1 = Resource(
       specific = ResourcePayload.DeliveryParamsResource(
@@ -80,8 +85,16 @@ class TicketLaws extends ScalaCheckSuite:
     val delivery = ticket(
       NonEmptyChain.one(ProcessType.Product),
       Chain(
-        ResourceSet(ResourceSetName.unsafe("Contact"), usage = Some(Usage.Input), resources = Chain(contact1, contact2)),
-        ResourceSet(ResourceSetName.unsafe("DeliveryParams"), usage = Some(Usage.Input), resources = Chain(drop1, drop2))
+        ResourceSet(
+          ResourceSetName.unsafe("Contact"),
+          usage = Some(Usage.Input),
+          resources = Chain(contact1, contact2)
+        ),
+        ResourceSet(
+          ResourceSetName.unsafe("DeliveryParams"),
+          usage = Some(Usage.Input),
+          resources = Chain(drop1, drop2)
+        )
       ),
       productList = Some(ProductList(NonEmptyChain.one(book)))
     )
@@ -154,3 +167,4 @@ class TicketLaws extends ScalaCheckSuite:
     val changeOrder: ChangeOrder = ticket(NonEmptyChain.one(ProcessType.Product))
     val asXjdf: XJDF = changeOrder // the refinement is erased at the value level
     assert(asXjdf.validate.isValid)
+end TicketLaws

@@ -4,9 +4,8 @@ package prim
 import cats.Show
 import cats.kernel.Eq
 
-/**
- * ICS conformance version (§3.1.1), value format:
- * `<ICSName>_L<ICSLevel>-<ICSVersion>`, e.g. `MISPRE_L1-2.0`.
+/** ICS conformance version (§3.1.1), value format:
+ *  `<ICSName>_L<ICSLevel>-<ICSVersion>`, e.g. `MISPRE_L1-2.0`.
  */
 opaque type IcsVersion = String
 
@@ -29,11 +28,10 @@ object IcsVersion:
 
 end IcsVersion
 
-/**
- * `XJDF/@Version` (Table 3.1): the version of the XJDF document. For documents
- * complying with this specification the value SHALL be `"2.2"` (enumeration
- * `XJDFXJMFVersion`, Table A.2.51 — `2.0`; XJDF 2.2 is backwards compatible and
- * keeps the `2.0` namespace/schema generation).
+/** `XJDF/@Version` (Table 3.1): the version of the XJDF document. For documents
+ *  complying with this specification the value SHALL be `"2.2"` (enumeration
+ *  `XJDFXJMFVersion`, Table A.2.51 — `2.0`; XJDF 2.2 is backwards compatible and
+ *  keeps the `2.0` namespace/schema generation).
  */
 opaque type XjdfVersion = String
 

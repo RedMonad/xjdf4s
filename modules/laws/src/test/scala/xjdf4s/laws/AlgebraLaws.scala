@@ -8,10 +8,9 @@ import munit.ScalaCheckSuite
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop.*
 
-/**
- * The algebraic structures of the model are *lawful*, not accidental:
- * associativity, identity, commutativity and idempotency are checked with
- * property-based tests (a discipline-style law suite on plain ScalaCheck).
+/** The algebraic structures of the model are *lawful*, not accidental:
+ *  associativity, identity, commutativity and idempotency are checked with
+ *  property-based tests (a discipline-style law suite on plain ScalaCheck).
  */
 class AlgebraLaws extends ScalaCheckSuite:
 
@@ -92,14 +91,14 @@ class AlgebraLaws extends ScalaCheckSuite:
   property("matrix: inverse cancels composition when it exists"):
     forAll { (m: Matrix) =>
       m.inverse match
-        case None      => math.abs(m.a * m.d - m.b * m.c) <= 1e-9
+        case None => math.abs(m.a * m.d - m.b * m.c) <= 1e-9
         case Some(inv) => matrixEq(m * inv, Matrix.identity) && matrixEq(inv * m, Matrix.identity)
     }
 
   property("matrix: composition matches point application"):
     forAll { (a: Matrix, b: Matrix, point: XYPairLike) =>
       val composed = (a * b).applyTo(point.p)
-      val applied  = a.applyTo(b.applyTo(point.p))
+      val applied = a.applyTo(b.applyTo(point.p))
       approxEq(composed.x, applied.x) && approxEq(composed.y, applied.y)
     }
 
@@ -118,6 +117,7 @@ class AlgebraLaws extends ScalaCheckSuite:
 
   property("IntegerRange 1 2 selects the middle"):
     IntegerRange(1, 2).select(List("a", "b", "c")) == List("b", "c")
+end AlgebraLaws
 
 /** A wrapper so the matrix-application property gets an arbitrary point. */
 final case class XYPairLike(p: XYPair)

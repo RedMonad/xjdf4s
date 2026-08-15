@@ -5,25 +5,24 @@ import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
 
-/**
- * `BindingIntent` (Table 4.8): the binding intent for a Product. The
- * type-specific detail elements SHALL only be specified together with the
- * matching `@BindingType` — modelled as a union type `BindingDetails`, with
- * the pairing enforced by `validate`.
+/** `BindingIntent` (Table 4.8): the binding intent for a Product. The
+ *  type-specific detail elements SHALL only be specified together with the
+ *  matching `@BindingType` — modelled as a union type `BindingDetails`, with
+ *  the pairing enforced by `validate`.
  */
 final case class BindingIntent(
-  bindingType: BindingType,
-  bindingOrder: Option[BindingOrder] = None,
-  bindingSide: Option[Edge] = None,
-  childRefs: Option[IdRefs] = None,
-  coverColor: Option[NamedColor] = None,
-  coverColorDetails: Option[XjdfString] = None,
-  bindingColor: Option[NamedColor] = None,
-  bindingColorDetails: Option[XjdfString] = None,
-  backCoverColor: Option[NamedColor] = None,
-  backCoverColorDetails: Option[XjdfString] = None,
-  details: Option[BindingDetails] = None,
-  tabs: Option[Tabs] = None
+    bindingType: BindingType,
+    bindingOrder: Option[BindingOrder] = None,
+    bindingSide: Option[Edge] = None,
+    childRefs: Option[IdRefs] = None,
+    coverColor: Option[NamedColor] = None,
+    coverColorDetails: Option[XjdfString] = None,
+    bindingColor: Option[NamedColor] = None,
+    bindingColorDetails: Option[XjdfString] = None,
+    backCoverColor: Option[NamedColor] = None,
+    backCoverColorDetails: Option[XjdfString] = None,
+    details: Option[BindingDetails] = None,
+    tabs: Option[Tabs] = None
 ):
 
   def references: Chain[IdRef] = Chain.fromSeq(childRefs.toList.flatMap(_.toList))
@@ -34,28 +33,33 @@ final case class BindingIntent(
       case None => true
       case Some(d) =>
         d match
-          case _: AdhesiveNote      => bindingType == BindingType.AdhesiveNote
-          case _: EdgeGluing        => bindingType == BindingType.EdgeGluing
-          case _: HardCoverBinding  => bindingType == BindingType.HardCover
-          case _: LooseBinding      => BindingIntent.looseTypes.contains(bindingType)
-          case _: SaddleStitching   => bindingType == BindingType.SaddleStitch
-          case _: SideStitching     => bindingType == BindingType.SideStitch
-          case _: SoftCoverBinding  => bindingType == BindingType.SoftCover
+          case _: AdhesiveNote => bindingType == BindingType.AdhesiveNote
+          case _: EdgeGluing => bindingType == BindingType.EdgeGluing
+          case _: HardCoverBinding => bindingType == BindingType.HardCover
+          case _: LooseBinding => BindingIntent.looseTypes.contains(bindingType)
+          case _: SaddleStitching => bindingType == BindingType.SaddleStitch
+          case _: SideStitching => bindingType == BindingType.SideStitch
+          case _: SoftCoverBinding => bindingType == BindingType.SoftCover
+end BindingIntent
 
 object BindingIntent:
 
   private val looseTypes: Set[BindingType] =
-    Set(BindingType.ChannelBinding, BindingType.CoilBinding, BindingType.CombBinding,
-      BindingType.RingBinding, BindingType.StripBinding)
+    Set(
+      BindingType.ChannelBinding,
+      BindingType.CoilBinding,
+      BindingType.CombBinding,
+      BindingType.RingBinding,
+      BindingType.StripBinding
+    )
 
   given Eq[BindingIntent] = Eq.fromUniversalEquals
 
 end BindingIntent
 
-/**
- * `BindingDetails`: the union of the type-specific detail elements of a
- * BindingIntent (Tables 4.9–4.18). Exactly one alternative can be present —
- * the coproduct of the binding details.
+/** `BindingDetails`: the union of the type-specific detail elements of a
+ *  BindingIntent (Tables 4.9–4.18). Exactly one alternative can be present —
+ *  the coproduct of the binding details.
  */
 type BindingDetails =
   AdhesiveNote | EdgeGluing | HardCoverBinding | LooseBinding | SaddleStitching | SideStitching | SoftCoverBinding
@@ -74,19 +78,19 @@ object EdgeGluing:
 
 /** Details of HardCoverBinding (Table 4.11). */
 final case class HardCoverBinding(
-  blockThreadSewing: Option[Boolean] = None,
-  coverStyle: Option[NmToken] = None,
-  endSheets: Option[Boolean] = None,
-  headBands: Option[Boolean] = None,
-  headBandColor: Option[NamedColor] = None,
-  headBandColorDetails: Option[XjdfString] = None,
-  jacket: Option[HardCoverJacket] = None,
-  jacketFoldingWidth: Option[Points] = None,
-  japanBind: Option[Boolean] = None,
-  spineGlue: Option[GlueType] = None,
-  spineOperations: Option[NmTokens] = None,
-  thickness: Option[Points] = None,
-  tightBacking: Option[TightBacking] = None
+    blockThreadSewing: Option[Boolean] = None,
+    coverStyle: Option[NmToken] = None,
+    endSheets: Option[Boolean] = None,
+    headBands: Option[Boolean] = None,
+    headBandColor: Option[NamedColor] = None,
+    headBandColorDetails: Option[XjdfString] = None,
+    jacket: Option[HardCoverJacket] = None,
+    jacketFoldingWidth: Option[Points] = None,
+    japanBind: Option[Boolean] = None,
+    spineGlue: Option[GlueType] = None,
+    spineOperations: Option[NmTokens] = None,
+    thickness: Option[Points] = None,
+    tightBacking: Option[TightBacking] = None
 )
 
 object HardCoverBinding:
@@ -94,11 +98,11 @@ object HardCoverBinding:
 
 /** Details of LooseBinding (Table 4.12). */
 final case class LooseBinding(
-  brand: Option[XjdfString] = None,
-  diameter: Option[Points] = None,
-  coilBinding: Option[CoilBinding] = None,
-  combBinding: Option[CombBinding] = None,
-  ringBinding: Option[RingBinding] = None
+    brand: Option[XjdfString] = None,
+    diameter: Option[Points] = None,
+    coilBinding: Option[CoilBinding] = None,
+    combBinding: Option[CombBinding] = None,
+    ringBinding: Option[RingBinding] = None
 )
 
 object LooseBinding:
@@ -106,8 +110,8 @@ object LooseBinding:
 
 /** Details of CoilBinding (Table 4.13). */
 final case class CoilBinding(
-  coilShape: Option[NmToken] = None,
-  material: Option[NmToken] = None
+    coilShape: Option[NmToken] = None,
+    material: Option[NmToken] = None
 )
 
 object CoilBinding:
@@ -115,8 +119,8 @@ object CoilBinding:
 
 /** Details of CombBinding (Table 4.14). */
 final case class CombBinding(
-  combShape: Option[NmToken] = None,
-  material: Option[NmToken] = None
+    combShape: Option[NmToken] = None,
+    material: Option[NmToken] = None
 )
 
 object CombBinding:
@@ -124,10 +128,10 @@ object CombBinding:
 
 /** Details of RingBinding (Table 4.15). */
 final case class RingBinding(
-  binderMaterial: Option[NmToken] = None,
-  ringShape: Option[NmToken] = None,
-  rivetsExposed: Option[Boolean] = None,
-  viewBinder: Option[NmToken] = None
+    binderMaterial: Option[NmToken] = None,
+    ringShape: Option[NmToken] = None,
+    rivetsExposed: Option[Boolean] = None,
+    viewBinder: Option[NmToken] = None
 )
 
 object RingBinding:
@@ -135,8 +139,8 @@ object RingBinding:
 
 /** Details of SaddleStitching (Table 4.16). */
 final case class SaddleStitching(
-  stapleShape: Option[StapleShape] = None,
-  stitchNumber: Option[Long] = None
+    stapleShape: Option[StapleShape] = None,
+    stitchNumber: Option[Long] = None
 )
 
 object SaddleStitching:
@@ -144,8 +148,8 @@ object SaddleStitching:
 
 /** Details of SideStitching (Table 4.17). */
 final case class SideStitching(
-  stapleShape: Option[StapleShape] = None,
-  stitchNumber: Option[Long] = None
+    stapleShape: Option[StapleShape] = None,
+    stitchNumber: Option[Long] = None
 )
 
 object SideStitching:
@@ -153,14 +157,14 @@ object SideStitching:
 
 /** Details of SoftCoverBinding (Table 4.18). */
 final case class SoftCoverBinding(
-  blockThreadSewing: Option[Boolean] = None,
-  endSheets: Option[Boolean] = None,
-  foldingWidth: Option[Points] = None,
-  foldingWidthBack: Option[Points] = None,
-  glueProcedure: Option[SoftCoverGlueProcedure] = None,
-  scoring: Option[SoftCoverScoring] = None,
-  spineGlue: Option[GlueType] = None,
-  spineOperations: Option[NmTokens] = None
+    blockThreadSewing: Option[Boolean] = None,
+    endSheets: Option[Boolean] = None,
+    foldingWidth: Option[Points] = None,
+    foldingWidthBack: Option[Points] = None,
+    glueProcedure: Option[SoftCoverGlueProcedure] = None,
+    scoring: Option[SoftCoverScoring] = None,
+    spineGlue: Option[GlueType] = None,
+    spineOperations: Option[NmTokens] = None
 )
 
 object SoftCoverBinding:
@@ -168,15 +172,15 @@ object SoftCoverBinding:
 
 /** Tabs in a bound document (Table 4.19). */
 final case class Tabs(
-  reinforceTabs: Option[Boolean] = None,
-  reinforceBind: Option[Boolean] = None,
-  reinforceColor: Option[NamedColor] = None,
-  reinforceColorDetails: Option[XjdfString] = None,
-  tabBrand: Option[XjdfString] = None,
-  tabCount: Option[Long] = None,
-  tabsPerBank: Option[Long] = None,
-  tabExtensionDistance: Option[Points] = None,
-  tabBodyCopy: Option[Boolean] = None
+    reinforceTabs: Option[Boolean] = None,
+    reinforceBind: Option[Boolean] = None,
+    reinforceColor: Option[NamedColor] = None,
+    reinforceColorDetails: Option[XjdfString] = None,
+    tabBrand: Option[XjdfString] = None,
+    tabCount: Option[Long] = None,
+    tabsPerBank: Option[Long] = None,
+    tabExtensionDistance: Option[Points] = None,
+    tabBodyCopy: Option[Boolean] = None
 )
 
 object Tabs:

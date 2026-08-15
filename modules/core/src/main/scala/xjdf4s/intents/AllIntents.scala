@@ -5,11 +5,10 @@ import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
 
-/**
- * The closed vocabulary of Product Intents modelled by this library (a subset
- * of Table 4.2), plus the escape hatch `Extension` for foreign-namespace
- * intents (§3.5.4). The `elementName` of a payload SHALL match `Intent/@Name`
- * of its container.
+/** The closed vocabulary of Product Intents modelled by this library (a subset
+ *  of Table 4.2), plus the escape hatch `Extension` for foreign-namespace
+ *  intents (§3.5.4). The `elementName` of a payload SHALL match `Intent/@Name`
+ *  of its container.
  */
 enum IntentPayload:
   case Assembly(value: AssemblingIntent)
@@ -25,28 +24,29 @@ enum IntentPayload:
   /** The local element name this payload is serialized as. */
   def elementName: NmToken =
     this match
-      case Assembly(_)   => NmToken.unsafe("AssemblingIntent")
-      case Binding(_)    => NmToken.unsafe("BindingIntent")
-      case Color(_)      => NmToken.unsafe("ColorIntent")
-      case Folding(_)    => NmToken.unsafe("FoldingIntent")
-      case Layout(_)     => NmToken.unsafe("LayoutIntent")
-      case Media(_)      => NmToken.unsafe("MediaIntent")
+      case Assembly(_) => NmToken.unsafe("AssemblingIntent")
+      case Binding(_) => NmToken.unsafe("BindingIntent")
+      case Color(_) => NmToken.unsafe("ColorIntent")
+      case Folding(_) => NmToken.unsafe("FoldingIntent")
+      case Layout(_) => NmToken.unsafe("LayoutIntent")
+      case Media(_) => NmToken.unsafe("MediaIntent")
       case Production(_) => NmToken.unsafe("ProductionIntent")
-      case Variable(_)   => NmToken.unsafe("VariableIntent")
+      case Variable(_) => NmToken.unsafe("VariableIntent")
       case Extension(_, local) => local
 
   /** All IDREFs used by this intent payload. */
   def references: Chain[IdRef] =
     this match
       case Assembly(a) => a.references
-      case Binding(b)  => b.references
-      case Color(_)    => Chain.empty
-      case Folding(_)  => Chain.empty
-      case Layout(_)   => Chain.empty
-      case Media(_)    => Chain.empty
+      case Binding(b) => b.references
+      case Color(_) => Chain.empty
+      case Folding(_) => Chain.empty
+      case Layout(_) => Chain.empty
+      case Media(_) => Chain.empty
       case Production(_) => Chain.empty
       case Variable(v) => v.references
       case Extension(_, _) => Chain.empty
+end IntentPayload
 
 object IntentPayload:
 

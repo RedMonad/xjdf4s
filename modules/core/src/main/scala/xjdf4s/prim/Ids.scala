@@ -5,11 +5,10 @@ import cats.Show
 import cats.data.NonEmptyChain
 import cats.kernel.Eq
 
-/**
- * XJDF data type `ID` (§2.2.3): unique identifier within the scope of a single
- * XJDF instance. Lexically an ID is like an NMTOKEN; *uniqueness*, however, is
- * not a property of the value itself — it is a property of the whole ticket and
- * is enforced by `XJDF.validate` (like a universal property of the document).
+/** XJDF data type `ID` (§2.2.3): unique identifier within the scope of a single
+ *  XJDF instance. Lexically an ID is like an NMTOKEN; *uniqueness*, however, is
+ *  not a property of the value itself — it is a property of the whole ticket and
+ *  is enforced by `XJDF.validate` (like a universal property of the document).
  */
 opaque type Id = String
 
@@ -61,8 +60,8 @@ object IdRefs:
   extension (refs: IdRefs)
     /** The underlying non-empty chain (representation). */
     def toNonEmptyChain: NonEmptyChain[IdRef] = refs
-    def toList: List[IdRef]                   = refs.toNonEmptyChain.toChain.toList
-    def contains(ref: IdRef): Boolean         = refs.toNonEmptyChain.exists(_ == ref)
+    def toList: List[IdRef] = refs.toNonEmptyChain.toChain.toList
+    def contains(ref: IdRef): Boolean = refs.toNonEmptyChain.exists(_ == ref)
 
   given Show[IdRefs] = Show.show(refs => refs.toNonEmptyChain.toChain.toList.mkString(" "))
 
@@ -70,10 +69,9 @@ object IdRefs:
 
 end IdRefs
 
-/**
- * `XJDF/@JobID`: job identification used by the application that created the
- * XJDF job (§2.2.2, Table 3.1). Maintained across XJDF instances — unlike
- * `Id`, which is scoped to one document.
+/** `XJDF/@JobID`: job identification used by the application that created the
+ *  XJDF job (§2.2.2, Table 3.1). Maintained across XJDF instances — unlike
+ *  `Id`, which is scoped to one document.
  */
 opaque type JobId = String
 
@@ -93,9 +91,8 @@ object JobId:
 
 end JobId
 
-/**
- * `XJDF/@JobPartID`: identifies one or more worksteps of the same type that can
- * be described as one XJDF (Table 3.1). Internal to the creating system.
+/** `XJDF/@JobPartID`: identifies one or more worksteps of the same type that can
+ *  be described as one XJDF (Table 3.1). Internal to the creating system.
  */
 opaque type JobPartId = String
 

@@ -7,10 +7,9 @@ import cats.Show
 import cats.data.{Chain, NonEmptyChain}
 import cats.kernel.Eq
 
-/**
- * A process type — a value of `XJDF/@Types` (Table 3.1, Chapter 5). The
- * predefined tokens are a catalog; extension process types may use a namespace
- * prefix (§3.5.6).
+/** A process type — a value of `XJDF/@Types` (Table 3.1, Chapter 5). The
+ *  predefined tokens are a catalog; extension process types may use a namespace
+ *  prefix (§3.5.6).
  */
 opaque type ProcessType = NmToken
 
@@ -21,29 +20,29 @@ object ProcessType:
   def from(raw: String): Option[ProcessType] = NmToken.from(raw)
 
   extension (pt: ProcessType)
-    def toNmToken: NmToken    = pt
-    def isExtension: Boolean  = pt.value.contains(':')
+    def toNmToken: NmToken = pt
+    def isExtension: Boolean = pt.value.contains(':')
 
   /** `"Product"` — the ticket specifies products without process details (§3.1.2). */
   val Product: ProcessType = NmToken.unsafe("Product")
 
   // A representative subset of Chapter 5 processes.
-  val Approval: ProcessType               = NmToken.unsafe("Approval")
-  val Collecting: ProcessType             = NmToken.unsafe("Collecting")
-  val ColorSpaceConversion: ProcessType   = NmToken.unsafe("ColorSpaceConversion")
-  val ConventionalPrinting: ProcessType   = NmToken.unsafe("ConventionalPrinting")
-  val Cutting: ProcessType                = NmToken.unsafe("Cutting")
-  val Delivery: ProcessType               = NmToken.unsafe("Delivery")
-  val DigitalPrinting: ProcessType        = NmToken.unsafe("DigitalPrinting")
-  val Folding: ProcessType                = NmToken.unsafe("Folding")
-  val Gathering: ProcessType              = NmToken.unsafe("Gathering")
-  val Imposition: ProcessType             = NmToken.unsafe("Imposition")
-  val Interpreting: ProcessType           = NmToken.unsafe("Interpreting")
-  val ManualLabor: ProcessType            = NmToken.unsafe("ManualLabor")
-  val QualityControl: ProcessType         = NmToken.unsafe("QualityControl")
-  val Rendering: ProcessType              = NmToken.unsafe("Rendering")
-  val Stitching: ProcessType              = NmToken.unsafe("Stitching")
-  val Stripping: ProcessType              = NmToken.unsafe("Stripping")
+  val Approval: ProcessType = NmToken.unsafe("Approval")
+  val Collecting: ProcessType = NmToken.unsafe("Collecting")
+  val ColorSpaceConversion: ProcessType = NmToken.unsafe("ColorSpaceConversion")
+  val ConventionalPrinting: ProcessType = NmToken.unsafe("ConventionalPrinting")
+  val Cutting: ProcessType = NmToken.unsafe("Cutting")
+  val Delivery: ProcessType = NmToken.unsafe("Delivery")
+  val DigitalPrinting: ProcessType = NmToken.unsafe("DigitalPrinting")
+  val Folding: ProcessType = NmToken.unsafe("Folding")
+  val Gathering: ProcessType = NmToken.unsafe("Gathering")
+  val Imposition: ProcessType = NmToken.unsafe("Imposition")
+  val Interpreting: ProcessType = NmToken.unsafe("Interpreting")
+  val ManualLabor: ProcessType = NmToken.unsafe("ManualLabor")
+  val QualityControl: ProcessType = NmToken.unsafe("QualityControl")
+  val Rendering: ProcessType = NmToken.unsafe("Rendering")
+  val Stitching: ProcessType = NmToken.unsafe("Stitching")
+  val Stripping: ProcessType = NmToken.unsafe("Stripping")
 
   given Show[ProcessType] = Show.show(_.value)
 
@@ -51,10 +50,9 @@ object ProcessType:
 
 end ProcessType
 
-/**
- * `XJDF/@Types` (§5.2): the ordered list of processes executed by this XJDF.
- * Categorically this is a *word* — a morphism — of the free category generated
- * by the graph of process transitions (see `ProcessPath`).
+/** `XJDF/@Types` (§5.2): the ordered list of processes executed by this XJDF.
+ *  Categorically this is a *word* — a morphism — of the free category generated
+ *  by the graph of process transitions (see `ProcessPath`).
  */
 final case class ProcessPath(steps: NonEmptyChain[ProcessType]):
 
@@ -68,6 +66,7 @@ final case class ProcessPath(steps: NonEmptyChain[ProcessType]):
   /** The zero-based positions at which `pt` occurs. */
   def indicesOf(pt: ProcessType): Chain[Int] =
     Chain.fromSeq(steps.toChain.toList.zipWithIndex.collect { case (`pt`, i) => i })
+end ProcessPath
 
 object ProcessPath:
 
@@ -83,10 +82,9 @@ object ProcessPath:
 
 end ProcessPath
 
-/**
- * `ResourceSet/@CombinedProcessIndex` (§3.4, §5.2): the zero-based index of a
- * process within the complete list of `XJDF/@Types`. Bounds are validated
- * against the enclosing ticket's `ProcessPath`.
+/** `ResourceSet/@CombinedProcessIndex` (§3.4, §5.2): the zero-based index of a
+ *  process within the complete list of `XJDF/@Types`. Bounds are validated
+ *  against the enclosing ticket's `ProcessPath`.
  */
 opaque type ProcessIndex = Int
 
@@ -105,10 +103,9 @@ object ProcessIndex:
 
 end ProcessIndex
 
-/**
- * `ResourceSet/@Name` (Table 3.12): the name of the explicit resource that the
- * ResourceSet represents. Names of standard resources have no namespace prefix;
- * proprietary resources use one (§3.5.2).
+/** `ResourceSet/@Name` (Table 3.12): the name of the explicit resource that the
+ *  ResourceSet represents. Names of standard resources have no namespace prefix;
+ *  proprietary resources use one (§3.5.2).
  */
 opaque type ResourceSetName = NmToken
 
@@ -118,7 +115,7 @@ object ResourceSetName:
     NmToken.from(raw).flatMap { t =>
       t.value.indexOf(':') match
         case -1 => Some(t)
-        case i  => Option.when(i > 0 && i < t.value.length - 1)(t)
+        case i => Option.when(i > 0 && i < t.value.length - 1)(t)
     }
 
   def unsafe(raw: String): ResourceSetName =
@@ -127,7 +124,7 @@ object ResourceSetName:
   def of(token: NmToken): ResourceSetName = token
 
   extension (name: ResourceSetName)
-    def toNmToken: NmToken   = name
+    def toNmToken: NmToken = name
     def isExtension: Boolean = name.value.contains(':')
 
   given Show[ResourceSetName] = Show.show(_.value)
@@ -138,10 +135,10 @@ end ResourceSetName
 
 /** The identification key of a ResourceSet within a ticket (§3.4). */
 final case class ResourceSetKey(
-  name: ResourceSetName,
-  usage: Option[Usage],
-  processUsage: Option[NmToken],
-  combinedProcessIndex: Option[NonEmptyChain[ProcessIndex]]
+    name: ResourceSetName,
+    usage: Option[Usage],
+    processUsage: Option[NmToken],
+    combinedProcessIndex: Option[NonEmptyChain[ProcessIndex]]
 )
 
 object ResourceSetKey:
@@ -152,38 +149,36 @@ object ResourceSetKey:
 
 end ResourceSetKey
 
-/**
- * `ResourceSet` (Table 3.12): a set of `Resource` elements that are logically
- * grouped together — physical entities such as paper or logical entities such
- * as process parameters.
+/** `ResourceSet` (Table 3.12): a set of `Resource` elements that are logically
+ *  grouped together — physical entities such as paper or logical entities such
+ *  as process parameters.
  *
- * §3.4: ResourceSet elements with the same values of `@Name`, `@Usage`,
- * `@ProcessUsage` and common or no entries in `@CombinedProcessIndex` SHALL NOT
- * be specified — i.e. `key` is unique within a ticket (checked by
- * `XJDF.validate`).
+ *  §3.4: ResourceSet elements with the same values of `@Name`, `@Usage`,
+ *  `@ProcessUsage` and common or no entries in `@CombinedProcessIndex` SHALL NOT
+ *  be specified — i.e. `key` is unique within a ticket (checked by
+ *  `XJDF.validate`).
  */
 final case class ResourceSet(
-  name: ResourceSetName,
-  usage: Option[Usage] = None,
-  processUsage: Option[NmToken] = None,
-  combinedProcessIndex: Option[NonEmptyChain[ProcessIndex]] = None,
-  unit: Option[NmToken] = None,
-  id: Option[Id] = None,
-  commentUrl: Option[Url] = None,
-  descriptiveName: Option[XjdfString] = None,
-  resources: Chain[Resource] = Chain.empty,
-  comments: Chain[Comment] = Chain.empty,
-  dependents: Chain[Dependent] = Chain.empty,
-  generalIds: Chain[GeneralID] = Chain.empty
+    name: ResourceSetName,
+    usage: Option[Usage] = None,
+    processUsage: Option[NmToken] = None,
+    combinedProcessIndex: Option[NonEmptyChain[ProcessIndex]] = None,
+    unit: Option[NmToken] = None,
+    id: Option[Id] = None,
+    commentUrl: Option[Url] = None,
+    descriptiveName: Option[XjdfString] = None,
+    resources: Chain[Resource] = Chain.empty,
+    comments: Chain[Comment] = Chain.empty,
+    dependents: Chain[Dependent] = Chain.empty,
+    generalIds: Chain[GeneralID] = Chain.empty
 ) extends Named[ResourceSetName]:
 
   /** The §3.4 uniqueness key of this ResourceSet. */
   def key: ResourceSetKey = ResourceSetKey(name, usage, processUsage, combinedProcessIndex)
 
-  /**
-   * §6.1.3.2 Selecting a Partition: iterate the Resource elements top to
-   * bottom; the first Resource with no mismatching Part attributes is selected.
-   * A Resource referenced by `@ID` is selected directly, ignoring its parts.
+  /** §6.1.3.2 Selecting a Partition: iterate the Resource elements top to
+   *  bottom; the first Resource with no mismatching Part attributes is selected.
+   *  A Resource referenced by `@ID` is selected directly, ignoring its parts.
    */
   def select(selector: Part): Option[Resource] =
     resources.iterator.find(_.matches(selector))
@@ -203,6 +198,7 @@ final case class ResourceSet(
   /** True when `@Usage` and the resource statuses are consistent (Table 6.1). */
   def hasLawfulStatuses: Boolean =
     if usage.contains(Usage.Output) then resources.forall(_.status.isEmpty) else true
+end ResourceSet
 
 object ResourceSet:
 
@@ -213,41 +209,40 @@ object ResourceSet:
 
 end ResourceSet
 
-/**
- * `Resource` (Table 6.1): one physical or logical entity in the partition
- * context defined by its `Part` elements. The specific resource — the last
- * XJDF-namespace element of the Resource — is carried by `specific`.
+/** `Resource` (Table 6.1): one physical or logical entity in the partition
+ *  context defined by its `Part` elements. The specific resource — the last
+ *  XJDF-namespace element of the Resource — is carried by `specific`.
  */
 final case class Resource(
-  specific: ResourcePayload,
-  id: Option[Id] = None,
-  externalId: Option[NmToken] = None,
-  descriptiveName: Option[XjdfString] = None,
-  brand: Option[XjdfString] = None,
-  parts: Chain[Part] = Chain.empty,
-  amountPool: Option[AmountPool] = None,
-  placement: Option[OrientationSpec] = None,
-  status: Option[ResourceStatus] = None,
-  start: Option[Timestamp] = None,
-  duration: Option[TimeSpan] = None,
-  grossWeight: Option[Double] = None,
-  resourceWeight: Option[Double] = None,
-  comments: Chain[Comment] = Chain.empty,
-  generalIds: Chain[GeneralID] = Chain.empty
+    specific: ResourcePayload,
+    id: Option[Id] = None,
+    externalId: Option[NmToken] = None,
+    descriptiveName: Option[XjdfString] = None,
+    brand: Option[XjdfString] = None,
+    parts: Chain[Part] = Chain.empty,
+    amountPool: Option[AmountPool] = None,
+    placement: Option[OrientationSpec] = None,
+    status: Option[ResourceStatus] = None,
+    start: Option[Timestamp] = None,
+    duration: Option[TimeSpan] = None,
+    grossWeight: Option[Double] = None,
+    resourceWeight: Option[Double] = None,
+    comments: Chain[Comment] = Chain.empty,
+    generalIds: Chain[GeneralID] = Chain.empty
 ):
 
   /** The local element name of the specific resource payload. */
   def elementName: NmToken = specific.elementName
 
-  /**
-   * §6.1.3.3: a Resource without `Part` elements applies to the entire
-   * ResourceSet; a Resource with several parts applies to any of them.
+  /** §6.1.3.3: a Resource without `Part` elements applies to the entire
+   *  ResourceSet; a Resource with several parts applies to any of them.
    */
   def matches(selector: Part): Boolean =
     parts.isEmpty || parts.exists(_.matches(selector))
 
   /** All IDREFs used by this resource. */
   def references: Chain[IdRef] = specific.references
+end Resource
 
 object Resource:
 
@@ -261,9 +256,8 @@ object Resource:
 
 end Resource
 
-/**
- * `Resource/@Orientation | @Transformation` — at most one of the two SHALL be
- * specified (Table 6.1). A union type: the value is either the named
- * orientation or an explicit transformation matrix.
+/** `Resource/@Orientation | @Transformation` — at most one of the two SHALL be
+ *  specified (Table 6.1). A union type: the value is either the named
+ *  orientation or an explicit transformation matrix.
  */
 type OrientationSpec = Orientation | Matrix

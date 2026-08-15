@@ -6,22 +6,21 @@ import cats.Show
 import cats.data.Chain
 import cats.kernel.Eq
 
-/**
- * The `Header` element (Table 7.3): information about the sender of an audit,
- * message or XJMF. `@DeviceID` and `@Time` are required; `@ID` is unique for
- * all messages and XJMF initiated by the sender.
+/** The `Header` element (Table 7.3): information about the sender of an audit,
+ *  message or XJMF. `@DeviceID` and `@Time` are required; `@ID` is unique for
+ *  all messages and XJMF initiated by the sender.
  */
 final case class Header(
-  deviceId: NmToken,
-  time: Timestamp,
-  agentName: Option[XjdfString] = None,
-  agentVersion: Option[XjdfString] = None,
-  author: Option[XjdfString] = None,
-  descriptiveName: Option[XjdfString] = None,
-  icsVersions: Option[NmTokens] = None,
-  id: Option[Id] = None,
-  refId: Option[NmToken] = None,
-  personalId: Option[NmToken] = None
+    deviceId: NmToken,
+    time: Timestamp,
+    agentName: Option[XjdfString] = None,
+    agentVersion: Option[XjdfString] = None,
+    author: Option[XjdfString] = None,
+    descriptiveName: Option[XjdfString] = None,
+    icsVersions: Option[NmTokens] = None,
+    id: Option[Id] = None,
+    refId: Option[NmToken] = None,
+    personalId: Option[NmToken] = None
 )
 
 object Header:
@@ -36,23 +35,22 @@ object Header:
 
 end Header
 
-/**
- * `DeviceInfo` (Table 7.67): details of the actual Device status — the payload
- * of `AuditStatus`/`SignalStatus`.
+/** `DeviceInfo` (Table 7.67): details of the actual Device status — the payload
+ *  of `AuditStatus`/`SignalStatus`.
  */
 final case class DeviceInfo(
-  status: DeviceStatus,
-  statusDetails: Option[NmToken] = None,
-  counterUnit: Option[NmToken] = None,
-  productionCounter: Option[Double] = None,
-  totalProductionCounter: Option[Double] = None,
-  speed: Option[Double] = None,
-  idleStartTime: Option[Timestamp] = None,
-  endTime: Option[Timestamp] = None,
-  powerOnTime: Option[Timestamp] = None,
-  hourCounter: Option[TimeSpan] = None,
-  moduleIds: Option[NmTokens] = None,
-  toolIds: Option[NmTokens] = None
+    status: DeviceStatus,
+    statusDetails: Option[NmToken] = None,
+    counterUnit: Option[NmToken] = None,
+    productionCounter: Option[Double] = None,
+    totalProductionCounter: Option[Double] = None,
+    speed: Option[Double] = None,
+    idleStartTime: Option[Timestamp] = None,
+    endTime: Option[Timestamp] = None,
+    powerOnTime: Option[Timestamp] = None,
+    hourCounter: Option[TimeSpan] = None,
+    moduleIds: Option[NmTokens] = None,
+    toolIds: Option[NmTokens] = None
 )
 
 object DeviceInfo:
@@ -64,20 +62,19 @@ object DeviceInfo:
 
 end DeviceInfo
 
-/**
- * The `Notification` element (Table 8.49): information about an individual
- * event that occurred during processing. Not more than one of `Event` and
- * `Milestone` SHALL be specified — modelled as `Option[Event | Milestone]`, a
- * union type with at most one inhabitant slot.
+/** The `Notification` element (Table 8.49): information about an individual
+ *  event that occurred during processing. Not more than one of `Event` and
+ *  `Milestone` SHALL be specified — modelled as `Option[Event | Milestone]`, a
+ *  union type with at most one inhabitant slot.
  */
 final case class Notification(
-  classification: SeverityClass,
-  jobId: Option[JobId] = None,
-  jobPartId: Option[JobPartId] = None,
-  queueEntryId: Option[NmToken] = None,
-  detail: Option[NotificationDetail] = None,
-  parts: Chain[Part] = Chain.empty,
-  comments: Chain[Comment] = Chain.empty
+    classification: SeverityClass,
+    jobId: Option[JobId] = None,
+    jobPartId: Option[JobPartId] = None,
+    queueEntryId: Option[NmToken] = None,
+    detail: Option[NotificationDetail] = None,
+    parts: Chain[Part] = Chain.empty,
+    comments: Chain[Comment] = Chain.empty
 )
 
 /** `Event | Milestone` — a union type: the two alternative payloads of a Notification. */
@@ -92,23 +89,23 @@ object Notification:
 
 end Notification
 
-/**
- * `ProcessRun` (Table 3.7): the details of an individual Workstep execution —
- * the payload of `AuditProcessRun`.
+/** `ProcessRun` (Table 3.7): the details of an individual Workstep execution —
+ *  the payload of `AuditProcessRun`.
  */
 final case class ProcessRun(
-  start: Timestamp,
-  end: Timestamp,
-  endStatus: EndStatus,
-  duration: Option[TimeSpan] = None,
-  queueEntryId: Option[NmToken] = None,
-  returnTime: Option[Timestamp] = None,
-  submissionTime: Option[Timestamp] = None,
-  parts: Chain[Part] = Chain.empty
+    start: Timestamp,
+    end: Timestamp,
+    endStatus: EndStatus,
+    duration: Option[TimeSpan] = None,
+    queueEntryId: Option[NmToken] = None,
+    returnTime: Option[Timestamp] = None,
+    submissionTime: Option[Timestamp] = None,
+    parts: Chain[Part] = Chain.empty
 ):
 
   /** The execution interval `@Start`..`@End`. */
   def interval: TimeRange = TimeRange(start, end)
+end ProcessRun
 
 object ProcessRun:
 
@@ -119,22 +116,21 @@ object ProcessRun:
 
 end ProcessRun
 
-/**
- * `ResourceInfo` (Table 7.53): the consumption or production of an individual
- * Resource — the payload of `AuditResource`/`SignalResource`.
+/** `ResourceInfo` (Table 7.53): the consumption or production of an individual
+ *  Resource — the payload of `AuditResource`/`SignalResource`.
  */
 final case class ResourceInfo(
-  resourceSet: ResourceSet,
-  commandResult: Option[CommandResult] = None,
-  jobId: Option[JobId] = None,
-  jobPartId: Option[JobPartId] = None,
-  level: Option[ResourceLevel] = None,
-  moduleId: Option[NmToken] = None,
-  queueEntryId: Option[NmToken] = None,
-  scope: Option[Scope] = None,
-  speed: Option[Double] = None,
-  totalAmount: Option[Double] = None,
-  types: Option[NmTokens] = None
+    resourceSet: ResourceSet,
+    commandResult: Option[CommandResult] = None,
+    jobId: Option[JobId] = None,
+    jobPartId: Option[JobPartId] = None,
+    level: Option[ResourceLevel] = None,
+    moduleId: Option[NmToken] = None,
+    queueEntryId: Option[NmToken] = None,
+    scope: Option[Scope] = None,
+    speed: Option[Double] = None,
+    totalAmount: Option[Double] = None,
+    types: Option[NmTokens] = None
 )
 
 object ResourceInfo:

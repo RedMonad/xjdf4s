@@ -5,25 +5,49 @@ import xjdf4s.prim.*
 import cats.Show
 import cats.kernel.{Eq, Semigroup}
 
-/**
- * The Partition Keys of `Resource/Part` (Table 6.4). A Partition Key is an
- * attribute of `Part` that can identify a specific Resource within its parent
- * ResourceSet.
+/** The Partition Keys of `Resource/Part` (Table 6.4). A Partition Key is an
+ *  attribute of `Part` that can identify a specific Resource within its parent
+ *  ResourceSet.
  */
 enum PartitionKey:
   case BinderySignatureID, BlockName, ContactType, DocIndex, DropID, Location, LotID,
-       Metadata, OptionKey, PageNumber, PartVersion, PreviewType, PrintCondition, Product,
-       ProductPart, QualityMeasurement, Run, RunIndex, Separation, SetIndex, SheetIndex,
-       SheetName, Side, StationName, TileID, TransferCurveName, WebName
+    Metadata, OptionKey, PageNumber, PartVersion, PreviewType, PrintCondition, Product,
+    ProductPart, QualityMeasurement, Run, RunIndex, Separation, SetIndex, SheetIndex,
+    SheetName, Side, StationName, TileID, TransferCurveName, WebName
 
 object PartitionKey:
 
   /** All keys, in Table 6.4 order. (`all`, not `values`: enums synthesize `values`.) */
   def all: List[PartitionKey] =
-    List(BinderySignatureID, BlockName, ContactType, DocIndex, DropID, Location, LotID,
-      Metadata, OptionKey, PageNumber, PartVersion, PreviewType, PrintCondition, Product,
-      ProductPart, QualityMeasurement, Run, RunIndex, Separation, SetIndex, SheetIndex,
-      SheetName, Side, StationName, TileID, TransferCurveName, WebName)
+    List(
+      BinderySignatureID,
+      BlockName,
+      ContactType,
+      DocIndex,
+      DropID,
+      Location,
+      LotID,
+      Metadata,
+      OptionKey,
+      PageNumber,
+      PartVersion,
+      PreviewType,
+      PrintCondition,
+      Product,
+      ProductPart,
+      QualityMeasurement,
+      Run,
+      RunIndex,
+      Separation,
+      SetIndex,
+      SheetIndex,
+      SheetName,
+      Side,
+      StationName,
+      TileID,
+      TransferCurveName,
+      WebName
+    )
 
   given Show[PartitionKey] = Show.fromToString
 
@@ -31,11 +55,10 @@ object PartitionKey:
 
 end PartitionKey
 
-/**
- * The runtime-tagged value of a Partition Key. Used when the key is not known
- * at compile time; for compile-time-known keys the typed fields of `Part`
- * (e.g. `part.docIndex: Option[IntegerRange]`, `part.side: Option[Side]`) and
- * the typed constructors of the `Part` companion are the primary interface.
+/** The runtime-tagged value of a Partition Key. Used when the key is not known
+ *  at compile time; for compile-time-known keys the typed fields of `Part`
+ *  (e.g. `part.docIndex: Option[IntegerRange]`, `part.side: Option[Side]`) and
+ *  the typed constructors of the `Part` companion are the primary interface.
  */
 enum PartitionValue:
   case Token(value: NmToken)
@@ -50,21 +73,20 @@ object PartitionValue:
 
   given Show[PartitionValue] =
     Show.show:
-      case Token(v)                => v.value
-      case Range(v)                => Show[IntegerRange].show(v)
-      case BySide(v)               => v.token.value
-      case Tile(v)                 => Show[XYPair].show(v)
-      case ByPreviewType(v)        => v.token.value
+      case Token(v) => v.value
+      case Range(v) => Show[IntegerRange].show(v)
+      case BySide(v) => v.token.value
+      case Tile(v) => Show[XYPair].show(v)
+      case ByPreviewType(v) => v.token.value
       case ByTransferCurveTarget(v) => v.token.value
-      case ProductRef(v)           => v.value
+      case ProductRef(v) => v.value
 
   given Eq[PartitionValue] = Eq.fromUniversalEquals
 
 end PartitionValue
 
-/**
- * The *type-level* reference mapping of Partition Keys to their value types
- * (Table 6.4), as a match type:
+/** The *type-level* reference mapping of Partition Keys to their value types
+ *  (Table 6.4), as a match type:
  *
  *  - range keys (`DocIndex`, `PageNumber`, `RunIndex`, `SetIndex`, `SheetIndex`)
  *    carry `IntegerRange`;
@@ -72,60 +94,59 @@ end PartitionValue
  *  - `TileID` carries an `XYPair` of integers, `ProductPart` an `IdRef`;
  *  - everything else is an open `NmToken`.
  *
- * Exposed for type-level programming downstream; the value-level accessors of
- * `Part` are the typed case-class fields and `PartitionValue` (the compiler
- * does not refine abstract keys in match-type scrutinees, so a generic
- * `get[K <: PartitionKey](key: K): Option[ValueOf[K]]` cannot be implemented
- * without casts — see ROADMAP, "Риски", item 3).
+ *  Exposed for type-level programming downstream; the value-level accessors of
+ *  `Part` are the typed case-class fields and `PartitionValue` (the compiler
+ *  does not refine abstract keys in match-type scrutinees, so a generic
+ *  `get[K <: PartitionKey](key: K): Option[ValueOf[K]]` cannot be implemented
+ *  without casts — see ROADMAP, "Риски", item 3).
  */
 type ValueOf[K <: PartitionKey] = K match
   case PartitionKey.DocIndex.type | PartitionKey.PageNumber.type | PartitionKey.RunIndex.type
-     | PartitionKey.SetIndex.type | PartitionKey.SheetIndex.type => IntegerRange
-  case PartitionKey.Side.type              => Side
-  case PartitionKey.TileID.type            => XYPair
-  case PartitionKey.PreviewType.type       => PreviewType
+        | PartitionKey.SetIndex.type | PartitionKey.SheetIndex.type => IntegerRange
+  case PartitionKey.Side.type => Side
+  case PartitionKey.TileID.type => XYPair
+  case PartitionKey.PreviewType.type => PreviewType
   case PartitionKey.TransferCurveName.type => TransferCurveTarget
-  case PartitionKey.ProductPart.type       => IdRef
-  case _                                   => NmToken
+  case PartitionKey.ProductPart.type => IdRef
+  case _ => NmToken
 
-/**
- * The `Part` element (Table 6.4): the partition context in which a Resource is
- * used. `Part.empty` applies to the entire ResourceSet.
+/** The `Part` element (Table 6.4): the partition context in which a Resource is
+ *  used. `Part.empty` applies to the entire ResourceSet.
  *
- * Parts form a `Semigroup` under *right-biased per-key overlay*: combining a
- * scheduling part with a more specific part refines each key that the right
- * side mentions and keeps everything else. The field-wise “last write wins”
- * rule is associative; conflicts (the same key present on both sides with
- * different values) are detected separately with `conflictingKeys`.
+ *  Parts form a `Semigroup` under *right-biased per-key overlay*: combining a
+ *  scheduling part with a more specific part refines each key that the right
+ *  side mentions and keeps everything else. The field-wise “last write wins”
+ *  rule is associative; conflicts (the same key present on both sides with
+ *  different values) are detected separately with `conflictingKeys`.
  */
 final case class Part(
-  binderySignatureId: Option[NmToken] = None,
-  blockName: Option[NmToken] = None,
-  contactType: Option[NmToken] = None,
-  docIndex: Option[IntegerRange] = None,
-  dropId: Option[NmToken] = None,
-  location: Option[NmToken] = None,
-  lotId: Option[NmToken] = None,
-  metadata: Option[NmToken] = None,
-  optionKey: Option[NmToken] = None,
-  pageNumber: Option[IntegerRange] = None,
-  partVersion: Option[NmToken] = None,
-  previewType: Option[PreviewType] = None,
-  printCondition: Option[NmToken] = None,
-  product: Option[NmToken] = None,
-  productPart: Option[IdRef] = None,
-  qualityMeasurement: Option[NmToken] = None,
-  run: Option[NmToken] = None,
-  runIndex: Option[IntegerRange] = None,
-  separation: Option[NmToken] = None,
-  setIndex: Option[IntegerRange] = None,
-  sheetIndex: Option[IntegerRange] = None,
-  sheetName: Option[NmToken] = None,
-  side: Option[Side] = None,
-  stationName: Option[NmToken] = None,
-  tileId: Option[XYPair] = None,
-  transferCurveName: Option[TransferCurveTarget] = None,
-  webName: Option[NmToken] = None
+    binderySignatureId: Option[NmToken] = None,
+    blockName: Option[NmToken] = None,
+    contactType: Option[NmToken] = None,
+    docIndex: Option[IntegerRange] = None,
+    dropId: Option[NmToken] = None,
+    location: Option[NmToken] = None,
+    lotId: Option[NmToken] = None,
+    metadata: Option[NmToken] = None,
+    optionKey: Option[NmToken] = None,
+    pageNumber: Option[IntegerRange] = None,
+    partVersion: Option[NmToken] = None,
+    previewType: Option[PreviewType] = None,
+    printCondition: Option[NmToken] = None,
+    product: Option[NmToken] = None,
+    productPart: Option[IdRef] = None,
+    qualityMeasurement: Option[NmToken] = None,
+    run: Option[NmToken] = None,
+    runIndex: Option[IntegerRange] = None,
+    separation: Option[NmToken] = None,
+    setIndex: Option[IntegerRange] = None,
+    sheetIndex: Option[IntegerRange] = None,
+    sheetName: Option[NmToken] = None,
+    side: Option[Side] = None,
+    stationName: Option[NmToken] = None,
+    tileId: Option[XYPair] = None,
+    transferCurveName: Option[TransferCurveTarget] = None,
+    webName: Option[NmToken] = None
 ):
 
   /** True when no Partition Key is specified — the Part applies to the whole set. */
@@ -167,59 +188,58 @@ final case class Part(
   def valueOf(key: PartitionKey): Option[PartitionValue] =
     key match
       case PartitionKey.BinderySignatureID => binderySignatureId.map(PartitionValue.Token.apply)
-      case PartitionKey.BlockName          => blockName.map(PartitionValue.Token.apply)
-      case PartitionKey.ContactType        => contactType.map(PartitionValue.Token.apply)
-      case PartitionKey.DocIndex           => docIndex.map(PartitionValue.Range.apply)
-      case PartitionKey.DropID             => dropId.map(PartitionValue.Token.apply)
-      case PartitionKey.Location           => location.map(PartitionValue.Token.apply)
-      case PartitionKey.LotID              => lotId.map(PartitionValue.Token.apply)
-      case PartitionKey.Metadata           => metadata.map(PartitionValue.Token.apply)
-      case PartitionKey.OptionKey          => optionKey.map(PartitionValue.Token.apply)
-      case PartitionKey.PageNumber         => pageNumber.map(PartitionValue.Range.apply)
-      case PartitionKey.PartVersion        => partVersion.map(PartitionValue.Token.apply)
-      case PartitionKey.PreviewType        => previewType.map(PartitionValue.ByPreviewType.apply)
-      case PartitionKey.PrintCondition     => printCondition.map(PartitionValue.Token.apply)
-      case PartitionKey.Product            => product.map(PartitionValue.Token.apply)
-      case PartitionKey.ProductPart        => productPart.map(PartitionValue.ProductRef.apply)
+      case PartitionKey.BlockName => blockName.map(PartitionValue.Token.apply)
+      case PartitionKey.ContactType => contactType.map(PartitionValue.Token.apply)
+      case PartitionKey.DocIndex => docIndex.map(PartitionValue.Range.apply)
+      case PartitionKey.DropID => dropId.map(PartitionValue.Token.apply)
+      case PartitionKey.Location => location.map(PartitionValue.Token.apply)
+      case PartitionKey.LotID => lotId.map(PartitionValue.Token.apply)
+      case PartitionKey.Metadata => metadata.map(PartitionValue.Token.apply)
+      case PartitionKey.OptionKey => optionKey.map(PartitionValue.Token.apply)
+      case PartitionKey.PageNumber => pageNumber.map(PartitionValue.Range.apply)
+      case PartitionKey.PartVersion => partVersion.map(PartitionValue.Token.apply)
+      case PartitionKey.PreviewType => previewType.map(PartitionValue.ByPreviewType.apply)
+      case PartitionKey.PrintCondition => printCondition.map(PartitionValue.Token.apply)
+      case PartitionKey.Product => product.map(PartitionValue.Token.apply)
+      case PartitionKey.ProductPart => productPart.map(PartitionValue.ProductRef.apply)
       case PartitionKey.QualityMeasurement => qualityMeasurement.map(PartitionValue.Token.apply)
-      case PartitionKey.Run                => run.map(PartitionValue.Token.apply)
-      case PartitionKey.RunIndex           => runIndex.map(PartitionValue.Range.apply)
-      case PartitionKey.Separation         => separation.map(PartitionValue.Token.apply)
-      case PartitionKey.SetIndex           => setIndex.map(PartitionValue.Range.apply)
-      case PartitionKey.SheetIndex         => sheetIndex.map(PartitionValue.Range.apply)
-      case PartitionKey.SheetName          => sheetName.map(PartitionValue.Token.apply)
-      case PartitionKey.Side               => side.map(PartitionValue.BySide.apply)
-      case PartitionKey.StationName        => stationName.map(PartitionValue.Token.apply)
-      case PartitionKey.TileID             => tileId.map(PartitionValue.Tile.apply)
-      case PartitionKey.TransferCurveName  => transferCurveName.map(PartitionValue.ByTransferCurveTarget.apply)
-      case PartitionKey.WebName            => webName.map(PartitionValue.Token.apply)
+      case PartitionKey.Run => run.map(PartitionValue.Token.apply)
+      case PartitionKey.RunIndex => runIndex.map(PartitionValue.Range.apply)
+      case PartitionKey.Separation => separation.map(PartitionValue.Token.apply)
+      case PartitionKey.SetIndex => setIndex.map(PartitionValue.Range.apply)
+      case PartitionKey.SheetIndex => sheetIndex.map(PartitionValue.Range.apply)
+      case PartitionKey.SheetName => sheetName.map(PartitionValue.Token.apply)
+      case PartitionKey.Side => side.map(PartitionValue.BySide.apply)
+      case PartitionKey.StationName => stationName.map(PartitionValue.Token.apply)
+      case PartitionKey.TileID => tileId.map(PartitionValue.Tile.apply)
+      case PartitionKey.TransferCurveName => transferCurveName.map(PartitionValue.ByTransferCurveTarget.apply)
+      case PartitionKey.WebName => webName.map(PartitionValue.Token.apply)
 
   /** Keys present on both sides with *different* values. */
   def conflictingKeys(other: Part): List[PartitionKey] =
     keys.filter: k =>
       (valueOf(k), other.valueOf(k)) match
         case (Some(a), Some(b)) => a != b
-        case _                  => false
+        case _ => false
 
-  /**
-   * §6.1.3.2 Selecting a Partition: this Part *matches* a selector when it has
-   * no attribute that mismatches the selector — i.e. every key present here is
-   * either absent in the selector or equal to it.
+  /** §6.1.3.2 Selecting a Partition: this Part *matches* a selector when it has
+   *  no attribute that mismatches the selector — i.e. every key present here is
+   *  either absent in the selector or equal to it.
    */
   def matches(selector: Part): Boolean =
     keys.forall: k =>
       selector.valueOf(k) match
-        case None    => true
+        case None => true
         case Some(v) => valueOf(k).contains(v)
 
-  /**
-   * Merges two parts. When no key conflicts, the merge is the overlay of both;
-   * conflicting keys are reported on the Left.
+  /** Merges two parts. When no key conflicts, the merge is the overlay of both;
+   *  conflicting keys are reported on the Left.
    */
   def mergeWith(other: Part): Either[List[PartitionKey], Part] =
     val conflicts = conflictingKeys(other)
     if conflicts.nonEmpty then Left(conflicts)
     else Right(Part.combine(this, other))
+end Part
 
 object Part:
 
@@ -229,32 +249,32 @@ object Part:
   def combine(a: Part, b: Part): Part =
     a.copy(
       binderySignatureId = b.binderySignatureId.orElse(a.binderySignatureId),
-      blockName          = b.blockName.orElse(a.blockName),
-      contactType        = b.contactType.orElse(a.contactType),
-      docIndex           = b.docIndex.orElse(a.docIndex),
-      dropId             = b.dropId.orElse(a.dropId),
-      location           = b.location.orElse(a.location),
-      lotId              = b.lotId.orElse(a.lotId),
-      metadata           = b.metadata.orElse(a.metadata),
-      optionKey          = b.optionKey.orElse(a.optionKey),
-      pageNumber         = b.pageNumber.orElse(a.pageNumber),
-      partVersion        = b.partVersion.orElse(a.partVersion),
-      previewType        = b.previewType.orElse(a.previewType),
-      printCondition     = b.printCondition.orElse(a.printCondition),
-      product            = b.product.orElse(a.product),
-      productPart        = b.productPart.orElse(a.productPart),
+      blockName = b.blockName.orElse(a.blockName),
+      contactType = b.contactType.orElse(a.contactType),
+      docIndex = b.docIndex.orElse(a.docIndex),
+      dropId = b.dropId.orElse(a.dropId),
+      location = b.location.orElse(a.location),
+      lotId = b.lotId.orElse(a.lotId),
+      metadata = b.metadata.orElse(a.metadata),
+      optionKey = b.optionKey.orElse(a.optionKey),
+      pageNumber = b.pageNumber.orElse(a.pageNumber),
+      partVersion = b.partVersion.orElse(a.partVersion),
+      previewType = b.previewType.orElse(a.previewType),
+      printCondition = b.printCondition.orElse(a.printCondition),
+      product = b.product.orElse(a.product),
+      productPart = b.productPart.orElse(a.productPart),
       qualityMeasurement = b.qualityMeasurement.orElse(a.qualityMeasurement),
-      run                = b.run.orElse(a.run),
-      runIndex           = b.runIndex.orElse(a.runIndex),
-      separation         = b.separation.orElse(a.separation),
-      setIndex           = b.setIndex.orElse(a.setIndex),
-      sheetIndex         = b.sheetIndex.orElse(a.sheetIndex),
-      sheetName          = b.sheetName.orElse(a.sheetName),
-      side               = b.side.orElse(a.side),
-      stationName        = b.stationName.orElse(a.stationName),
-      tileId             = b.tileId.orElse(a.tileId),
-      transferCurveName  = b.transferCurveName.orElse(a.transferCurveName),
-      webName            = b.webName.orElse(a.webName)
+      run = b.run.orElse(a.run),
+      runIndex = b.runIndex.orElse(a.runIndex),
+      separation = b.separation.orElse(a.separation),
+      setIndex = b.setIndex.orElse(a.setIndex),
+      sheetIndex = b.sheetIndex.orElse(a.sheetIndex),
+      sheetName = b.sheetName.orElse(a.sheetName),
+      side = b.side.orElse(a.side),
+      stationName = b.stationName.orElse(a.stationName),
+      tileId = b.tileId.orElse(a.tileId),
+      transferCurveName = b.transferCurveName.orElse(a.transferCurveName),
+      webName = b.webName.orElse(a.webName)
     )
 
   /** Builds a Part with exactly one runtime-tagged key value. */
@@ -358,9 +378,8 @@ object Part:
 
 end Part
 
-/**
- * Incremental constructor of `Part` values for runtime-tagged keys. The typed
- * alternative is the per-key constructors of the `Part` companion.
+/** Incremental constructor of `Part` values for runtime-tagged keys. The typed
+ *  alternative is the per-key constructors of the `Part` companion.
  */
 final case class PartBuilder private (part: Part):
 
@@ -377,6 +396,7 @@ final case class PartBuilder private (part: Part):
     withValue(key, PartitionValue.Range(value))
 
   def build: Part = part
+end PartBuilder
 
 object PartBuilder:
 
@@ -386,32 +406,32 @@ object PartBuilder:
   def set(part: Part, key: PartitionKey, value: PartitionValue): Part =
     key match
       case PartitionKey.BinderySignatureID => part.copy(binderySignatureId = Some(expectToken(value)))
-      case PartitionKey.BlockName          => part.copy(blockName = Some(expectToken(value)))
-      case PartitionKey.ContactType        => part.copy(contactType = Some(expectToken(value)))
-      case PartitionKey.DocIndex           => part.copy(docIndex = Some(expectRange(value)))
-      case PartitionKey.DropID             => part.copy(dropId = Some(expectToken(value)))
-      case PartitionKey.Location           => part.copy(location = Some(expectToken(value)))
-      case PartitionKey.LotID              => part.copy(lotId = Some(expectToken(value)))
-      case PartitionKey.Metadata           => part.copy(metadata = Some(expectToken(value)))
-      case PartitionKey.OptionKey          => part.copy(optionKey = Some(expectToken(value)))
-      case PartitionKey.PageNumber         => part.copy(pageNumber = Some(expectRange(value)))
-      case PartitionKey.PartVersion        => part.copy(partVersion = Some(expectToken(value)))
-      case PartitionKey.PreviewType        => part.copy(previewType = Some(expectPreviewType(value)))
-      case PartitionKey.PrintCondition     => part.copy(printCondition = Some(expectToken(value)))
-      case PartitionKey.Product            => part.copy(product = Some(expectToken(value)))
-      case PartitionKey.ProductPart        => part.copy(productPart = Some(expectProductRef(value)))
+      case PartitionKey.BlockName => part.copy(blockName = Some(expectToken(value)))
+      case PartitionKey.ContactType => part.copy(contactType = Some(expectToken(value)))
+      case PartitionKey.DocIndex => part.copy(docIndex = Some(expectRange(value)))
+      case PartitionKey.DropID => part.copy(dropId = Some(expectToken(value)))
+      case PartitionKey.Location => part.copy(location = Some(expectToken(value)))
+      case PartitionKey.LotID => part.copy(lotId = Some(expectToken(value)))
+      case PartitionKey.Metadata => part.copy(metadata = Some(expectToken(value)))
+      case PartitionKey.OptionKey => part.copy(optionKey = Some(expectToken(value)))
+      case PartitionKey.PageNumber => part.copy(pageNumber = Some(expectRange(value)))
+      case PartitionKey.PartVersion => part.copy(partVersion = Some(expectToken(value)))
+      case PartitionKey.PreviewType => part.copy(previewType = Some(expectPreviewType(value)))
+      case PartitionKey.PrintCondition => part.copy(printCondition = Some(expectToken(value)))
+      case PartitionKey.Product => part.copy(product = Some(expectToken(value)))
+      case PartitionKey.ProductPart => part.copy(productPart = Some(expectProductRef(value)))
       case PartitionKey.QualityMeasurement => part.copy(qualityMeasurement = Some(expectToken(value)))
-      case PartitionKey.Run                => part.copy(run = Some(expectToken(value)))
-      case PartitionKey.RunIndex           => part.copy(runIndex = Some(expectRange(value)))
-      case PartitionKey.Separation         => part.copy(separation = Some(expectToken(value)))
-      case PartitionKey.SetIndex           => part.copy(setIndex = Some(expectRange(value)))
-      case PartitionKey.SheetIndex         => part.copy(sheetIndex = Some(expectRange(value)))
-      case PartitionKey.SheetName          => part.copy(sheetName = Some(expectToken(value)))
-      case PartitionKey.Side               => part.copy(side = Some(expectSide(value)))
-      case PartitionKey.StationName        => part.copy(stationName = Some(expectToken(value)))
-      case PartitionKey.TileID             => part.copy(tileId = Some(expectTile(value)))
-      case PartitionKey.TransferCurveName  => part.copy(transferCurveName = Some(expectTransferCurveTarget(value)))
-      case PartitionKey.WebName            => part.copy(webName = Some(expectToken(value)))
+      case PartitionKey.Run => part.copy(run = Some(expectToken(value)))
+      case PartitionKey.RunIndex => part.copy(runIndex = Some(expectRange(value)))
+      case PartitionKey.Separation => part.copy(separation = Some(expectToken(value)))
+      case PartitionKey.SetIndex => part.copy(setIndex = Some(expectRange(value)))
+      case PartitionKey.SheetIndex => part.copy(sheetIndex = Some(expectRange(value)))
+      case PartitionKey.SheetName => part.copy(sheetName = Some(expectToken(value)))
+      case PartitionKey.Side => part.copy(side = Some(expectSide(value)))
+      case PartitionKey.StationName => part.copy(stationName = Some(expectToken(value)))
+      case PartitionKey.TileID => part.copy(tileId = Some(expectTile(value)))
+      case PartitionKey.TransferCurveName => part.copy(transferCurveName = Some(expectTransferCurveTarget(value)))
+      case PartitionKey.WebName => part.copy(webName = Some(expectToken(value)))
 
   private def expectToken(value: PartitionValue): NmToken = value match
     case PartitionValue.Token(t) => t
@@ -440,3 +460,4 @@ object PartBuilder:
   private def expectProductRef(value: PartitionValue): IdRef = value match
     case PartitionValue.ProductRef(r) => r
     case other => throw new IllegalArgumentException(s"Expected a ProductPart partition value, got $other")
+end PartBuilder

@@ -4,12 +4,11 @@ import xjdf4s.model.*
 import xjdf4s.prim.*
 import cats.Show
 
-/**
- * Demo entry point: `sbt examples/run`.
+/** Demo entry point: `sbt examples/run`.
  *
- * Renders the specification examples built by `SpecExamples` and demonstrates
- * the categorical machinery: the BOM catamorphism, the audit alignment and the
- * change-order monoid.
+ *  Renders the specification examples built by `SpecExamples` and demonstrates
+ *  the categorical machinery: the BOM catamorphism, the audit alignment and the
+ *  change-order monoid.
  */
 object Main:
 
@@ -20,6 +19,7 @@ object Main:
     demoChangeOrder()
     demoAlignment()
     demoMatrix()
+  end main
 
   /** The bill of materials as an initial algebra: unfold + catamorphism. */
   private def demoBomFold(): Unit =
@@ -47,7 +47,9 @@ object Main:
       case cats.data.Validated.Valid(ticket) =>
         ticket.resourceSetsNamed(ResourceSetName.unsafe("Component")).toList.foreach { rs =>
           rs.resources.toList.foreach { r =>
-            println(s"  ${rs.name.toNmToken.value} amount = ${r.amountPool.fold("unset")(_.totalAmount.value.toString)}")
+            println(
+              s"  ${rs.name.toNmToken.value} amount = ${r.amountPool.fold("unset")(_.totalAmount.value.toString)}"
+            )
           }
         }
 
@@ -68,3 +70,4 @@ object Main:
     println(s"  Rotate90 matrix: ${Show[Matrix].show(rot90)}")
     println(s"  applied to (10, 0): ${Show[XYPair].show(rot90.applyTo(point))}")
     println(s"  identity == 1 0 0 1 0 0: ${cats.kernel.Monoid[Matrix].empty == Matrix.identity}")
+end Main

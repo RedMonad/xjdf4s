@@ -5,37 +5,35 @@ import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
 
-/**
- * `FoldingIntent` (Table 4.27): straight line folding, creasing and perforating
- * of a product — in the coordinate system of the Final Product. Folds implied
- * by binding SHALL NOT be specified here.
+/** `FoldingIntent` (Table 4.27): straight line folding, creasing and perforating
+ *  of a product — in the coordinate system of the Final Product. Folds implied
+ *  by binding SHALL NOT be specified here.
  */
 final case class FoldingIntent(
-  foldCatalog: Option[NmToken] = None,
-  foldingDetails: Option[NmToken] = None,
-  orientation: Option[Orientation] = None,
-  folds: Chain[Fold] = Chain.empty,
-  perforates: Chain[Perforate] = Chain.empty
+    foldCatalog: Option[NmToken] = None,
+    foldingDetails: Option[NmToken] = None,
+    orientation: Option[Orientation] = None,
+    folds: Chain[Fold] = Chain.empty,
+    perforates: Chain[Perforate] = Chain.empty
 )
 
 object FoldingIntent:
   given Eq[FoldingIntent] = Eq.fromUniversalEquals
 
-/**
- * `VariableIntent` (Table 4.36): the variations of printed data with variable
- * content.
+/** `VariableIntent` (Table 4.36): the variations of printed data with variable
+ *  content.
  */
 final case class VariableIntent(
-  variableType: VariableType,
-  area: Option[UnitInterval] = None,
-  averagePages: Option[Long] = None,
-  childRefs: Option[IdRefs] = None,
-  colorsUsedBack: Option[NmTokens] = None,
-  colorsUsedFront: Option[NmTokens] = None,
-  maxPages: Option[Long] = None,
-  minPages: Option[Long] = None,
-  numberOfCopies: Option[Long] = None,
-  variableQuality: Option[VariableQuality] = None
+    variableType: VariableType,
+    area: Option[UnitInterval] = None,
+    averagePages: Option[Long] = None,
+    childRefs: Option[IdRefs] = None,
+    colorsUsedBack: Option[NmTokens] = None,
+    colorsUsedFront: Option[NmTokens] = None,
+    maxPages: Option[Long] = None,
+    minPages: Option[Long] = None,
+    numberOfCopies: Option[Long] = None,
+    variableQuality: Option[VariableQuality] = None
 ):
 
   def references: Chain[IdRef] = Chain.fromSeq(childRefs.toList.flatMap(_.toList))
@@ -44,26 +42,26 @@ final case class VariableIntent(
   def isLawful: Boolean =
     val okMin = (minPages, averagePages) match
       case (Some(mn), Some(av)) => mn <= av
-      case _                    => true
+      case _ => true
     val okMax = (averagePages, maxPages) match
       case (Some(av), Some(mx)) => av <= mx
-      case _                    => true
+      case _ => true
     okMin && okMax
+end VariableIntent
 
 object VariableIntent:
   given Eq[VariableIntent] = Eq.fromUniversalEquals
 
-/**
- * `AssemblingIntent` (Table 4.3): placing or inserting one component within
- * another. `@Container` SHALL reference the main Product — an IDREF, not the
- * parent product of this intent.
+/** `AssemblingIntent` (Table 4.3): placing or inserting one component within
+ *  another. `@Container` SHALL reference the main Product — an IDREF, not the
+ *  parent product of this intent.
  */
 final case class AssemblingIntent(
-  container: IdRef,
-  assemblyItems: Chain[AssemblyItem] = Chain.empty,
-  bindIns: Chain[BindIn] = Chain.empty,
-  blowIns: Chain[BlowIn] = Chain.empty,
-  stickOns: Chain[StickOn] = Chain.empty
+    container: IdRef,
+    assemblyItems: Chain[AssemblyItem] = Chain.empty,
+    bindIns: Chain[BindIn] = Chain.empty,
+    blowIns: Chain[BlowIn] = Chain.empty,
+    stickOns: Chain[StickOn] = Chain.empty
 ):
 
   def references: Chain[IdRef] =
@@ -72,6 +70,7 @@ final case class AssemblingIntent(
       bindIns.map(_.childRef) ++
       blowIns.map(_.childRef) ++
       stickOns.map(_.childRef)
+end AssemblingIntent
 
 object AssemblingIntent:
   given Eq[AssemblingIntent] = Eq.fromUniversalEquals
@@ -84,11 +83,11 @@ object AssemblyItem:
 
 /** An insert that is glued into the main product (Table 4.5). */
 final case class BindIn(
-  childRef: IdRef,
-  folio: Option[Long] = None,
-  orientation: Option[Orientation] = None,
-  position: Option[XYPair] = None,
-  glue: Option[GlueType] = None
+    childRef: IdRef,
+    folio: Option[Long] = None,
+    orientation: Option[Orientation] = None,
+    position: Option[XYPair] = None,
+    glue: Option[GlueType] = None
 )
 
 object BindIn:
@@ -96,10 +95,10 @@ object BindIn:
 
 /** An insert that is loosely inserted into the main product (Table 4.6). */
 final case class BlowIn(
-  childRef: IdRef,
-  folioFrom: Option[Long] = None,
-  folioTo: Option[Long] = None,
-  orientation: Option[Orientation] = None
+    childRef: IdRef,
+    folioFrom: Option[Long] = None,
+    folioTo: Option[Long] = None,
+    orientation: Option[Orientation] = None
 )
 
 object BlowIn:
@@ -107,40 +106,38 @@ object BlowIn:
 
 /** A child product glued onto the main product, e.g. a label (Table 4.7). */
 final case class StickOn(
-  childRef: IdRef,
-  face: Option[Face] = None,
-  folio: Option[Long] = None,
-  orientation: Option[Orientation] = None,
-  position: Option[XYPair] = None,
-  glue: Option[GlueType] = None
+    childRef: IdRef,
+    face: Option[Face] = None,
+    folio: Option[Long] = None,
+    orientation: Option[Orientation] = None,
+    position: Option[XYPair] = None,
+    glue: Option[GlueType] = None
 )
 
 object StickOn:
   given Eq[StickOn] = Eq.fromUniversalEquals
 
-/**
- * `Fold` (Table 8.26): an individual folding operation. Shared by
- * `FoldingIntent` and the `FoldingParams` resource.
+/** `Fold` (Table 8.26): an individual folding operation. Shared by
+ *  `FoldingIntent` and the `FoldingParams` resource.
  */
 final case class Fold(
-  from: FoldFrom,
-  to: FoldTo,
-  travel: Option[Points] = None
+    from: FoldFrom,
+    to: FoldTo,
+    travel: Option[Points] = None
 )
 
 object Fold:
   given Eq[Fold] = Eq.fromUniversalEquals
 
-/**
- * `Perforate` (Table 8.53): one perforated line. Shared by `FoldingIntent` and
- * `FoldingParams`/`PerforatingParams`.
+/** `Perforate` (Table 8.53): one perforated line. Shared by `FoldingIntent` and
+ *  `FoldingParams`/`PerforatingParams`.
  */
 final case class Perforate(
-  depth: Option[Microns] = None,
-  startPosition: Option[XYPair] = None,
-  teethPerDimension: Option[Double] = None,
-  workingDirection: Option[NmToken] = None,
-  workingPath: Option[XYPair] = None
+    depth: Option[Microns] = None,
+    startPosition: Option[XYPair] = None,
+    teethPerDimension: Option[Double] = None,
+    workingDirection: Option[NmToken] = None,
+    workingPath: Option[XYPair] = None
 )
 
 object Perforate:

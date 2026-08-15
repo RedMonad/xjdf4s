@@ -9,10 +9,9 @@ import cats.Show
 import cats.data.{Chain, NonEmptyChain, Validated, ValidatedNec}
 import cats.syntax.all.*
 
-/**
- * The declarative DSL of xjdf4s: build tickets the way a Controller writes
- * them — bottom-up from resources, products and audits — with every structural
- * invariant checked and every violation accumulated.
+/** The declarative DSL of xjdf4s: build tickets the way a Controller writes
+ *  them — bottom-up from resources, products and audits — with every structural
+ *  invariant checked and every violation accumulated.
  */
 object dsl:
 
@@ -38,16 +37,15 @@ object dsl:
   // Resources
   // ------------------------------------------------------------------
 
-  /**
-   * A ResourceSet with validated `@Name`. Child resources SHALL match the name
-   * — enforced structurally, since the payload's element name is compared with
-   * the ResourceSet name at build time.
+  /** A ResourceSet with validated `@Name`. Child resources SHALL match the name
+   *  — enforced structurally, since the payload's element name is compared with
+   *  the ResourceSet name at build time.
    */
   def resourceSet(
-    name: String,
-    usage: Option[Usage] = None,
-    processUsage: Option[String] = None,
-    combinedProcessIndex: Option[NonEmptyChain[ProcessIndex]] = None
+      name: String,
+      usage: Option[Usage] = None,
+      processUsage: Option[String] = None,
+      combinedProcessIndex: Option[NonEmptyChain[ProcessIndex]] = None
   )(resources: Resource*): ValidatedNec[Issue, ResourceSet] =
     val nameV = ResourceSetName
       .from(name)
@@ -123,11 +121,11 @@ object dsl:
 
   /** A product with optional amount, product type, id and intents. */
   def product(
-    amount: Option[Long] = None,
-    isRoot: Boolean = true,
-    productType: Option[String] = None,
-    id: Option[String] = None,
-    externalId: Option[String] = None
+      amount: Option[Long] = None,
+      isRoot: Boolean = true,
+      productType: Option[String] = None,
+      id: Option[String] = None,
+      externalId: Option[String] = None
   )(intents: Intent*): ValidatedNec[Issue, Product] =
     val idValidated = validateId(id)
     val typeV = productType match
@@ -171,7 +169,10 @@ object dsl:
         Validated.condNec(
           i.isLawful,
           i,
-          Issue.error(XPath("/XJDF/ProductList/Intent"), s"Intent @Name='$name' does not match payload ${payload.elementName.value}")
+          Issue.error(
+            XPath("/XJDF/ProductList/Intent"),
+            s"Intent @Name='$name' does not match payload ${payload.elementName.value}"
+          )
         )
       }
 
@@ -181,15 +182,15 @@ object dsl:
 
   /** A ticket draft: fields are added incrementally, validated at `build`. */
   final case class TicketDraft private (
-    jobId: Option[JobId],
-    types: Chain[ProcessType],
-    jobPartId: Option[JobPartId],
-    projectId: Option[ProjectId],
-    productList: Option[ProductList],
-    resourceSets: Chain[ResourceSet],
-    auditPool: Option[AuditPool],
-    comments: Chain[Comment],
-    generalIds: Chain[GeneralID]
+      jobId: Option[JobId],
+      types: Chain[ProcessType],
+      jobPartId: Option[JobPartId],
+      projectId: Option[ProjectId],
+      productList: Option[ProductList],
+      resourceSets: Chain[ResourceSet],
+      auditPool: Option[AuditPool],
+      comments: Chain[Comment],
+      generalIds: Chain[GeneralID]
   ):
     def withJobPart(jobPartId: String): TicketDraft =
       copy(jobPartId = JobPartId.from(jobPartId))
@@ -228,6 +229,7 @@ object dsl:
             generalIds = generalIds
           )
           ticket.validate.as(ticket)
+  end TicketDraft
 
   object TicketDraft:
 
@@ -235,7 +237,10 @@ object dsl:
       val jobV = JobId
         .from(jobId)
         .toValidNec(Issue.error(XPath("/XJDF/@JobID"), s"Invalid JobID: '$jobId'"))
-      jobV.map(job => TicketDraft(Some(job), Chain.fromSeq(types), None, None, None, Chain.empty, None, Chain.empty, Chain.empty))
+      jobV.map(job =>
+        TicketDraft(Some(job), Chain.fromSeq(types), None, None, None, Chain.empty, None, Chain.empty, Chain.empty)
+      )
+  end TicketDraft
 
   // ------------------------------------------------------------------
   // Audits
@@ -262,3 +267,4 @@ object dsl:
 
   /** Renders a ticket as a compact, human-readable description. */
   def render(ticket: XJDF): String = Show[XJDF].show(ticket)
+end dsl

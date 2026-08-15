@@ -6,18 +6,18 @@ import cats.Show
 import cats.data.{Chain, NonEmptyChain}
 import cats.kernel.{Eq, Semigroup}
 
-/**
- * `PartWaste` (Table 6.5): particulars of a type or source of waste.
- * At least one of `@ModuleIDs` and `@WasteDetails` SHALL be specified.
+/** `PartWaste` (Table 6.5): particulars of a type or source of waste.
+ *  At least one of `@ModuleIDs` and `@WasteDetails` SHALL be specified.
  */
 final case class PartWaste(
-  waste: Amount,
-  moduleIds: Option[NmTokens] = None,
-  wasteDetails: Option[WasteDetail] = None
+    waste: Amount,
+    moduleIds: Option[NmTokens] = None,
+    wasteDetails: Option[WasteDetail] = None
 ):
 
   /** The “at least one of” rule of Table 6.5. */
   def isLawful: Boolean = moduleIds.isDefined || wasteDetails.isDefined
+end PartWaste
 
 object PartWaste:
 
@@ -27,22 +27,22 @@ object PartWaste:
 
 end PartWaste
 
-/**
- * `PartAmount` (Table 6.3): the amounts and waste of a resource partition.
- * Multiple PartAmount elements specify partial completion of resources
- * (§6.1.2.1).
+/** `PartAmount` (Table 6.3): the amounts and waste of a resource partition.
+ *  Multiple PartAmount elements specify partial completion of resources
+ *  (§6.1.2.1).
  */
 final case class PartAmount(
-  amount: Option[Amount] = None,
-  maxAmount: Option[Amount] = None,
-  minAmount: Option[Amount] = None,
-  waste: Option[Amount] = None,
-  part: Part = Part.empty,
-  partWaste: Chain[PartWaste] = Chain.empty
+    amount: Option[Amount] = None,
+    maxAmount: Option[Amount] = None,
+    minAmount: Option[Amount] = None,
+    waste: Option[Amount] = None,
+    part: Part = Part.empty,
+    partWaste: Chain[PartWaste] = Chain.empty
 ):
 
   /** The amount attributes viewed as one range. */
   def range: AmountRange = AmountRange(amount, maxAmount, minAmount)
+end PartAmount
 
 object PartAmount:
 
@@ -57,11 +57,10 @@ object PartAmount:
 
 end PartAmount
 
-/**
- * `AmountPool` (Table 6.2): a non-empty, ordered list of PartAmount elements —
- * the amount-related metadata of a Resource. Concatenation is the free-monoid
- * (semigroup) operation: planning amounts and recorded amounts accumulate in
- * order.
+/** `AmountPool` (Table 6.2): a non-empty, ordered list of PartAmount elements —
+ *  the amount-related metadata of a Resource. Concatenation is the free-monoid
+ *  (semigroup) operation: planning amounts and recorded amounts accumulate in
+ *  order.
  */
 opaque type AmountPool = NonEmptyChain[PartAmount]
 
@@ -75,7 +74,7 @@ object AmountPool:
   extension (pool: AmountPool)
     /** The underlying non-empty chain (representation). */
     def toNonEmptyChain: NonEmptyChain[PartAmount] = pool
-    def toList: List[PartAmount]                  = pool.toNonEmptyChain.toChain.toList
+    def toList: List[PartAmount] = pool.toNonEmptyChain.toChain.toList
 
     /** Total planned amount across all PartAmount entries. */
     def totalAmount: Amount =
@@ -84,6 +83,7 @@ object AmountPool:
     /** Total waste across all PartAmount entries. */
     def totalWaste: Amount =
       pool.toNonEmptyChain.toChain.toList.foldLeft(Amount.zero)((acc, pa) => acc + pa.waste.getOrElse(Amount.zero))
+  end extension
 
   given Semigroup[AmountPool] with
     def combine(a: AmountPool, b: AmountPool): AmountPool =

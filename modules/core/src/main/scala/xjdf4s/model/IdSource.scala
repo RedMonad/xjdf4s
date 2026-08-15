@@ -4,10 +4,9 @@ package model
 import xjdf4s.prim.Id
 import cats.data.State
 
-/**
- * Fresh `@ID` allocation is a stateful computation — an effect, modelled
- * purely with `cats.data.State`: `fresh` threads an internal counter and
- * returns a new, unique ID for the current document.
+/** Fresh `@ID` allocation is a stateful computation — an effect, modelled
+ *  purely with `cats.data.State`: `fresh` threads an internal counter and
+ *  returns a new, unique ID for the current document.
  */
 object IdSource:
 
@@ -31,10 +30,9 @@ object IdSource:
 
 end IdSource
 
-/**
- * Context function of ticket authoring: code inside a `WithIds[A]` scope can
- * allocate fresh IDs via `summon[IdAllocator]`. This is the “build-time
- * environment” of the declarative DSL.
+/** Context function of ticket authoring: code inside a `WithIds[A]` scope can
+ *  allocate fresh IDs via `summon[IdAllocator]`. This is the “build-time
+ *  environment” of the declarative DSL.
  */
 trait IdAllocator:
   def fresh(prefix: String): Id

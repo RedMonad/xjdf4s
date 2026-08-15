@@ -9,14 +9,13 @@ private[xjdf4s] def fmtDouble(d: Double): String =
   if d.isWhole && !d.isInfinite && !d.isNaN then d.toLong.toString
   else d.toString
 
-/**
- * XJDF data type `XYPair` (Table A.1): the list SHALL contain two values
- * representing the sequence `x y`.
+/** XJDF data type `XYPair` (Table A.1): the list SHALL contain two values
+ *  representing the sequence `x y`.
  *
- * Represented as a *named tuple* behind an opaque type: names survive at the
- * representation layer, while the public API is a nominal, extension-friendly
- * type. Pointwise addition is a lawful commutative monoid — the product of the
- * additive monoid on `Double` with itself.
+ *  Represented as a *named tuple* behind an opaque type: names survive at the
+ *  representation layer, while the public API is a nominal, extension-friendly
+ *  type. Pointwise addition is a lawful commutative monoid — the product of the
+ *  additive monoid on `Double` with itself.
  */
 opaque type XYPair = (x: Double, y: Double)
 
@@ -29,8 +28,8 @@ object XYPair:
   extension (p: XYPair)
     def x: Double = p.x
     def y: Double = p.y
-    def +(o: XYPair): XYPair    = XYPair(p.x + o.x, p.y + o.y)
-    def -(o: XYPair): XYPair    = XYPair(p.x - o.x, p.y - o.y)
+    def +(o: XYPair): XYPair = XYPair(p.x + o.x, p.y + o.y)
+    def -(o: XYPair): XYPair = XYPair(p.x - o.x, p.y - o.y)
     def scaled(k: Double): XYPair = XYPair(p.x * k, p.y * k)
 
   given Show[XYPair] = Show.show(p => s"${fmtDouble(p.x)} ${fmtDouble(p.y)}")
@@ -48,8 +47,7 @@ object XYPair:
 
 end XYPair
 
-/**
- * XJDF data type `shape` (Table A.1): three values `width height depth`.
+/** XJDF data type `shape` (Table A.1): three values `width height depth`.
  */
 opaque type Shape = (width: Double, height: Double, depth: Double)
 
@@ -61,9 +59,9 @@ object Shape:
   def flat(width: Double, height: Double): Shape = Shape(width, height, 0.0)
 
   extension (s: Shape)
-    def width: Double  = s.width
+    def width: Double = s.width
     def height: Double = s.height
-    def depth: Double  = s.depth
+    def depth: Double = s.depth
 
   given Show[Shape] =
     Show.show(s => s"${fmtDouble(s.width)} ${fmtDouble(s.height)} ${fmtDouble(s.depth)}")
@@ -72,9 +70,8 @@ object Shape:
 
 end Shape
 
-/**
- * XJDF data type `rectangle` (Table A.1): four values `llx lly urx ury`
- * (lower-left and upper-right corners).
+/** XJDF data type `rectangle` (Table A.1): four values `llx lly urx ury`
+ *  (lower-left and upper-right corners).
  */
 opaque type Rectangle = (llx: Double, lly: Double, urx: Double, ury: Double)
 
@@ -93,7 +90,7 @@ object Rectangle:
     def lly: Double = r.lly
     def urx: Double = r.urx
     def ury: Double = r.ury
-    def width: Double  = r.urx - r.llx
+    def width: Double = r.urx - r.llx
     def height: Double = r.ury - r.lly
 
   given Show[Rectangle] =
@@ -103,13 +100,12 @@ object Rectangle:
 
 end Rectangle
 
-/**
- * XJDF data type `matrix` (Table A.1): six values `a b c d Tx Ty` of a 3×3
- * transformation matrix whose third column is fixed to `0 0 1` (§2.6.5).
+/** XJDF data type `matrix` (Table A.1): six values `a b c d Tx Ty` of a 3×3
+ *  transformation matrix whose third column is fixed to `0 0 1` (§2.6.5).
  *
- * Matrices act on column vectors `[x y 1]ᵀ`; `m1 * m2` means “apply `m2`,
- * then `m1`”. Multiplication is associative with the identity `1 0 0 1 0 0` —
- * a lawful monoid, i.e. the group of affine plane transformations (§2.6).
+ *  Matrices act on column vectors `[x y 1]ᵀ`; `m1 * m2` means “apply `m2`,
+ *  then `m1`”. Multiplication is associative with the identity `1 0 0 1 0 0` —
+ *  a lawful monoid, i.e. the group of affine plane transformations (§2.6).
  */
 opaque type Matrix = (a: Double, b: Double, c: Double, d: Double, tx: Double, ty: Double)
 
@@ -130,10 +126,10 @@ object Matrix:
     apply(c, s, -s, c, 0, 0)
 
   extension (m: Matrix)
-    def a: Double  = m.a
-    def b: Double  = m.b
-    def c: Double  = m.c
-    def d: Double  = m.d
+    def a: Double = m.a
+    def b: Double = m.b
+    def c: Double = m.c
+    def d: Double = m.d
     def tx: Double = m.tx
     def ty: Double = m.ty
 
@@ -167,9 +163,12 @@ object Matrix:
             ty = (m.b * m.tx - m.a * m.ty) / det
           )
         )
+  end extension
 
   given Show[Matrix] =
-    Show.show(m => s"${fmtDouble(m.a)} ${fmtDouble(m.b)} ${fmtDouble(m.c)} ${fmtDouble(m.d)} ${fmtDouble(m.tx)} ${fmtDouble(m.ty)}")
+    Show.show(m =>
+      s"${fmtDouble(m.a)} ${fmtDouble(m.b)} ${fmtDouble(m.c)} ${fmtDouble(m.d)} ${fmtDouble(m.tx)} ${fmtDouble(m.ty)}"
+    )
 
   given Eq[Matrix] = Eq.fromUniversalEquals
 
@@ -179,10 +178,9 @@ object Matrix:
 
 end Matrix
 
-/**
- * A length in points — the default unit of XJDF geometry (Table A.3.23).
- * Distinct unit types make dimensional mistakes impossible: you cannot
- * accidentally add points to microns.
+/** A length in points — the default unit of XJDF geometry (Table A.3.23).
+ *  Distinct unit types make dimensional mistakes impossible: you cannot
+ *  accidentally add points to microns.
  */
 opaque type Points = Double
 
@@ -193,7 +191,7 @@ object Points:
   val zero: Points = 0.0
 
   extension (p: Points)
-    def value: Double      = p
+    def value: Double = p
     def +(o: Points): Points = p + o
     def -(o: Points): Points = p - o
     def *(k: Double): Points = p * k
@@ -227,7 +225,7 @@ object Microns:
   def ofPoints(p: Points): Microns = Microns(p * MicronsPerPoint)
 
   extension (m: Microns)
-    def value: Double        = m
+    def value: Double = m
     def +(o: Microns): Microns = m + o
     def *(k: Double): Microns = m * k
 
@@ -258,9 +256,8 @@ object Grammage:
 
 end Grammage
 
-/**
- * An amount of a resource or product, e.g. `PartAmount/@Amount` — in the units
- * of `ResourceSet/@Unit` or the default units of Table A.3.23.
+/** An amount of a resource or product, e.g. `PartAmount/@Amount` — in the units
+ *  of `ResourceSet/@Unit` or the default units of Table A.3.23.
  */
 opaque type Amount = Double
 
@@ -274,11 +271,11 @@ object Amount:
   def nonNegative(d: Double): Option[Amount] = Option.when(d >= 0.0)(d)
 
   extension (a: Amount)
-    def value: Double        = a
+    def value: Double = a
     def +(o: Amount): Amount = a + o
     def -(o: Amount): Amount = a - o
     def *(k: Double): Amount = a * k
-    def isNegative: Boolean  = a < 0.0
+    def isNegative: Boolean = a < 0.0
 
   given Show[Amount] = Show.show(a => fmtDouble(a.value))
 
@@ -327,10 +324,9 @@ object UnitInterval:
 
 end UnitInterval
 
-/**
- * XJDF quality scoring `@Severity`: an integer in [0, 100], where 0 is the
- * highest and 100 the lowest quality (§5.3.4.1). The spec defines the exact
- * mapping between severity values and quality scores, implemented here.
+/** XJDF quality scoring `@Severity`: an integer in [0, 100], where 0 is the
+ *  highest and 100 the lowest quality (§5.3.4.1). The spec defines the exact
+ *  mapping between severity values and quality scores, implemented here.
  */
 opaque type Severity = Int
 
@@ -342,8 +338,7 @@ object Severity:
     (100.0 * position / (numberOfScores - 1)).round.toInt
 
   /** Maps a severity back to a quality score: `P = S × (N − 1) / 100`. */
-  def toScore(s: Severity, numberOfScores: Int): Int =
-    (s.toDouble * (numberOfScores - 1) / 100.0).round.toInt
+  def toScore(s: Severity, numberOfScores: Int): Int = (s.toDouble * (numberOfScores - 1) / 100.0).round.toInt
 
   def fromInt(i: Int): Option[Severity] = Option.when(i >= 0 && i <= 100)(i)
 
@@ -362,10 +357,9 @@ object Severity:
 
 end Severity
 
-/**
- * XJDF data type `IntegerRange` (Table A.1): two integer values representing an
- * inclusive range. Zero-based with negative values counting from the back of
- * the list (§1.10.2): `0-1` selects all entries, `-1 0` the same in reverse.
+/** XJDF data type `IntegerRange` (Table A.1): two integer values representing an
+ *  inclusive range. Zero-based with negative values counting from the back of
+ *  the list (§1.10.2): `0-1` selects all entries, `-1 0` the same in reverse.
  */
 opaque type IntegerRange = (from: Long, to: Long)
 
@@ -379,7 +373,7 @@ object IntegerRange:
 
   extension (r: IntegerRange)
     def from: Long = r.from
-    def to: Long   = r.to
+    def to: Long = r.to
 
     /** Normalizes a single index: negative values count from the back. */
     def normalizeIndex(i: Long, size: Long): Long =
@@ -398,6 +392,7 @@ object IntegerRange:
     /** Selects items of a list, applying the counting rules of §1.10.2. */
     def select[A](items: List[A]): List[A] =
       indices(items.size.toLong).map(i => items(i.toInt))
+  end extension
 
   given Show[IntegerRange] = Show.show(r => s"${r.from} ${r.to}")
 
@@ -485,8 +480,7 @@ object RGBColor:
 
 end RGBColor
 
-/**
- * XJDF data type `FloatList` (Table A.1): a non-empty list of float values.
+/** XJDF data type `FloatList` (Table A.1): a non-empty list of float values.
  */
 opaque type FloatList = List[Double]
 
@@ -496,7 +490,7 @@ object FloatList:
 
   extension (values: FloatList)
     def toList: List[Double] = values
-    def size: Int            = values.size
+    def size: Int = values.size
 
   given Show[FloatList] = Show.show(_.map(fmtDouble).mkString(" "))
 
@@ -504,8 +498,7 @@ object FloatList:
 
 end FloatList
 
-/**
- * XJDF data type `IntegerList` (Table A.1): a non-empty list of integer values.
+/** XJDF data type `IntegerList` (Table A.1): a non-empty list of integer values.
  */
 opaque type IntegerList = List[Long]
 
@@ -515,7 +508,7 @@ object IntegerList:
 
   extension (values: IntegerList)
     def toList: List[Long] = values
-    def size: Int          = values.size
+    def size: Int = values.size
 
   given Show[IntegerList] = Show.show(_.mkString(" "))
 
@@ -523,14 +516,13 @@ object IntegerList:
 
 end IntegerList
 
-/**
- * A planned or recorded amount range: `@Amount` together with the tolerances
- * `@MinAmount`/`@MaxAmount` (PartAmount, Table 6.3).
+/** A planned or recorded amount range: `@Amount` together with the tolerances
+ *  `@MinAmount`/`@MaxAmount` (PartAmount, Table 6.3).
  *
- * The *meet* of two ranges — taking the stricter constraint on every axis — is
- * commutative, associative and idempotent: a lawful `Semilattice`, the
- * “constraint intersection”. The dual *join* (optimistic widening) is a
- * semilattice as well; both are modelled here.
+ *  The *meet* of two ranges — taking the stricter constraint on every axis — is
+ *  commutative, associative and idempotent: a lawful `Semilattice`, the
+ *  “constraint intersection”. The dual *join* (optimistic widening) is a
+ *  semilattice as well; both are modelled here.
  */
 opaque type AmountRange = (amount: Option[Amount], max: Option[Amount], min: Option[Amount])
 
@@ -547,20 +539,20 @@ object AmountRange:
 
   private def stricterMin(a: Option[Amount], b: Option[Amount]): Option[Amount] =
     (a, b) match
-      case (None, other)      => other
-      case (other, None)      => other
+      case (None, other) => other
+      case (other, None) => other
       case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) >= 0 then x else y)
 
   private def stricterMax(a: Option[Amount], b: Option[Amount]): Option[Amount] =
     (a, b) match
-      case (None, other)      => other
-      case (other, None)      => other
+      case (None, other) => other
+      case (other, None) => other
       case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) <= 0 then x else y)
 
   extension (r: AmountRange)
     def amount: Option[Amount] = r.amount
-    def max: Option[Amount]    = r.max
-    def min: Option[Amount]    = r.min
+    def max: Option[Amount] = r.max
+    def min: Option[Amount] = r.min
 
     /** Constraint tightening: the greatest lower bound of two ranges. */
     def meet(o: AmountRange): AmountRange =
@@ -582,6 +574,7 @@ object AmountRange:
     def includes(a: Amount): Boolean =
       r.min.forall(m => Order[Amount].compare(a, m) >= 0) &&
         r.max.forall(m => Order[Amount].compare(a, m) <= 0)
+  end extension
 
   given Semilattice[AmountRange] with
     def combine(a: AmountRange, b: AmountRange): AmountRange = a.meet(b)

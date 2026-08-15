@@ -4,9 +4,8 @@ package prim
 import cats.Show
 import cats.kernel.{Eq, Monoid, Order}
 
-/**
- * XJDF data type `dateTime` (Table A.1): a specific instant of time — UTC or a
- * local time that includes the time zone. Backed by `java.time.OffsetDateTime`.
+/** XJDF data type `dateTime` (Table A.1): a specific instant of time — UTC or a
+ *  local time that includes the time zone. Backed by `java.time.OffsetDateTime`.
  */
 opaque type Timestamp = java.time.OffsetDateTime
 
@@ -25,12 +24,12 @@ object Timestamp:
     java.time.OffsetDateTime.ofInstant(java.time.Instant.ofEpochSecond(seconds), java.time.ZoneOffset.UTC)
 
   extension (t: Timestamp)
-    def toJava: java.time.OffsetDateTime      = t
-    def instant: java.time.Instant            = t.toInstant
-    def isBefore(o: Timestamp): Boolean       = t.isBefore(o)
-    def isAfter(o: Timestamp): Boolean        = t.isAfter(o)
-    def plus(d: TimeSpan): Timestamp          = t.plus(d)
-    def minus(d: TimeSpan): Timestamp         = t.minus(d)
+    def toJava: java.time.OffsetDateTime = t
+    def instant: java.time.Instant = t.toInstant
+    def isBefore(o: Timestamp): Boolean = t.isBefore(o)
+    def isAfter(o: Timestamp): Boolean = t.isAfter(o)
+    def plus(d: TimeSpan): Timestamp = t.plus(d)
+    def minus(d: TimeSpan): Timestamp = t.minus(d)
 
   given showTimestamp: Show[Timestamp] =
     Show.show(t => t.format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME))
@@ -41,10 +40,9 @@ object Timestamp:
 
 end Timestamp
 
-/**
- * XJDF data type `duration` (Table A.1): a duration of time, including
- * non-working hours. Backed by `java.time.Duration`. Addition of durations is
- * a lawful commutative monoid.
+/** XJDF data type `duration` (Table A.1): a duration of time, including
+ *  non-working hours. Backed by `java.time.Duration`. Addition of durations is
+ *  a lawful commutative monoid.
  */
 opaque type TimeSpan = java.time.Duration
 
@@ -62,8 +60,8 @@ object TimeSpan:
 
   extension (d: TimeSpan)
     def toJava: java.time.Duration = d
-    def seconds: Long              = d.getSeconds
-    def isZero: Boolean            = d.isZero
+    def seconds: Long = d.getSeconds
+    def isZero: Boolean = d.isZero
 
   given Show[TimeSpan] = Show.show(_.toJava.toString)
 
@@ -75,10 +73,9 @@ object TimeSpan:
 
 end TimeSpan
 
-/**
- * A time interval — e.g. the `@Start`..`@End` span of a ProcessRun or the
- * `@FirstStart`..`@LastEnd` span of a NodeInfo. A named tuple behind an opaque
- * type.
+/** A time interval — e.g. the `@Start`..`@End` span of a ProcessRun or the
+ *  `@FirstStart`..`@LastEnd` span of a NodeInfo. A named tuple behind an opaque
+ *  type.
  */
 opaque type TimeRange = (start: Timestamp, end: Timestamp)
 
@@ -88,7 +85,7 @@ object TimeRange:
 
   extension (r: TimeRange)
     def start: Timestamp = r.start
-    def end: Timestamp   = r.end
+    def end: Timestamp = r.end
     def duration: TimeSpan = java.time.Duration.between(r.start.toInstant, r.end.toInstant)
     def contains(t: Timestamp): Boolean = !t.isBefore(r.start) && !t.isAfter(r.end)
 

@@ -9,22 +9,20 @@ import cats.Show
 import cats.data.{Chain, NonEmptyChain, Validated, ValidatedNec}
 import cats.syntax.all.*
 
-/**
- * The worked examples of the XJDF specification, expressed with the
- * declarative DSL. Every example is a plain Scala value — building it is
- * validation: the result is a `ValidatedNec[Issue, XJDF]`.
+/** The worked examples of the XJDF specification, expressed with the
+ *  declarative DSL. Every example is a plain Scala value — building it is
+ *  validation: the result is a `ValidatedNec[Issue, XJDF]`.
  */
 object SpecExamples:
 
-  /**
-   * Sequential chaining of `Validated`. `Validated` is applicative, not a
-   * monad: it deliberately has no `flatMap` (see cats, "Validated vs Either"),
-   * so sequencing is spelled out as a pattern match on the two cases — no
-   * syntax imports involved.
+  /** Sequential chaining of `Validated`. `Validated` is applicative, not a
+   *  monad: it deliberately has no `flatMap` (see cats, "Validated vs Either"),
+   *  so sequencing is spelled out as a pattern match on the two cases — no
+   *  syntax imports involved.
    */
   private def chainV[E, A, B](v: ValidatedNec[E, A])(f: A => ValidatedNec[E, B]): ValidatedNec[E, B] =
     v match
-      case Validated.Valid(a)          => f(a)
+      case Validated.Valid(a) => f(a)
       case Validated.Invalid(problems) => Validated.Invalid(problems)
 
   /** Example 3.1: JSON-encoded XJDF — a minimal product ticket. */
@@ -46,11 +44,17 @@ object SpecExamples:
       )
     ) { binding =>
       chainV(dsl.product(amount = Some(10), productType = Some("Notebook"))(binding)) { root =>
-        chainV(dsl.product(amount = Some(1), isRoot = false, productType = Some("FrontCover"), id = Some("ICover"))()) { cover =>
-          chainV(dsl.product(amount = Some(50), isRoot = false, productType = Some("BookBlock"), id = Some("IBody"))()) { body =>
-            dsl.product(amount = Some(1), isRoot = false, productType = Some("BackCover"), id = Some("IBack"))()
-              .map(back => ProductList(NonEmptyChain(root, cover, body, back)))
-          }
+        chainV(dsl.product(amount = Some(1), isRoot = false, productType = Some("FrontCover"), id = Some("ICover"))()) {
+          cover =>
+            chainV(dsl.product(
+              amount = Some(50),
+              isRoot = false,
+              productType = Some("BookBlock"),
+              id = Some("IBody")
+            )()) { body =>
+              dsl.product(amount = Some(1), isRoot = false, productType = Some("BackCover"), id = Some("IBack"))()
+                .map(back => ProductList(NonEmptyChain(root, cover, body, back)))
+            }
         }
       }
     }
@@ -122,8 +126,16 @@ object SpecExamples:
       draft
         .withProductList(ProductList(NonEmptyChain.one(book)))
         .withResources(
-          ResourceSet(ResourceSetName.unsafe("Contact"), usage = Some(Usage.Input), resources = Chain(contact1, contact2)),
-          ResourceSet(ResourceSetName.unsafe("DeliveryParams"), usage = Some(Usage.Input), resources = Chain(delivery1, delivery2))
+          ResourceSet(
+            ResourceSetName.unsafe("Contact"),
+            usage = Some(Usage.Input),
+            resources = Chain(contact1, contact2)
+          ),
+          ResourceSet(
+            ResourceSetName.unsafe("DeliveryParams"),
+            usage = Some(Usage.Input),
+            resources = Chain(delivery1, delivery2)
+          )
         )
         .build
     }
@@ -184,25 +196,37 @@ object SpecExamples:
               chainV(dsl.media(Media.paper(Grammage(115.0)), id = Some("media_1"))) { mediaRes =>
                 chainV(dsl.resourceSet("RunList", usage = Some(Usage.Input))(runList)) { inputRunList =>
                   chainV(dsl.resourceSet("Media", usage = Some(Usage.Input))(mediaRes)) { inputMedia =>
-                    chainV(dsl.component(Component.of(Catalog.ProductType.Brochure), id = Some("comp_1"))) { componentRes =>
-                      chainV(dsl.resourceSet("Component", usage = Some(Usage.Output))(componentRes)) { outputComponent =>
-                        chainV(dsl.TicketDraft.of("Brochure-2026", ProcessType.DigitalPrinting, ProcessType.Stitching)) { draft =>
-                          val run = ProcessRun(
-                            start = Timestamp.unsafe("2026-08-14T08:00:00+02:00"),
-                            end = Timestamp.unsafe("2026-08-14T08:37:00+02:00"),
-                            endStatus = EndStatus.Completed
-                          )
-                          val audits = AuditPool.of(
-                            Audit.Created(Header(NmToken.unsafe("MIS"), Timestamp.unsafe("2026-08-14T07:55:00+02:00"))),
-                            Audit.Run(Header(NmToken.unsafe("Press-7"), Timestamp.unsafe("2026-08-14T08:37:00+02:00")), run)
-                          )
-                          draft
-                            .withProductList(ProductList(NonEmptyChain.one(brochure)))
-                            .withResources(inputRunList, inputMedia, outputComponent)
-                            .withAuditPool(audits)
-                            .build
+                    chainV(dsl.component(Component.of(Catalog.ProductType.Brochure), id = Some("comp_1"))) {
+                      componentRes =>
+                        chainV(dsl.resourceSet("Component", usage = Some(Usage.Output))(componentRes)) {
+                          outputComponent =>
+                            chainV(dsl.TicketDraft.of(
+                              "Brochure-2026",
+                              ProcessType.DigitalPrinting,
+                              ProcessType.Stitching
+                            )) { draft =>
+                              val run = ProcessRun(
+                                start = Timestamp.unsafe("2026-08-14T08:00:00+02:00"),
+                                end = Timestamp.unsafe("2026-08-14T08:37:00+02:00"),
+                                endStatus = EndStatus.Completed
+                              )
+                              val audits = AuditPool.of(
+                                Audit.Created(Header(
+                                  NmToken.unsafe("MIS"),
+                                  Timestamp.unsafe("2026-08-14T07:55:00+02:00")
+                                )),
+                                Audit.Run(
+                                  Header(NmToken.unsafe("Press-7"), Timestamp.unsafe("2026-08-14T08:37:00+02:00")),
+                                  run
+                                )
+                              )
+                              draft
+                                .withProductList(ProductList(NonEmptyChain.one(brochure)))
+                                .withResources(inputRunList, inputMedia, outputComponent)
+                                .withAuditPool(audits)
+                                .build
+                            }
                         }
-                      }
                     }
                   }
                 }
@@ -233,11 +257,12 @@ object SpecExamples:
   def renderAll: List[String] =
     List(
       "Example 3.1 (minimal product):" -> minimalProduct.map(Show[XJDF].show),
-      "Example 3.4 (notebook BOM):"    -> notebook.map(Show[ProductList].show),
-      "Example 3.6 (combined):"        -> combinedProcesses.map(Show[XJDF].show),
-      "Example 5.2 (split delivery):"  -> splitDelivery.map(Show[XJDF].show),
-      "Brochure job:"                  -> brochureJob.map(Show[XJDF].show),
-      "Brochure job after change:"     -> updatedBrochureJob.map(Show[XJDF].show)
+      "Example 3.4 (notebook BOM):" -> notebook.map(Show[ProductList].show),
+      "Example 3.6 (combined):" -> combinedProcesses.map(Show[XJDF].show),
+      "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
+      "Brochure job:" -> brochureJob.map(Show[XJDF].show),
+      "Brochure job after change:" -> updatedBrochureJob.map(Show[XJDF].show)
     ).map { case (label, result) =>
       s"$label\n  ${result.fold(_.toChain.toList.map(Show[Issue].show).mkString(", "), identity)}"
     }
+end SpecExamples

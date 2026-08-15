@@ -5,16 +5,15 @@ import cats.Show
 import cats.data.{Chain, NonEmptyChain}
 import cats.kernel.Eq
 
-/**
- * XJDF data type `NMTOKEN` (xsd:NMTOKEN): a continuous sequence of characters
- * without whitespace (Table A.1).
+/** XJDF data type `NMTOKEN` (xsd:NMTOKEN): a continuous sequence of characters
+ *  without whitespace (Table A.1).
  *
- * NMTOKEN lists in XJDF are *open by design* (§1.1.1, §3.5.5): the recommended
- * values form a catalog, but vendor extensions are legal. This is why a closed
- * Scala `enum` is NOT sufficient here: `NmToken` is an opaque, validated String,
- * and the closed enumerations (`Usage`, `BindingType`, …) live beside it as
- * recommended sets. Openness itself is modelled with `NsPrefix` for foreign
- * namespace extensions (`foo:FooParams`, §3.5.2).
+ *  NMTOKEN lists in XJDF are *open by design* (§1.1.1, §3.5.5): the recommended
+ *  values form a catalog, but vendor extensions are legal. This is why a closed
+ *  Scala `enum` is NOT sufficient here: `NmToken` is an opaque, validated String,
+ *  and the closed enumerations (`Usage`, `BindingType`, …) live beside it as
+ *  recommended sets. Openness itself is modelled with `NsPrefix` for foreign
+ *  namespace extensions (`foo:FooParams`, §3.5.2).
  */
 opaque type NmToken = String
 
@@ -32,7 +31,7 @@ object NmToken:
   def splitPrefix(raw: String): (Option[String], String) =
     raw.indexOf(':') match
       case -1 => (None, raw)
-      case i  => (Some(raw.substring(0, i)), raw.substring(i + 1))
+      case i => (Some(raw.substring(0, i)), raw.substring(i + 1))
 
   extension (t: NmToken)
     def value: String = t
@@ -44,10 +43,9 @@ object NmToken:
 
 end NmToken
 
-/**
- * XJDF data type `NMTOKENS`: a whitespace-separated list of one or more
- * NMTOKEN values (Table A.1). Modelled as a non-empty chain — the free monoid
- * over `NmToken` without the empty word.
+/** XJDF data type `NMTOKENS`: a whitespace-separated list of one or more
+ *  NMTOKEN values (Table A.1). Modelled as a non-empty chain — the free monoid
+ *  over `NmToken` without the empty word.
  */
 opaque type NmTokens = NonEmptyChain[NmToken]
 
@@ -67,8 +65,8 @@ object NmTokens:
   extension (tokens: NmTokens)
     /** The underlying non-empty chain (representation). */
     def toNonEmptyChain: NonEmptyChain[NmToken] = tokens
-    def toList: List[NmToken]                   = tokens.toNonEmptyChain.toChain.toList
-    def contains(token: NmToken): Boolean       = tokens.toNonEmptyChain.exists(_ == token)
+    def toList: List[NmToken] = tokens.toNonEmptyChain.toChain.toList
+    def contains(token: NmToken): Boolean = tokens.toNonEmptyChain.exists(_ == token)
 
   given Show[NmTokens] = Show.show(tokens => tokens.toNonEmptyChain.toChain.toList.mkString(" "))
 
@@ -76,9 +74,8 @@ object NmTokens:
 
 end NmTokens
 
-/**
- * A namespace prefix of a foreign namespace extension (§3.5): `foo` in
- * `foo:FooParams`.
+/** A namespace prefix of a foreign namespace extension (§3.5): `foo` in
+ *  `foo:FooParams`.
  */
 opaque type NsPrefix = String
 
@@ -96,9 +93,8 @@ object NsPrefix:
 
 end NsPrefix
 
-/**
- * XJDF data type `string` (Table A.1): normalized string of at most 1023
- * characters; tabs, line feeds and similar control characters are invalid.
+/** XJDF data type `string` (Table A.1): normalized string of at most 1023
+ *  characters; tabs, line feeds and similar control characters are invalid.
  */
 opaque type XjdfString = String
 
@@ -158,9 +154,8 @@ object CommentText:
 
 end CommentText
 
-/**
- * A simple XPath expression referencing an XJDF trait (§1.3). Used to locate
- * validation issues inside a ticket.
+/** A simple XPath expression referencing an XJDF trait (§1.3). Used to locate
+ *  validation issues inside a ticket.
  */
 opaque type XPath = String
 
@@ -176,12 +171,11 @@ object XPath:
 
 end XPath
 
-/**
- * Scala 3 trait parameter: a named element — the common surface of XJDF
- * elements that are identified by their `@Name` (ResourceSet, Intent).
- * The member is abstract; case-class subclasses supply it with their `name`
- * parameter (a trait *constructor* parameter `(val name: N)` would clash with
- * the case-class parameter of the same name and require an `override`).
+/** Scala 3 trait parameter: a named element — the common surface of XJDF
+ *  elements that are identified by their `@Name` (ResourceSet, Intent).
+ *  The member is abstract; case-class subclasses supply it with their `name`
+ *  parameter (a trait *constructor* parameter `(val name: N)` would clash with
+ *  the case-class parameter of the same name and require an `override`).
  */
 trait Named[N]:
   def name: N
