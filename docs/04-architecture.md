@@ -21,7 +21,7 @@ xjdf4s/
 
 ```
 prim/        базовые типы-значения (без зависимостей от домена)
-  Tokens     NmToken/NmTokens, XjdfString, LanguageTag, NsPrefix, XPath, Named
+  Tokens     NmToken/NmTokens, XjdfString, LanguageTag, NsPrefix, Named
   Ids        Id/IdRef/IdRefs, JobId/JobPartId/ProjectId
   Versions   IcsVersion, XjdfVersion
   Quantity   XYPair, Shape, Rectangle, Matrix, Points, Microns, Grammage,
@@ -42,8 +42,15 @@ model/       скелет XJDF
   Resource   ProcessType, ProcessPath, ProcessIndex, ResourceSetName,
              ResourceSet, ResourceSetKey, Resource, OrientationSpec (union)
   Ticket     XJDF, ChangeOrder (intersection), WorkstepKey (named tuple)
-  Patch      Patch (Endo-моноид), mergeResourceSets (Ior)
-  Validation Issue, TicketValidator
+  Patch      Patch (Endo-моноид), mergeResourceSets (Ior),
+             extension XJDF.withPatch
+  ValidationTypes
+             Issue, IssueCode, SeverityClass, XPath, DomainRule,
+             ValidationResult, ValidationReport — фундамент валидации
+             с Fan-Out 0 (ADR-0002, M1.4-1)
+  TicketValidator
+             корневой валидатор, агрегирует правила (ADR-0002);
+             extension XJDF.validate / XJDF.validateReport
   IdSource   IdSource (State), IdAllocator (context function)
 
 intents/     Product Intents главы 4
@@ -53,7 +60,11 @@ dsl/         декларативные конструкторы, возвращ
 
 Зависимости пакетов: `prim ← {model, intents, resources}`,
 `model ← {intents, resources}` (только для закрытых перечислений полезных
-нагрузок), `dsl ← все`. Циклов нет: intents/resources не импортируют model.
+нагрузок), `dsl ← все`. Циклов файловых зависимостей нет (ADR-0002,
+M1.4-1 / PR-9): `ValidationTypes` — фундамент с Fan-Out 0; `intents` и
+`resources` ссылаются на `model.ValidationTypes` и закрытые перечисления
+payload; корневой `TicketValidator` импортирует модель интентов —
+файловый граф ацикличен.
 
 ## Принципы
 

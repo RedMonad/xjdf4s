@@ -40,5 +40,15 @@
 
 **Решение (PR-8).** Все локальные законы приведены к контракту ADR-0003 `trait DomainRule[-A]: def check(value: A, at: XPath): Chain[Issue]` и явно вызываются из `TicketValidator.checkLocalLaws`. Каждый закон возвращает структурированный `Issue` со стабильным `IssueCode`, severity и XPath. `Boolean`-предикаты сохранены как производные аксессоры там, где их использует DSL (`Intent.isLawful`) или тесты, но они больше не являются первичной формой закона. Глобальные правила (ID/IDREF, §3.4, BOM, хронология) остаются в `TicketValidator`; решение владельца — рефакторить все предикаты сразу (не оставлять legacy).
 
-**Прим.:** `Disposition.law` определён в `TicketValidator.dispositionLaw`, а не в `prim.Disposition`, чтобы не создавать зависимости `prim → validation` до разрыва цикла в M1.4-1.
+**Прим.:** `Disposition.law` определён в `TicketValidator.dispositionLaw`, а не в `prim.Disposition`, чтобы `prim` не зависел от слоя валидации; разрыв цикла зависимостей выполнен в M1.4-1 (PR-9) — правило остаётся на месте, хук в обходе ресурсов подключается при реализации FileSpec-несущих ресурсов (M1.6/M3).
+
+### DR-M1.4-1 — разрыв цикла зависимостей валидации (ADR-0002, N-21)
+
+**Норма.** ADR-0002: фундамент валидации — файл с Fan-Out 0; `Ticket.scala` не зависит от реализации `Patch`; корневой валидатор агрегирует правила; повторный анализ зависимостей — 0 циклов.
+
+**Решение (PR-9).** `model/ValidationTypes.scala` создан и содержит `Issue`, `IssueCode`, `SeverityClass`, `XPath`, `trait DomainRule[-A]`, `type ValidationResult[A] = ValidatedNec[Issue, A]`, `ValidationReport`; импортирует только `prim.*` и cats. По решению владельца список ADR-0002 выполнен буквально: `IssueCode`, `SeverityClass`, `XPath` перенесены из `prim` (`Tokens.scala`, `Enums.scala`) в слой валидации. `Validation.scala` переименован в `TicketValidator.scala`. Для нуля циклов из `Ticket.scala` убраны `XJDF.validate`, `XJDF.validateReport` (стали extension-методами в `TicketValidator.scala`) и `XJDF.withPatch` (extension в `Patch.scala`).
+
+**Migration impact.** Типы `XPath`, `SeverityClass`, `IssueCode` сменили пакет `xjdf4s.prim` → `xjdf4s.model`; потребители, импортировавшие их через `prim.*` без `xjdf4s.model.*`, обновлены: `intents/Binding.scala`, `intents/FoldingVariable.scala`, `laws/EnumLaws.scala`. Методы `XJDF.validate`/`validateReport`/`withPatch` — теперь extension-методы; call sites с точечным импортом обязаны добавить их в импорт (в репозитории такой один — `examples/SpecExamplesSuite.scala`, добавлен `validate`). Все прочие call sites используют `import xjdf4s.model.*` и не менялись: `dsl/XjdfDsl.scala`, `examples/SpecExamples.scala`, `laws/{TicketLaws,BomLaws,PatchLaws,AlignmentLaws}.scala`.
+
+**Верификация.** Анализатор файловых зависимостей (top-level-символы, package-aware резолвинг, комментарии/строки исключены): до PR-9 — 1 цикл (SCC с `Validation/Product/Ticket/Patch`), после — 0 циклов. Межмодульный граф не изменился (`examples → core`, `laws → core`). Прогон владельца — Приложение D ROADMAP.
 

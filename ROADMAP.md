@@ -204,7 +204,7 @@ ThisBuild / scalacOptions ++= Seq(
 
 | Область | Реализовано | Статус |
 | --- | --- | --- |
-| Примитивы Appendix A | `NmToken`/`NmTokens`, `Id`/`IdRef`/`IdRefs`, `JobId`/`JobPartId`/`ProjectId`, `XjdfString`, `LanguageTag`, `Url`, `XPath`, `IcsVersion`, `XjdfVersion`, `XYPair`, `Shape`, `Rectangle`, `Matrix`, `Points`/`Microns`/`Grammage`, `Amount`, `Coverage`, `UnitInterval`, `Severity`, `IntegerRange`, `LabColor`/`CMYKColor`/`RGBColor`, `FloatList`/`IntegerList`, `AmountRange`, `Timestamp`/`TimeSpan`/`TimeRange` | 🟡 нужен полный аудит Appendix A и round-trip (M2); нет типа `regExp` |
+| Примитивы Appendix A | `NmToken`/`NmTokens`, `Id`/`IdRef`/`IdRefs`, `JobId`/`JobPartId`/`ProjectId`, `XjdfString`, `LanguageTag`, `Url`, `IcsVersion`, `XjdfVersion`, `XYPair`, `Shape`, `Rectangle`, `Matrix`, `Points`/`Microns`/`Grammage`, `Amount`, `Coverage`, `UnitInterval`, `Severity`, `IntegerRange`, `LabColor`/`CMYKColor`/`RGBColor`, `FloatList`/`IntegerList`, `AmountRange`, `Timestamp`/`TimeSpan`/`TimeRange`, `RegExp` | 🟡 нужен полный аудит Appendix A и round-trip (M2). На базовом срезе `XPath` находился здесь; в PR-9 (M1.4-1) он перенесён в validation-слой `model/ValidationTypes.scala` вместе с `IssueCode` и `SeverityClass` |
 | Перечисления | 45 закрытых `enum` + `XjdfEnum`/`XjdfEnumCompanion`, каталоги открытых токенов (`Catalog.*`) | 🟡 четыре подтверждённых расхождения (N-06…N-09) |
 | Partition | 27 `PartitionKey`, `Part`, overlay-Semigroup, `matches`, `PartBuilder`, match type `ValueOf` | 🟡 два неверных типа, unsafe runtime API, нет `attributeName` |
 | Amounts | `AmountPool`, `PartAmount`, `PartWaste`, `AmountRange` | 🟡 неверная кардинальность `Part`, спорная алгебра `meet`/`join` |
@@ -266,7 +266,7 @@ ThisBuild / scalacOptions ++= Seq(
 | `resources.AllResources` | 5 | 13 | 161.6 | нельзя превращать M3 в один постоянно растущий центральный enum без ADR-0008 |
 | `model.Resource` | 11 | 9 | 135.1 | изменения `specific`, references и validation требуют широких regression-тестов |
 | `intents.AllIntents` | 3 | 6 | 45.9 | новые intents — вертикальными срезами, dispatch под контролем |
-| `model.Validation` | 6 | 11 | 42.1 | отделить типы валидации от корневого обхода |
+| `model.TicketValidator` | 6 | 11 | 42.1 | выполнено в M1.4-1 (PR-9): типы вынесены в `ValidationTypes` (Fan-Out 0), цикл разорван |
 | `model.Intent` | 3 | 3 | 35.9 | — |
 | `model.Ticket` | 7 | 11 | 30.8 | не добавлять codec-only детали и реализацию `Patch` в корневую модель |
 | `model.Product` | 7 | 5 | 20.9 | BOM-изменения защищать cycle/DAG/deep-tree тестами |
@@ -287,6 +287,8 @@ flowchart LR
 ```
 
 Цикл `Validation → Product → Ticket → Patch → Validation` (4 файла) нарушает Acyclic Dependencies Principle и затрудняет расширение validator/codecs. Разрыв — задача M1.4-1 по ADR-0002.
+
+**Статус (PR-9, M1.4-1):** цикл разорван — повторный анализ тем же алгоритмом даёт 0 циклов; `[~]` до зелёного прогона владельца (Приложение D).
 
 ### 3.7 Ограничение верификации на срезе
 
@@ -536,7 +538,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 
 | ID | Находка | Норма | Код | Задача |
 | --- | --- | --- | --- | --- |
-| N-16 | §3.4 проверяется только на точное равенство ключа: не ловится ни частичное пересечение CPI (`[0]` vs `[0,1]`), ни смесь «без CPI» + «с CPI» | §3.4: «`ResourceSet` elements with the same values of `@Name`, `@Usage`, `@ProcessUsage` and **common or no entries** in `@CombinedProcessIndex` SHALL NOT be specified.» | `model/Validation.scala`, `checkResourceSetKeys`: попарное сравнение через `ResourceSet.clashesWith` (PR-8) | M1.3-1 — `[x]` |
+| N-16 | §3.4 проверяется только на точное равенство ключа: не ловится ни частичное пересечение CPI (`[0]` vs `[0,1]`), ни смесь «без CPI» + «с CPI» | §3.4: «`ResourceSet` elements with the same values of `@Name`, `@Usage`, `@ProcessUsage` and **common or no entries** in `@CombinedProcessIndex` SHALL NOT be specified.» | `model/TicketValidator.scala` (до PR-9 — `model/Validation.scala`), `checkResourceSetKeys`: попарное сравнение через `ResourceSet.clashesWith` (PR-8) | M1.3-1 — `[x]` |
 | N-17 | §6.1.2.1 реализован частично: при нескольких родительских `Part` проверка выключается, вторая половина правила отсутствует | Table 6.3, `Part*` | реализовано в PR-6 (M1.3-2, `[x]` верифицировано владельцем) | M1.3-2 — `[x]` |
 | N-18 | Объявленные локальные инварианты не подключены к корневой валидации | соответствующие SHALL глав 3–8 | все бывшие `Boolean isLawful/hasLawful*` приведены к `DomainRule` и вызываются из `TicketValidator.checkLocalLaws` (PR-8) | M1.3-3 — `[x]` |
 | N-19 | Целостность и ацикличность BOM не входят в `validate` | §3.3.1.1 | `checkBomIntegrity` вызывает `Bom.fromProductList` (PR-8) | M1.3-4 — `[x]` |
@@ -710,6 +712,8 @@ model/TicketValidator.scala    зависит от всей доменной м�
 Искусственный trait ради метрики не вводится: зависимости должны следовать ответственности.
 
 **Критерий приёмки.** Повторный прогон анализатора зависимостей тем же алгоритмом даёт 0 циклов; межмодульный граф остаётся прежним; публичные импорты получают migration-алиасы только при необходимости.
+
+**Реализация (PR-9, M1.4-1).** Список содержимого `ValidationTypes.scala` выполнен буквально, по решению владельца: `IssueCode`, `SeverityClass` и `XPath` перенесены туда из `prim` (на срезе PR-8 они находились в `prim/Tokens.scala` и `prim/Enums.scala`), alias `ValidationResult[A]` введён. Для нуля циклов `Ticket.scala` освобождён также от ссылок на валидатор и на `Patch`: `XJDF.validate`/`validateReport` стали extension-методами в `TicketValidator.scala`, `XJDF.withPatch` — в `Patch.scala`. Migration-алиасы не понадобились: типы остались в пакете `xjdf4s.model`, call sites обновлены импортами (полный список — в DR-M1.4-1, `docs/SPEC-COVERAGE.md`). Повторный анализ: 0 циклов.
 
 ### ADR-0003 — Форма локальных правил: `DomainRule`, а не `Boolean`
 
@@ -893,7 +897,7 @@ flowchart TB
 | prim | проверенные скалярные типы Appendix A, закрытые enum, открытые каталоги | `XJDF`, XML/JSON, HTTP |
 | elements | общие элементы глав 3/8 (`Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `Disposition`) | парсеры, эффекты |
 | model | агрегаты XJDF и локальные инварианты | wire-формат, parser backend, сеть, файловая система |
-| validation | `Issue`, `IssueCode`, severity, XPath, `DomainRule`, корневой валидатор | транспорт, runtime-эффекты |
+| validation | `ValidationTypes.scala` (`Issue`, `IssueCode`, `SeverityClass`, `XPath`, `DomainRule`, `ValidationResult`, `ValidationReport` — фундамент с Fan-Out 0) + `TicketValidator.scala` (корневой валидатор) | транспорт, runtime-эффекты |
 | dsl | безопасное декларативное конструирование | порядок элементов, namespace-префиксы |
 
 ### 7.3 Архитектурные budgets
@@ -1475,7 +1479,7 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 Заменить/обернуть `Boolean isLawful` композируемым контрактом ADR-0003. Один обход агрегата в `TicketValidator` вызывает все правила по структуре.
 
-**Статус сессии (PR-8, решение владельца «рефакторить все сразу»):** `trait DomainRule[-A]` с методом `check(value, at): Chain[Issue]` введён в `model/Validation.scala` (переедет в `ValidationTypes.scala` при разрыве цикла в M1.4-1). Все бывшие `Boolean`-предикаты приведены к `DomainRule` и явно вызываются из `TicketValidator.checkLocalLaws`:
+**Статус сессии (PR-8, решение владельца «рефакторить все сразу»):** `trait DomainRule[-A]` с методом `check(value, at): Chain[Issue]` введён в `model/Validation.scala` (в PR-9, M1.4-1, файл переименован в `TicketValidator.scala`, а trait перенесён в `model/ValidationTypes.scala`). Все бывшие `Boolean`-предикаты приведены к `DomainRule` и явно вызываются из `TicketValidator.checkLocalLaws`:
 
 - `Intent.nameLaw` — `@Name == payload.elementName` (Table 4.1);
 - `BindingIntent.law` — парность details ↔ `@BindingType` (Table 4.8) + запрет `@BindingSide` при `@BindingOrder="None"`;
@@ -1531,7 +1535,7 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 `ValidationReport(errors, warnings)`; SHALL инвалидируют результат, SHOULD/MAY — нет; каждый `Issue` получает стабильный `IssueCode`; вызывающая сторона не анализирует строки сообщений.
 
-**Статус сессии (PR-8):** `ValidationReport(errors, warnings)` с `isValid`, `withWarningsAsErrors`, `escalate(codes)`; `TicketValidator.validateReport(ticket)` — первичная точка входа, `validate` (легаси-`ValidatedNec`) сохранён для существующих вызовов и `XJDF.validate`; добавлен `XJDF.validateReport`. Все core-проверки снабжены стабильными `IssueCode` (реестр в `prim.IssueCode`); `code` остаётся `Option` для DSL-конструкторов и внешних потребителей, но сам валидатор всегда его проставляет — это покрыто негативным тестом «every issue produced by the core validator carries an IssueCode». На текущем срезе core не эмитирует warnings (только errors), поэтому положительный тест — пустой warnings-список; API строгой эскалации готов к SHOULD/MAY правилам M1.6/M3. Прогон владельца — чистый; статус `[x] (верифицировано владельцем)`.
+**Статус сессии (PR-8):** `ValidationReport(errors, warnings)` с `isValid`, `withWarningsAsErrors`, `escalate(codes)`; `TicketValidator.validateReport(ticket)` — первичная точка входа, `validate` (легаси-`ValidatedNec`) сохранён для существующих вызовов и `XJDF.validate`; добавлен `XJDF.validateReport`. Все core-проверки снабжены стабильными `IssueCode` (реестр на срезе PR-8 — `prim.IssueCode`; в PR-9, M1.4-1, тип и реестр перенесены в `model/ValidationTypes.scala`); `code` остаётся `Option` для DSL-конструкторов и внешних потребителей, но сам валидатор всегда его проставляет — это покрыто негативным тестом «every issue produced by the core validator carries an IssueCode». На текущем срезе core не эмитирует warnings (только errors), поэтому положительный тест — пустой warnings-список; API строгой эскалации готов к SHOULD/MAY правилам M1.6/M3. Прогон владельца — чистый; статус `[x] (верифицировано владельцем)`.
 
 #### DoD M1.3
 
@@ -1543,11 +1547,21 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 ### M1.4 — Архитектура, алгебры и безопасный API
 
-#### M1.4-1. Разорвать цикл зависимостей (P2) — закрывает N-21, ADR-0002
+#### M1.4-1. Разорвать цикл зависимостей (P2) — закрывает N-21, ADR-0002 — `[~]` реализовано, ожидается прогон владельца
 
 Создать `model/ValidationTypes.scala`, перенести `Issue`, `IssueCode`, `SeverityClass`, `XPath`, `trait DomainRule`, `type ValidationResult[A]`. Переименовать `Validation.scala` → `TicketValidator.scala` (корень проверок).
 
 **Критерий:** повторный анализ зависимостей — 0 циклов; межмодульный граф не меняется.
+
+**Статус сессии (PR-9).** Решение владельца: следовать буквальному списку ADR-0002 — в `ValidationTypes.scala` перенесены все перечисленные типы, включая `IssueCode`, `SeverityClass` и `XPath`, которые на срезе PR-8 находились в `prim` (`Tokens.scala`, `Enums.scala`); alias `type ValidationResult[A] = ValidatedNec[Issue, A]` введён и используется в сигнатуре `TicketValidator.validate`. Для нуля циклов из `Ticket.scala` убраны три ссылки на соседние файлы: `XJDF.validate` и `XJDF.validateReport` стали extension-методами в `TicketValidator.scala`, `XJDF.withPatch` — extension-методом в `Patch.scala` (тот же пакет `xjdf4s.model`; все call sites в репозитории импортируют `xjdf4s.model.*`, кроме `SpecExamplesSuite`, куда добавлен явный импорт `validate`).
+
+**Коммиты PR-9:** `04c4176` (create ValidationTypes.scala), `f3b7015` (rename), `4848653` (update imports and break cycle), ROADMAP-правки — настоящий коммит.
+
+**Migration note (breaking для точечных импортов).** `XJDF.validate`, `XJDF.validateReport`, `XJDF.withPatch` больше не члены класса, а extension-методы; потребители с импортом конкретных членов вместо `import xjdf4s.model.*` обязаны добавить `validate` / `validateReport` / `withPatch` в импорт. Список call sites: `dsl/XjdfDsl.scala`, `examples/SpecExamples.scala`, `examples/SpecExamplesSuite.scala`, `laws/TicketLaws.scala`, `laws/BomLaws.scala`, `laws/PatchLaws.scala`. Типы `XPath`, `SeverityClass`, `IssueCode` сменили пакет `xjdf4s.prim` → `xjdf4s.model`; потребители, импортировавшие их через `prim.*` без `xjdf4s.model.*`, обновлены: `intents/Binding.scala`, `intents/FoldingVariable.scala`, `laws/EnumLaws.scala`.
+
+**Статическая верификация.** Анализатор зависимостей (тот же стиль, что в §3.3: top-level-символы, package-aware резолвинг, комментарии/строки исключены): до PR-9 — 1 цикл (SCC с `Validation/Product/Ticket/Patch`), после — 0 циклов (файлов 48, рёбер 273). Межмодульный граф не изменился: `examples → core`, `laws → core`.
+
+**Ожидаемый прогон владельца (Приложение D):** `sbt -batch clean scalafmtCheckAll compile test examples/run` — чистая сборка без предупреждений `-Wunused:all -Wvalue-discard -Wnonunit-statement`, все сьюты зелёные, `examples/run` завершается с exit 0. После зелёного прогона статус переводится в `[x] (верифицировано владельцем)`.
 
 #### M1.4-2. Номинальный ChangeOrder (P2) — закрывает N-20, ADR-0001
 
@@ -1714,7 +1728,7 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 | 6 | Кардинальность `PartAmount` + оба правила §6.1.2.1 | M1.2-3, M1.3-2 | 4 | parent/child кейсы |
 | 7 | Bodyless `Resource`, `DropItem`, `Notification`, ID-скоупы | M1.2-4, M1.2-5 | 3 | Example 3.6 + тесты скоупов |
 | 8 | Шина `DomainRule`, полный `TicketValidator`, severity | M1.3-1, M1.3-3, M1.3-4, M1.3-5 | 2, 6, 7 | все локальные законы подключены |
-| 9 | `ValidationTypes` и разрыв цикла | M1.4-1 | 8 | циклов = 0 |
+| 9 | `ValidationTypes` и разрыв цикла | M1.4-1 | 8 | циклов = 0 — `[~]` (PR-9 реализован, ждёт прогона владельца) |
 | 10 | ADR-0001 + номинальный `ChangeOrder` | M1.4-2 | 3, 9 | compile/apply/revalidate |
 | 11 | Тотальные builder-ы, решение по `IdAllocator`, ADR-0004 `AmountRange` | M1.4-3, M1.4-4, M1.4-5 | 9 | нет скрытых исключений |
 | 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 |
@@ -2102,7 +2116,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-18 | `isLawful` не подключены | ✅ шина `DomainRule` (ADR-0003), все локальные законы подключены | M1.3-3 — `[x]` | P1 |
 | N-19 | BOM вне `validate` | ✅ `checkBomIntegrity` через `Bom.fromProductList` | M1.3-4 — `[x]` | P1 |
 | N-20 | `ChangeOrder` вырожден | ✅ ADR-0001, вариант C | M1.4-2 | P2 |
-| N-21 | Цикл зависимостей | ✅ ADR-0002 | M1.4-1 | P2 |
+| N-21 | Цикл зависимостей | ✅ ADR-0002 (реализовано в PR-9) | M1.4-1 — `[~]` | P2 |
 | N-22 | `IdAllocator` мёртв | ✅ явное решение (интегрировать/удалить) | M1.4-4 | P2 |
 | N-23 | `meet`/`join` расходятся с docs | ✅ ADR-0004 | M1.4-5 | P2 |
 | N-24 | `PartBuilder.set` бросает | ✅ safe/unsafe | M1.4-3 | P2 |
@@ -2477,8 +2491,8 @@ M1: одна обязательная быстрая платформа — Temu
 | `model/Ticket.scala` | M1.2-5, M1.4-1, M1.4-2 |
 | `model/Header.scala` | M1.2-5 (`Notification`), M1.3-3 |
 | `model/Audit.scala` | M1.2-5 (references), M1.4-6 |
-| `model/Validation.scala` → `model/TicketValidator.scala` | M1.3-1 … M1.3-5, M1.4-1 |
-| `model/ValidationTypes.scala` (новый) | M1.4-1 |
+| `model/Validation.scala` → `model/TicketValidator.scala` | M1.3-1 … M1.3-5, M1.4-1 (переименование выполнено в PR-9) |
+| `model/ValidationTypes.scala` (новый) | M1.4-1 (создан в PR-9) |
 | `model/IdSource.scala` | M1.4-4 |
 | `dsl/XjdfDsl.scala` | M1.2-4, M1.4-3, M1.4-4 |
 | `resources/{Color,Finishing,Layout,Media,NodeInfo,Preview}.scala` | M1.2-6 |
@@ -2572,4 +2586,4 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-8 (M1.0 + M1.1 + M1.2 + M1.3) выполнены и верифицированы владельцем. Фаза M1.3 (полный корневой валидатор) закрыта. Следующий по плану — PR-9 (M1.4-1: `ValidationTypes.scala`, перенос `Issue`/`IssueCode`/`DomainRule`/`XPath` в фундаментный модуль с Fan-Out 0, разрыв цикла `Validation → Product → Ticket → Patch → Validation`).
+**Краткий следующий шаг:** PR-1…PR-8 (M1.0 + M1.1 + M1.2 + M1.3) выполнены и верифицированы владельцем. PR-9 (M1.4-1) реализован статически: создан `model/ValidationTypes.scala` (фундамент валидации с Fan-Out 0), `Validation.scala` переименован в `TicketValidator.scala`, цикл `Validation → Product → Ticket → Patch → Validation` разорван (анализ — 0 циклов); статус `[~]` до зелёного прогона владельца (`sbt -batch clean scalafmtCheckAll compile test examples/run`). Следующий по плану — PR-10 (M1.4-2: номинальный `ChangeOrder` по ADR-0001), зависит от PR-3 и PR-9.
