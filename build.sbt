@@ -41,7 +41,13 @@ lazy val laws = project
     name := "xjdf4s-laws",
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit"            % munitVersion           % Test,
-      "org.scalameta" %% "munit-scalacheck" % munitScalacheckVersion % Test
+      "org.scalameta" %% "munit-scalacheck" % munitScalacheckVersion % Test,
+      // ADR-0009: cats-laws and discipline-munit for potential discipline-based law tests.
+      // These are included for resolution verification under Scala 3.8.4.
+      // If resolution fails (expected), they remain commented in the ADR reasoning.
+      // Uncomment for the resolution check: sbt -batch update
+      // "org.typelevel" %% "cats-laws"        % catsVersion           % Test,
+      // "org.typelevel" %% "discipline-munit" % "2.0.0"              % Test
     )
   )
 
