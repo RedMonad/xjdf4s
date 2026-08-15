@@ -942,7 +942,9 @@ flowchart LR
 
 #### M1.0-1. Обязательный CI и `sbt-scalafmt` (P4) — закрывает N-43, N-44
 
-**Файлы:** `.github/workflows/ci.yml` (новый), `project/plugins.sbt` (новый).
+**Решение владельца (PR-1):** интеграция CI-файла `.github/workflows/ci.yml` отложена — токен среды исполнения не имеет permission `workflows`, а сборка и проверка (компиляция, тесты, `scalafmt`) выполняются на стороне владельца. `project/plugins.sbt` (sbt-scalafmt) включён в сборку; gate-команда `sbt -batch clean scalafmtCheckAll compile test examples/run` фиксируется первым же доступным прогоном. Пункт не считается закрытым `[x]` до зелёного прогона.
+
+**Файлы:** `.github/workflows/ci.yml` (новый, отложен), `project/plugins.sbt` (новый).
 
 ```yaml
 name: CI
