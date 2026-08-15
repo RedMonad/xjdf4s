@@ -98,7 +98,7 @@ end PartitionValue
  *  `Part` are the typed case-class fields and `PartitionValue` (the compiler
  *  does not refine abstract keys in match-type scrutinees, so a generic
  *  `get[K <: PartitionKey](key: K): Option[ValueOf[K]]` cannot be implemented
- *  without casts — see ROADMAP, "Риски", item 3).
+ *  without casts — see ROADMAP.md, "Риски и меры снижения").
  */
 type ValueOf[K <: PartitionKey] = K match
   case PartitionKey.DocIndex.type | PartitionKey.PageNumber.type | PartitionKey.RunIndex.type
