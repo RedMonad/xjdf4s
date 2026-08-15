@@ -2155,6 +2155,10 @@ Preflight, ProductList(Product(?×100, root)))`; `check-spec-coverage.sh` —
 
 **Статус:** `[~]` — код и тесты внесены статически (среда без JVM/sbt);
 ожидается прогон владельца: `sbt -batch clean compile test examples/run`.
+Исправление по итогам первого прогона владельца: E008 — `.toChain` вызывался
+на поле типа `Chain` (метод существует только на `NonEmptyChain`); убран в
+`ContentCheckIntent.declaredIds` и `checkContentCheckLaws` — по образцу
+`checkAssemblyGlueLaws` (`Chain`/`NonEmptyChain.zipWithIndex` напрямую).
 
 #### M1.6-12. `HoleMakingIntent` (Table 4.29, §4.8) — `[x]` выполнено (верифицировано владельцем; PR-18)
 

@@ -33,7 +33,7 @@ final case class ContentCheckIntent(
    *  (Table 4.24), in document order (§2.2.3).
    */
   def declaredIds: Chain[Id] =
-    proofItems.toChain.flatMap(p => Chain.fromOption(p.id))
+    proofItems.flatMap(p => Chain.fromOption(p.id))
 
 end ContentCheckIntent
 

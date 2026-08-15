@@ -172,7 +172,7 @@ object TicketValidator:
    *  anticipated in `checkResourceLocalLaws` (M1.6-11).
    */
   private def checkContentCheckLaws(c: ContentCheckIntent, path: XPath): Chain[Issue] =
-    c.proofItems.toChain.zipWithIndex.flatMap { (pi, i) =>
+    c.proofItems.zipWithIndex.flatMap { (pi, i) =>
       pi.fileSpec.fold(Chain.empty[Issue]) { fs =>
         fs.disposition.fold(Chain.empty[Issue]) { d =>
           dispositionLaw.check(d, XPath(s"$path/ProofItem[$i]/FileSpec/Disposition"))
