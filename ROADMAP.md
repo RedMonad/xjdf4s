@@ -1187,7 +1187,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet])
 
 #### M1.2-1. Полная модель `Part` по Table 6.4 (P1) — закрывает N-03, N-04, N-05, N-29 — `[~]` реализовано (PR-4; машинного evidence нет, верификация владельцем)
 
-**Файлы:** `prim/Tokens.scala` (новый тип), `model/Partition.scala`, `laws/Arbitraries.scala`, `laws/PartitionLaws.scala`.
+**Файлы:** `prim/Tokens.scala` (новый тип), `model/Partition.scala`, `model/Validation.scala` (сообщение §6.1.2.1 через `attributeName`), `laws/Arbitraries.scala`, `laws/PartitionLaws.scala`, `laws/TicketLaws.scala` (регрессия N-05).
 
 Новый проверенный opaque-тип для XJDF-типа данных `regExp`:
 
