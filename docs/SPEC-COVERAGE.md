@@ -60,6 +60,8 @@ README ссылается на этот документ, числа — в вы
 
 | Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
 |---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
+| §4.9 | Table 4.30 | LaminatingTemperature | `LaminatingTemperature` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`Hot`, `Cold`) для `LaminatingIntent/@Temperature`; golden — `EnumLaws` (M1.6-9) |
+| §A.3.22 | Table A.80 | Texture catalog | `NmToken` | `?` | ❌ | ✅ | ❌ | ❌ | Implemented | открытый `Catalog.Texture`, 12 рекомендуемых значений; `LaminatingIntent/@Texture` остаётся расширяемым NMTOKEN (M1.6-9, ADR-0007) |
 | §A.2.49 | Table A.50 | WorkingDirection | `WorkingDirection` | 1 | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (`Bottom`, `Top`); golden и машинная сверка — `EnumLaws`; тип XSD — `EnumTopBottom` (имя таблицы и атрибута нормативны); потребители — `Crease` (M1.6-2), `Cut` (M3) |
 | §A.2.23 | Table A.24 | EnumGlue | `EnumGlue` | 1 | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (3 значения: `ColdGlue`, `Hotmelt`, `PUR`); XSD `simpleType EnumGlue`; для атрибутов «Allowed value is from: Glue» (`EdgeGlue`, `SpineGlue`); переименован из `GlueType` в M1.6-3 (ADR-0011) |
 | §8.24 | Table 8.29 | GlueType | `GlueType` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum (5 значений: `ColdGlue`, `Hotmelt`, `Permanent`, `PUR`, `Removable`); атрибут `Glue/@GlueType`; новый в M1.6-3 (ADR-0011, N-50) |
@@ -75,7 +77,7 @@ README ссылается на этот документ, числа — в вы
 | Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
 |---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
 | §4.1 | Table 4.1 | Intent | `Intent` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | `@Name == payload.elementName` (`Intent.nameLaw`) |
-| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 9 payload + `Extension` escape hatch |
+| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 10 payload + `Extension` escape hatch |
 | §4.2 | Table 4.3 | AssemblingIntent | `AssemblingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.2 | Table 4.4 | AssemblyItem | `AssemblyItem` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.2 | Table 4.5 | BindIn | `BindIn` | `*` | ✅ | ❌ | ❌ | ❌ | Implemented | `Glue?` → `Option[Glue]` (элемент, M1.6-3/ADR-0011); `Glue/@GlueRef` собирается; SHALL-правила Glue подключены через валидатор |
@@ -97,6 +99,7 @@ README ссылается на этот документ, числа — в вы
 | §4.4 | Table 4.21 | SurfaceColor | `SurfaceColor` | `?` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.7 | Table 4.27 | FoldingIntent | `FoldingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.8 | Table 4.29 | HoleMakingIntent | `HoleMakingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `HolePattern+` → `NonEmptyChain[HolePattern]` (кардинальность `+`, структурно); SHALL-правило вложенного `HolePattern` подключено через валидатор (M1.6-12) |
+| §4.9 | Table 4.30 | LaminatingIntent | `LaminatingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | required `@Surface` → `NonEmptyChain[Side]` (структурно); `@Temperature?`, `@Texture?`, `@Thickness?`; IDREF отсутствуют; `ProcessType.Laminating` (M1.6-9) |
 | §8.21 | Table 8.26 | Fold | `Fold` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation; общий для `FoldingIntent` и `FoldingParams` |
 | §8.34 | Table 8.53 | Perforate | `Perforate` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.10 | Table 4.31 | LayoutIntent | `LayoutIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |

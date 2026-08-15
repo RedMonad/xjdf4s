@@ -216,6 +216,30 @@ object SpecExamples:
         .build
     }
 
+  /** Fixture (§4.9 / Table 4.30): a two-sided hot laminating intent using a
+   *  recommended texture from Table A.80 and a 25 micron laminate.
+   */
+  val laminatingJob: ValidatedNec[Issue, XJDF] =
+    chainV(dsl.TicketDraft.of("laminatingJob", ProcessType.Laminating)) { draft =>
+      val laminating = LaminatingIntent(
+        surface = NonEmptyChain(Side.Front, Side.Back),
+        temperature = Some(LaminatingTemperature.Hot),
+        texture = Some(Catalog.Texture.Gloss),
+        thickness = Some(Microns(25.0))
+      )
+      val payload = IntentPayload.Laminating(laminating)
+      val intent = Intent(name = IntentName.of(payload.elementName), specific = payload)
+      val product = Product(
+        id = Some(Id.unsafe("P1")),
+        isRoot = true,
+        amount = Some(100L),
+        intents = Chain.one(intent)
+      )
+      draft
+        .withProductList(ProductList(products = NonEmptyChain.one(product)))
+        .build
+    }
+
   /** Example 5.2: Split delivery — thirty books, ten to Drop1, twenty to Drop2. */
   val splitDelivery: ValidatedNec[Issue, XJDF] =
     val drop1 = PartBuilder.empty
@@ -402,6 +426,7 @@ object SpecExamples:
       "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
       "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),
+      "Laminating intent (Table 4.30):" -> laminatingJob.map(Show[XJDF].show),
       "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
       "Brochure job:" -> brochureJob.map(Show[XJDF].show),
       "Brochure job after change:" -> updatedBrochureJob.map(Show[XJDF].show)

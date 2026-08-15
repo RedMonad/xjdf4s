@@ -1928,6 +1928,53 @@ ChangeOrderLaws 8, SpecExamplesSuite 20, EnumLaws 23, BomLaws 8, TicketLaws 59,
 PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0; статус `[x]` — закрыт полностью.
 Исправление экранирования `87497a7` — `clean`/`compile` зелёный.
 
+#### M1.6-9. `LaminatingIntent` (Table 4.30, §4.9) — `[~]` реализовано статически, ожидает прогона владельца (PR-19)
+
+Вертикальный срез продолжает паттерн интентов главы 4, закреплённый PR-18.
+
+- **Сверка Table/XSD (§1.2).** Table 4.30 содержит четыре атрибута:
+  обязательный `@Surface` (`enumerations`, значения из `Side`), опциональные
+  `@Temperature` (`Hot`/`Cold`), `@Texture` (`NMTOKEN`, открытый список из
+  Texture) и `@Thickness` (`float`, микроны). `schema.xsd` подтверждает
+  обязательный `Surface` как `xs:list itemType="Side"`, остальные три атрибута
+  как optional; дочерних элементов нет. Расхождений prose/XSD не обнаружено.
+- **Модель** `intents/Laminating.scala`:
+  `LaminatingIntent(surface: NonEmptyChain[Side], temperature:
+  Option[LaminatingTemperature], texture: Option[NmToken], thickness:
+  Option[Microns])`. Непустота обязательного списка поверхностей обеспечена
+  структурно; отдельная runtime-проверка «at least one» не нужна.
+- **Закрытый enum** `LaminatingTemperature` (`Hot`, `Cold`) добавлен в
+  `prim/Enums.scala`; точное множество wire-токенов проверяется golden-тестом.
+- **Открытый каталог** `Catalog.Texture` содержит 12 рекомендуемых значений
+  Table A.80, включая `IPP:*`; произвольный валидный `NMTOKEN` остаётся
+  допустимым по ADR-0007 и покрыт тестом расширяемости.
+- **Dispatch/references:** `IntentPayload.Laminating`,
+  `elementName = "LaminatingIntent"`; IDREF-атрибутов нет, поэтому
+  `references = Chain.empty`. Специальных локальных SHALL-правил сверх
+  структурной обязательности `@Surface` нет; общий `Intent.nameLaw` применяется
+  существующим обходом корневого валидатора.
+- **ProcessType:** добавлен стандартный `ProcessType.Laminating` (§5.6.23,
+  Tables 5.109–5.110).
+- **Тесты:** `LaminatingIntentLaws.scala` (7: dispatch, references,
+  структурная кардинальность, mapping, открытый каталог, позитивная корневая
+  валидация, негативный `Intent/@Name`); `EnumLaws` golden для температуры;
+  `SpecExamples.laminatingJob` + conformance/golden в `SpecExamplesSuite`.
+- **Coverage:** строки `LaminatingIntent`, `LaminatingTemperature`,
+  `Catalog.Texture`; dispatch обновлён с 9 до 10 payload.
+
+**Файлы:** `intents/Laminating.scala` (новый), `intents/AllIntents.scala`,
+`prim/Enums.scala`, `prim/Common.scala`, `model/Resource.scala`,
+`laws/LaminatingIntentLaws.scala` (новый), `laws/EnumLaws.scala`,
+`examples/SpecExamples.scala`, `laws/SpecExamplesSuite.scala`,
+`docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
+без предупреждений; ожидается 268 тестов зелёных (258 + 7
+`LaminatingIntentLaws` + 1 `EnumLaws` + 2 `SpecExamplesSuite`);
+`examples/run` exit 0 с `Laminating intent (Table 4.30): ...`;
+`scripts/check-spec-coverage.sh` — `RESULT: OK`. До подтверждения владельца
+статус остаётся `[~]`.
+
 #### M1.6-12. `HoleMakingIntent` (Table 4.29, §4.8) — `[x]` выполнено (верифицировано владельцем; PR-18)
 
 Первый из пяти отсутствующих интентов главы 4; использует только что созданный
@@ -2019,7 +2066,8 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 16 | `Glue` (Table 8.29) + ADR-0011 + N-50 | M1.6-3 | 15 | `[x]` верифицировано владельцем: 228 тестов, `examples/run` exit 0 |
 | 17 | `HolePattern` (Table 8.30 / Appendix F) + 3 enum + open catalogs + SHALL + LooseBinding | M1.6-5 | 16 | `[x]` верифицировано владельцем: 248 тестов, `examples/run` exit 0 |
 | 18 | `HoleMakingIntent` (Table 4.29, §4.8) + `HolePattern+` + wiring SHALL + fixture | M1.6-12 | 17 | `[x]` верифицировано владельцем: 258 тестов, `examples/run` exit 0 |
-| 19+ | Пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15) | M1.6 | 18 | шаблон среза выполнен |
+| 19 | `LaminatingIntent` (Table 4.30, §4.9) + `LaminatingTemperature` + открытый `Catalog.Texture` | M1.6-9 | 18 | `[~]` статически реализовано; ожидает гейт владельца (268 тестов) |
+| 20+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/12) | M1.6 | 19 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -2963,7 +3011,12 @@ prose и `schema.xsd`, структурно), `IntentPayload.HoleMaking`, wiring
 строки в `docs/SPEC-COVERAGE.md` (27 строк Intents; `check-spec-coverage.sh` —
 `RESULT: OK`). Статус `[x]` — закрыт полностью (верифицировано владельцем:
 **258 тестов зелёных (258/0)**, `examples/run` exit 0).
-Следующий по плану — PR-19+ (M1.6-1 Certification, M1.6-4 GangSource+MISDetails
-под `NodeInfo`, M1.6-9…M1.6-13 остальные интенты главы 4 — выбор подтверждается
-владельцем). LICENSE остаётся `BLOCKED` до решения владельца;
-возврат обязательного CI — открытая часть M1.0-1.
+PR-19 (M1.6-9) статически реализовал `LaminatingIntent` (Table 4.30):
+обязательный непустой `@Surface`, закрытый `LaminatingTemperature`, открытый
+`Catalog.Texture`, `ProcessType.Laminating`, dispatch, тесты, фикстуру и coverage;
+статус `[~]` до прогона владельца (ожидается 268 тестов). Следующий срез PR-20+
+выбирается после закрытия PR-19 из M1.6-1 Certification, M1.6-4/7/8
+GangSource+MISDetails+NodeInfo, M1.6-6 IdentificationField, M1.6-10/11/13
+оставшихся интентов, M1.6-14 NamedFeatures или M1.6-15 Part audit. LICENSE
+остаётся `BLOCKED` до решения владельца; возврат обязательного CI — открытая
+часть M1.0-1.

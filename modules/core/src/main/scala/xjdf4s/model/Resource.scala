@@ -41,6 +41,7 @@ object ProcessType:
   val HoleMaking: ProcessType = NmToken.unsafe("HoleMaking")
   val Imposition: ProcessType = NmToken.unsafe("Imposition")
   val Interpreting: ProcessType = NmToken.unsafe("Interpreting")
+  val Laminating: ProcessType = NmToken.unsafe("Laminating")
   val ManualLabor: ProcessType = NmToken.unsafe("ManualLabor")
   val QualityControl: ProcessType = NmToken.unsafe("QualityControl")
   val Rendering: ProcessType = NmToken.unsafe("Rendering")

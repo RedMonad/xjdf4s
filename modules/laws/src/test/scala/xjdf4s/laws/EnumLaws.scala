@@ -102,6 +102,9 @@ class EnumLaws extends FunSuite:
   test("Table A.36: Scope wire tokens"):
     assertEquals(tokensOf(Scope.all), Set("Allowed", "Device", "Estimate", "Job", "Present"))
 
+  test("Table 4.30: LaminatingIntent/@Temperature wire tokens"):
+    assertEquals(tokensOf(LaminatingTemperature.all), Set("Hot", "Cold"))
+
   test("Table A.50: WorkingDirection wire tokens"):
     assertEquals(tokensOf(WorkingDirection.all), Set("Bottom", "Top"))
 
@@ -153,6 +156,7 @@ class EnumLaws extends FunSuite:
         ("BindingType", BindingType.all, BindingType.fromToken),
         ("Coating", Coating.all, Coating.fromToken),
         ("SoftCoverScoring", SoftCoverScoring.all, SoftCoverScoring.fromToken),
+        ("LaminatingTemperature", LaminatingTemperature.all, LaminatingTemperature.fromToken),
         ("WorkingDirection", WorkingDirection.all, WorkingDirection.fromToken),
         ("GlueType", GlueType.all, GlueType.fromToken),
         ("EnumGlue", EnumGlue.all, EnumGlue.fromToken),
@@ -176,6 +180,7 @@ class EnumLaws extends FunSuite:
         "Scope"               -> Scope.all,
         "Status"              -> Status.all,
         "BindingType"         -> BindingType.all,
+        "LaminatingTemperature" -> LaminatingTemperature.all,
         "WorkingDirection"    -> WorkingDirection.all,
         "GlueType"            -> GlueType.all,
         "EnumGlue"            -> EnumGlue.all,

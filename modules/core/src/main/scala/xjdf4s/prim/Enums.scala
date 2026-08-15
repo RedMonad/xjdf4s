@@ -589,6 +589,16 @@ end HardCoverJacket
 object HardCoverJacket extends XjdfEnumCompanion[HardCoverJacket]:
   val all: List[HardCoverJacket] = List(Unjacketed, Loose, GlueApplied)
 
+/** `LaminatingIntent/@Temperature` (§4.9 / Table 4.30): temperature used in
+ *  the Laminating process.
+ */
+enum LaminatingTemperature extends XjdfEnum:
+  case Hot, Cold
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object LaminatingTemperature extends XjdfEnumCompanion[LaminatingTemperature]:
+  val all: List[LaminatingTemperature] = List(Hot, Cold)
+
 /** `WorkingDirection` (Table A.50): the direction from which a tool works.
  *  Used by the `Crease` and `Cut` elements (Tables 8.17 / 8.18); the XSD type
  *  is `EnumTopBottom` (schema.xsd) — the attribute and table name win.

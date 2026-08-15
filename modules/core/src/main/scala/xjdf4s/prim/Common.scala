@@ -490,6 +490,30 @@ object Catalog:
     val Varnish: NmToken = NmToken.unsafe("Varnish")
     val WaterResistant: NmToken = NmToken.unsafe("WaterResistant")
 
+  /** Texture catalog (§A.3.22 / Table A.80): recommended textures for
+   *  `NMTOKEN` attributes such as `LaminatingIntent/@Texture` (Table 4.30).
+   *  The catalog is open per ADR-0007: any other valid NMTOKEN remains legal.
+   */
+  object Texture:
+    val Antique: NmToken = NmToken.unsafe("Antique")
+    val Calendared: NmToken = NmToken.unsafe("Calendared")
+    val Gloss: NmToken = NmToken.unsafe("Gloss")
+    val IPPCourse: NmToken = NmToken.unsafe("IPP:Course")
+    val IPPFine: NmToken = NmToken.unsafe("IPP:Fine")
+    val IPPMedium: NmToken = NmToken.unsafe("IPP:Medium")
+    val Linen: NmToken = NmToken.unsafe("Linen")
+    val Matte: NmToken = NmToken.unsafe("Matte")
+    val Smooth: NmToken = NmToken.unsafe("Smooth")
+    val Stipple: NmToken = NmToken.unsafe("Stipple")
+    val Uncalendared: NmToken = NmToken.unsafe("Uncalendared")
+    val Vellum: NmToken = NmToken.unsafe("Vellum")
+
+    val recommended: List[NmToken] = List(
+      Antique, Calendared, Gloss, IPPCourse, IPPFine, IPPMedium,
+      Linen, Matte, Smooth, Stipple, Uncalendared, Vellum
+    )
+  end Texture
+
   /** Hole Pattern Catalog (Appendix F, Table 8.30 `@Pattern`): predefined hole
    *  patterns. Data type `NMTOKEN`, allowed from Section F. The list here
    *  is the XSD enumeration (34 values, including `None`) — the normative
