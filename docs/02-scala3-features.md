@@ -127,7 +127,7 @@ type ValueOf[K <: PartitionKey] = K match
 `Part.valueOf: PartitionKey => Option[PartitionValue]` с тегованным значением.
 (Обобщённый `get[K <: PartitionKey](key: K): Option[ValueOf[K]]` не
 реализуем без кастов: компилятор не уточняет абстрактный ключ в ветках матча
-при редукции match type — подтверждено сборкой; см. ROADMAP, «Риски», п. 3.)
+при редукции match type — подтверждено сборкой; см. `ROADMAP.md`, «Риски и меры снижения».)
 
 Ссылка: `reference/new-types/match-types.md`.
 
@@ -161,7 +161,7 @@ childRefs: Option[IdRefs], details: Option[BindingDetails], …)`.
 они выражены типами (union/enum/opaque); семантические ограничения («SHALL»
 связанные с несколькими элементами: уникальность ключей ResourceSet, границы
 CombinedProcessIndex, хронология AuditPool) — аппликативным валидатором
-`ValidatedNec[Issue, Unit]` с XPath-локализацией каждой ошибки (см. 03-cats.md).
+`ValidatedNec[Issue, Unit]` с XPath-локализацией каждой ошибки (см. 03-cats-mapping.md).
 
 ## Что сознательно НЕ использовано
 

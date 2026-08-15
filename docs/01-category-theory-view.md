@@ -13,7 +13,7 @@
 - **объекты** — интерфейсы участников (Device, Controller, MIS) как «типы портов»;
 - **морфизмы** — сами XJDF-тикеты: Controller → Device.
 
-Ссылка: `Part 1 – its-all-about-morphisms`-идея («сначала морфизмы, потом объекты»)
+Ссылка: `Part 3 – its-all-about-morphisms`-идея («сначала морфизмы, потом объекты»)
 и `Part 1 – category-the-essence-of-composition`: суть XJDF — композиция, а не
 структура данных. Поэтому в xjdf4s корневой `XJDF` — это **значение-морфизм**,
 а не «большой объект-тикет» (ср. критику JDF 1.x «monolithic job ticket», §1.3).

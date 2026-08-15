@@ -50,12 +50,12 @@ import xjdf4s.model.*
 
 // Example 3.1 спецификации: <XJDF JobID="J1" Types="Product" Version="2.2"/>
 val ticket: ValidatedNec[Issue, XJDF] =
-  dsl.TicketDraft.of("J1", ProcessType.Product).flatMap(_.build)
+  dsl.TicketDraft.of("J1", ProcessType.Product).andThen(_.build)
 ```
 
 ## Документация
 
-- `ROADMAP.md` — план работ (M0 выполнено; M1–M6 впереди);
+- `ROADMAP.md` — консолидированный план работ (M0 — прототип; M1 в работе, M2–M6 впереди);
 - `docs/01-category-theory-view.md` — XJDF через призму теории категорий;
 - `docs/02-scala3-features.md` — соответствие «спецификация → Scala 3»;
 - `docs/03-cats-mapping.md` — какие абстракции cats и зачем;

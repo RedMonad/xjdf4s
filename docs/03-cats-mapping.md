@@ -16,13 +16,15 @@
 интегратору. `NonEmptyChain[Issue]` гарантирует непустой список ошибок.
 Ссылка: `docs/typeclasses/applicative.md`, `docs/datatypes/validated.md`.
 
-> **Важно:** `Validated` — **не монада**: у него сознательно нет `flatMap`
-> (см. validated.md: «Validated isn't a monad, but an Applicative Functor»).
-> Поэтому ни for-comprehensions, ни `.flatMap`/`.andThen` на `Validated` не
-> компилируются; последовательная композиция — либо через `mapN`
-> (аппликативно, параллельно), либо через явный паттерн-матч по
-> `Valid`/`Invalid` (в примерах — хелпер `SpecExamples.chainV`), либо через
-> конверсию `.toEither`.
+> **Важно:** `Validated` — **не монада**: у него сознательно нет монадического
+> `flatMap` (см. validated.md: «Validated isn't a monad, but an Applicative
+> Functor»), поэтому for-comprehensions на нём не компилируются. При этом
+> метод `.andThen` у `Validated` **есть** — это right-biased последовательная
+> композиция без накопления левой ошибки; он используется, например, в
+> `dsl.intent` и в README-примере. Последовательная композиция с накоплением
+> ошибок — либо через `mapN` (аппликативно, параллельно), либо через явный
+> паттерн-матч по `Valid`/`Invalid` (в примерах — хелпер `SpecExamples.chainV`),
+> либо через конверсию `.toEither`.
 
 Катаморфизм BOM использует тот же носитель: `cata: ProductTree[ValidatedNec]
 => ValidatedNec` — «свёртка дерева в аккумулятор ошибок».
@@ -93,7 +95,7 @@ context function `IdAllocator` (см. 02-scala3-features.md). Ссылка:
 ## Eval-подход и дальнейшие шаги
 
 Текущая версия не использует `Eval`/`Kleisli`/`WriterT` явно (валидация —
-чистый `Validated`); в ROADMAP они запланированы для:
+чистый `Validated`); в `ROADMAP.md` они запланированы для:
 - потоковой обработки сигналов (`fs2`-совместимый слой, `Writer`-семантика
   аудитов);
 - эффектной загрузки больших RunList (`Kleisli[F, IdSource, *]`);
