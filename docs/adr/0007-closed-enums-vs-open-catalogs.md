@@ -126,8 +126,8 @@ these tables SHOULD be used where possible»).
 `Pantone 123 C`. Это значение **непригодно как тест-фикстура**: оно содержит пробелы и
 потому не является валидным `NMTOKEN`, тогда как открытые каталоги проекта
 типизированы через `NmToken`. Тест на расширяемость использует значение вне
-рекомендованного списка, но валидное как NMTOKEN — `MintCream` (реальное имя SVG,
-отсутствующее в прежнем 16-значном enum). Полная лексическая проверка `NamedColor`
+рекомендованного списка, но валидное как NMTOKEN — `Pantone185C` (не входит в
+147 значений `[Color Names]`). Полная лексическая проверка `NamedColor`
 против XSD-pattern-ов — задача кодеков M2 (ср. R5/ADR по `RegExp`).
 
 ## Alternatives
@@ -231,7 +231,7 @@ Media(MediaType.Paper, mediaColor = Some(NamedColor.White))
 Media(MediaType.Paper, mediaColor = Some(Catalog.NamedColor.White))
 
 // стало — значение вне рекомендованного списка (легально, §1.10.3.2)
-Media(MediaType.Paper, mediaColor = NmToken.from("MintCream"))
+Media(MediaType.Paper, mediaColor = NmToken.from("Pantone185C"))
 ```
 
 Переходный alias `NamedColor` не вводится: тип и его значения исчезают одновременно,

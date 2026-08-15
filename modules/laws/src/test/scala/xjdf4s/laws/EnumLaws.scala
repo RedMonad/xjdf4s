@@ -148,12 +148,12 @@ class EnumLaws extends FunSuite:
 
   test("§A.2.30: NamedColor is an open catalog and accepts a value outside the list"):
     // §1.10.3.2: “This does not preclude the use of other values as required by
-    // vendor or customer extensions.” MintCream is a real [Color Names] value
-    // that the previous 16-value enum could not express (N-09).
-    val outside = NmToken.from("MintCream")
-    assertEquals(outside.map(_.value), Some("MintCream"))
-    assert(!Catalog.NamedColor.recommended.contains(NmToken.unsafe("VendorFluoPink")))
-    assertEquals(NmToken.from("VendorFluoPink").map(_.value), Some("VendorFluoPink"))
+    // vendor or customer extensions.” Pantone185C is a valid NMTOKEN that is
+    // not among the 147 [Color Names] values — a genuine vendor extension that
+    // the old closed 16-value enum could not express (N-09).
+    val outside = NmToken.from("Pantone185C")
+    assertEquals(outside.map(_.value), Some("Pantone185C"))
+    assert(!Catalog.NamedColor.recommended.contains(NmToken.unsafe("Pantone185C")))
 
   test("§A.2.30: Catalog.NamedColor carries all 147 [Color Names] values"):
     // [Color Names] = SVG 1.1 Second Edition (Appendix G); the same 147 names
