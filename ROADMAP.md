@@ -288,7 +288,7 @@ flowchart LR
 
 Цикл `Validation → Product → Ticket → Patch → Validation` (4 файла) нарушает Acyclic Dependencies Principle и затрудняет расширение validator/codecs. Разрыв — задача M1.4-1 по ADR-0002.
 
-**Статус (PR-9, M1.4-1):** цикл разорван — повторный анализ тем же алгоритмом даёт 0 циклов; `[~]` до зелёного прогона владельца (Приложение D).
+**Статус (PR-9, M1.4-1):** цикл разорван — повторный анализ тем же алгоритмом даёт 0 циклов; `[x]` верифицировано владельцем (сборка и тесты чистые, Приложение D).
 
 ### 3.7 Ограничение верификации на срезе
 
@@ -1547,7 +1547,7 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 ### M1.4 — Архитектура, алгебры и безопасный API
 
-#### M1.4-1. Разорвать цикл зависимостей (P2) — закрывает N-21, ADR-0002 — `[~]` реализовано, ожидается прогон владельца
+#### M1.4-1. Разорвать цикл зависимостей (P2) — закрывает N-21, ADR-0002 — `[x]` выполнено (верифицировано владельцем; PR-9)
 
 Создать `model/ValidationTypes.scala`, перенести `Issue`, `IssueCode`, `SeverityClass`, `XPath`, `trait DomainRule`, `type ValidationResult[A]`. Переименовать `Validation.scala` → `TicketValidator.scala` (корень проверок).
 
@@ -1555,7 +1555,7 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 **Статус сессии (PR-9).** Решение владельца: следовать буквальному списку ADR-0002 — в `ValidationTypes.scala` перенесены все перечисленные типы, включая `IssueCode`, `SeverityClass` и `XPath`, которые на срезе PR-8 находились в `prim` (`Tokens.scala`, `Enums.scala`); alias `type ValidationResult[A] = ValidatedNec[Issue, A]` введён и используется в сигнатуре `TicketValidator.validate`. Для нуля циклов из `Ticket.scala` убраны три ссылки на соседние файлы: `XJDF.validate` и `XJDF.validateReport` стали extension-методами в `TicketValidator.scala`, `XJDF.withPatch` — extension-методом в `Patch.scala` (тот же пакет `xjdf4s.model`; все call sites в репозитории импортируют `xjdf4s.model.*`, кроме `SpecExamplesSuite`, куда добавлен явный импорт `validate`).
 
-**Компиляция владельца (первый прогон):** единственная ошибка — E008 в теле `withPatch`: extension-синтаксис `patch.applyTo(ticket)` не резолвится для opaque-типа `Patch` из тела top-level extension-блока в файле-определителе (компилятор предлагал `import xjdf4s.model.Patch.applyTo`). Исправлено статической формой вызова `Patch.applyTo(patch)(ticket)` (extension-метод — член компаньона); остальные юниты PR скомпилировались чисто, включая `ValidationTypes.scala` и extension-блоки `TicketValidator.scala`. Требуется повторный прогон.
+**Компиляция владельца (первый прогон):** единственная ошибка — E008 в теле `withPatch`: extension-синтаксис `patch.applyTo(ticket)` не резолвится для opaque-типа `Patch` из тела top-level extension-блока в файле-определителе (компилятор предлагал `import xjdf4s.model.Patch.applyTo`). Исправлено статической формой вызова `Patch.applyTo(patch)(ticket)` (extension-метод — член компаньона); остальные юниты PR скомпилировались чисто, включая `ValidationTypes.scala` и extension-блоки `TicketValidator.scala`. Повторный прогон владельца — чистый: сборка и тесты зелёные (подтверждение владельца после коммита `fbcff7e`).
 
 **Коммиты PR-9:** `04c4176` (create ValidationTypes.scala), `f3b7015` (rename), `4848653` (update imports and break cycle), ROADMAP-правки — настоящий коммит.
 
@@ -1563,7 +1563,7 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 **Статическая верификация.** Анализатор зависимостей (тот же стиль, что в §3.3: top-level-символы, package-aware резолвинг, комментарии/строки исключены): до PR-9 — 1 цикл (SCC с `Validation/Product/Ticket/Patch`), после — 0 циклов (файлов 48, рёбер 273). Межмодульный граф не изменился: `examples → core`, `laws → core`.
 
-**Ожидаемый прогон владельца (Приложение D):** `sbt -batch clean scalafmtCheckAll compile test examples/run` — чистая сборка без предупреждений `-Wunused:all -Wvalue-discard -Wnonunit-statement`, все сьюты зелёные, `examples/run` завершается с exit 0. После зелёного прогона статус переводится в `[x] (верифицировано владельцем)`.
+**Прогон владельца (Приложение D):** `sbt -batch clean scalafmtCheckAll compile test examples/run` — чистая сборка без предупреждений `-Wunused:all -Wvalue-discard -Wnonunit-statement`, все сьюты зелёные, `examples/run` завершается с exit 0. Подтверждено владельцем после коммита `fbcff7e`; статус `[x] (верифицировано владельцем)`.
 
 #### M1.4-2. Номинальный ChangeOrder (P2) — закрывает N-20, ADR-0001
 
@@ -1730,7 +1730,7 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 | 6 | Кардинальность `PartAmount` + оба правила §6.1.2.1 | M1.2-3, M1.3-2 | 4 | parent/child кейсы |
 | 7 | Bodyless `Resource`, `DropItem`, `Notification`, ID-скоупы | M1.2-4, M1.2-5 | 3 | Example 3.6 + тесты скоупов |
 | 8 | Шина `DomainRule`, полный `TicketValidator`, severity | M1.3-1, M1.3-3, M1.3-4, M1.3-5 | 2, 6, 7 | все локальные законы подключены |
-| 9 | `ValidationTypes` и разрыв цикла | M1.4-1 | 8 | циклов = 0 — `[~]` (PR-9 реализован, ждёт прогона владельца) |
+| 9 | `ValidationTypes` и разрыв цикла | M1.4-1 | 8 | циклов = 0 — `[x]` (PR-9 верифицирован владельцем) |
 | 10 | ADR-0001 + номинальный `ChangeOrder` | M1.4-2 | 3, 9 | compile/apply/revalidate |
 | 11 | Тотальные builder-ы, решение по `IdAllocator`, ADR-0004 `AmountRange` | M1.4-3, M1.4-4, M1.4-5 | 9 | нет скрытых исключений |
 | 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 |
@@ -2118,7 +2118,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-18 | `isLawful` не подключены | ✅ шина `DomainRule` (ADR-0003), все локальные законы подключены | M1.3-3 — `[x]` | P1 |
 | N-19 | BOM вне `validate` | ✅ `checkBomIntegrity` через `Bom.fromProductList` | M1.3-4 — `[x]` | P1 |
 | N-20 | `ChangeOrder` вырожден | ✅ ADR-0001, вариант C | M1.4-2 | P2 |
-| N-21 | Цикл зависимостей | ✅ ADR-0002 (реализовано в PR-9) | M1.4-1 — `[~]` | P2 |
+| N-21 | Цикл зависимостей | ✅ ADR-0002 (реализовано в PR-9) | M1.4-1 — `[x]` | P2 |
 | N-22 | `IdAllocator` мёртв | ✅ явное решение (интегрировать/удалить) | M1.4-4 | P2 |
 | N-23 | `meet`/`join` расходятся с docs | ✅ ADR-0004 | M1.4-5 | P2 |
 | N-24 | `PartBuilder.set` бросает | ✅ safe/unsafe | M1.4-3 | P2 |
@@ -2588,4 +2588,4 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-8 (M1.0 + M1.1 + M1.2 + M1.3) выполнены и верифицированы владельцем. PR-9 (M1.4-1) реализован статически: создан `model/ValidationTypes.scala` (фундамент валидации с Fan-Out 0), `Validation.scala` переименован в `TicketValidator.scala`, цикл `Validation → Product → Ticket → Patch → Validation` разорван (анализ — 0 циклов); статус `[~]` до зелёного прогона владельца (`sbt -batch clean scalafmtCheckAll compile test examples/run`). Следующий по плану — PR-10 (M1.4-2: номинальный `ChangeOrder` по ADR-0001), зависит от PR-3 и PR-9.
+**Краткий следующий шаг:** PR-1…PR-8 (M1.0 + M1.1 + M1.2 + M1.3) и PR-9 (M1.4-1) выполнены и верифицированы владельцем: создан `model/ValidationTypes.scala` (фундамент валидации с Fan-Out 0), `Validation.scala` переименован в `TicketValidator.scala`, цикл `Validation → Product → Ticket → Patch → Validation` разорван (анализ — 0 циклов, прогон владельца — чистый). Следующий по плану — PR-10 (M1.4-2: номинальный `ChangeOrder` по ADR-0001), зависит от PR-3 и PR-9.
