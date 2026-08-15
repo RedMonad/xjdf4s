@@ -183,9 +183,13 @@ modules/examples   2 файла  — примеры глав 3/5 и демо
 flowchart LR
     examples --> core
     laws --> core
+    laws --> examples
 ```
 
-`core` не зависит ни от `laws`, ни от `examples`; межмодульного цикла нет. Определение сборки (`build.sbt`) не использует плагинов; `project/` содержит только `build.properties` с `sbt.version=2.0.2`. Флаги компилятора зафиксированы в `build.sbt`:
+`core` не зависит ни от `laws`, ни от `examples`; межмодульного цикла нет.
+**M1.5-3 (PR-13):** добавлено ребро `laws → examples` — conformance-сьют
+`laws/SpecExamplesSuite.scala` исполняет примеры `examples.SpecExamples`;
+`examples` остался демонстрационным (DR-M1.5-3 в `docs/SPEC-COVERAGE.md`). Определение сборки (`build.sbt`) не использует плагинов; `project/` содержит только `build.properties` с `sbt.version=2.0.2`. Флаги компилятора зафиксированы в `build.sbt`:
 
 ```scala
 ThisBuild / scalacOptions ++= Seq(
@@ -617,18 +621,18 @@ def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
 
 Каталог заводится в `docs/adr/`, формат Michael Nygard (Context / Decision / Alternatives / Consequences / Normative references / Migration impact). ADR фиксируется **до** написания кода соответствующей задачи.
 
-| ADR | Тема | Дедлайн | Задача |
-| --- | --- | --- | --- |
-| ADR-0001 | ChangeOrder: relaxed cardinality, компиляция в `Patch` | до M1.4-2 | M1.4-2 |
-| ADR-0002 | Слои валидации и разрыв цикла | до M1.4-1 | M1.4-1 |
-| ADR-0003 | Форма локальных правил: `DomainRule`, а не `Boolean` | до M1.3-3 | M1.3-3 |
-| ADR-0004 | Семантика `AmountRange`: bounds vs nominal | до M1.4-5 | M1.4-5 |
-| ADR-0005 | `Part.matches` — отношение толерантности | до M1.5-1 | M1.5-1 |
-| ADR-0006 | Политика severity: errors vs warnings | до M1.3-5 | M1.3-5 |
-| ADR-0007 | Закрытые enum vs открытые каталоги; JSON Exceptions вне домена | до M1.2-2 | M1.2-2 |
-| ADR-0008 | Масштабируемое представление `ResourcePayload` | до массового M3 | M3.1 |
-| ADR-0009 | Law-инфраструктура: `cats-laws`/`discipline-munit` или локальные сьюты | до M1.4-6 — `[x]` (ADR-0009 зафиксирован в `docs/adr/0009-law-infrastructure.md`; рукописные сьюты сохранены; верифицировано владельцем в PR-12) | M1.4-6 |
-| ADR-0010 | Нормализация кодеков и сохранение расширений | до заморозки API M2 | M2.2 |
+| ADR | Тема | Дедлайн | Задача | Файл |
+| --- | --- | --- | --- | --- |
+| ADR-0001 | ChangeOrder: relaxed cardinality, компиляция в `Patch` | до M1.4-2 | M1.4-2 | `docs/adr/0001-change-order.md` (PR-10) |
+| ADR-0002 | Слои валидации и разрыв цикла | до M1.4-1 | M1.4-1 | `docs/adr/0002-validation-layers-cycle-break.md` (PR-13) |
+| ADR-0003 | Форма локальных правил: `DomainRule`, а не `Boolean` | до M1.3-3 | M1.3-3 | `docs/adr/0003-domain-rule-form.md` (PR-13) |
+| ADR-0004 | Семантика `AmountRange`: bounds vs nominal | до M1.4-5 | M1.4-5 | `docs/adr/0004-amount-range-semantics.md` (PR-11) |
+| ADR-0005 | `Part.matches` — отношение толерантности | до M1.5-1 | M1.5-1 | `docs/adr/0005-part-matches-tolerance.md` (PR-13) |
+| ADR-0006 | Политика severity: errors vs warnings | до M1.3-5 | M1.3-5 | `docs/adr/0006-severity-policy.md` (PR-13) |
+| ADR-0007 | Закрытые enum vs открытые каталоги; JSON Exceptions вне домена | до M1.2-2 | M1.2-2 | `docs/adr/0007-closed-enums-vs-open-catalogs.md` (PR-5) |
+| ADR-0008 | Масштабируемое представление `ResourcePayload` | до массового M3 | M3.1 | `docs/adr/0008-resource-payload-representation.md` (PR-13) |
+| ADR-0009 | Law-инфраструктура: `cats-laws`/`discipline-munit` или локальные сьюты | до M1.4-6 — `[x]` (зафиксирован в `docs/adr/0009-law-infrastructure.md`; рукописные сьюты сохранены; верифицировано владельцем в PR-12) | M1.4-6 | `docs/adr/0009-law-infrastructure.md` (PR-12) |
+| ADR-0010 | Нормализация кодеков и сохранение расширений | до заморозки API M2 | M2.2 | `docs/adr/0010-codec-normalization.md` (PR-13) |
 
 ### ADR-0001 — ChangeOrder как номинальный partial-документ
 
@@ -1426,9 +1430,11 @@ final case class Notification(
 
 **Статус сессии (PR-7):** реализовано в коммитах `e4322b1`, `241020a`, `6bccf04`. Тесты в `TicketLaws.scala`: поля `DropItem`, опциональный `moduleId`, валидация Milestone/@Class, уникальность языков Comment в Notification, два аудита с одинаковым `Header/@ID` валидны, сбор и валидация IDREF из `AuditResource`. Прогон владельца (`sbt -batch clean scalafmtCheckAll compile test examples/run`) чистый; статус `[x] (верифицировано владельцем)`.
 
-#### M1.2-6. Scaladoc-ссылки и реестр покрытия (P1/P3) — закрывает N-15, N-46
+#### M1.2-6. Scaladoc-ссылки и реестр покрытия (P1/P3) — закрывает N-15, N-46 — `[~]` выполнено (PR-13, ожидает верификации владельцем)
 
 Исправить семь ссылок по таблице из §5.2; `Device.scala:7` не трогать. Принять конвенцию scaladoc: `§x.y / Table z` — у спецификации нумерация разделов и таблиц независима, именно это породило все семь ошибок.
+
+**Статус сессии (PR-13).** Семь ссылок исправлены (`Color` 6.27, `CuttingParams` 6.53, `FoldingParams` 6.74, `Layout` 6.95, `Media` 6.114, `NodeInfo` 6.119, `Preview` 6.134); `Device` 6.57 не тронут. `docs/SPEC-COVERAGE.md` пересобран в требуемую структуру (Resources/Intents/Deviations/Version notes/DR) и содержит все 12 ресурсов, 8 интентов, подэлементы и реестр отклонений; конвенция `§x.y / Table z` зафиксирована в шапке реестра. `scripts/check-spec-coverage.sh` реализует пять проверок (несуществующая таблица; тип без нормативной ссылки — в обе стороны; кардинальность вне словаря Table 1.2; Implemented-строка без validation/test-статуса; потерянная version note) и печатает вычисляемую сводку; README ссылается на реестр, приблизительных чисел нет. Чекер прогнан статически (exit 0) и проверен на двух намеренных нарушениях (ложная таблица, удалённая строка — оба ловятся). Подключение в CI — вместе с возвратом CI по решению владельца (M1.0-1).
 
 Создать `docs/SPEC-COVERAGE.md`:
 
@@ -1652,7 +1658,7 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 
 ### M1.5 — Документация, тестовая инфраструктура и coverage
 
-#### M1.5-1. Категориальная точность (P3) — закрывает N-33, N-34, N-35
+#### M1.5-1. Категориальная точность (P3) — закрывает N-33, N-34, N-35 — `[~]` выполнено (PR-13, ожидает верификации владельцем)
 
 Обновить `docs/01-category-theory-view.md`:
 
@@ -1665,7 +1671,9 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 
 Конвенция: каждое категориальное утверждение в `docs/*` имеет либо закон в `modules/laws`, либо явную пометку «эвристика».
 
-#### M1.5-2. Scala/cats/архитектурные документы (P3) — закрывает N-40, N-41
+**Статус сессии (PR-13).** `docs/01` переписан: введена конвенция «закон или пометка „эвристика“»; `Part.matches` — отношение толерантности с явным контрпримером; частичный порядок — только через `mergeWith`/`merge`; §4 — таблица свободных конструкций с колонкой «свободная конструкция» и кардинальностями `T+`/`T*`; все упоминания «свободный моноид» для `NonEmptyChain`-носителей заменены на «свободная полугруппа»; §7 переименован в «структурное зеркалирование (эвристика)» с перечнем незаданного (функторы, unit/counit, hom-iso, triangle identities); §2 различает граф `ProductList` и `Fix[ProductTree]` из монадической развёртки (плюс `toTreeEval`/`cataEval`, M1.4-7); §8 — `AmountBounds` (ADR-0004, без `Semilattice`); §9 — частичный `inverse`; `Show` — debug-вывод. Законы в `PartitionLaws`: симметричность `matches`, контрпример нетранзитивности, рефлексивность/антисимметричность/транзитивность merge-порядка.
+
+#### M1.5-2. Scala/cats/архитектурные документы (P3) — закрывает N-40, N-41 — `[~]` выполнено (PR-13, ожидает верификации владельцем)
 
 - `docs/02-scala3-features.md`: честно описать отказ от вырожденного intersection и текущее состояние `ChangeOrder`;
 - `docs/03-cats-mapping.md`: `andThen`, семантика `AmountRange`, терминология «свободная полугруппа»;
@@ -1673,7 +1681,9 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 - `prim/Versions.scala`: в scaladoc объяснить разницу между Table A.52 (значения `2.0`, `2.1`, `2.2`) и Table 3.1 («The value of `@Version` SHALL be `"2.2"` for documents that comply to this specification»), из-за которой `XjdfVersion.from` принимает только `"2.2"`;
 - проверить все локальные и reference-ссылки.
 
-#### M1.5-3. Тесты и фикстуры (P3) — закрывает N-29 (тестовая часть)
+**Статус сессии (PR-13).** `docs/02`: убраны устаревшие `AmountRange`-трио, `WithIds`/context functions (заменены честным описанием `State`-программы `IdAllocator`, N-22), `NamedColor` вынесен из списка закрытых enum в открытые каталоги, `Semilattice` убран из списка инстансов, `XPath` — слой валидации. `docs/03`: `NonEmptyChain` — свободная полугруппа; таблица инстансов дополнена структурой (`Semigroup`/`Monoid`/`CommutativeMonoid`), секция `Semilattice` заменена на `AmountBounds` (ADR-0004); `Show` — debug, не сериализация; `Eval` — реализован (M1.4-7), а не «запланирован». `docs/04`: добавлены ребро `resources → intents` (Finishing.scala) и слой валидации (`ValidationTypes`/`TicketValidator`); `AmountBounds` в перечне `prim/Quantity`. `prim/Versions.scala`: scaladoc противопоставляет Table A.52 (словарь значений типа) и Table 3.1 (SHALL `"2.2"` для конформных документов); тест `EnumLaws` «accepts only \"2.2\"» добавлен. Ссылки в `docs/02`/`docs/03` приведены к полным путям (`./reference/scala/…`, `./reference/cats/…`).
+
+#### M1.5-3. Тесты и фикстуры (P3) — закрывает N-29 (тестовая часть) — `[~]` выполнено (PR-13, ожидает верификации владельцем)
 
 - lawful- и намеренно невалидные `Arbitrary` разделены;
 - генерация всех 27 Partition Keys;
@@ -1682,9 +1692,13 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 - golden-тесты структуры примеров: `Show`-рендеры фиксируются как golden-литералы с процедурой обновления, но прямо помечаются как временные — в M2 они заменяются каноническими XML/JSON;
 - счётчик покрытия вычисляется автоматически, а не хранится приблизительным числом в README.
 
-#### M1.5-4. ADR и дисциплина покрытия (P3)
+**Статус сессии (PR-13).** Все 27 ключей в `arbPart` — на месте (сохранность N-29 подтверждена). `Arbitraries.Invalid` отделён от lawful-генераторов: `arbDuplicateResourceSets` (намеренно конфликтующие по §3.4 `ResourceSet`) + негативное property в `TicketLaws` («every intentionally invalid duplicate-keys ticket is rejected», ожидается `RESOURCESET-CLASH`). Регрессионная фикстура право-смещённого overlay — существующий тест X-03 в `PartitionLaws`, без зависимости от build-лога. Conformance-сьют переехал в `laws/SpecExamplesSuite.scala` (именованные тесты с номерами разделов/таблиц, включая BOM-проверки notebook и amount=650 после change order); `modules/examples` остался демонстрационным (`Main` + `SpecExamples`), его тестовая конфигурация удалена; `laws` объявлен зависящим от `examples` (`.dependsOn(core, examples)`, решение в DR-M1.5-3 реестра). Golden-тесты: семь `Show`-литералов с процедурой обновления в scaladoc сьюта, помечены временными (M2 заменит XML/JSON). Сводка покрытия вычисляется `check-spec-coverage.sh`.
+
+#### M1.5-4. ADR и дисциплина покрытия (P3) — `[~]` выполнено (PR-13, ожидает верификации владельцем)
 
 Создать `docs/adr/0001-change-order.md` … `docs/adr/0010-codec-normalization.md` по разделу 6. Любое сознательное отклонение имеет владельца, обоснование, нормативный источник, тест и срок пересмотра. Статус покрытия не может быть «есть case class».
+
+**Статус сессии (PR-13).** Каталог `docs/adr/` дополнен до полного набора 0001–0010: созданы отсутствовавшие `0002-validation-layers-cycle-break.md`, `0003-domain-rule-form.md`, `0005-part-matches-tolerance.md`, `0006-severity-policy.md`, `0008-resource-payload-representation.md`, `0010-codec-normalization.md` (формат Nygard, русский, с миграционными последствиями и сроками пересмотра). Расхождение с планом сессии: ADR-0002/0003 считались созданными в предыдущих PR, но файлов в `docs/adr/` не было — созданы здесь (§1.1). Проверка ссылок по `docs/*` и README: все локальные и reference-ссылки разрешаются (shorthand-ссылки `docs/02`/`docs/03` приведены к полным путям).
 
 #### DoD M1.5
 
@@ -1756,7 +1770,7 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 | 10 | ADR-0001 + номинальный `ChangeOrder` | M1.4-2 | 3, 9 | compile/apply/revalidate — `[x]` (верифицировано владельцем) |
 | 11 | Тотальные builder-ы, решение по `IdAllocator`, ADR-0004 `AmountBounds` | M1.4-3, M1.4-4, M1.4-5 | 9 | `[x]` (верифицировано владельцем) |
 | 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 — `[x]` (верифицировано владельцем: чистая сборка, 180 тестов, 0 предупреждений) |
-| 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate |
+| 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate — `[~]` (выполнено, ожидает верификации владельцем) |
 | 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | компиляция без правок поведения |
 | 15+ | Пробелы глав 4/8 — один вертикальный срез на PR | M1.6 | 13 | шаблон среза выполнен |
 | 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
@@ -2134,7 +2148,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-12 | `DropItem` неполон | ✅ три поля Table 6.55 | M1.2-5 | P1 |
 | N-13 | `Notification` без `@ModuleID` и правила Milestone | ✅ поле + `DomainRule` | M1.2-5, M1.3-3 | P1 |
 | N-14 | `Header/@ID` в документном скоупе | ✅ разделить скоупы, дополнить `references` | M1.2-5 | P1 |
-| N-15 | Семь ссылок на таблицы | ✅ + автопроверка | M1.2-6 | P1 |
+| N-15 | Семь ссылок на таблицы | ✅ исправлены + автопроверка | M1.2-6 — `[~]` (PR-13) | P1 |
 | N-16 | §3.4 только точное равенство ключа | ✅ попарное сравнение через `clashesWith` + `IssueCode.ResourceSetClash` | M1.1-2, M1.3-1 — `[x]` | P1 |
 | N-17 | §6.1.2.1 частично | ✅ оба правила | M1.3-2 | P1 |
 | N-18 | `isLawful` не подключены | ✅ шина `DomainRule` (ADR-0003), все локальные законы подключены | M1.3-3 — `[x]` | P1 |
@@ -2148,24 +2162,24 @@ M1: одна обязательная быстрая платформа — Temu
 | N-26 | README `.flatMap` | ✅ `.andThen` + compile-тест | M1.0-2 | P3 |
 | N-27 | `cata` не стек-безопасен | ✅ `Eval` (cataEval + toTreeEval) | M1.4-7 — `[x]` (верифицировано владельцем) | P2 |
 | N-28 | Не-примитивы в `prim/Common` | ✅ перенос в `model/elements` | M1.4-8 | P2 |
-| N-29 | `arbPart` покрывает 5 ключей из 27 | ✅ переписать генератор | M1.2-1, M1.5-3 | P2 |
+| N-29 | `arbPart` покрывает 5 ключей из 27 | ✅ 27 ключей (M1.2-1); invalid-генераторы отделены (PR-13) | M1.2-1, M1.5-3 — `[~]` (PR-13) | P2 |
 | N-30 | `docs/03` о `.andThen` | ✅ исправить | M1.0-2 | P3 |
 | N-31 | Битая ссылка в `docs/02` | ✅ | M1.0-2 | P3 |
 | N-32 | Неточная ссылка в `docs/01` | ✅ | M1.0-2 | P3 |
-| N-33 | `matches` назван preorder | ✅ ADR-0005 | M1.5-1 | P3 |
-| N-34 | «свободный моноид» | ✅ полугруппа | M1.5-1 | P3 |
-| N-35 | «сопряжение» как факт | ✅ пометить эвристикой | M1.5-1 | P3 |
+| N-33 | `matches` назван preorder | ✅ ADR-0005 + законы (симметрия, контрпример, merge-порядок) | M1.5-1 — `[~]` (PR-13) | P3 |
+| N-34 | «свободный моноид» | ✅ свободная полугруппа (`T+`) vs свободный моноид (`T*`) | M1.5-1 — `[~]` (PR-13) | P3 |
+| N-35 | «сопряжение» как факт | ✅ структурное зеркалирование + пометка «эвристика» | M1.5-1 — `[~]` (PR-13) | P3 |
 | N-36 | Дубликат `Product` в `@Types` | ✅ decision record + строгая политика (`ProductTokenDuplicate`) | M1.3-4 — `[x]` | P1 |
 | N-37 | `Product/@PartVersion` root/child | ✅ `checkPartVersion`, правило Table 3.11 | M1.3-4 — `[x]` | P1 |
 | N-38 | Уникальность `Comment/@Language` | ✅ `Notification.law` (`CommentLanguageDuplicate`) | M1.3-3 — `[x]` | P1 |
 | N-39 | `AllResources` — bottleneck | ✅ ADR-0008 до M3 | M3.1 | P2 |
-| N-40 | `docs/04` без ребра `resources → intents` | ✅ | M1.5-2 | P3 |
-| N-41 | Scaladoc `XjdfVersion` | ✅ Table A.52 vs Table 3.1 | M1.5-2 | P3 |
+| N-40 | `docs/04` без ребра `resources → intents` | ✅ ребро добавлено (Finishing.scala: Fold/Perforate) | M1.5-2 — `[~]` (PR-13) | P3 |
+| N-41 | Scaladoc `XjdfVersion` | ✅ Table A.52 vs Table 3.1 + тест «accepts only 2.2» | M1.5-2 — `[~]` (PR-13) | P3 |
 | N-42 | Ссылки на прежний план | ✅ заменить на настоящий `ROADMAP.md` | M1.0-5 | P3 |
 | N-43 | Нет CI | ✅ | M1.0-1 | P4 |
 | N-44 | Нет `sbt-scalafmt` | ✅ | M1.0-1 | P4 |
 | N-45 | Нет LICENSE | ✅ после решения владельца | M1.0-4 | P4 |
-| N-46 | Нет реестра покрытия | ✅ `docs/SPEC-COVERAGE.md` + checker | M1.2-6 | P4 |
+| N-46 | Нет реестра покрытия | ✅ `docs/SPEC-COVERAGE.md` + `scripts/check-spec-coverage.sh` (5 проверок + сводка) | M1.2-6 — `[~]` (PR-13) | P4 |
 | X-01 | `Monoid[ValidatedNec]` отсутствует | ❌ отклонено | M1.0-3 (compile-тест) | — |
 | X-02 | `IntegerRange` нисходящие сломаны | ❌ отклонено; только rename | M1.1-4 | P2 |
 | X-03 | Красный `build.log` в VCS | ⚠️ не воспроизводится | M1.0-4 (правило) | P4 |
@@ -2492,21 +2506,29 @@ M1: одна обязательная быстрая платформа — Temu
 | `build.sbt` | M1.0-1 (команды CI), M1.4-6 (при выборе `cats-laws`/`discipline`) |
 | `LICENSE` (новый, после решения владельца) | M1.0-4 |
 | `ROADMAP.md` | настоящий консолидированный документ (M1.0-5) |
-| `README.md` | M1.0-2, M1.0-5, M1.5-3 |
-| `docs/01-category-theory-view.md` | M1.0-2, M1.5-1 |
+| `README.md` | M1.0-2, M1.0-5, M1.5-3 (ссылка на SPEC-COVERAGE, PR-13) |
+| `docs/01-category-theory-view.md` | M1.0-2, M1.5-1 (PR-13) |
 | `docs/02-scala3-features.md` | M1.0-2, M1.0-5, M1.5-2 |
 | `docs/03-cats-mapping.md` | M1.0-2, M1.0-5, M1.5-2 |
-| `docs/04-architecture.md` | M1.0-5, M1.5-2 |
+| `docs/04-architecture.md` | M1.0-5, M1.5-2, M1.5-3 (PR-13) |
 | `docs/adr/*` (новые) | M1.5-4 (ADR-0001 … ADR-0010); каждый ADR фиксируется перед своей задачей |
 | `docs/adr/0001-change-order.md` | M1.4-2 (создан в PR-10) |
+| `docs/adr/0002-validation-layers-cycle-break.md` | M1.4-1 (файл создан в PR-13) |
+| `docs/adr/0003-domain-rule-form.md` | M1.3-3 (файл создан в PR-13) |
 | `docs/adr/0004-amount-range-semantics.md` | M1.4-5 (создан до кода PR-11) |
+| `docs/adr/0005-part-matches-tolerance.md` | M1.5-1 (создан в PR-13) |
+| `docs/adr/0006-severity-policy.md` | M1.3-5 (файл создан в PR-13) |
 | `docs/adr/0007-closed-enums-vs-open-catalogs.md` | M1.2-2 (создан в PR-5) |
+| `docs/adr/0008-resource-payload-representation.md` | M3.1 (файл создан в PR-13) |
+| `docs/adr/0009-law-infrastructure.md` | M1.4-6 (создан в PR-12) |
+| `docs/adr/0010-codec-normalization.md` | M2.2 (файл создан в PR-13) |
 | `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4 |
+| `scripts/check-spec-coverage.sh` (новый) | M1.2-6 (создан в PR-13; в CI подключается вместе с возвратом CI) |
 | `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги |
 | `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`) |
 | `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountBounds`), M1.4-6 (алгебры) |
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
-| `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only) |
+| `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only, PR-13) |
 | `prim/Common.scala` | M1.4-8 (перенос элементов), каталоги; M1.2-2 (`Catalog.NamedColor`) |
 | `model/elements/*` (новый пакет) | M1.4-8 |
 | `model/Partition.scala` | M1.2-1, M1.4-3, M1.0-5 (scaladoc-ссылка) |
@@ -2527,15 +2549,17 @@ M1: одна обязательная быстрая платформа — Temu
 | `resources/NodeInfo.scala` | M1.2-6, M1.6 (`GangSource`, `MISDetails`) |
 | `resources/AllResources.scala` | M1.2-4 (optional payload), подготовка ADR-0008 |
 | `intents/*` | M1.3-3, M1.6; M1.2-2 (`Binding.scala`, `MediaLayout.scala` — тип цветовых полей) |
-| `laws/Arbitraries.scala` | M1.2-1, M1.5-3 |
+| `laws/Arbitraries.scala` | M1.2-1, M1.5-3 (lawful/`Invalid` разделены в PR-13) |
 | `laws/AlgebraLaws.scala` | M1.0-3, M1.1-4, M1.4-5, M1.4-6 |
-| `laws/PartitionLaws.scala` | M1.2-1, M1.5-1 |
-| `laws/TicketLaws.scala` | M1.0-2, M1.1-1, M1.1-3, M1.3-*, M1.5-3 |
+| `laws/PartitionLaws.scala` | M1.2-1, M1.5-1 (законы толерантности и merge-порядка, PR-13) |
+| `laws/TicketLaws.scala` | M1.0-2, M1.1-1, M1.1-3, M1.3-*, M1.5-3 (негативное property на `Invalid`, PR-13) |
+| `laws/SpecExamplesSuite.scala` (новый) | M1.5-3 (conformance + golden, создан в PR-13) |
 | `laws/ChangeOrderLaws.scala` (новый) | M1.4-2 |
 | `laws/AlignmentLaws.scala` | M1.4-6 |
-| `laws/EnumLaws.scala` (новый) | M1.2-2 (golden-токены, открытые каталоги, сверка с Appendix A) |
+| `laws/EnumLaws.scala` (новый) | M1.2-2 (golden-токены, открытые каталоги, сверка с Appendix A), M1.5-2 (тест `XjdfVersion`, PR-13) |
 | `examples/SpecExamples.scala` | M1.1-1, M1.2-3, M1.2-4, M1.4-2, M1.5-3 |
 | `examples/Main.scala` | M1.1-1, M1.5-3 |
+| `examples/src/test/SpecExamplesSuite.scala` (удалён) | M1.5-3 (переехал в `laws/SpecExamplesSuite.scala`, PR-13) |
 
 ---
 
@@ -2614,4 +2638,4 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-12 выполнены. PR-12 (M1.4-6/7: алгебраические инстансы и stack-safe BOM): ADR-0009 зафиксирован (рукописные сьюты), `CommutativeMonoid` для `XYPair`/`Points`/`TimeSpan`, `Order` для `Coverage`/`UnitInterval`/`IntegerRange`/`TimeSpan`, scaladoc о недостижимости `Monoid` для `AuditPool`/`AmountPool`, `cataEval`/`toTreeEval` с `Eval.defer`, deep-тест ≥10 000. Статус `[x] (верифицировано владельцем)`: чистая сборка, 180 тестов зелёных, 0 предупреждений. Следующий по плану — PR-13 (M1.2-6, M1.5-1…M1.5-4: scaladoc-ссылки, SPEC-COVERAGE, docs/ADR).
+**Краткий следующий шаг:** PR-1…PR-12 выполнены и верифицированы владельцем. PR-13 (M1.2-6 + M1.5-1…M1.5-4) выполнен статически: семь scaladoc-ссылок исправлены; `docs/SPEC-COVERAGE.md` пересобран + `scripts/check-spec-coverage.sh` (5 проверок, прогнан статически, ловит намеренные нарушения); `docs/01` исправлен категориально (толерантность, свободные полугруппы, «эвристики») с законами в `PartitionLaws`; `docs/02/03/04` приведены к фактическому состоянию (AmountBounds, State-`IdAllocator`, ребро `resources → intents`, слой валидации); `XjdfVersion` объяснён в scaladoc (Table A.52 vs Table 3.1) + тест; conformance-сьют примеров переехал в `laws/SpecExamplesSuite.scala` с golden-литералами, `Arbitraries.Invalid` отделён от lawful; каталог ADR дополнен до 0001–0010; ссылки `docs/*`/README проверены. Статусы M1.2-6, M1.5-1…M1.5-4 — `[~]`, ожидают прогона владельца (Приложение D). Следующий по плану — PR-14 (M1.4-8: перенос элементов в `model/elements`), затем PR-15+ (M1.6).

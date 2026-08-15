@@ -4,7 +4,7 @@ import cats.Show
 import cats.data.{Validated, ValidatedNec}
 import munit.FunSuite
 import xjdf4s.examples.SpecExamples
-import xjdf4s.model.{AmountPool, Bom, Issue, ResourceSetName, XJDF, validate}
+import xjdf4s.model.{Bom, Issue, ResourceSetName, XJDF, validate}
 import xjdf4s.prim.Amount
 
 /** Conformance suite for the worked examples of the XJDF specification
