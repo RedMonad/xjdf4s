@@ -20,8 +20,10 @@ change order — действие моноида эндоморфизмов на
 Код использует: opaque types (все типы Appendix A), named tuples
 (`XYPair`, `Matrix`, `WorkstepKey`…), enum (40+ закрытых перечислений и
 GADT-суммы полезных нагрузок), union types (`BindingDetails`,
-`OrientationSpec`), intersection types (`ChangeOrder = XJDF & Partial`),
-match types (`ValueOf[PartitionKey]`), trait-параметры, context functions.
+`OrientationSpec`), match types (`ValueOf[PartitionKey]`), trait-параметры,
+context functions. Intersection types сознательно не используются для
+change order: `XJDF & Partial` вырожден при `XJDF <: Partial` (N-20,
+ADR-0001); честная демонстрация — в M4 (`Query & WithSubscription`).
 cats даёт законы: `ValidatedNec` (валидация-аккумулятор), `Semigroup`/`Monoid`/
 `Semilattice` (Part, AmountPool, AuditPool, Matrix, Patch), `FunctionK`
 (выравнивание сигнал→аудит, Table 3.2), `Ior`, `State`, `Show`/`Eq`/`Order`.

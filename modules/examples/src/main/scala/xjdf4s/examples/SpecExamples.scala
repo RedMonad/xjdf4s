@@ -236,21 +236,32 @@ object SpecExamples:
       }
     }
 
-  /** A change order: raise the amount of the brochure run (a `Patch`). */
-  val changeOrder: Patch =
-    Patch.updateResourceSets { rs =>
-      if rs.name == ResourceSetName.unsafe("Component") && rs.usage.contains(Usage.Output) then
-        Some(
-          rs.copy(resources = rs.resources.map { r =>
-            r.copy(amountPool = Some(AmountPool.of(PartAmount(amount = Some(Amount(650.0))))))
-          })
+  /** Example 9.6-style change order: raise the brochure run amount (§1.3.2).
+   *  A nominal partial document (ADR-0001), not a degenerate `XJDF & Partial`.
+   */
+  val changeOrder: ChangeOrder =
+    ChangeOrder(
+      jobId = JobId.unsafe("Brochure-2026"),
+      resourceSets = Chain.one(
+        ResourceSet(
+          name = ResourceSetName.unsafe("Component"),
+          usage = Some(Usage.Output),
+          resources = Chain.one(
+            Resource(
+              specific = Some(ResourcePayload.ComponentResource(Component.of(Catalog.ProductType.Brochure))),
+              id = Some(Id.unsafe("comp_1")),
+              amountPool = Some(AmountPool.of(PartAmount(amount = Some(Amount(650.0)))))
+            )
+          )
         )
-      else Some(rs)
-    }
+      )
+    )
 
-  /** The brochure ticket after the change order has been applied. */
+  /** The brochure ticket after the change order has been compiled, applied
+   *  and revalidated (ADR-0001).
+   */
   val updatedBrochureJob: ValidatedNec[Issue, XJDF] =
-    chainV(brochureJob.map(_.withPatch(changeOrder)))(t => t.validate.as(t))
+    chainV(brochureJob)(_.applyChange(changeOrder))
 
   /** Render everything for the demo main. */
   def renderAll: List[String] =

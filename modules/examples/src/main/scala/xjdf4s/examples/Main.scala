@@ -38,9 +38,9 @@ object Main:
               println(s"  amount validation: ${Bom.validateAmounts(tree)}")
             }
 
-  /** The monoid action of change orders on tickets. */
+  /** A nominal change order compiled to a Patch and revalidated (ADR-0001). */
   private def demoChangeOrder(): Unit =
-    println("\n--- Change order: Patch monoid action ---")
+    println("\n--- Change order: compile + applyChange (ADR-0001) ---")
     SpecExamples.updatedBrochureJob match
       case cats.data.Validated.Invalid(issues) =>
         println(s"invalid: ${issues.toChain.toList.map(_.message).mkString("; ")}")

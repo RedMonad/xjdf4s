@@ -41,7 +41,10 @@ model/       скелет XJDF
   Intent     Intent, IntentName
   Resource   ProcessType, ProcessPath, ProcessIndex, ResourceSetName,
              ResourceSet, ResourceSetKey, Resource, OrientationSpec (union)
-  Ticket     XJDF, ChangeOrder (intersection), WorkstepKey (named tuple)
+  Ticket     XJDF, WorkstepKey (named tuple)
+  ChangeOrder
+             номинальный partial-документ (§1.3.2, §1.6.5, ADR-0001);
+             compile → Patch; applyChange ревалидирует результат
   Patch      Patch (Endo-моноид), mergeResourceSets (Ior),
              extension XJDF.withPatch
   ValidationTypes

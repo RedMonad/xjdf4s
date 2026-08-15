@@ -54,3 +54,18 @@ class SpecExamplesSuite extends FunSuite:
     val t = SpecExamples.brochureJob
     assertConstructs("brochureJob")(t)
     t.toOption.foreach(x => assert(x.validate.isValid, "brochureJob validates"))
+
+  test("ADR-0001: updatedBrochureJob applies a nominal ChangeOrder and revalidates"):
+    val t = SpecExamples.updatedBrochureJob
+    assertConstructs("updatedBrochureJob")(t)
+    t.toOption.foreach { x =>
+      assert(x.validate.isValid, "updatedBrochureJob validates")
+      val amount = x
+        .resourceSetsNamed(ResourceSetName.unsafe("Component"))
+        .toList
+        .flatMap(_.resources.toList)
+        .flatMap(_.amountPool.toList)
+        .flatMap(_.toList)
+        .flatMap(_.amount.toList)
+      assertEquals(amount, List(Amount(650.0)))
+    }

@@ -96,14 +96,24 @@
 
 Ссылка: `reference/new-types/union-types.md`.
 
-## intersection types — уточнения типа на уровне маркеров
+## intersection types — отказ от вырожденного пересечения
 
-- `trait Partial` — маркер ослабленной кардинальности change order (§1.6.5);
-- `XJDF extends Partial`, и `type ChangeOrder = XJDF & Partial` — «тот же
-  тикет, но в контексте изменения». Значение одно, а API различает контексты
-  на уровне типов.
+До M1.4-2 change order моделировался как `type ChangeOrder = XJDF & Partial`
+при `XJDF extends Partial`. Пересечение было **вырождено**: `XJDF <: Partial`
+влечёт `XJDF & Partial ≡ XJDF`, ни одна сигнатура публичного API не принимала
+`ChangeOrder`, и ослабленная кардинальность §1.6.5 оставалась комментарием
+(N-20).
 
-Ссылка: `reference/new-types/intersection-types.md`.
+ADR-0001 (вариант C) заменяет пересечение номинальным `final case class
+ChangeOrder` с `Option`/`Chain`-полями. Обязателен только контекст адресации
+(`@JobID`); `compile` строит `Patch`, `applyChange` применяет его и
+**повторно валидирует** результат. `trait Partial` удалён.
+
+Честная демонстрация intersection types переносится в M4 (XJMF), где
+пересечение невырождено: `type SubscribedQuery = Query & WithSubscription`
+(два независимых trait-а, ни один не является подтипом другого).
+
+Ссылка: `reference/new-types/intersection-types.md`; решение — `docs/adr/0001-change-order.md`.
 
 ## match types — тип значения ключа зависит от самого ключа
 
