@@ -480,6 +480,22 @@ class TicketLaws extends ScalaCheckSuite:
     val t = ticket(NonEmptyChain.one(ProcessType.Cutting), resourceSets = Chain.one(rs))
     assert(t.validate.isInvalid)
 
+  test("TicketDraft.withJobPart returns Invalid instead of discarding an invalid id"):
+    val draft = dsl.TicketDraft.of("J1", ProcessType.Product).toOption.get
+    assert(draft.withJobPart("invalid id").isInvalid)
+
+  test("TicketDraft.withJobPartUnsafe throws for the same invalid id"):
+    val draft = dsl.TicketDraft.of("J1", ProcessType.Product).toOption.get
+    intercept[IllegalArgumentException](draft.withJobPartUnsafe("invalid id"))
+
+  test("TicketDraft.withProject returns Invalid instead of discarding an invalid id"):
+    val draft = dsl.TicketDraft.of("J1", ProcessType.Product).toOption.get
+    assert(draft.withProject("invalid id").isInvalid)
+
+  test("TicketDraft.withProjectUnsafe throws for the same invalid id"):
+    val draft = dsl.TicketDraft.of("J1", ProcessType.Product).toOption.get
+    intercept[IllegalArgumentException](draft.withProjectUnsafe("invalid id"))
+
   test("README example compiles and validates"):
     val ticket: ValidatedNec[Issue, XJDF] =
       dsl.TicketDraft.of("J1", ProcessType.Product).andThen(_.build)

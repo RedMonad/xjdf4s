@@ -200,11 +200,33 @@ object dsl:
       comments: Chain[Comment],
       generalIds: Chain[GeneralID]
   ):
-    def withJobPart(jobPartId: String): TicketDraft =
-      copy(jobPartId = JobPartId.from(jobPartId))
+    /** Safely sets `@JobPartID`, preserving an invalid raw value as an Issue. */
+    def withJobPart(jobPartId: String): ValidatedNec[Issue, TicketDraft] =
+      JobPartId
+        .from(jobPartId)
+        .toValidNec(Issue.error(XPath("/XJDF/@JobPartID"), s"Invalid JobPartID: '$jobPartId'"))
+        .map(value => copy(jobPartId = Some(value)))
 
-    def withProject(projectId: String): TicketDraft =
-      copy(projectId = ProjectId.from(projectId))
+    /** Sets `@JobPartID` or throws `IllegalArgumentException`. Prefer `withJobPart`. */
+    def withJobPartUnsafe(jobPartId: String): TicketDraft =
+      withJobPart(jobPartId).toEither.fold(
+        issues => throw new IllegalArgumentException(issues.head.message),
+        identity
+      )
+
+    /** Safely sets `@ProjectID`, preserving an invalid raw value as an Issue. */
+    def withProject(projectId: String): ValidatedNec[Issue, TicketDraft] =
+      ProjectId
+        .from(projectId)
+        .toValidNec(Issue.error(XPath("/XJDF/@ProjectID"), s"Invalid ProjectID: '$projectId'"))
+        .map(value => copy(projectId = Some(value)))
+
+    /** Sets `@ProjectID` or throws `IllegalArgumentException`. Prefer `withProject`. */
+    def withProjectUnsafe(projectId: String): TicketDraft =
+      withProject(projectId).toEither.fold(
+        issues => throw new IllegalArgumentException(issues.head.message),
+        identity
+      )
 
     def withProductList(pl: ProductList): TicketDraft =
       copy(productList = Some(pl))
