@@ -102,6 +102,9 @@ class EnumLaws extends FunSuite:
   test("Table A.36: Scope wire tokens"):
     assertEquals(tokensOf(Scope.all), Set("Allowed", "Device", "Estimate", "Job", "Present"))
 
+  test("Table A.50: WorkingDirection wire tokens"):
+    assertEquals(tokensOf(WorkingDirection.all), Set("Bottom", "Top"))
+
   test("Table A.8 / A.11 / A.46: the '→ None' token family"):
     // Scala reserves `None`, so four enumerations rename the case and map the
     // token explicitly (ROADMAP Appendix C).
@@ -122,7 +125,8 @@ class EnumLaws extends FunSuite:
         ("Scope", Scope.all, Scope.fromToken),
         ("BindingType", BindingType.all, BindingType.fromToken),
         ("Coating", Coating.all, Coating.fromToken),
-        ("SoftCoverScoring", SoftCoverScoring.all, SoftCoverScoring.fromToken)
+        ("SoftCoverScoring", SoftCoverScoring.all, SoftCoverScoring.fromToken),
+        ("WorkingDirection", WorkingDirection.all, WorkingDirection.fromToken)
       )
     companions.foreach: (name, all, fromToken) =>
       all.foreach: v =>
@@ -138,7 +142,8 @@ class EnumLaws extends FunSuite:
         "MediaType"         -> MediaType.all,
         "Scope"             -> Scope.all,
         "Status"            -> Status.all,
-        "BindingType"       -> BindingType.all
+        "BindingType"       -> BindingType.all,
+        "WorkingDirection"  -> WorkingDirection.all
       )
     closed.foreach: (name, all) =>
       assertEquals(all.map(_.token.value).distinct.size, all.size, s"$name has duplicate tokens")
@@ -206,7 +211,8 @@ class EnumLaws extends FunSuite:
       "StapleShape"       -> StapleShape.all,
       "Status"            -> Status.all,
       "TightBacking"      -> TightBacking.all,
-      "Usage"             -> Usage.all
+      "Usage"             -> Usage.all,
+      "WorkingDirection"  -> WorkingDirection.all
     )
 
   /** Values that the normative text lists but this model deliberately omits,
