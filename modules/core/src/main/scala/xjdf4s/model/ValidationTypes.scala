@@ -130,6 +130,12 @@ object IssueCode:
   /** A local structural law of a model node is violated (ADR-0003). */
   val LocalLawViolation: IssueCode = unsafe("LOCAL-LAW-VIOLATION")
 
+  /** Change order `@JobID` does not match the base ticket (Table 7.56, §9.8.2.1.1). */
+  val ChangeOrderJobIdMismatch: IssueCode = unsafe("CHANGE-ORDER-JOBID-MISMATCH")
+
+  /** Change order `@JobPartID` does not match the base ticket (§9.8.2.1.1). */
+  val ChangeOrderJobPartIdMismatch: IssueCode = unsafe("CHANGE-ORDER-JOBPARTID-MISMATCH")
+
 end IssueCode
 
 /** A validation finding: a stable machine-readable code, the severity class,

@@ -404,11 +404,6 @@ class TicketLaws extends ScalaCheckSuite:
     val invalid = ticket(NonEmptyChain.one(ProcessType.Product)).copy(relatedJobPartId = Some(JobPartId.unsafe("P1")))
     assert(invalid.validate.isInvalid)
 
-  test("a change order is an XJDF refined by Partial (intersection type)"):
-    val changeOrder: ChangeOrder = ticket(NonEmptyChain.one(ProcessType.Product))
-    val asXjdf: XJDF = changeOrder // the refinement is erased at the value level
-    assert(asXjdf.validate.isValid)
-
   test("§6.1.2.1: validator messages use PartitionKey.attributeName (@Option, not @OptionKey)"):
     val parent = PartBuilder.empty.withToken(PartitionKey.OptionKey, NmToken.unsafe("a")).build
     val child = PartBuilder.empty.withToken(PartitionKey.OptionKey, NmToken.unsafe("b")).build

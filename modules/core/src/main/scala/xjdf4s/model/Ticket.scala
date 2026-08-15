@@ -102,12 +102,6 @@ object XJDF:
 
 end XJDF
 
-/** A change order: the same data as an XJDF, used in the relaxed context —
- *  only the modified values are conveyed (§1.3.2, §1.6.5). An *intersection
- *  type* refines `XJDF` with the `Partial` marker at the type level.
- */
-type ChangeOrder = XJDF & Partial
-
 /** §2.2.2: the unique identification of an individual workstep — the
  *  combination of `@JobID`, `@JobPartID` and the Partition Keys defined in any
  *  `Part`. A named tuple behind an opaque type.
