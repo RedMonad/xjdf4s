@@ -176,7 +176,7 @@ object TicketValidator:
         r.amountPool.toList.flatMap: pool =>
           pool.toList.flatMap: pa =>
             val overlap = pa.part.keys.filter(parentKeys.contains)
-            overlap.map(k => s"${rs.name.toNmToken.value}/@${k.toString}")
+            overlap.map(k => s"${rs.name.toNmToken.value}/@${k.attributeName}")
     Validated.condNec(
       violations.isEmpty,
       (),

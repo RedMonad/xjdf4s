@@ -169,6 +169,26 @@ class TicketLaws extends ScalaCheckSuite:
     val asXjdf: XJDF = changeOrder // the refinement is erased at the value level
     assert(asXjdf.validate.isValid)
 
+  test("§6.1.2.1: validator messages use PartitionKey.attributeName (@Option, not @OptionKey)"):
+    val parent = PartBuilder.empty.withToken(PartitionKey.OptionKey, NmToken.unsafe("a")).build
+    val child = PartBuilder.empty.withToken(PartitionKey.OptionKey, NmToken.unsafe("b")).build
+    val rs = ResourceSet(
+      name = ResourceSetName.unsafe("Media"),
+      resources = Chain.one(
+        Resource(
+          specific = ResourcePayload.Foreign(NsPrefix.unsafe("foo"), NmToken.unsafe("Bar")),
+          parts = Chain.one(parent),
+          amountPool = Some(AmountPool.of(PartAmount(part = child)))
+        )
+      )
+    )
+    val t = ticket(NonEmptyChain.one(ProcessType.Cutting), resourceSets = Chain.one(rs))
+    val messages = t.validate.toEither match
+      case Left(issues) => issues.toChain.toList.map(_.message)
+      case Right(_)     => fail("expected the shadowing PartAmount to be rejected")
+    assert(messages.exists(_.contains("@Option")), messages.mkString("; "))
+    assert(!messages.exists(_.contains("@OptionKey")), messages.mkString("; "))
+
   test("README example compiles and validates"):
     val ticket: ValidatedNec[Issue, XJDF] =
       dsl.TicketDraft.of("J1", ProcessType.Product).andThen(_.build)
