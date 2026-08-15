@@ -90,12 +90,12 @@ object SpecExamples:
   /** Example 5.2: Split delivery — thirty books, ten to Drop1, twenty to Drop2. */
   val splitDelivery: ValidatedNec[Issue, XJDF] =
     val drop1 = PartBuilder.empty
-      .withToken(PartitionKey.ContactType, Catalog.ContactType.Delivery)
-      .withToken(PartitionKey.DropID, NmToken.unsafe("Drop1"))
+      .withTokenUnsafe(PartitionKey.ContactType, Catalog.ContactType.Delivery)
+      .withTokenUnsafe(PartitionKey.DropID, NmToken.unsafe("Drop1"))
       .build
     val drop2 = PartBuilder.empty
-      .withToken(PartitionKey.ContactType, Catalog.ContactType.Delivery)
-      .withToken(PartitionKey.DropID, NmToken.unsafe("Drop2"))
+      .withTokenUnsafe(PartitionKey.ContactType, Catalog.ContactType.Delivery)
+      .withTokenUnsafe(PartitionKey.DropID, NmToken.unsafe("Drop2"))
       .build
     val contact1 = Resource(
       specific = Some(ResourcePayload.ContactResource(

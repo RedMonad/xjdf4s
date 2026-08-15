@@ -30,8 +30,8 @@ class TicketLaws extends ScalaCheckSuite:
   /** A `Part` carrying `@Separation` and `@PartVersion` (Example 6.1). */
   private def sepVersionPart(separation: String, partVersion: String): Part =
     PartBuilder.empty
-      .withToken(PartitionKey.Separation, NmToken.unsafe(separation))
-      .withToken(PartitionKey.PartVersion, NmToken.unsafe(partVersion))
+      .withSeparation(NmToken.unsafe(separation))
+      .withTokenUnsafe(PartitionKey.PartVersion, NmToken.unsafe(partVersion))
       .build
 
   /** An `ExposedMedia` resource. The specific `ExposedMedia` resource is outside
@@ -192,19 +192,19 @@ class TicketLaws extends ScalaCheckSuite:
       specific = Some(ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city1")))))
       )),
-      parts = Chain.one(PartBuilder.empty.withToken(
+      parts = Chain.one(PartBuilder.empty.withTokenUnsafe(
         PartitionKey.ContactType,
         Catalog.ContactType.Delivery
-      ).withToken(PartitionKey.DropID, NmToken.unsafe("Drop1")).build)
+      ).withTokenUnsafe(PartitionKey.DropID, NmToken.unsafe("Drop1")).build)
     )
     val contact2 = Resource(
       specific = Some(ResourcePayload.ContactResource(
         Contact(address = Some(Address(city = Some(XjdfString.unsafe("city2")))))
       )),
-      parts = Chain.one(PartBuilder.empty.withToken(
+      parts = Chain.one(PartBuilder.empty.withTokenUnsafe(
         PartitionKey.ContactType,
         Catalog.ContactType.Delivery
-      ).withToken(PartitionKey.DropID, NmToken.unsafe("Drop2")).build)
+      ).withTokenUnsafe(PartitionKey.DropID, NmToken.unsafe("Drop2")).build)
     )
     val drop1 = Resource(
       specific = Some(ResourcePayload.DeliveryParamsResource(
@@ -405,8 +405,8 @@ class TicketLaws extends ScalaCheckSuite:
     assert(invalid.validate.isInvalid)
 
   test("§6.1.2.1: validator messages use PartitionKey.attributeName (@Option, not @OptionKey)"):
-    val parent = PartBuilder.empty.withToken(PartitionKey.OptionKey, NmToken.unsafe("a")).build
-    val child = PartBuilder.empty.withToken(PartitionKey.OptionKey, NmToken.unsafe("b")).build
+    val parent = PartBuilder.empty.withTokenUnsafe(PartitionKey.OptionKey, NmToken.unsafe("a")).build
+    val child = PartBuilder.empty.withTokenUnsafe(PartitionKey.OptionKey, NmToken.unsafe("b")).build
     val rs = ResourceSet(
       name = ResourceSetName.unsafe("Media"),
       resources = Chain.one(
@@ -442,7 +442,7 @@ class TicketLaws extends ScalaCheckSuite:
   test("§6.1.2.1 Rule 2: a PartAmount/Part may repeat a parent key when it matches one of several parent values"):
     val cyanEnglish = sepVersionPart("Cyan", "English")
     val cyanFrench  = sepVersionPart("Cyan", "French")
-    val child = PartBuilder.empty.withToken(PartitionKey.PartVersion, NmToken.unsafe("English")).build
+    val child = PartBuilder.empty.withTokenUnsafe(PartitionKey.PartVersion, NmToken.unsafe("English")).build
     val resource = exposedMedia(cyanEnglish, cyanFrench)
       .copy(amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child)))))
     val rs = ResourceSet(
@@ -454,8 +454,8 @@ class TicketLaws extends ScalaCheckSuite:
     assert(t.validate.isValid)
 
   test("§6.1.2.1 Rule 1: a PartAmount/Part SHALL NOT repeat a Partition Key uniquely specified by the parent"):
-    val parent = PartBuilder.empty.withToken(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
-    val child = PartBuilder.empty.withToken(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
+    val parent = PartBuilder.empty.withTokenUnsafe(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
+    val child = PartBuilder.empty.withTokenUnsafe(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
     val resource = exposedMedia(parent)
       .copy(amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child)))))
     val rs = ResourceSet(
@@ -469,7 +469,7 @@ class TicketLaws extends ScalaCheckSuite:
   test("§6.1.2.1 Rule 2: a repeated key value SHALL match one of the parent values (mismatch is rejected)"):
     val cyanEnglish = sepVersionPart("Cyan", "English")
     val cyanFrench  = sepVersionPart("Cyan", "French")
-    val child = PartBuilder.empty.withToken(PartitionKey.PartVersion, NmToken.unsafe("German")).build
+    val child = PartBuilder.empty.withTokenUnsafe(PartitionKey.PartVersion, NmToken.unsafe("German")).build
     val resource = exposedMedia(cyanEnglish, cyanFrench)
       .copy(amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child)))))
     val rs = ResourceSet(

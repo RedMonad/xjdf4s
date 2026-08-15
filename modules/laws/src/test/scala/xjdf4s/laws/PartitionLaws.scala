@@ -51,6 +51,19 @@ class PartitionLaws extends ScalaCheckSuite:
   property("typed constructor bySide carries the Side enum"):
     Part.bySide(Side.Front).valueOf(PartitionKey.Side).contains(PartitionValue.BySide(Side.Front))
 
+  test("PartBuilder.withValue returns Left for a mismatched runtime value kind"):
+    val result = PartBuilder.empty.withValue(PartitionKey.DocIndex, PartitionValue.Token(NmToken.unsafe("not-a-range")))
+    assert(result.isLeft)
+
+  test("PartBuilder.withValueUnsafe throws for the same mismatched value kind"):
+    intercept[IllegalArgumentException](
+      PartBuilder.empty.withValueUnsafe(PartitionKey.DocIndex, PartitionValue.Token(NmToken.unsafe("not-a-range")))
+    )
+
+  test("PartBuilder.withSeparation remains a typed non-throwing path"):
+    val builder = PartBuilder.empty.withSeparation(NmToken.unsafe("Cyan"))
+    assertEquals(builder.build.separation, Some(NmToken.unsafe("Cyan")))
+
   // --- M1.2-1: per-key law families (Table 6.4) ---------------------------
 
   property("Part.keys ↔ valueOf are consistent"):

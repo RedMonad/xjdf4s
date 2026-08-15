@@ -109,8 +109,8 @@ class ChangeOrderLaws extends FunSuite:
     assert(issuesOf(result).exists(_.code.contains(IssueCode.ResourceSetClash)))
 
   test("§6.1.2.1: a change order that breaks parent/child Part keys is caught by revalidation"):
-    val parent = PartBuilder.empty.withToken(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
-    val child = PartBuilder.empty.withToken(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
+    val parent = PartBuilder.empty.withTokenUnsafe(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
+    val child = PartBuilder.empty.withTokenUnsafe(PartitionKey.Separation, NmToken.unsafe("Cyan")).build
     val lawful = Resource(
       specific = Some(ResourcePayload.MediaResource(Media(MediaType.Paper))),
       parts = Chain.one(parent)
