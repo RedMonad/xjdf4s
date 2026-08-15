@@ -36,10 +36,13 @@ prim/        базовые типы-значения (без зависимос
              IntegerList
   Time       Timestamp, TimeSpan, TimeRange
   Enums      закрытые перечисления Appendix A + XjdfEnum/XjdfEnumCompanion
-  Common     Comment, GeneralID, Event, Milestone, Dependent, FileSpec,
-             Disposition, FileLocation, Catalog.*
+  Common     Url (Appendix A), Catalog.* (открытые каталоги токенов)
 
 model/       скелет XJDF
+  elements/  общие элементы глав 3/8 (M1.4-8, PR-14)
+    CommonElements
+             Comment, GeneralID, Event, Milestone, Dependent, FileSpec,
+             Disposition; FileLocation — внутренний coproduct FileSpec
   Partition  PartitionKey, PartitionValue, ValueOf (match type), Part, PartBuilder
   Amounts    PartWaste, PartAmount, AmountPool
   Header     Header, DeviceInfo, Notification(+union), ProcessRun, ResourceInfo
@@ -61,23 +64,27 @@ model/       скелет XJDF
   TicketValidator
              корневой валидатор, агрегирует правила (ADR-0002);
              extension XJDF.validate / XJDF.validateReport
-  IdSource   IdSource (State), IdAllocator (context function)
+  IdSource   IdSource, IdAllocator[A] = State[Map[String, Int], A]
 
 intents/     Product Intents главы 4
 resources/   Resources главы 6
 dsl/         декларативные конструкторы, возвращающие ValidatedNec
 ```
 
-Зависимости пакетов: `prim ← {model, intents, resources}`,
-`model ← {intents, resources}` (только для закрытых перечислений полезных
-нагрузок `IntentPayload`/`ResourcePayload`), **`resources ← intents`**:
+Зависимости пакетов: `prim ← elements ← {model, resources, dsl}` и
+`prim ← {model, intents, resources}`. Слой `elements` импортирует только
+`prim` и cats; обратного ребра `prim → elements` нет.
+`model ← {intents, resources}` (для закрытых перечислений полезных нагрузок
+`IntentPayload`/`ResourcePayload`), **`resources ← intents`**:
 `resources/Finishing.scala` импортирует `xjdf4s.intents.{Fold, Perforate}`
 (`FoldingParams` переиспользует элементы главы 8, объявленные рядом с
-`FoldingIntent`; N-40), `dsl ← все`. Циклов файловых зависимостей нет
-(ADR-0002, M1.4-1 / PR-9): `ValidationTypes` — фундамент с Fan-Out 0;
-`intents` и `resources` ссылаются на `model.ValidationTypes` и закрытые
-перечисления payload; корневой `TicketValidator` импортирует модель
-интентов — файловый граф ацикличен.
+`FoldingIntent`; N-40), `dsl ← все`.
+
+Циклов файловых зависимостей нет. После M1.4-8 (PR-14) symbol-aware анализ
+51 Scala-файла показывает 0 циклических SCC и 0 рёбер `prim → domain`;
+Fan-In `prim/Common.scala` снизился с baseline 14 до 8 (до 5 внутри `core`).
+`ValidationTypes` остаётся фундаментом с Fan-Out 0; корневой
+`TicketValidator` импортирует модель интентов, но обратного ребра нет.
 
 **Слой валидации** (ADR-0002, PR-9): `model/ValidationTypes.scala` (`Issue`,
 `IssueCode`, `SeverityClass`, `XPath`, `DomainRule`, `ValidationResult`,
@@ -112,10 +119,11 @@ cats; `model/TicketValidator.scala` — корневой валидатор, а�
 
 ## Что реализовано, а что осознанно отложено в `ROADMAP.md`
 
-- Реализовано: скелет XJDF 2.2 (§3), ProductList/BOM (§3.3, §4 — 8 интентов из
-  13), ResourceSet/Resource/Part/AmountPool (§3.4, §6.1), AuditPool и
-  выравнивание с сигналами (§3.2, Table 3.2), 12 ресурсов главы 6, валидатор,
-  Patch/change orders, DSL, примеры из спецификации, законы.
+- Реализовано: скелет XJDF 2.2 (§3), общие элементы глав 3/8 в
+  `model/elements`, ProductList/BOM (§3.3, §4 — 8 интентов из 13),
+  ResourceSet/Resource/Part/AmountPool (§3.4, §6.1), AuditPool и выравнивание с
+  сигналами (§3.2, Table 3.2), 12 ресурсов главы 6, валидатор, Patch/change
+  orders, DSL, примеры из спецификации, законы.
 - В `ROADMAP.md`: оставшиеся ~130 ресурсов и 5 интентов, кодеки XML/JSON
   (см. §1.4, §9.10), JSON-исключения (`$schema`, `@Name`, AuditPool-массив),
   XJMF (глава 7), интеграция с REST-эндпоинтами §9.10.3.

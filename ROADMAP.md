@@ -275,7 +275,7 @@ ThisBuild / scalacOptions ++= Seq(
 | `model.Ticket` | 7 | 11 | 30.8 | не добавлять codec-only детали и реализацию `Patch` в корневую модель |
 | `model.Product` | 7 | 5 | 20.9 | BOM-изменения защищать cycle/DAG/deep-tree тестами |
 | `model.Header` | 3 | 7 | 20.6 | явно разделить document и message ID scope |
-| `prim.Common` | 14 | 4 | 14.7 | разгрузить от непримитивных элементов отдельным механическим PR |
+| `prim.Common` | 14 baseline → 8 после PR-14 (5 внутри `core`) | 4 baseline | 14.7 baseline | `[x]` N-28: элементы перенесены в `model.elements`, остались `Url` и открытые каталоги |
 | `prim.Enums` | 24 | 2 | 6.3 | точные wire-token goldens обязательны |
 | `prim.Tokens` | 36 | 0 | 0 | стабильный фундамент; breaking changes требуют migration plan |
 | `model.IdSource` | 0 | 1 | 0 | публичная возможность объявлена, но нигде не используется |
@@ -587,7 +587,7 @@ def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
 | N-24 | `PartBuilder.set` бросает `IllegalArgumentException` без `unsafe` в имени | `model/Partition.scala:406-462`: `def set(part: Part, key: PartitionKey, value: PartitionValue): Part` через вспомогательные `expectToken`/`expectProductRef`, которые бросают исключение при несовпадении вида значения | M1.4-3 |
 | N-25 | `TicketDraft.withJobPart`/`withProject` молча глотают невалидные значения | `dsl/XjdfDsl.scala:195-199`: `def withJobPart(jobPartId: String): TicketDraft = copy(jobPartId = JobPartId.from(jobPartId))` — невалидная строка превращается в `None`. При этом `TicketDraft.of` валидирует `JobID` через `ValidatedNec` — несимметричный UX | M1.4-3 |
 | N-27 | `Bom.cata` и развёртка не стек-безопасны | `model/Product.scala:179-183`: `cata` рекурсивен без `Eval`; `toTree` тоже. Глубокий BOM (коробочное производство) — реальный кейс | M1.4-7 — `[x]` (верифицировано владельцем) |
-| N-28 | Непримитивные элементы глав 3/8 лежат в `prim/Common.scala` | Файл содержит `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`, `Catalog` — это элементы главы 8, а не примитивы Appendix A. Fan-In файла — 14 | M1.4-8 |
+| N-28 | Непримитивные элементы глав 3/8 лежат в `prim/Common.scala` | На baseline файл содержал `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, внутренний coproduct `FileLocation` и `Disposition`; Fan-In — 14. В PR-14 они перенесены в `model/elements`; `Url` (Appendix A) и `Catalog` (открытые каталоги ADR-0007) оставлены в `prim` | M1.4-8 — `[x]` (PR-14, верифицировано владельцем) |
 | N-29 | Генераторы `Arbitraries` покрывают 5 из 27 Partition Keys | `laws/Arbitraries.scala:47-55`, `arbPart` порождает только `sheetName`, `separation`, `run`, `side`, `docIndex`. Почти все сочетания overlay/matches не достигаются | M1.2-1 (тесты), M1.5-3 |
 | N-39 | `resources.AllResources` — узкое место ещё до M3 (betweenness 161.6, Fan-Out 13) | Добавление ~130 таблиц главы 6 в единый enum усилит bottleneck линейно | ADR-0008, до массового M3 |
 
@@ -900,8 +900,8 @@ flowchart TB
 
 | Слой | Содержимое | Не должен знать о |
 | --- | --- | --- |
-| prim | проверенные скалярные типы Appendix A, закрытые enum, открытые каталоги | `XJDF`, XML/JSON, HTTP |
-| elements | общие элементы глав 3/8 (`Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `Disposition`) | парсеры, эффекты |
+| prim | проверенные скалярные типы Appendix A, закрытые enum, открытые каталоги; `prim/Common.scala` после PR-14 содержит только `Url` и `Catalog` | `XJDF`, XML/JSON, HTTP, доменные пакеты |
+| elements | `model/elements/CommonElements.scala`: общие элементы глав 3/8 (`Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `Disposition`) и внутренний coproduct `FileLocation`; зависит только от `prim` и cats | парсеры, эффекты, агрегаты XJDF |
 | model | агрегаты XJDF и локальные инварианты | wire-формат, parser backend, сеть, файловая система |
 | validation | `ValidationTypes.scala` (`Issue`, `IssueCode`, `SeverityClass`, `XPath`, `DomainRule`, `ValidationResult`, `ValidationReport` — фундамент с Fan-Out 0) + `TicketValidator.scala` (корневой валидатор) | транспорт, runtime-эффекты |
 | dsl | безопасное декларативное конструирование | порядок элементов, namespace-префиксы |
@@ -1643,9 +1643,46 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 
 **Прогон владельца (PR-12).** `sbt -batch clean scalafmtCheckAll compile test examples/run` — чистая сборка, 180 тестов зелёных, 0 предупреждений; deep-тест 10 000 без `StackOverflowError`; статус `[x] (верифицировано владельцем)`.
 
-#### M1.4-8. Разгрузить `prim/Common.scala` (P2) — закрывает N-28
+#### M1.4-8. Разгрузить `prim/Common.scala` (P2) — закрывает N-28 — `[x]` выполнено (PR-14, верифицировано владельцем)
 
 Перенести `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition` в `model/elements/` (или эквивалентный пакет). Чисто механическое перемещение, **отдельным PR**, без функциональных правок. Проверить импорты, scaladoc-ссылки и граф зависимостей. `Url` и `Catalog` остаются кандидатами на `prim` — их принадлежность определяется в том же PR явно.
+
+**Статус сессии (PR-14).** Типы verbatim перенесены в
+`model/elements/CommonElements.scala`; нормативные ссылки сохранены:
+`Comment` — Table 8.14, `GeneralID` — 8.28, `Event` — 8.21, `Milestone` —
+8.50, `Dependent` — Table 3.13, `FileSpec`/`FileLocation` — 8.22,
+`Disposition` — 8.23. `FileLocation` — внутренний coproduct вариантов
+`FileSpec`, а не отдельный XJDF-элемент. Поведение и сигнатуры типов не
+менялись.
+
+**Решение о принадлежности.** `Url` остаётся в `prim` как тип Appendix A;
+`Catalog` остаётся там же как набор открытых каталогов токенов по ADR-0007 и
+§7.2. После переноса `prim/Common.scala` содержит только `Url` и `Catalog`.
+Слой `model.elements` импортирует только `prim` и cats; искусственная
+зависимость от `ValidationTypes` не добавлена.
+
+**Migration note (breaking package move).** Точечные импорты переносимых типов
+из `xjdf4s.prim` заменяются на `xjdf4s.model.elements`; wildcard
+`xjdf4s.prim.*` больше не предоставляет эти имена. Полный список внутренних
+call sites: `dsl/XjdfDsl.scala`; `model/{ChangeOrder,Header,Patch,Product,
+Resource,Ticket,TicketValidator}.scala`; `resources/{Finishing,Layout,Preview,
+RunList}.scala`; `examples/SpecExamples.scala`; `laws/{Arbitraries,
+ChangeOrderLaws,TicketLaws}.scala`.
+
+**Граф зависимостей.** Symbol-aware анализ 51 Scala-файла: 0 циклических SCC,
+0 рёбер `prim → domain`, 0 посторонних project-зависимостей у `elements`;
+Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём репозитории
+(до 5 внутри `core`). Промежуточное предупреждение E198 об устаревшем
+`xjdf4s.prim.*` в `Patch.scala` устранено в коммите проверки графа.
+
+**Документация.** `docs/04-architecture.md` отражает новый слой и граф. При
+стартовой сверке PR-13 исправлены две остаточные неточности без изменения
+кода: `IdAllocator[A]` описан как фактический `State[Map[String, Int], A]`, а
+`NonEmptyChain` — как свободная полугруппа, не моноид.
+
+**Прогон владельца.** `clean`/`compile`/`test`/`examples/run` — чисто:
+201 тест зелёный, 0 ошибок и предупреждений, `examples/run` exit 0. Статус
+`[x]` (верифицировано владельцем).
 
 #### DoD M1.4
 
@@ -1656,7 +1693,9 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 - семантика `AmountRange` зафиксирована ADR и тестами;
 - имена алгебр соответствуют носителям;
 - глубокий BOM не переполняет стек;
-- `prim` содержит именно примитивы.
+- `prim` содержит только примитивы Appendix A, закрытые enum и открытые каталоги; элементы глав 3/8 находятся в `model/elements`.
+
+**Статус M1.4:** все пункты M1.4-1…M1.4-8 выполнены и верифицированы владельцем.
 
 ### M1.5 — Документация, тестовая инфраструктура и coverage
 
@@ -1785,7 +1824,7 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 | 11 | Тотальные builder-ы, решение по `IdAllocator`, ADR-0004 `AmountBounds` | M1.4-3, M1.4-4, M1.4-5 | 9 | `[x]` (верифицировано владельцем) |
 | 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 — `[x]` (верифицировано владельцем: чистая сборка, 180 тестов, 0 предупреждений) |
 | 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate — `[x]` (верифицировано владельцем: 201 тест зелёный, `examples/run` exit 0, golden совпали) |
-| 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | компиляция без правок поведения |
+| 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | `[x]` верифицировано владельцем: 201 тест, 0 предупреждений, `examples/run` exit 0, циклов = 0 |
 | 15+ | Пробелы глав 4/8 — один вертикальный срез на PR | M1.6 | 13 | шаблон среза выполнен |
 | 16 | `LICENSE` (после решения владельца) | M1.0-4 | — | `BLOCKED` до решения |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
@@ -2175,7 +2214,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-25 | `TicketDraft` глотает вход | ✅ `ValidatedNec` + явные unsafe-варианты | M1.4-3 — `[x]` (верифицировано владельцем) | P2 |
 | N-26 | README `.flatMap` | ✅ `.andThen` + compile-тест | M1.0-2 | P3 |
 | N-27 | `cata` не стек-безопасен | ✅ `Eval` (cataEval + toTreeEval) | M1.4-7 — `[x]` (верифицировано владельцем) | P2 |
-| N-28 | Не-примитивы в `prim/Common` | ✅ перенос в `model/elements` | M1.4-8 | P2 |
+| N-28 | Не-примитивы в `prim/Common` | ✅ verbatim-перенос в `model/elements`; `Url`/`Catalog` оставлены в `prim`, SCC = 0 | M1.4-8 — `[x]` (PR-14, верифицировано владельцем) | P2 |
 | N-29 | `arbPart` покрывает 5 ключей из 27 | ✅ 27 ключей (M1.2-1); invalid-генераторы отделены (PR-13) | M1.2-1, M1.5-3 — `[x]` (PR-13, верифицировано владельцем) | P2 |
 | N-30 | `docs/03` о `.andThen` | ✅ исправить | M1.0-2 | P3 |
 | N-31 | Битая ссылка в `docs/02` | ✅ | M1.0-2 | P3 |
@@ -2543,8 +2582,8 @@ M1: одна обязательная быстрая платформа — Temu
 | `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountBounds`), M1.4-6 (алгебры) |
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
 | `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only, PR-13) |
-| `prim/Common.scala` | M1.4-8 (перенос элементов), каталоги; M1.2-2 (`Catalog.NamedColor`) |
-| `model/elements/*` (новый пакет) | M1.4-8 |
+| `prim/Common.scala` | M1.4-8: элементы удалены, оставлены `Url` и открытые каталоги; M1.2-2 (`Catalog.NamedColor`) |
+| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition` |
 | `model/Partition.scala` | M1.2-1, M1.4-3, M1.0-5 (scaladoc-ссылка) |
 | `model/Amounts.scala` | M1.2-3, M1.3-3 (`PartWaste`) |
 | `model/Product.scala` | M1.1-1, M1.3-3, M1.3-4, M1.4-7 |
@@ -2652,4 +2691,13 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-12 выполнены и верифицированы владельцем. PR-13 (M1.2-6 + M1.5-1…M1.5-4) выполнен статически: семь scaladoc-ссылок исправлены; `docs/SPEC-COVERAGE.md` пересобран + `scripts/check-spec-coverage.sh` (5 проверок, прогнан статически, ловит намеренные нарушения); `docs/01` исправлен категориально (толерантность, свободные полугруппы, «эвристики») с законами в `PartitionLaws`; `docs/02/03/04` приведены к фактическому состоянию (AmountBounds, State-`IdAllocator`, ребро `resources → intents`, слой валидации); `XjdfVersion` объяснён в scaladoc (Table A.52 vs Table 3.1) + тест; conformance-сьют примеров переехал в `laws/SpecExamplesSuite.scala` с golden-литералами, `Arbitraries.Invalid` отделён от lawful; каталог ADR дополнен до 0001–0010; ссылки `docs/*`/README проверены. Статусы M1.2-6, M1.5-1…M1.5-4 — `[x] (верифицировано владельцем)`: прогон `clean`/`compile`/`test`/`examples/run` чистый, 201 тест зелёный (0 failed), все семь `Show`-golden совпали с выводом демо, `examples/run` exit 0, чекер `RESULT: OK`. Следующий по плану — PR-14 (M1.4-8: перенос элементов в `model/elements`), затем PR-15+ (M1.6).
+**Краткий следующий шаг:** PR-1…PR-14 выполнены и верифицированы
+владельцем. PR-13 закрыл M1.2-6 и M1.5-1…M1.5-4 (201 тест,
+`examples/run` exit 0, `check-spec-coverage.sh` — `RESULT: OK`). PR-14 закрыл
+M1.4-8/N-28: общие элементы глав 3/8 verbatim перенесены из `prim/Common.scala`
+в `model/elements/CommonElements.scala`; `Url` и открытые каталоги оставлены в
+`prim`; импорты и документация обновлены; повторный анализ показывает 0 циклов
+и 0 рёбер `prim → domain`; владелец подтвердил 201 тест, 0 предупреждений и
+`examples/run` exit 0. Следующий по плану — PR-15+ (M1.6, пробелы глав 4/8).
+LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
+открытая часть M1.0-1.

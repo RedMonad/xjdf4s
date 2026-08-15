@@ -88,7 +88,7 @@ val signalToAudit: Signal => Audit             // Table 3.2
 
 Закон естественности (`map f ∘ snapshot = snapshot ∘ map f`) проверяется
 свойством в laws. `Pulse` имеет `Functor`, `NonEmptyChain` — функтор
-свободного моноида. Ссылка: `./reference/cats/docs/datatypes/functionk.md`,
+свободной полугруппы. Ссылка: `./reference/cats/docs/datatypes/functionk.md`,
 `./reference/cats/docs/typeclasses/functor.md`.
 
 ## Ior — трёхзначный итог слияния change order
@@ -99,9 +99,10 @@ val signalToAudit: Signal => Audit             // Table 3.2
 
 ## State — выделение ID как чистый эффект
 
-`IdSource.fresh: State[Counter, Id]` — генератор `@ID` без мутаций; наружу —
-context function `IdAllocator` (см. 02-scala3-features.md). Ссылка:
-`./reference/cats/docs/datatypes/state.md`.
+`IdAllocator[A] = State[Map[String, Int], A]`; `IdSource.freshId(prefix)` и
+`freshMany(prefix, n)` выделяют `@ID` без мутаций, ведя отдельный счётчик для
+каждого префикса. `IdSource.run` запускает программу с пустым состоянием (см.
+02-scala3-features.md). Ссылка: `./reference/cats/docs/datatypes/state.md`.
 
 ## Show/Eq/Order — наблюдаемость домена
 
