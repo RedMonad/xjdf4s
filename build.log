@@ -1,59 +1,166 @@
-warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Amounts.scala:79:57 
-[warn] 79 |    def head: PartAmount                          = pool.head
-[warn]    |                                                    ^^^^^^^^^
-[warn]    |                                      Infinite loop in function body
-[warn]    |                                      xjdf4s.model.AmountPool.head(pool)
-[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:18:15 
-[error] 18 |  case Created(header: Header)
-[error]    |               ^
-[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
-[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
-[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:20:16 
-[error] 20 |  case Notified(header: Header, event: Notification)
-[error]    |                ^
-[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
-[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
-[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:22:11 
-[error] 22 |  case Run(header: Header, run: ProcessRun)
-[error]    |           ^
-[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
-[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
-[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:24:16 
-[error] 24 |  case Resource(header: Header, resourceInfo: ResourceInfo)
-[error]    |                ^
-[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
-[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
-[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:26:14 
-[error] 26 |  case Status(header: Header, deviceInfo: DeviceInfo)
-[error]    |              ^
-[error]    |error overriding method header in class Audit of type => xjdf4s.model.Header;
-[error]    |  value header of type xjdf4s.model.Header needs `override` modifier
-[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Intent.scala:16:2 
-[error] 16 |  name: IntentName,
-[error]    |  ^
-[error]    |error overriding value name in trait Named of type xjdf4s.model.IntentName;
-[error]    |  value name of type xjdf4s.model.IntentName needs `override` modifier
-[error] -- [E164] Declaration Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Resource.scala:166:2 
-[error] 166 |  name: ResourceSetName,
-[error]     |  ^
-[error]     |error overriding value name in trait Named of type xjdf4s.model.ResourceSetName;
-[error]     |  value name of type xjdf4s.model.ResourceSetName needs `override` modifier
-[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Ids.scala:63:53 
-[warn] 63 |    def toList: List[IdRef]           = refs.toChain.toList
-[warn]    |                                        ^^^^^^^^^^^^^^^^^^^
-[warn]    |             Infinite loop in function body
-[warn]    |             xjdf4s.prim.IdRefs.toList(xjdf4s.prim.IdRefs.toChain(refs))
-[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Tokens.scala:69:57 
-[warn] 69 |    def toList: List[NmToken]           = tokens.toChain.toList
-[warn]    |                                          ^^^^^^^^^^^^^^^^^^^^^
-[warn]    |       Infinite loop in function body
-[warn]    |       xjdf4s.prim.NmTokens.toList(xjdf4s.prim.NmTokens.toChain(tokens))
-[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Tokens.scala:70:49 
-[warn] 70 |    def head: NmToken                   = tokens.head
-[warn]    |                                          ^^^^^^^^^^^
-[warn]    |                                       Infinite loop in function body
-[warn]    |                                       xjdf4s.prim.NmTokens.head(tokens)
-[warn] four warnings found
-[error] 7 errors found
-[error] (core / Compile / compileIncremental) Compilation failed
-[error] elapsed time: 4 s, cache 98%, 58 disk cache hits, 1 onsite task
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlgebraLaws.scala:17:40 
+[error] 17 |  private def semigroupAssociativity[A: Arbitrary](name: String)(using Semigroup[A], Eq[A]) =
+[error]    |                                        ^^^^^^^^^
+[error]    |                                        Not found: type Arbitrary
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlgebraLaws.scala:20:36 
+[error] 20 |        val s = summon[Semigroup[A]]
+[error]    |                                    ^
+[error]    |Ambiguous given instances: both parameter x$2 and parameter evidence$1 match type cats.kernel.Semigroup[A] of parameter x of method summon in object Predef
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlgebraLaws.scala:24:28 
+[error] 24 |  private def monoidLaws[A: Arbitrary](name: String)(using Monoid[A], Eq[A]) =
+[error]    |                            ^^^^^^^^^
+[error]    |                            Not found: type Arbitrary
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlgebraLaws.scala:27:33 
+[error] 27 |        val m = summon[Monoid[A]]
+[error]    |                                 ^
+[error]    |Ambiguous given instances: both parameter x$2 and parameter evidence$1 match type cats.kernel.Monoid[A] of parameter x of method summon in object Predef
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlgebraLaws.scala:32:33 
+[error] 32 |        val m = summon[Monoid[A]]
+[error]    |                                 ^
+[error]    |Ambiguous given instances: both parameter x$2 and parameter evidence$1 match type cats.kernel.Monoid[A] of parameter x of method summon in object Predef
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlgebraLaws.scala:36:33 
+[error] 36 |  private def semilatticeLaws[A: Arbitrary](name: String)(using Semilattice[A], Eq[A]) =
+[error]    |                                 ^^^^^^^^^
+[error]    |                                 Not found: type Arbitrary
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlgebraLaws.scala:39:38 
+[error] 39 |        val s = summon[Semilattice[A]]
+[error]    |                                      ^
+[error]    |Ambiguous given instances: both parameter x$2 and parameter evidence$1 match type cats.kernel.Semilattice[A] of parameter x of method summon in object Predef
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlgebraLaws.scala:44:38 
+[error] 44 |        val s = summon[Semilattice[A]]
+[error]    |                                      ^
+[error]    |Ambiguous given instances: both parameter x$2 and parameter evidence$1 match type cats.kernel.Semilattice[A] of parameter x of method summon in object Predef
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlgebraLaws.scala:49:38 
+[error] 49 |        val s = summon[Semilattice[A]]
+[error]    |                                      ^
+[error]    |Ambiguous given instances: both parameter x$2 and parameter evidence$1 match type cats.kernel.Semilattice[A] of parameter x of method summon in object Predef
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/examples/src/main/scala/xjdf4s/examples/Main.scala:45:45 
+[error] 45 |        ticket.resourceSetsNamed(xjdf4s.prim.ResourceSetName.unsafe("Component")).toList.foreach { rs =>
+[error]    |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |                    value ResourceSetName is not a member of xjdf4s.prim
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/examples/src/main/scala/xjdf4s/examples/Main.scala:59:42 
+[error] 59 |      FunctorForDemo.map(pulse)(identity).value
+[error]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |  value value is not a member of xjdf4s.model.Pulse[xjdf4s.model.Signal]
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/examples/src/main/scala/xjdf4s/examples/Main.scala:70:35 
+[error] 70 |    println(s"  Rotate90 matrix: ${Show[Matrix].show(rot90)}")
+[error]    |                                   ^^^^
+[error]    |                                   Not found: Show - did you mean Short?
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/examples/src/main/scala/xjdf4s/examples/Main.scala:71:38 
+[error] 71 |    println(s"  applied to (10, 0): ${Show[XYPair].show(rot90.applyTo(point))}")
+[error]    |                                      ^^^^
+[error]    |                                   Not found: Show - did you mean Short?
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/examples/src/main/scala/xjdf4s/examples/SpecExamples.scala:21:50 
+[error] 21 |    dsl.TicketDraft.of("J1", ProcessType.Product).flatMap(_.build)
+[error]    |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value flatMap is not a member of cats.data.ValidatedNec[xjdf4s.model.Issue, xjdf4s.dsl.dsl².TicketDraft], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.Bimonad.ops.toAllBimonadOps
+[error]    |  import cats.CommutativeFlatMap.ops.toAllCommutativeFlatMapOps
+[error]    |  import cats.CommutativeMonad.ops.toAllCommutativeMonadOps
+[error]    |  import cats.FlatMap.ops.toAllFlatMapOps
+[error]    |  import cats.Monad.ops.toAllMonadOps
+[error]    |
+[error]    |
+[error]    |
+[error]    |where:    dsl  is a package in package xjdf4s
+[error]    |          dsl² is a object in package xjdf4s.dsl
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/laws/src/test/scala/xjdf4s/laws/AlignmentLaws.scala:53:77 
+[error] 53 |      Pulse.beat(Signal(header, SignalPayload.Status(DeviceInfo(DeviceStatus.Setup)))),
+[error]    |                                                                ^^^^^^^^^^^^^^^^^^
+[error]    |          value Setup is not a member of object xjdf4s.prim.DeviceStatus
+[error] 10 errors found
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/examples/src/main/scala/xjdf4s/examples/SpecExamples.scala:26:17 
+[error] 26 |      binding <- dsl.intent(
+[error]    |                 ^
+[error]    |value flatMap is not a member of cats.data.ValidatedNec[xjdf4s.model.Issue, xjdf4s.model.Intent], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.Bimonad.ops.toAllBimonadOps
+[error]    |  import cats.CommutativeFlatMap.ops.toAllCommutativeFlatMapOps
+[error]    |  import cats.CommutativeMonad.ops.toAllCommutativeMonadOps
+[error]    |  import cats.FlatMap.ops.toAllFlatMapOps
+[error]    |  import cats.Monad.ops.toAllMonadOps
+[error]    |
+[error]    |
+[error] 27 |        "BindingIntent",
+[error] 28 |...
+[error] 35 |      )
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/examples/src/main/scala/xjdf4s/examples/SpecExamples.scala:45:21 
+[error] 45 |      cuttingInfo <- dsl.resourceSet(
+[error]    |                     ^
+[error]    |value flatMap is not a member of cats.data.ValidatedNec[xjdf4s.model.Issue, xjdf4s.model.ResourceSet], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.Bimonad.ops.toAllBimonadOps
+[error]    |  import cats.CommutativeFlatMap.ops.toAllCommutativeFlatMapOps
+[error]    |  import cats.CommutativeMonad.ops.toAllCommutativeMonadOps
+[error]    |  import cats.FlatMap.ops.toAllFlatMapOps
+[error]    |  import cats.Monad.ops.toAllMonadOps
+[error]    |
+[error]    |
+[error] 46 |        "NodeInfo",
+[error] 47 |...
+[error] 49 |      )(dsl.nodeInfo(NodeInfo(start = Some(Timestamp.ofEpochSecond(1700)))))
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/examples/src/main/scala/xjdf4s/examples/SpecExamples.scala:107:7 
+[error]  98 |    dsl.TicketDraft
+[error]  99 |      .of("splitDelivery", ProcessType.Product)
+[error] 100 |      .map(
+[error] 101 |        _.withProductList(ProductList(NonEmptyChain.one(book)))
+[error] 102 |          .withResources(
+[error] 103 |            ResourceSet(ResourceSetName.unsafe("Contact"), usage = Some(Usage.Input), resources = Chain(contact1, contact2)),
+[error] 104 |            ResourceSet(ResourceSetName.unsafe("DeliveryParams"), usage = Some(Usage.Input), resources = Chain(delivery1, delivery2))
+[error] 105 |          )
+[error] 106 |      )
+[error] 107 |      .flatMap(_.build)
+[error]     |    ^
+[error]     |value flatMap is not a member of cats.data.Validated[cats.data.NonEmptyChainImpl.Type[xjdf4s.model.Issue],
+[error]     |  xjdf4s.dsl.dsl².TicketDraft], but could be made available as an extension method.
+[error]     |
+[error]     |One of the following imports might make progress towards fixing the problem:
+[error]     |
+[error]     |  import cats.Bimonad.ops.toAllBimonadOps
+[error]     |  import cats.CommutativeFlatMap.ops.toAllCommutativeFlatMapOps
+[error]     |  import cats.CommutativeMonad.ops.toAllCommutativeMonadOps
+[error]     |  import cats.FlatMap.ops.toAllFlatMapOps
+[error]     |  import cats.Monad.ops.toAllMonadOps
+[error]     |
+[error]     |
+[error]     |
+[error]     |where:    dsl  is a package in package xjdf4s
+[error]     |          dsl² is a object in package xjdf4s.dsl
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/examples/src/main/scala/xjdf4s/examples/SpecExamples.scala:131:21 
+[error] 131 |      mediaIntent <- dsl.intent(
+[error]     |                     ^
+[error]     |value flatMap is not a member of cats.data.ValidatedNec[xjdf4s.model.Issue, xjdf4s.model.Intent], but could be made available as an extension method.
+[error]     |
+[error]     |One of the following imports might make progress towards fixing the problem:
+[error]     |
+[error]     |  import cats.Bimonad.ops.toAllBimonadOps
+[error]     |  import cats.CommutativeFlatMap.ops.toAllCommutativeFlatMapOps
+[error]     |  import cats.CommutativeMonad.ops.toAllCommutativeMonadOps
+[error]     |  import cats.FlatMap.ops.toAllFlatMapOps
+[error]     |  import cats.Monad.ops.toAllMonadOps
+[error]     |
+[error]     |
+[error] 132 |        "MediaIntent",
+[error] 133 |        IntentPayload.Media(MediaIntent(MediaType.Paper, weight = Some(Grammage(115.0))))
+[error] 134 |      )
+[error] 9 errors found
+[error] (examples / Compile / compileIncremental) Compilation failed
+[error] (laws / Test / compileIncremental) Compilation failed
+[error] elapsed time: 9 s, cache 81%, 62 disk cache hits, 14 onsite tasks
