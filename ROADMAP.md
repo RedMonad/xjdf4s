@@ -1981,7 +1981,7 @@ PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0; статус `[x]`
 `XJDF(job=laminatingJob, types=Laminating, ProductList(Product(?×100, root)))`.
 Статус `[x]` — закрыт полностью.
 
-#### M1.6-10. `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) — `[~]` (PR-20, ждёт прогона владельца)
+#### M1.6-10. `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) — `[x]` выполнено (верифицировано владельцем; PR-20)
 
 Вертикальный срез продолжает паттерн интентов главы 4 (PR-18/PR-19) и вводит
 первый локальный подэлемент главы 4.
@@ -2044,7 +2044,15 @@ PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0; статус `[x]`
 `SpecExamplesSuite` 2); `examples/run` exit 0 с
 `Embossing intent (Table 4.25): ...`; `check-spec-coverage.sh` — `RESULT: OK`.
 
-**Статус:** `[~]` — код и тесты закоммичены, прогон владельца ожидается.
+**Статус:** верифицировано владельцем (2026-08-16): `compile` — чисто
+(78 disk cache hits, 0 предупреждений); `testFull` — **284/0**
+(GlueLaws 15, HolePatternLaws 14, LaminatingIntentLaws 7, CreaseLaws 5,
+HoleMakingIntentLaws 8, AlignmentLaws 6, EmbossingIntentLaws 12, PatchLaws 13,
+ChangeOrderLaws 8, SpecExamplesSuite 26, EnumLaws 26, TicketLaws 59, BomLaws 8,
+PartitionLaws 27, AlgebraLaws 50); `examples/run` — exit 0, вывод содержит
+`Embossing intent (Table 4.25): XJDF(job=embossingJob, types=Embossing,
+ProductList(Product(?×200, root)))`; `check-spec-coverage.sh` — `RESULT: OK`.
+Статус `[x]` — закрыт полностью.
 
 #### M1.6-12. `HoleMakingIntent` (Table 4.29, §4.8) — `[x]` выполнено (верифицировано владельцем; PR-18)
 
@@ -2138,7 +2146,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 17 | `HolePattern` (Table 8.30 / Appendix F) + 3 enum + open catalogs + SHALL + LooseBinding | M1.6-5 | 16 | `[x]` верифицировано владельцем: 248 тестов, `examples/run` exit 0 |
 | 18 | `HoleMakingIntent` (Table 4.29, §4.8) + `HolePattern+` + wiring SHALL + fixture | M1.6-12 | 17 | `[x]` верифицировано владельцем: 258 тестов, `examples/run` exit 0 |
 | 19 | `LaminatingIntent` (Table 4.30, §4.9) + `LaminatingTemperature` + открытый `Catalog.Texture` | M1.6-9 | 18 | `[x]` верифицировано владельцем: 268 тестов, `examples/run` exit 0 |
-| 20 | `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) + `EmbossDirection`/`EmbossType` + SHALL `@Separation`↔`Color/@ColorType="DieLine"` | M1.6-10 | 19 | `[~]` ждёт прогона владельца |
+| 20 | `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) + `EmbossDirection`/`EmbossType` + SHALL `@Separation`↔`Color/@ColorType="DieLine"` | M1.6-10 | 19 | `[x]` верифицировано владельцем: 284 теста, `examples/run` exit 0 |
 | 21+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/12) | M1.6 | 20 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -3095,8 +3103,9 @@ PR-19 (M1.6-9) реализовал `LaminatingIntent` (Table 4.30): обяза�
 (`IssueCode.EmbossingColorNotDieLine`, `TicketValidator.checkEmbossingColorTypes`),
 `ProcessType.Embossing`, тесты `EmbossingIntentLaws` (12), golden-токены,
 фикстура `embossingJob` + conformance/golden, coverage
-(`check-spec-coverage.sh` — `RESULT: OK`); статус `[~]` — ждёт прогона
-владельца (ожидается **284/0**). Следующий срез PR-21+ выбирается из
+(`check-spec-coverage.sh` — `RESULT: OK`); верифицировано владельцем:
+**284 теста зелёных (284/0)**, `examples/run` exit 0, статус `[x]`.
+Следующий срез PR-21+ выбирается из
 M1.6-1 Certification, M1.6-4/7/8 GangSource+MISDetails+NodeInfo,
 M1.6-6 IdentificationField, M1.6-11/13 оставшихся интентов
 (`ContentCheckIntent`, `ShapeCuttingIntent`), M1.6-14 NamedFeatures или
