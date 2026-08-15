@@ -193,3 +193,24 @@ object Disposition:
   given Eq[Disposition] = Eq.fromUniversalEquals
 
 end Disposition
+
+/** The `Crease` element (Table 8.17): an individual crease line on a
+ *  component. Used by the `CreasingParams` (`Crease+`, Table 6.51) and
+ *  `FoldingParams` (`Crease*`, Table 6.74) resources. `@Depth` is measured in
+ *  microns, `@StartPosition` and `@WorkingPath` in the operation coordinate
+ *  system.
+ */
+final case class Crease(
+    depth: Option[Microns] = None,
+    startPosition: Option[XYPair] = None,
+    workingDirection: Option[WorkingDirection] = None,
+    workingPath: Option[XYPair] = None
+)
+
+object Crease:
+
+  given Show[Crease] = Show.fromToString
+
+  given Eq[Crease] = Eq.fromUniversalEquals
+
+end Crease

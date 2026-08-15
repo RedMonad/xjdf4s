@@ -556,3 +556,14 @@ end HardCoverJacket
 
 object HardCoverJacket extends XjdfEnumCompanion[HardCoverJacket]:
   val all: List[HardCoverJacket] = List(Unjacketed, Loose, GlueApplied)
+
+/** `WorkingDirection` (Table A.50): the direction from which a tool works.
+ *  Used by the `Crease` and `Cut` elements (Tables 8.17 / 8.18); the XSD type
+ *  is `EnumTopBottom` (schema.xsd) — the attribute and table name win.
+ */
+enum WorkingDirection extends XjdfEnum:
+  case Bottom, Top
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object WorkingDirection extends XjdfEnumCompanion[WorkingDirection]:
+  val all: List[WorkingDirection] = List(Bottom, Top)

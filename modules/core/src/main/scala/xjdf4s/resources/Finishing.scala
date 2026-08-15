@@ -2,7 +2,7 @@ package xjdf4s
 package resources
 
 import xjdf4s.intents.{Fold, Perforate}
-import xjdf4s.model.elements.FileSpec
+import xjdf4s.model.elements.{Crease, FileSpec}
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
@@ -44,13 +44,15 @@ end CutBlock
 
 /** The `FoldingParams` resource (Table 6.74): the parameter set of a Folding
  *  process. The geometry elements `Fold` and `Perforate` are shared with
- *  `FoldingIntent`.
+ *  `FoldingIntent`; `Crease` (Table 8.17) is used here with cardinality
+ *  `Crease*` and in `CreasingParams` with `Crease+` (Table 6.51, M3).
  */
 final case class FoldingParams(
     foldCatalog: Option[NmToken] = None,
     foldingDetails: Option[NmToken] = None,
     sheetLay: Option[SheetLay] = None,
     fileSpecs: Chain[FileSpec] = Chain.empty,
+    creases: Chain[Crease] = Chain.empty,
     folds: Chain[Fold] = Chain.empty,
     perforates: Chain[Perforate] = Chain.empty
 )
