@@ -2,7 +2,6 @@ package xjdf4s
 package prim
 
 import cats.Show
-import cats.data.Chain
 import cats.kernel.Eq
 
 /** XJDF data type `URL` (Table A.1), as defined by [RFC3986]. */

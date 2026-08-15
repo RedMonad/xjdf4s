@@ -34,7 +34,8 @@ enum Audit:
       case Resource(_, _) => NmToken.unsafe("AuditResource")
       case Status(_, _)  => NmToken.unsafe("AuditStatus")
 
-  def header: Header =
+  /** The origin Header of this audit (also available per-case via `header`). */
+  def origin: Header =
     this match
       case Created(h)    => h
       case Notified(h, _) => h
@@ -42,7 +43,7 @@ enum Audit:
       case Resource(h, _) => h
       case Status(h, _)  => h
 
-  def time: Timestamp = header.time
+  def time: Timestamp = origin.time
 
 object Audit:
 
@@ -78,20 +79,20 @@ object AuditPool:
   extension (pool: AuditPool)
     /** The underlying non-empty chain (representation). */
     def toNonEmptyChain: NonEmptyChain[Audit] = pool
-    def toList: List[Audit]                  = pool.toChain.toList
-    def latest: Audit                        = pool.last
-    def oldest: Audit                        = pool.head
+    def toList: List[Audit]                  = pool.toNonEmptyChain.toChain.toList
+    def latest: Audit                        = pool.toNonEmptyChain.last
+    def oldest: Audit                        = pool.toNonEmptyChain.head
 
     /** True when the audits are ordered chronologically from oldest to newest. */
     def isChronological: Boolean =
-      pool.toChain.toList.sliding(2).forall {
+      pool.toNonEmptyChain.toChain.toList.sliding(2).forall {
         case a :: b :: Nil => !b.time.isBefore(a.time)
         case _             => true
       }
 
     /** The process runs recorded in this pool, in order. */
     def processRuns: Chain[ProcessRun] =
-      Chain.fromSeq(pool.toChain.toList.collect { case Audit.Run(_, run) => run })
+      Chain.fromSeq(pool.toNonEmptyChain.toChain.toList.collect { case Audit.Run(_, run) => run })
 
     /** The `AuditProcessRun` that finalizes the newest workstep. */
     def latestProcessRun: Option[ProcessRun] = processRuns.lastOption
@@ -101,7 +102,7 @@ object AuditPool:
       NonEmptyChain.fromChainUnsafe(a.toNonEmptyChain.toChain ++ b.toNonEmptyChain.toChain)
 
   given Show[AuditPool] =
-    Show.show(pool => pool.toChain.toList.map(Show[Audit].show).mkString("[", "\n, ", "]"))
+    Show.show(pool => pool.toNonEmptyChain.toChain.toList.map(Show[Audit].show).mkString("[", "\n, ", "]"))
 
   given Eq[AuditPool] = Eq.fromUniversalEquals
 

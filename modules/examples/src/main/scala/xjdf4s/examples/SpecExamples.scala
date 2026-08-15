@@ -23,18 +23,17 @@ object SpecExamples:
   /** Example 3.4: Amounts in a Notebook — a 10-copy notebook BOM. */
   val notebook: ValidatedNec[Issue, ProductList] =
     for
-      root <- dsl.product(amount = Some(10), productType = Some("Notebook"))(
-        dsl.intent(
-          "BindingIntent",
-          IntentPayload.Binding(
-            BindingIntent(
-              bindingType = BindingType.EdgeGluing,
-              bindingSide = Some(Edge.Top),
-              childRefs = Some(IdRefs.of(IdRef.unsafe("IBack"), IdRef.unsafe("IBody"), IdRef.unsafe("ICover")))
-            )
+      binding <- dsl.intent(
+        "BindingIntent",
+        IntentPayload.Binding(
+          BindingIntent(
+            bindingType = BindingType.EdgeGluing,
+            bindingSide = Some(Edge.Top),
+            childRefs = Some(IdRefs.of(IdRef.unsafe("IBack"), IdRef.unsafe("IBody"), IdRef.unsafe("ICover")))
           )
         )
       )
+      root <- dsl.product(amount = Some(10), productType = Some("Notebook"))(binding)
       cover <- dsl.product(amount = Some(1), isRoot = false, productType = Some("FrontCover"), id = Some("ICover"))()
       body  <- dsl.product(amount = Some(50), isRoot = false, productType = Some("BookBlock"), id = Some("IBody"))()
       back  <- dsl.product(amount = Some(1), isRoot = false, productType = Some("BackCover"), id = Some("IBack"))()

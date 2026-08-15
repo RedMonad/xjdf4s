@@ -65,12 +65,12 @@ object NmTokens:
     else None
 
   extension (tokens: NmTokens)
-    def toChain: NonEmptyChain[NmToken] = tokens
-    def toList: List[NmToken]           = tokens.toChain.toList
-    def head: NmToken                   = tokens.head
-    def contains(token: NmToken): Boolean = tokens.exists(_ == token)
+    /** The underlying non-empty chain (representation). */
+    def toNonEmptyChain: NonEmptyChain[NmToken] = tokens
+    def toList: List[NmToken]                   = tokens.toNonEmptyChain.toChain.toList
+    def contains(token: NmToken): Boolean       = tokens.toNonEmptyChain.exists(_ == token)
 
-  given Show[NmTokens] = Show.show(tokens => tokens.toChain.toList.mkString(" "))
+  given Show[NmTokens] = Show.show(tokens => tokens.toNonEmptyChain.toChain.toList.mkString(" "))
 
   given Eq[NmTokens] = Eq.fromUniversalEquals
 
@@ -177,7 +177,11 @@ object XPath:
 end XPath
 
 /**
- * Scala 3 trait parameters: a named element — the common surface of XJDF
+ * Scala 3 trait parameter: a named element — the common surface of XJDF
  * elements that are identified by their `@Name` (ResourceSet, Intent).
+ * The member is abstract; case-class subclasses supply it with their `name`
+ * parameter (a trait *constructor* parameter `(val name: N)` would clash with
+ * the case-class parameter of the same name and require an `override`).
  */
-trait Named[N](val name: N)
+trait Named[N]:
+  def name: N

@@ -5,7 +5,7 @@ import xjdf4s.model.*
 import xjdf4s.prim.*
 import cats.kernel.{Eq, Monoid, Semigroup, Semilattice}
 import munit.ScalaCheckSuite
-import org.scalacheck.Prop.forAll
+import org.scalacheck.Prop.*
 
 /**
  * The algebraic structures of the model are *lawful*, not accidental:

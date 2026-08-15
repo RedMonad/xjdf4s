@@ -59,11 +59,12 @@ object IdRefs:
   def from(chain: NonEmptyChain[IdRef]): IdRefs = chain
 
   extension (refs: IdRefs)
-    def toChain: NonEmptyChain[IdRef] = refs
-    def toList: List[IdRef]           = refs.toChain.toList
-    def contains(ref: IdRef): Boolean = refs.exists(_ == ref)
+    /** The underlying non-empty chain (representation). */
+    def toNonEmptyChain: NonEmptyChain[IdRef] = refs
+    def toList: List[IdRef]                   = refs.toNonEmptyChain.toChain.toList
+    def contains(ref: IdRef): Boolean         = refs.toNonEmptyChain.exists(_ == ref)
 
-  given Show[IdRefs] = Show.show(refs => refs.toChain.toList.mkString(" "))
+  given Show[IdRefs] = Show.show(refs => refs.toNonEmptyChain.toChain.toList.mkString(" "))
 
   given Eq[IdRefs] = Eq.fromUniversalEquals
 

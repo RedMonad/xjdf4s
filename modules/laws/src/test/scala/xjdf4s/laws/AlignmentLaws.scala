@@ -4,7 +4,7 @@ import xjdf4s.model.*
 import xjdf4s.prim.*
 import cats.Functor
 import munit.ScalaCheckSuite
-import org.scalacheck.Prop.forAll
+import org.scalacheck.Prop.*
 
 /**
  * Table 3.2 “Alignment of Audits and Messages” and the categorical backbone

@@ -175,7 +175,7 @@ final case class ResourceSet(
   comments: Chain[Comment] = Chain.empty,
   dependents: Chain[Dependent] = Chain.empty,
   generalIds: Chain[GeneralID] = Chain.empty
-) extends Named[ResourceSetName](name):
+) extends Named[ResourceSetName]:
 
   /** The §3.4 uniqueness key of this ResourceSet. */
   def key: ResourceSetKey = ResourceSetKey(name, usage, processUsage, combinedProcessIndex)

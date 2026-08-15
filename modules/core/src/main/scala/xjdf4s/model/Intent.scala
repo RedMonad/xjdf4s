@@ -17,7 +17,7 @@ final case class Intent(
   specific: IntentPayload,
   descriptiveName: Option[XjdfString] = None,
   externalId: Option[NmToken] = None
-) extends Named[IntentName](name):
+) extends Named[IntentName]:
 
   /** True when `@Name` matches the local element name of the payload. */
   def isLawful: Boolean = name == specific.elementName

@@ -131,11 +131,15 @@ type ValueOf[K <: PartitionKey] = K match
 
 Ссылка: `reference/new-types/match-types.md`.
 
-## trait с параметрами — общая поверхность именованных элементов
+## trait — общая поверхность именованных элементов
 
-`trait Named[N](val name: N)` реализуют `Intent` и `ResourceSet` — общий
-«именованный» интерфейс без дублирования поля. Ссылка:
-`reference/other-new-features/trait-parameters.md`.
+`trait Named[N] { def name: N }` реализуют `Intent` и `ResourceSet` — общий
+«именованный» интерфейс без дублирования поля. Член оставлен абстрактным
+сознательно: trait-конструктор `(val name: N)` конфликтовал бы с
+case-class-параметром `name` подкласса (E164: «needs `override` modifier»),
+а `Named[N](name: N)` без val не даёт членов. Ссылки:
+`reference/other-new-features/trait-parameters.md`,
+`reference/changed-features/…`.
 
 ## context functions — окружение сборки тикета
 

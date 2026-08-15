@@ -4,7 +4,7 @@ import xjdf4s.laws.Arbitraries.given
 import xjdf4s.model.*
 import xjdf4s.prim.*
 import munit.ScalaCheckSuite
-import org.scalacheck.Prop.forAll
+import org.scalacheck.Prop.*
 
 /**
  * The selection semantics of §6.1.3.2 “Selecting a Partition”, and the

@@ -61,7 +61,7 @@ final case class XJDF(
       resourceSets.flatMap(rs => Chain.fromOption(rs.id) ++ rs.resources.flatMap(r => Chain.fromOption(r.id)))
     val productIds = productList.fold(Chain.empty[Id])(_.declaredIds)
     val headerIds =
-      auditPool.fold(Chain.empty[Id])(_.toNonEmptyChain.toChain.flatMap(a => Chain.fromOption(a.header.id)))
+      auditPool.fold(Chain.empty[Id])(_.toNonEmptyChain.toChain.flatMap(a => Chain.fromOption(a.origin.id)))
     resourceIds ++ productIds ++ headerIds
 
   /** All IDREFs used inside this ticket. */
