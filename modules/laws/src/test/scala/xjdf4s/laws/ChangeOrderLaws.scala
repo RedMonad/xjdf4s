@@ -13,7 +13,7 @@ import munit.FunSuite
  */
 class ChangeOrderLaws extends FunSuite:
 
-  private def mediaSet(resourceId: Option[Id] = None): ResourceSet =
+  private def mediaSet(resourceId: Option[Id]): ResourceSet =
     ResourceSet(
       name = ResourceSetName.unsafe("Media"),
       usage = Some(Usage.Input),
