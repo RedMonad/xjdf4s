@@ -1,0 +1,1528 @@
+[error] -- [E040] Syntax Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/IdSource.scala:24:2
+[error] 24 |  def run[A](program: State[Counter, A]): A =
+[error]    |  ^^^
+[error]    |  ')' expected, but 'def' found
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/dsl/XjdfDsl.scala:100:57
+[error] 100 |          parts = Chain.one(Part.of(PartitionKey.DropID, token))
+[error]     |                                                         ^^^^^
+[error]     |Found:    (token : xjdf4s.prim.NmToken)
+[error]     |Required: xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |  failed since selector xjdf4s.model.PartitionKey
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E045] Cyclic Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/dsl/XjdfDsl.scala:124:14
+[error] 124 |    val idV = idV(id)
+[error]     |              ^
+[error]     |              Recursive value idV needs type
+[error]     |
+[error]     |               Run with -explain-cyclic for more details.
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/dsl/XjdfDsl.scala:149:13
+[error] 149 |        id = idv,
+[error]     |             ^^^
+[error]     |             Found:    (idv : Any)
+[error]     |             Required: Option[xjdf4s.prim.Id]
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/dsl/XjdfDsl.scala:157:36
+[error] 157 |  def intent(name: String, payload: IntentPayload): ValidatedNec[Issue, Intent] =
+[error]     |                                    ^^^^^^^^^^^^^
+[error]     |                                    Not found: type IntentPayload
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Amounts.scala:88:36
+[error] 88 |      NonEmptyChain.fromChainUnsafe(a.toChain ++ b.toChain)
+[error]    |                                    ^^^^^^^^^^^^^^^^^^^^^^
+[error]    |     Found:    cats.data.NonEmptyChainImpl.Type[xjdf4s.model.PartAmount]
+[error]    |     Required: cats.data.Chain[xjdf4s.model.PartAmount]
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:195:57
+[error] 195 |    NonEmptyChain.fromChainUnsafe(logs.toChain.flatMap(_.toChain))
+[error]     |                                                       ^^^^^^^^^
+[error]     |        Found:    cats.data.NonEmptyChainImpl.Type[xjdf4s.model.Audit]
+[error]     |        Required: cats.data.Chain[Any]
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Audit.scala:100:36
+[error] 100 |      NonEmptyChain.fromChainUnsafe(a.toChain ++ b.toChain)
+[error]     |                                    ^^^^^^^^^^^^^^^^^^^^^^
+[error]     |        Found:    cats.data.NonEmptyChainImpl.Type[xjdf4s.model.Audit]
+[error]     |        Required: cats.data.Chain[xjdf4s.model.Audit]
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Header.scala:143:55
+[error] 143 |    Show.show(r => s"ResourceInfo(${r.resourceSet.name.value})")
+[error]     |                                    ^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |           value value is not a member of xjdf4s.model.ResourceSetName
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Intent.scala:31:37
+[error] 31 |    Show.show(i => s"Intent(${i.name.value})")
+[error]    |                              ^^^^^^^^^^^^
+[error]    |                  value value is not a member of xjdf4s.model.IntentName
+[error] -- [E120] Naming Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:21:6
+[error] 21 |  def values: List[PartitionKey] =
+[error]    |      ^
+[error]    |Conflicting definitions:
+[error]    |def values: Array[xjdf4s.model.PartitionKey] in object PartitionKey at line 17 and
+[error]    |def values: List[xjdf4s.model.PartitionKey] in object PartitionKey at line 21
+[error]    |have the same type (): List after erasure.
+[error]    |
+[error]    |Consider adding a @targetName annotation to one of the conflicting definitions
+[error]    |for disambiguation.
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:194:47
+[error] 194 |      case PartitionKey.BinderySignatureID  => binderySignatureId
+[error]     |                                               ^^^^^^^^^^^^^^^^^^
+[error]     |Found:    (Part.this.binderySignatureId : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:195:47
+[error] 195 |      case PartitionKey.BlockName           => blockName
+[error]     |                                               ^^^^^^^^^
+[error]     |Found:    (Part.this.blockName : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:196:47
+[error] 196 |      case PartitionKey.ContactType         => contactType
+[error]     |                                               ^^^^^^^^^^^
+[error]     |Found:    (Part.this.contactType : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:197:47
+[error] 197 |      case PartitionKey.DocIndex            => docIndex
+[error]     |                                               ^^^^^^^^
+[error]     |Found:    (Part.this.docIndex : Option[xjdf4s.prim.IntegerRange])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:198:47
+[error] 198 |      case PartitionKey.DropID              => dropId
+[error]     |                                               ^^^^^^
+[error]     |Found:    (Part.this.dropId : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:199:47
+[error] 199 |      case PartitionKey.Location            => location
+[error]     |                                               ^^^^^^^^
+[error]     |Found:    (Part.this.location : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:200:47
+[error] 200 |      case PartitionKey.LotID               => lotId
+[error]     |                                               ^^^^^
+[error]     |Found:    (Part.this.lotId : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:201:47
+[error] 201 |      case PartitionKey.Metadata            => metadata
+[error]     |                                               ^^^^^^^^
+[error]     |Found:    (Part.this.metadata : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:202:47
+[error] 202 |      case PartitionKey.OptionKey           => optionKey
+[error]     |                                               ^^^^^^^^^
+[error]     |Found:    (Part.this.optionKey : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:203:47
+[error] 203 |      case PartitionKey.PageNumber          => pageNumber
+[error]     |                                               ^^^^^^^^^^
+[error]     |Found:    (Part.this.pageNumber : Option[xjdf4s.prim.IntegerRange])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:204:47
+[error] 204 |      case PartitionKey.PartVersion         => partVersion
+[error]     |                                               ^^^^^^^^^^^
+[error]     |Found:    (Part.this.partVersion : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:205:47
+[error] 205 |      case PartitionKey.PreviewType         => previewType
+[error]     |                                               ^^^^^^^^^^^
+[error]     |Found:    (Part.this.previewType : Option[xjdf4s.prim.PreviewType])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:206:47
+[error] 206 |      case PartitionKey.PrintCondition      => printCondition
+[error]     |                                               ^^^^^^^^^^^^^^
+[error]     |Found:    (Part.this.printCondition : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:207:47
+[error] 207 |      case PartitionKey.Product             => product
+[error]     |                                               ^^^^^^^
+[error]     |Found:    (Part.this.product : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:208:47
+[error] 208 |      case PartitionKey.ProductPart         => productPart
+[error]     |                                               ^^^^^^^^^^^
+[error]     |Found:    (Part.this.productPart : Option[xjdf4s.prim.IdRef])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:209:47
+[error] 209 |      case PartitionKey.QualityMeasurement  => qualityMeasurement
+[error]     |                                               ^^^^^^^^^^^^^^^^^^
+[error]     |Found:    (Part.this.qualityMeasurement : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:210:47
+[error] 210 |      case PartitionKey.Run                 => run
+[error]     |                                               ^^^
+[error]     |Found:    (Part.this.run : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:211:47
+[error] 211 |      case PartitionKey.RunIndex            => runIndex
+[error]     |                                               ^^^^^^^^
+[error]     |Found:    (Part.this.runIndex : Option[xjdf4s.prim.IntegerRange])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:212:47
+[error] 212 |      case PartitionKey.Separation          => separation
+[error]     |                                               ^^^^^^^^^^
+[error]     |Found:    (Part.this.separation : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:213:47
+[error] 213 |      case PartitionKey.SetIndex            => setIndex
+[error]     |                                               ^^^^^^^^
+[error]     |Found:    (Part.this.setIndex : Option[xjdf4s.prim.IntegerRange])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:214:47
+[error] 214 |      case PartitionKey.SheetIndex          => sheetIndex
+[error]     |                                               ^^^^^^^^^^
+[error]     |Found:    (Part.this.sheetIndex : Option[xjdf4s.prim.IntegerRange])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:215:47
+[error] 215 |      case PartitionKey.SheetName           => sheetName
+[error]     |                                               ^^^^^^^^^
+[error]     |Found:    (Part.this.sheetName : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:216:47
+[error] 216 |      case PartitionKey.Side                => side
+[error]     |                                               ^^^^
+[error]     |Found:    (Part.this.side : Option[xjdf4s.prim.Side])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:217:47
+[error] 217 |      case PartitionKey.StationName         => stationName
+[error]     |                                               ^^^^^^^^^^^
+[error]     |Found:    (Part.this.stationName : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:218:47
+[error] 218 |      case PartitionKey.TileID              => tileId
+[error]     |                                               ^^^^^^
+[error]     |Found:    (Part.this.tileId : Option[xjdf4s.prim.XYPair])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:219:47
+[error] 219 |      case PartitionKey.TransferCurveName   => transferCurveName
+[error]     |                                               ^^^^^^^^^^^^^^^^^
+[error]     |Found:    (Part.this.transferCurveName : Option[xjdf4s.prim.TransferCurveTarget])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:220:47
+[error] 220 |      case PartitionKey.WebName             => webName
+[error]     |                                               ^^^^^^^
+[error]     |Found:    (Part.this.webName : Option[xjdf4s.prim.NmToken])
+[error]     |Required: Option[xjdf4s.model.ValueOf[K]]
+[error]     |
+[error]     |where:    K is a type in method get with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[K]
+[error]     |  failed since selector K
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:291:59
+[error] 291 |    NmToken.from(name).map(t => of(PartitionKey.SheetName, t))
+[error]     |                                                           ^
+[error]     |Found:    (t : xjdf4s.prim.NmToken)
+[error]     |Required: xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |  failed since selector xjdf4s.model.PartitionKey
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:295:60
+[error] 295 |    NmToken.from(name).map(t => of(PartitionKey.Separation, t))
+[error]     |                                                            ^
+[error]     |Found:    (t : xjdf4s.prim.NmToken)
+[error]     |Required: xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |  failed since selector xjdf4s.model.PartitionKey
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:298:50
+[error] 298 |  def side(s: Side): Part = of(PartitionKey.Side, s)
+[error]     |                                                  ^
+[error]     |Found:    (s : xjdf4s.prim.Side)
+[error]     |Required: xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |  failed since selector xjdf4s.model.PartitionKey
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:302:53
+[error] 302 |    NmToken.from(name).map(t => of(PartitionKey.Run, t))
+[error]     |                                                     ^
+[error]     |Found:    (t : xjdf4s.prim.NmToken)
+[error]     |Required: xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |
+[error]     |Note: a match type could not be fully reduced:
+[error]     |
+[error]     |  trying to reduce  xjdf4s.model.ValueOf[xjdf4s.model.PartitionKey]
+[error]     |  failed since selector xjdf4s.model.PartitionKey
+[error]     |  does not match  case (xjdf4s.model.PartitionKey.DocIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.PageNumber : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.RunIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SetIndex : xjdf4s.model.PartitionKey) |
+[error]     |  (xjdf4s.model.PartitionKey.SheetIndex : xjdf4s.model.PartitionKey) => xjdf4s.prim.IntegerRange
+[error]     |  and cannot be shown to be disjoint from it either.
+[error]     |  Therefore, reduction cannot advance to the remaining cases
+[error]     |
+[error]     |    case (xjdf4s.model.PartitionKey.Side : xjdf4s.model.PartitionKey) => xjdf4s.prim.Side
+[error]     |    case (xjdf4s.model.PartitionKey.TileID : xjdf4s.model.PartitionKey) => xjdf4s.prim.XYPair
+[error]     |    case (xjdf4s.model.PartitionKey.PreviewType : xjdf4s.model.PartitionKey) => xjdf4s.prim.PreviewType
+[error]     |    case (xjdf4s.model.PartitionKey.TransferCurveName : xjdf4s.model.PartitionKey) => xjdf4s.prim.TransferCurveTarget
+[error]     |    case (xjdf4s.model.PartitionKey.ProductPart : xjdf4s.model.PartitionKey) => xjdf4s.prim.IdRef
+[error]     |    case _ => xjdf4s.prim.NmToken
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:332:85
+[error] 332 |        case PartitionKey.BinderySignatureID  => part.copy(binderySignatureId = Some(value))
+[error]     |                                                                                     ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:333:76
+[error] 333 |        case PartitionKey.BlockName           => part.copy(blockName = Some(value))
+[error]     |                                                                            ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:334:78
+[error] 334 |        case PartitionKey.ContactType         => part.copy(contactType = Some(value))
+[error]     |                                                                              ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:335:75
+[error] 335 |        case PartitionKey.DocIndex            => part.copy(docIndex = Some(value))
+[error]     |                                                                           ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.IntegerRange
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:336:73
+[error] 336 |        case PartitionKey.DropID              => part.copy(dropId = Some(value))
+[error]     |                                                                         ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:337:75
+[error] 337 |        case PartitionKey.Location            => part.copy(location = Some(value))
+[error]     |                                                                           ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:338:72
+[error] 338 |        case PartitionKey.LotID               => part.copy(lotId = Some(value))
+[error]     |                                                                        ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:339:75
+[error] 339 |        case PartitionKey.Metadata            => part.copy(metadata = Some(value))
+[error]     |                                                                           ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:340:76
+[error] 340 |        case PartitionKey.OptionKey           => part.copy(optionKey = Some(value))
+[error]     |                                                                            ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:341:77
+[error] 341 |        case PartitionKey.PageNumber          => part.copy(pageNumber = Some(value))
+[error]     |                                                                             ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.IntegerRange
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:342:78
+[error] 342 |        case PartitionKey.PartVersion         => part.copy(partVersion = Some(value))
+[error]     |                                                                              ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:343:78
+[error] 343 |        case PartitionKey.PreviewType         => part.copy(previewType = Some(value))
+[error]     |                                                                              ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.PreviewType
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:344:81
+[error] 344 |        case PartitionKey.PrintCondition      => part.copy(printCondition = Some(value))
+[error]     |                                                                                 ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:345:74
+[error] 345 |        case PartitionKey.Product             => part.copy(product = Some(value))
+[error]     |                                                                          ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:346:78
+[error] 346 |        case PartitionKey.ProductPart         => part.copy(productPart = Some(value))
+[error]     |                                                                              ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.IdRef
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:347:85
+[error] 347 |        case PartitionKey.QualityMeasurement  => part.copy(qualityMeasurement = Some(value))
+[error]     |                                                                                     ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:348:70
+[error] 348 |        case PartitionKey.Run                 => part.copy(run = Some(value))
+[error]     |                                                                      ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:349:75
+[error] 349 |        case PartitionKey.RunIndex            => part.copy(runIndex = Some(value))
+[error]     |                                                                           ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.IntegerRange
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:350:77
+[error] 350 |        case PartitionKey.Separation          => part.copy(separation = Some(value))
+[error]     |                                                                             ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:351:75
+[error] 351 |        case PartitionKey.SetIndex            => part.copy(setIndex = Some(value))
+[error]     |                                                                           ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.IntegerRange
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:352:77
+[error] 352 |        case PartitionKey.SheetIndex          => part.copy(sheetIndex = Some(value))
+[error]     |                                                                             ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.IntegerRange
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:353:76
+[error] 353 |        case PartitionKey.SheetName           => part.copy(sheetName = Some(value))
+[error]     |                                                                            ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:354:71
+[error] 354 |        case PartitionKey.Side                => part.copy(side = Some(value))
+[error]     |                                                                       ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.Side
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:355:78
+[error] 355 |        case PartitionKey.StationName         => part.copy(stationName = Some(value))
+[error]     |                                                                              ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:356:73
+[error] 356 |        case PartitionKey.TileID              => part.copy(tileId = Some(value))
+[error]     |                                                                         ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.XYPair
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:357:84
+[error] 357 |        case PartitionKey.TransferCurveName   => part.copy(transferCurveName = Some(value))
+[error]     |                                                                                    ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.TransferCurveTarget
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Partition.scala:358:74
+[error] 358 |        case PartitionKey.WebName             => part.copy(webName = Some(value))
+[error]     |                                                                          ^^^^^
+[error]     |Found:    (value : xjdf4s.model.ValueOf[K])
+[error]     |Required: xjdf4s.prim.NmToken
+[error]     |
+[error]     |where:    K is a type in method withKey with bounds <: xjdf4s.model.PartitionKey
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Patch.scala:66:26
+[error] 66 |  def addComment(comment: Comment): Patch =
+[error]    |                          ^^^^^^^
+[error]    |                          Not found: type Comment
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Patch.scala:81:22
+[error] 81 |        Issue.warning(XPath("/XJDF/ResourceSet"), s"Duplicate ResourceSet key replaced: ${Show[ResourceSetKey].show(rs.key)}")
+[error]    |                      ^^^^^
+[error]    |                 Not found: XPath - did you mean Math? or perhaps Patch?
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Product.scala:60:27
+[error] 60 |    Chain.fromSeq(products.toList.filter(_.isRoot))
+[error]    |                  ^^^^^^^^^^^^^^^
+[error]    |value toList is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.Product], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might fix the problem:
+[error]    |
+[error]    |  import cats.implicits.toFoldableOps
+[error]    |  import cats.Foldable.ops.toAllFoldableOps
+[error]    |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]    |  import cats.Reducible.ops.toAllReducibleOps
+[error]    |  import cats.Traverse.ops.toAllTraverseOps
+[error]    |  import cats.syntax.all.toFoldableOps
+[error]    |  import cats.syntax.foldable.toFoldableOps
+[error]    |  import cats.Foldable.nonInheritedOps.toFoldableOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Product.scala:63:27
+[error] 63 |    Chain.fromSeq(products.toList.filterNot(_.isRoot))
+[error]    |                  ^^^^^^^^^^^^^^^
+[error]    |value toList is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.Product], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might fix the problem:
+[error]    |
+[error]    |  import cats.implicits.toFoldableOps
+[error]    |  import cats.Foldable.ops.toAllFoldableOps
+[error]    |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]    |  import cats.Reducible.ops.toAllReducibleOps
+[error]    |  import cats.Traverse.ops.toAllTraverseOps
+[error]    |  import cats.syntax.all.toFoldableOps
+[error]    |  import cats.syntax.foldable.toFoldableOps
+[error]    |  import cats.Foldable.nonInheritedOps.toFoldableOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Product.scala:67:13
+[error] 67 |    products.toList.find(_.id.contains(id))
+[error]    |    ^^^^^^^^^^^^^^^
+[error]    |value toList is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.Product], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might fix the problem:
+[error]    |
+[error]    |  import cats.implicits.toFoldableOps
+[error]    |  import cats.Foldable.ops.toAllFoldableOps
+[error]    |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]    |  import cats.Reducible.ops.toAllReducibleOps
+[error]    |  import cats.Traverse.ops.toAllTraverseOps
+[error]    |  import cats.syntax.all.toFoldableOps
+[error]    |  import cats.syntax.foldable.toFoldableOps
+[error]    |  import cats.Foldable.nonInheritedOps.toFoldableOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Product.scala:75:27
+[error] 75 |    Chain.fromSeq(products.toList.flatMap(_.id))
+[error]    |                  ^^^^^^^^^^^^^^^
+[error]    |value toList is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.Product], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might fix the problem:
+[error]    |
+[error]    |  import cats.implicits.toFoldableOps
+[error]    |  import cats.Foldable.ops.toAllFoldableOps
+[error]    |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]    |  import cats.Reducible.ops.toAllReducibleOps
+[error]    |  import cats.Traverse.ops.toAllTraverseOps
+[error]    |  import cats.syntax.all.toFoldableOps
+[error]    |  import cats.syntax.foldable.toFoldableOps
+[error]    |  import cats.Foldable.nonInheritedOps.toFoldableOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Product.scala:87:32
+[error] 87 |    Show.show(pl => pl.products.toList.map(Show[Product].show).mkString("ProductList(", ", ", ")"))
+[error]    |                    ^^^^^^^^^^^^^^^^^^
+[error]    |value toList is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.Product], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might fix the problem:
+[error]    |
+[error]    |  import cats.implicits.toFoldableOps
+[error]    |  import cats.Foldable.ops.toAllFoldableOps
+[error]    |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]    |  import cats.Reducible.ops.toAllReducibleOps
+[error]    |  import cats.Traverse.ops.toAllTraverseOps
+[error]    |  import cats.syntax.all.toFoldableOps
+[error]    |  import cats.syntax.foldable.toFoldableOps
+[error]    |  import cats.Foldable.nonInheritedOps.toFoldableOps
+[error]    |
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Product.scala:138:89
+[error] 138 |      Left(Issue.error(XPath("/XJDF/ProductList"), s"Cycle in product structure at ID '${id.value}'"))
+[error]     |                                                                                         ^^
+[error]     |                                      Not found: id - did you mean io?
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Product.scala:161:18
+[error] 161 |      pl.products.toList.flatMap(p => p.id.map(id => id.value -> p)).toMap
+[error]     |      ^^^^^^^^^^^^^^^^^^
+[error]     |value toList is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.Product], but could be made available as an extension method.
+[error]     |
+[error]     |One of the following imports might fix the problem:
+[error]     |
+[error]     |  import cats.implicits.toFoldableOps
+[error]     |  import cats.Foldable.ops.toAllFoldableOps
+[error]     |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]     |  import cats.Reducible.ops.toAllReducibleOps
+[error]     |  import cats.Traverse.ops.toAllTraverseOps
+[error]     |  import cats.syntax.all.toFoldableOps
+[error]     |  import cats.syntax.foldable.toFoldableOps
+[error]     |  import cats.Foldable.nonInheritedOps.toFoldableOps
+[error]     |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Product.scala:198:27
+[error] 198 |    if bad.isEmpty then ().validNec
+[error]     |                        ^^^^^^^^^^^
+[error]     |value validNec is not a member of Unit, but could be made available as an extension method.
+[error]     |
+[error]     |One of the following imports might fix the problem:
+[error]     |
+[error]     |  import cats.implicits.catsSyntaxValidatedIdBinCompat0
+[error]     |  import cats.syntax.all.catsSyntaxValidatedIdBinCompat0
+[error]     |  import cats.syntax.validated.catsSyntaxValidatedIdBinCompat0
+[error]     |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Product.scala:199:83
+[error] 199 |    else Issue.error(XPath("/XJDF/ProductList"), s"Negative product amount in $p").invalidNec
+[error]     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |value invalidNec is not a member of xjdf4s.model.Issue, but could be made available as an extension method.
+[error]     |
+[error]     |One of the following imports might fix the problem:
+[error]     |
+[error]     |  import cats.implicits.catsSyntaxValidatedIdBinCompat0
+[error]     |  import cats.syntax.all.catsSyntaxValidatedIdBinCompat0
+[error]     |  import cats.syntax.validated.catsSyntaxValidatedIdBinCompat0
+[error]     |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Resource.scala:63:24
+[error] 63 |  def size: Int = steps.size
+[error]    |                  ^^^^^^^^^^
+[error]    |value size is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.ProcessType], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might fix the problem:
+[error]    |
+[error]    |  import cats.Foldable.ops.toAllFoldableOps
+[error]    |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]    |  import cats.Reducible.ops.toAllReducibleOps
+[error]    |  import cats.Traverse.ops.toAllTraverseOps
+[error]    |  import cats.implicits.toUnorderedFoldableOps
+[error]    |  import cats.UnorderedFoldable.ops.toAllUnorderedFoldableOps
+[error]    |  import cats.UnorderedTraverse.ops.toAllUnorderedTraverseOps
+[error]    |  import cats.syntax.all.toUnorderedFoldableOps
+[error]    |  import cats.syntax.foldable.toUnorderedFoldableOps
+[error]    |  import cats.syntax.unorderedFoldable.toUnorderedFoldableOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Resource.scala:66:50
+[error] 66 |  def at(index: Int): Option[ProcessType] = steps.toList.lift(index)
+[error]    |                                            ^^^^^^^^^^^^
+[error]    |value toList is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.ProcessType], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might fix the problem:
+[error]    |
+[error]    |  import cats.implicits.toFoldableOps
+[error]    |  import cats.Foldable.ops.toAllFoldableOps
+[error]    |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]    |  import cats.Reducible.ops.toAllReducibleOps
+[error]    |  import cats.Traverse.ops.toAllTraverseOps
+[error]    |  import cats.syntax.all.toFoldableOps
+[error]    |  import cats.syntax.foldable.toFoldableOps
+[error]    |  import cats.Foldable.nonInheritedOps.toFoldableOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Resource.scala:70:24
+[error] 70 |    Chain.fromSeq(steps.toList.zipWithIndex.collect { case (`pt`, i) => i })
+[error]    |                  ^^^^^^^^^^^^
+[error]    |value toList is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.ProcessType], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might fix the problem:
+[error]    |
+[error]    |  import cats.implicits.toFoldableOps
+[error]    |  import cats.Foldable.ops.toAllFoldableOps
+[error]    |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]    |  import cats.Reducible.ops.toAllReducibleOps
+[error]    |  import cats.Traverse.ops.toAllTraverseOps
+[error]    |  import cats.syntax.all.toFoldableOps
+[error]    |  import cats.syntax.foldable.toFoldableOps
+[error]    |  import cats.Foldable.nonInheritedOps.toFoldableOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Resource.scala:80:46
+[error] 80 |  given Show[ProcessPath] = Show.show(_.steps.toList.map(Show[ProcessType].show).mkString(" "))
+[error]    |                                      ^^^^^^^^^^^^^^
+[error]    |value toList is not a member of cats.data.NonEmptyChainImpl.Type[xjdf4s.model.ProcessType], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might fix the problem:
+[error]    |
+[error]    |  import cats.implicits.toFoldableOps
+[error]    |  import cats.Foldable.ops.toAllFoldableOps
+[error]    |  import cats.NonEmptyTraverse.ops.toAllNonEmptyTraverseOps
+[error]    |  import cats.Reducible.ops.toAllReducibleOps
+[error]    |  import cats.Traverse.ops.toAllTraverseOps
+[error]    |  import cats.syntax.all.toFoldableOps
+[error]    |  import cats.syntax.foldable.toFoldableOps
+[error]    |  import cats.Foldable.nonInheritedOps.toFoldableOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Resource.scala:210:44
+[error] 210 |    Show.show(rs => s"ResourceSet(${rs.name.value}${rs.usage.fold("")(u => s", ${u.token.value}")})")
+[error]     |                                    ^^^^^^^^^^^^^
+[error]     |           value value is not a member of xjdf4s.model.ResourceSetName
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Ticket.scala:63:92
+[error] 63 |    val headerIds  = auditPool.fold(Chain.empty[Id])(_.toChain.flatMap(a => Chain.fromOption(a.header.id)))
+[error]    |                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |                         Found:    cats.data.Chain[xjdf4s.prim.Id]
+[error]    |                         Required: cats.data.NonEmptyChainImpl.Type[Any]
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Ticket.scala:64:33
+[error] 64 |    resourceIds ++ productIds ++ headerIds
+[error]    |                                 ^^^^^^^^^
+[error]    |                Found:    (headerIds : cats.data.Chain[xjdf4s.prim.Id] |
+[error]    |                  cats.data.NonEmptyChainImpl.Type[Nothing])
+[error]    |                Required: cats.data.Chain[xjdf4s.prim.Id]
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Ticket.scala:95:22
+[error] 95 |    JobId.from(jobId).toValidNec(Issue.error(XPath("/XJDF"), s"Invalid JobID: '$jobId'")).map(XJDF(_, types))
+[error]    |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value toValidNec is not a member of Option[xjdf4s.prim.JobId], but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.syntax.all.catsSyntaxOption
+[error]    |  import cats.syntax.option.catsSyntaxOption
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Ticket.scala:105:15
+[error] 105 |      ).flatten
+[error]     |               ^
+[error]     |No given instance of type String | Option[String] => IterableOnce[B] was found for parameter toIterableOnce of method flatten in trait StrictOptimizedIterableOps
+[error]     |
+[error]     |where:    B is a type variable
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Validation.scala:106:106
+[error] 106 |      Issue.error(XPath("/XJDF/ResourceSet"), s"ResourceSet children do not match @Name: ${bad.map(_.name.value).mkString(", ")}")
+[error]     |                                                                                                   ^^^^^^^^^^^^
+[error]     |           value value is not a member of xjdf4s.model.ResourceSetName
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Validation.scala:115:116
+[error] 115 |      Issue.error(XPath("/XJDF/ResourceSet"), s"Resource @Status specified for output ResourceSet: ${bad.map(_.name.value).mkString(", ")}")
+[error]     |                                                                                                             ^^^^^^^^^^^^
+[error]     |           value value is not a member of xjdf4s.model.ResourceSetName
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Validation.scala:123:68
+[error] 123 |        indices.toList.filter(_.value >= size).map(i => s"${rs.name.value}@${i.value}")
+[error]     |                                                            ^^^^^^^^^^^^^
+[error]     |           value value is not a member of xjdf4s.model.ResourceSetName
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Validation.scala:171:41
+[error] 171 |            overlap.map(k => s"${rs.name.value}/@${k.toString}")
+[error]     |                                 ^^^^^^^^^^^^^
+[error]     |           value value is not a member of xjdf4s.model.ResourceSetName
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/model/Validation.scala:181:101
+[error] 181 |      p.intents.toList.filterNot(_.isLawful).map(i => s"${p.productType.fold("?")(_.value)}/${i.name.value}")
+[error]     |                                                                                              ^^^^^^^^^^^^
+[error]     |                value value is not a member of xjdf4s.model.IntentName
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Common.scala:161:12
+[error] 161 |    url.map(FileLocation.Url.apply)
+[error]     |            ^^^^^^^^^^^^^^^^^^^^^^
+[error]     | Found:    xjdf4s.prim.FileLocation.Url => xjdf4s.prim.FileLocation
+[error]     | Required: xjdf4s.prim.Url² => xjdf4s.prim.FileLocation
+[error]     |
+[error]     | where:    Url  is a class in object FileLocation
+[error]     |           Url² is a type in the top-level definitions in package prim
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Common.scala:194:18
+[error] 194 |  case Url(value: Url)
+[error]     |                  ^^^
+[error]     |                  illegal reference to class Url from enum case
+[error] -- [E120] Naming Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Enums.scala:33:6
+[error] 33 |  val values: List[Usage] = List(Input, Output)
+[error]    |      ^
+[error]    |     Conflicting definitions:
+[error]    |     def values: Array[xjdf4s.prim.Usage] in object Usage at line 29 and
+[error]    |     val values: List[xjdf4s.prim.Usage] in object Usage at line 33
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E120] Naming Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Enums.scala:41:6
+[error] 41 |  val values: List[Side] = List(Front, Back)
+[error]    |      ^
+[error]    |      Conflicting definitions:
+[error]    |      def values: Array[xjdf4s.prim.Side] in object Side at line 37 and
+[error]    |      val values: List[xjdf4s.prim.Side] in object Side at line 41
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E120] Naming Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Enums.scala:49:6
+[error] 49 |  val values: List[Sides] = List(OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead)
+[error]    |      ^
+[error]    |     Conflicting definitions:
+[error]    |     def values: Array[xjdf4s.prim.Sides] in object Sides at line 45 and
+[error]    |     val values: List[xjdf4s.prim.Sides] in object Sides at line 49
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E120] Naming Error: /Users/black-monad/Projects/xjdf4s/modules/core/src/main/scala/xjdf4s/prim/Enums.scala:57:6
+[error] 57 |  val values: List[Edge] = List(Bottom, Left, Right, Top)
+[error]    |      ^
+[error]    |      Conflicting definitions:
+[error]    |      def values: Array[xjdf4s.prim.Edge] in object Edge at line 53 and
+[error]    |      val values: List[xjdf4s.prim.Edge] in object Edge at line 57
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] 165 errors found
+[error] (core / Compile / compileIncremental) Compilation failed
+[error] elapsed time: 13 s, cache 94%, 56 disk cache hits, 3 onsite tasks
