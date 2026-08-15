@@ -1583,14 +1583,16 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 Цикл ADR-0002 не вернулся: `ChangeOrder` зависит от `TicketValidator`, обратного ребра нет. Владелец подтвердил чистый прогон `sbt -batch clean scalafmtCheckAll compile test examples/run`; статус `[x]` (верифицировано владельцем).
 
-#### M1.4-3. Тотальные конструкторы (P2) — закрывает N-24, N-25
+#### M1.4-3. Тотальные конструкторы (P2) — закрывает N-24, N-25 — `[~]` реализовано (ожидает верификации владельца)
 
 - `PartBuilder.withValue` → `Either[Issue, PartBuilder]`; бросающий вариант — `withValueUnsafe`, имя объявляет поведение;
 - для ключа, известного на этапе компиляции, сохраняется типизированный путь;
 - `TicketDraft.withJobPart`/`withProject` возвращают `ValidatedNec` либо принимают уже проверенный тип — симметрично `TicketDraft.of`;
 - правило: нет `unsafe` без safe-альтернативы; невалидный вход не превращается молча в `None`.
 
-#### M1.4-4. Решить судьбу `IdAllocator`/`IdSource` (P2) — закрывает N-22
+**Статус сессии (PR-11).** `PartBuilder.withValue` возвращает `Either[Issue, PartBuilder]`; `withValueUnsafe` и unsafe-варианты runtime helpers явно объявляют исключение. Добавлен типизированный `withSeparation`. `TicketDraft.withJobPart` и `withProject` возвращают `ValidatedNec`, а их unsafe-варианты бросают `IllegalArgumentException`. Регрессионные тесты покрывают оба поведения; внутренние call sites мигрированы на typed либо явно unsafe путь.
+
+#### M1.4-4. Решить судьбу `IdAllocator`/`IdSource` (P2) — закрывает N-22 — `[~]` реализовано (ожидает верификации владельца)
 
 Одно из двух проверяемых решений; промежуточное состояние «код есть, но не используется» недопустимо.
 
@@ -1599,9 +1601,13 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 Рекомендуется вариант 1 с чистой `State`-программой как референсом.
 
-#### M1.4-5. Пересмотреть `AmountRange` (P2) — закрывает N-23, ADR-0004
+**Статус сессии (PR-11).** Выбран вариант 1: `IdAllocator[A] = State[Map[String, Int], A]`; `IdSource.freshId`/`freshMany` и DSL `inIds`/`freshId`/`freshMany` имеют реальный Fan-In. `dsl.productWithFreshId` выделяет `Product_<n>` при отсутствии явного ID. Императивный `IdAllocator.stateful` оставлен только как явно документированная не потокобезопасная integration boundary; `WithIds` удалён. Тесты проверяют уникальность, последовательность `P_0`, `P_1` и детерминизм.
+
+#### M1.4-5. Пересмотреть `AmountRange` (P2) — закрывает N-23, ADR-0004 — `[~]` реализовано (ожидает верификации владельца)
 
 Реализовать решение ADR-0004: разделить `AmountBounds` и nominal `Amount`; исправить направления; добавить в объект комментарий-таблицу «что растёт, что падает»; `join` удалить либо переименовать в `widen` после определения порядка и law-тестов. Пустое пересечение не возвращается как валидный range.
+
+**Статус сессии (PR-11).** `AmountRange`, `join` и `Semilattice[AmountRange]` удалены. `PartAmount` хранит nominal `amount` и `AmountBounds` раздельно и проверяет согласованность. `meet` возвращает `Option` при пустом пересечении; `widen` расширяет границы. Law/regression-тесты покрывают направления, пустое пересечение, инвариант, ассоциативность, коммутативность, идемпотентность и эквивалентность `isDefined` непустому пересечению.
 
 #### M1.4-6. Уточнить алгебраические инстансы (P2) — закрывает X-05, ADR-0009
 
@@ -1744,7 +1750,7 @@ def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eva
 | 8 | Шина `DomainRule`, полный `TicketValidator`, severity | M1.3-1, M1.3-3, M1.3-4, M1.3-5 | 2, 6, 7 | все локальные законы подключены |
 | 9 | `ValidationTypes` и разрыв цикла | M1.4-1 | 8 | циклов = 0 — `[x]` (PR-9 верифицирован владельцем) |
 | 10 | ADR-0001 + номинальный `ChangeOrder` | M1.4-2 | 3, 9 | compile/apply/revalidate — `[x]` (верифицировано владельцем) |
-| 11 | Тотальные builder-ы, решение по `IdAllocator`, ADR-0004 `AmountRange` | M1.4-3, M1.4-4, M1.4-5 | 9 | нет скрытых исключений |
+| 11 | Тотальные builder-ы, решение по `IdAllocator`, ADR-0004 `AmountBounds` | M1.4-3, M1.4-4, M1.4-5 | 9 | `[~]` реализовано, ожидает верификации владельца |
 | 12 | Stack-safe BOM + алгебраические инстансы (ADR-0009) | M1.4-6, M1.4-7 | 2, 11 | глубина ≥ 10 000 |
 | 13 | Scaladoc-ссылки, `SPEC-COVERAGE`, docs/ADR, golden-примеры | M1.2-6, M1.5-1 … M1.5-4 | 4, 9 | docs/tests/coverage gate |
 | 14 | Перенос элементов в `model/elements` (чистое перемещение) | M1.4-8 | 9 | компиляция без правок поведения |
@@ -2131,10 +2137,10 @@ M1: одна обязательная быстрая платформа — Temu
 | N-19 | BOM вне `validate` | ✅ `checkBomIntegrity` через `Bom.fromProductList` | M1.3-4 — `[x]` | P1 |
 | N-20 | `ChangeOrder` вырожден | ✅ ADR-0001, вариант C; номинальный `ChangeOrder` + `compile`/`applyChange`; `& Partial` удалён | M1.4-2 — `[x]` (верифицировано владельцем) | P2 |
 | N-21 | Цикл зависимостей | ✅ ADR-0002 (реализовано в PR-9) | M1.4-1 — `[x]` | P2 |
-| N-22 | `IdAllocator` мёртв | ✅ явное решение (интегрировать/удалить) | M1.4-4 | P2 |
-| N-23 | `meet`/`join` расходятся с docs | ✅ ADR-0004 | M1.4-5 | P2 |
-| N-24 | `PartBuilder.set` бросает | ✅ safe/unsafe | M1.4-3 | P2 |
-| N-25 | `TicketDraft` глотает вход | ✅ `ValidatedNec` | M1.4-3 | P2 |
+| N-22 | `IdAllocator` мёртв | ✅ вариант 1: чистый `State` в `IdSource` и DSL | M1.4-4 — `[~]` | P2 |
+| N-23 | `meet`/`join` расходятся с docs | ✅ ADR-0004; `AmountBounds.meet`/`widen`, `AmountRange` удалён | M1.4-5 — `[~]` | P2 |
+| N-24 | `PartBuilder.set` бросает | ✅ `withValue` / `withValueUnsafe` | M1.4-3 — `[~]` | P2 |
+| N-25 | `TicketDraft` глотает вход | ✅ `ValidatedNec` + явные unsafe-варианты | M1.4-3 — `[~]` | P2 |
 | N-26 | README `.flatMap` | ✅ `.andThen` + compile-тест | M1.0-2 | P3 |
 | N-27 | `cata` не стек-безопасен | ✅ `Eval` | M1.4-7 | P2 |
 | N-28 | Не-примитивы в `prim/Common` | ✅ перенос в `model/elements` | M1.4-8 | P2 |
@@ -2494,7 +2500,7 @@ M1: одна обязательная быстрая платформа — Temu
 | `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4 |
 | `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги |
 | `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`) |
-| `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountRange`), M1.4-6 (алгебры) |
+| `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountBounds`), M1.4-6 (алгебры) |
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
 | `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only) |
 | `prim/Common.scala` | M1.4-8 (перенос элементов), каталоги; M1.2-2 (`Catalog.NamedColor`) |
@@ -2604,4 +2610,4 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-10 выполнены и верифицированы владельцем. PR-10 (M1.4-2, ADR-0001): номинальный `ChangeOrder`, `compile`/`applyChange` с повторной валидацией и удаление `trait Partial` подтверждены чистым прогоном владельца `sbt -batch clean scalafmtCheckAll compile test examples/run`. Следующий по плану — PR-11 (M1.4-3/4/5: safe API, IdAllocator, ADR-0004 AmountBounds).
+**Краткий следующий шаг:** PR-1…PR-10 выполнены и верифицированы владельцем. PR-11 (M1.4-3/4/5) реализован статически: safe/unsafe API `PartBuilder` и `TicketDraft`, чистый `State`-allocator в DSL, ADR-0004 и `AmountBounds`; статусы `[~]` до чистого прогона владельца `sbt -batch clean scalafmtCheckAll compile test examples/run`.
