@@ -2,7 +2,7 @@ package xjdf4s
 package model
 
 import xjdf4s.prim.*
-import cats.{Functor, Show}
+import cats.{Eval, Functor, Show}
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}
 import cats.kernel.Eq
 import cats.syntax.all.*
@@ -139,46 +139,79 @@ final case class Fix[F[_]](unfix: F[Fix[F]])
  *  and the `Fix[ProductTree]` tree exists exactly when those references form an
  *  acyclic forest rooted at `@IsRoot="true"` products. Cycle/unresolved-ref
  *  detection makes `fromProductList` a *monadic* unfold.
+ *
+ *  Stack safety (N-27 / M1.4-7): both `toTree` (the unfold) and `cataEval`
+ *  (the fold) use `Eval.defer` to trampoline recursive calls, making deep
+ *  BOMs (≥10 000 depth) safe against `StackOverflowError`.
  */
 object Bom:
 
   /** The recursive node type of a product BOM. */
   type Tree = Fix[ProductTree]
 
+  // ------------------------------------------------------------------
+  // Stack-safe tree unfold (N-27)
+  // ------------------------------------------------------------------
+
+  /** Stack-safe variant of `toTree` using `Eval.defer` for each recursive
+   *  descent into a child product. A chain of 10 000 `@ChildRefs` will not
+   *  overflow the JVM stack.
+   */
+  private def toTreeEval(
+      product: Product,
+      byId: Map[String, Product],
+      seen: Set[String]
+  ): Eval[Either[Issue, Fix[ProductTree]]] =
+    val currentId = product.id.map(_.value)
+    currentId match
+      case Some(id) if seen.contains(id) =>
+        Eval.now(Left(Issue.errorC(
+          IssueCode.BomCycle,
+          XPath("/XJDF/ProductList"),
+          s"Cycle in product structure at ID '$id'"
+        )))
+      case _ =>
+        val nextSeen = currentId.fold(seen)(seen + _)
+        product.references.toList.distinct match
+          case Nil =>
+            Eval.now(Right(Fix(ProductTree.Leaf(product))))
+          case refs =>
+            Eval.defer(processRefs(refs, byId, nextSeen, Chain.empty))
+              .map(_.map(cs => Fix(ProductTree.Node(product, cs))))
+
+  /** Processes child references one by one with `Eval.defer` between each
+   *  recursive call, keeping the stack bounded.
+   */
+  private def processRefs(
+      refs: List[IdRef],
+      byId: Map[String, Product],
+      nextSeen: Set[String],
+      acc: Chain[Fix[ProductTree]]
+  ): Eval[Either[Issue, Chain[Fix[ProductTree]]]] =
+    refs match
+      case Nil =>
+        Eval.now(Right(acc))
+      case ref :: rest =>
+        byId.get(ref.value) match
+          case None =>
+            Eval.now(Left(Issue.errorC(
+              IssueCode.BomUnresolvedChildRef,
+              XPath("/XJDF/ProductList"),
+              s"Unresolved ChildRef '${ref.value}'"
+            )))
+          case Some(child) =>
+            Eval.defer(toTreeEval(child, byId, nextSeen)).flatMap {
+              case Left(issue) => Eval.now(Left(issue))
+              case Right(kid) => processRefs(rest, byId, nextSeen, acc :+ kid)
+            }
+
+  /** Wrapper that evaluates the `Eval` trampoline. */
   private def toTree(
       product: Product,
       byId: Map[String, Product],
       seen: Set[String]
   ): Either[Issue, Fix[ProductTree]] =
-    val currentId = product.id.map(_.value)
-    currentId match
-      case Some(id) if seen.contains(id) =>
-        Left(Issue.errorC(
-          IssueCode.BomCycle,
-          XPath("/XJDF/ProductList"),
-          s"Cycle in product structure at ID '$id'"
-        ))
-      case _ =>
-        val nextSeen = currentId.fold(seen)(seen + _)
-        product.references.toList.distinct match
-          case Nil =>
-            Right(Fix(ProductTree.Leaf(product)))
-          case refs =>
-            val children =
-              refs.foldLeft(Right(Chain.empty[Fix[ProductTree]]): Either[Issue, Chain[Fix[ProductTree]]]) {
-                case (acc, ref) =>
-                  for
-                    kids  <- acc
-                    child <- byId.get(ref.value).toRight(
-                               Issue.errorC(
-                                 IssueCode.BomUnresolvedChildRef,
-                                 XPath("/XJDF/ProductList"),
-                                 s"Unresolved ChildRef '${ref.value}'"
-                               ))
-                    kid   <- toTree(child, byId, nextSeen)
-                  yield kids :+ kid
-              }
-            children.map(cs => Fix(ProductTree.Node(product, cs)))
+    toTreeEval(product, byId, seen).value
 
   /** Unfolds a ProductList into a forest of product trees. Fails on unresolved
    *  references and cycles. Roots are ordered as in the ProductList.
@@ -206,13 +239,33 @@ object Bom:
           Issue.errorC(IssueCode.BomNoRoot, XPath("/XJDF/ProductList"), "Empty product list"))
       )
 
+  // ------------------------------------------------------------------
+  // Stack-safe catamorphism (N-27)
+  // ------------------------------------------------------------------
+
+  /** A stack-safe catamorphism using `Eval` for trampolined recursion.
+   *  Each recursive child descent is wrapped with `Eval.defer`, bounding
+   *  the JVM call stack to a constant depth regardless of tree depth.
+   */
+  def cataEval[A](algebra: ProductTree[A] => Eval[A])(tree: Fix[ProductTree]): Eval[A] =
+    tree.unfix match
+      case ProductTree.Leaf(p) =>
+        algebra(ProductTree.Leaf(p))
+      case ProductTree.Node(p, kids) =>
+        kids.traverse(k => Eval.defer(cataEval(algebra)(k)))
+          .flatMap(cs => algebra(ProductTree.Node(p, cs)))
+
   /** A catamorphism: folds an `ProductTree[A] => A` algebra over the whole tree.
+   *  Delegates to `cataEval` — its stack safety depends on `Eval`'s trampoline,
+   *  which is guaranteed for cats `Eval` (always-eager loop). If unbounded
+   *  recursion is observed, use `cataEval` directly.
    */
   def cata[A](algebra: ProductTree[A] => A)(tree: Fix[ProductTree]): A =
-    tree.unfix match
-      case ProductTree.Leaf(p) => algebra(ProductTree.Leaf(p))
-      case ProductTree.Node(p, kids) =>
-        algebra(ProductTree.Node(p, kids.map(cata(algebra))))
+    cataEval(a => Eval.now(algebra(a)))(tree).value
+
+  // ------------------------------------------------------------------
+  // Derived folds
+  // ------------------------------------------------------------------
 
   /** Amount validation as a catamorphism: the algebra's carrier is
    *  `ValidatedNec[Issue, Unit]` — the applicative functor of accumulated
