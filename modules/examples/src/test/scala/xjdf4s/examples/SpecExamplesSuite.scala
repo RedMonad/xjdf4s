@@ -2,15 +2,14 @@ package xjdf4s.examples
 
 import cats.data.{Validated, ValidatedNec}
 import munit.FunSuite
-import xjdf4s.model.Issue
+import xjdf4s.model.{Bom, Issue}
 
 /** Smoke test that actually *executes* the specification examples, so the CI
  *  gate cannot silently pass with "No tests to run" while the suites are
  *  unexercised (ROADMAP M1.0-3).
  *
- *  Scope note (PR-1): the notebook BOM is **not** unfolded here. `Bom.fromProductList`
- *  reports a false cycle for any tree with `@ChildRefs` (N-01); the failing
- *  regression test is added together with the fix in PR-2 (M1.1-1).
+ *  Since PR-2 (M1.1-1) the notebook BOM unfolds correctly — the `Example 3.4`
+ *  test asserts the unfold and `Bom.totalCopies`, which is the N-01 regression.
  */
 class SpecExamplesSuite extends FunSuite:
 
@@ -25,8 +24,18 @@ class SpecExamplesSuite extends FunSuite:
     assertConstructs("Example 3.1")(t)
     t.toOption.foreach(x => assert(x.validate.isValid, "Example 3.1 validates"))
 
-  test("Example 3.4: notebook BOM constructs (unfolding deferred to PR-2 / M1.1-1)"):
-    assertConstructs("Example 3.4 notebook")(SpecExamples.notebook)
+  test("Example 3.4: notebook BOM unfolds and totalCopies is computed (N-01)"):
+    val pl = SpecExamples.notebook
+    assertConstructs("Example 3.4 notebook")(pl)
+    pl.toOption.foreach { list =>
+      Bom.fromProductList(list) match
+        case Left(issue) => fail(s"notebook BOM failed to unfold: ${issue.message}")
+        case Right(forest) =>
+          assertEquals(forest.toChain.toList.size, 1)
+          val copies = Bom.totalCopies(forest.head)
+          assertEquals(copies.size, 4)
+          assertEquals(copies.head._2, 10L) // the notebook root: 10 copies
+    }
 
   test("Example 3.6: combinedProcesses constructs and validates"):
     val t = SpecExamples.combinedProcesses

@@ -132,25 +132,26 @@ object Bom:
       byId: Map[String, Product],
       seen: Set[String]
   ): Either[Issue, Fix[ProductTree]] =
-    val cycleIssue = product.id.collect { case id if seen.contains(id.value) => id }
-    cycleIssue match
-      case Some(id) =>
-        Left(Issue.error(XPath("/XJDF/ProductList"), s"Cycle in product structure at ID '${id.value}'"))
-      case None =>
-        val childRefs = product.references.toList.distinct
-        childRefs match
+    val currentId = product.id.map(_.value)
+    currentId match
+      case Some(id) if seen.contains(id) =>
+        Left(Issue.error(XPath("/XJDF/ProductList"), s"Cycle in product structure at ID '$id'"))
+      case _ =>
+        val nextSeen = currentId.fold(seen)(seen + _)
+        product.references.toList.distinct match
           case Nil =>
             Right(Fix(ProductTree.Leaf(product)))
           case refs =>
-            val children = refs.foldLeft(Right(Chain.empty[Fix[ProductTree]]): Either[Issue, Chain[Fix[ProductTree]]]) {
-              case (acc, ref) =>
-                for
-                  kids <- acc
-                  child =
-                    byId.get(ref.value).toRight(Issue.error(XPath("/XJDF/ProductList"), s"Unresolved ChildRef '$ref'"))
-                  kid <- child.flatMap(c => toTree(c, byId, seen + c.id.fold("")(_.value)))
-                yield kids :+ kid
-            }
+            val children =
+              refs.foldLeft(Right(Chain.empty[Fix[ProductTree]]): Either[Issue, Chain[Fix[ProductTree]]]) {
+                case (acc, ref) =>
+                  for
+                    kids  <- acc
+                    child <- byId.get(ref.value).toRight(
+                               Issue.error(XPath("/XJDF/ProductList"), s"Unresolved ChildRef '${ref.value}'"))
+                    kid   <- toTree(child, byId, nextSeen)
+                  yield kids :+ kid
+              }
             children.map(cs => Fix(ProductTree.Node(product, cs)))
 
   /** Unfolds a ProductList into a forest of product trees. Fails on unresolved
