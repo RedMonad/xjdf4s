@@ -33,7 +33,10 @@ end DeliveryParams
  */
 final case class DropItem(
     amount: Long,
-    itemRef: IdRef
+    itemRef: IdRef,
+    totalDimensions: Option[Shape] = None,
+    totalVolume: Option[Double] = None,
+    totalWeight: Option[Double] = None
 )
 
 object DropItem:
