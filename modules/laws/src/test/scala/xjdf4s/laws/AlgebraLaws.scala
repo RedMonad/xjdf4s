@@ -147,16 +147,16 @@ class AlgebraLaws extends ScalaCheckSuite:
   // NOTE: Floating-point addition is not associative; use approxEq.
   property("Points: monoid identity is 0"):
     forAll { (a: Points) =>
-      approxEq(Points.zero + a, a) && approxEq(a + Points.zero, a)
+      pointsApproxEq(Points.zero + a, a) && pointsApproxEq(a + Points.zero, a)
     }
 
   property("Points: monoid associativity (approx)"):
     forAll { (a: Points, b: Points, c: Points) =>
-      approxEq((a + b) + c, a + (b + c))
+      pointsApproxEq((a + b) + c, a + (b + c))
     }
 
   property("Points: commutative monoid commutativity"):
-    forAll { (a: Points, b: Points) => approxEq(a + b, b + a) }
+    forAll { (a: Points, b: Points) => pointsApproxEq(a + b, b + a) }
 
   // --- TimeSpan: commutative monoid of duration addition ---------------
   commutativeMonoidLaws[TimeSpan]("TimeSpan")
@@ -178,6 +178,9 @@ class AlgebraLaws extends ScalaCheckSuite:
 
   private def xyPairApproxEq(a: XYPair, b: XYPair): Boolean =
     approxEq(a.x, b.x) && approxEq(a.y, b.y)
+
+  private def pointsApproxEq(a: Points, b: Points): Boolean =
+    approxEq(a.value, b.value)
 
   private def matrixEq(a: Matrix, b: Matrix): Boolean =
     approxEq(a.a, b.a) && approxEq(a.b, b.b) && approxEq(a.c, b.c) &&
