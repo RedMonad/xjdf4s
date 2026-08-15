@@ -52,8 +52,7 @@ end PartWaste
  */
 final case class PartAmount(
     amount: Option[Amount] = None,
-    maxAmount: Option[Amount] = None,
-    minAmount: Option[Amount] = None,
+    bounds: AmountBounds = AmountBounds.unbounded,
     waste: Option[Amount] = None,
     parts: Chain[Part] = Chain.empty, // Table 6.3: Part* (0..*)
     partWaste: Chain[PartWaste] = Chain.empty
@@ -65,15 +64,17 @@ final case class PartAmount(
   @deprecated("transitional accessor; removed before M2", "M1")
   def part: Option[Part] = parts.headOption
 
-  /** The amount attributes viewed as one range. */
-  def range: AmountRange = AmountRange(amount, maxAmount, minAmount)
+  require(amount.forall(bounds.includes), "Amount is outside MinAmount/MaxAmount bounds")
 end PartAmount
 
 object PartAmount:
 
   given Show[PartAmount] =
     Show.show { pa =>
-      val base = Show[AmountRange].show(pa.range)
+      val base = List(
+        pa.amount.map(value => s"amount ${Show[Amount].show(value)}"),
+        Option.when(pa.bounds != AmountBounds.unbounded)(Show[AmountBounds].show(pa.bounds))
+      ).flatten.mkString(", ")
       val parts = pa.parts.toList.map(Show[Part].show)
       if parts.isEmpty then s"PartAmount($base)"
       else s"PartAmount($base, parts=[${parts.mkString(", ")}])"

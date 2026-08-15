@@ -518,6 +518,39 @@ object IntegerList:
 
 end IntegerList
 
+/** §6.1.2 / Table 6.3: the planned acceptable lower and upper bounds for an
+ *  amount. This deliberately does not contain nominal `@Amount`: a specified
+ *  amount and its tolerated interval have different domain meanings.
+ */
+final case class AmountBounds(min: Option[Amount], max: Option[Amount]):
+  require(AmountBounds.isOrdered(min, max), "MinAmount > MaxAmount")
+
+  /** True when an amount lies within every specified bound. */
+  def includes(amount: Amount): Boolean =
+    min.forall(lower => Order[Amount].compare(amount, lower) >= 0) &&
+      max.forall(upper => Order[Amount].compare(amount, upper) <= 0)
+
+object AmountBounds:
+
+  /** No lower or upper planned tolerance is specified. */
+  val unbounded: AmountBounds = AmountBounds(None, None)
+
+  private[prim] def isOrdered(min: Option[Amount], max: Option[Amount]): Boolean =
+    min.forall(lower => max.forall(upper => Order[Amount].compare(lower, upper) <= 0))
+
+  given Show[AmountBounds] =
+    Show.show { bounds =>
+      val parts = List(
+        bounds.min.map(value => s"min ${fmtDouble(value)}"),
+        bounds.max.map(value => s"max ${fmtDouble(value)}")
+      ).flatten
+      if parts.isEmpty then "unbounded" else parts.mkString(", ")
+    }
+
+  given Eq[AmountBounds] = Eq.fromUniversalEquals
+
+end AmountBounds
+
 /** A planned or recorded amount range: `@Amount` together with the tolerances
  *  `@MinAmount`/`@MaxAmount` (PartAmount, Table 6.3).
  *
