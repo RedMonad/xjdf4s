@@ -82,7 +82,7 @@ class PatchLaws extends FunSuite:
     assert(merged.isBoth)
     val result = merged.toOption.get
     assertEquals(result.resourceSets.toList.size, 1)
-    assertEquals(result.resourceSets.head.resources.head.id, Some(Id.unsafe("new")))
+    assertEquals(result.resourceSets.toList.head.resources.toList.head.id, Some(Id.unsafe("new")))
     assert(result.validate.isValid)
 
   test("merge with partial CPI overlap replaces (Both) — §3.4 N-16"):
@@ -92,7 +92,7 @@ class PatchLaws extends FunSuite:
     assert(merged.isBoth)
     val result = merged.toOption.get
     assertEquals(result.resourceSets.toList.size, 1)
-    assertEquals(result.resourceSets.head.resources.head.id, Some(Id.unsafe("new")))
+    assertEquals(result.resourceSets.toList.head.resources.toList.head.id, Some(Id.unsafe("new")))
 
   test("merge with absent-CPI vs present-CPI replaces (Both)"):
     val old = mediaSet(Some(NonEmptyChain.one(ProcessIndex.unsafe(1))), resourceId = Some(Id.unsafe("old")))
@@ -113,7 +113,7 @@ class PatchLaws extends FunSuite:
     val merged = Patch.mergeResourceSets(t, update)
     assert(merged.isBoth)
     val ids = merged.toOption.get.resourceSets.flatMap(_.resources).map(_.id).toList.toSet
-    assertEquals(ids, Set(Some(Id.unsafe("m0new")), Some(Id.unsafe("n0new"))))
+    assertEquals(ids, Set[Option[Id]](Some(Id.unsafe("m0new")), Some(Id.unsafe("n0new"))))
 
   test("merge rejects an internally conflicting update (Left)"):
     val dup = mediaSet(Some(NonEmptyChain.one(ProcessIndex.unsafe(0))))
@@ -128,7 +128,7 @@ class PatchLaws extends FunSuite:
     val old = mediaSet(Some(NonEmptyChain.one(ProcessIndex.unsafe(0))), resourceId = Some(Id.unsafe("old")))
     val fresh = mediaSet(Some(NonEmptyChain.one(ProcessIndex.unsafe(0))), resourceId = Some(Id.unsafe("new")))
     val result = Patch.mergeResourceSets(ticket(old), Chain.one(fresh)).toOption.get
-    assertEquals(result.resourceSets.head.select(Part.empty).flatMap(_.id), Some(Id.unsafe("new")))
+    assertEquals(result.resourceSets.toList.head.select(Part.empty).flatMap(_.id), Some(Id.unsafe("new")))
 
   test("merge is idempotent on the resource sets"):
     val old = mediaSet(Some(NonEmptyChain.one(ProcessIndex.unsafe(0))), resourceId = Some(Id.unsafe("old")))
