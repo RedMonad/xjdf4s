@@ -9,17 +9,20 @@ import cats.kernel.Eq
  *  type-specific detail elements SHALL only be specified together with the
  *  matching `@BindingType` — modelled as a union type `BindingDetails`, with
  *  the pairing enforced by `validate`.
+ *
+ *  Color attributes are `NamedColor` (§A.2.30): an open catalog, so they are
+ *  typed `NmToken` with recommended values in `Catalog.NamedColor` (ADR-0007).
  */
 final case class BindingIntent(
     bindingType: BindingType,
     bindingOrder: Option[BindingOrder] = None,
     bindingSide: Option[Edge] = None,
     childRefs: Option[IdRefs] = None,
-    coverColor: Option[NamedColor] = None,
+    coverColor: Option[NmToken] = None,
     coverColorDetails: Option[XjdfString] = None,
-    bindingColor: Option[NamedColor] = None,
+    bindingColor: Option[NmToken] = None,
     bindingColorDetails: Option[XjdfString] = None,
-    backCoverColor: Option[NamedColor] = None,
+    backCoverColor: Option[NmToken] = None,
     backCoverColorDetails: Option[XjdfString] = None,
     details: Option[BindingDetails] = None,
     tabs: Option[Tabs] = None
@@ -76,13 +79,17 @@ final case class EdgeGluing(edgeGlue: Option[GlueType] = None)
 object EdgeGluing:
   given Eq[EdgeGluing] = Eq.fromUniversalEquals
 
-/** Details of HardCoverBinding (Table 4.11). */
+/** Details of HardCoverBinding (Table 4.11).
+ *
+ *  `@HeadBandColor` is `NamedColor` (§A.2.30): an open catalog typed `NmToken`,
+ *  recommended values in `Catalog.NamedColor` (ADR-0007).
+ */
 final case class HardCoverBinding(
     blockThreadSewing: Option[Boolean] = None,
     coverStyle: Option[NmToken] = None,
     endSheets: Option[Boolean] = None,
     headBands: Option[Boolean] = None,
-    headBandColor: Option[NamedColor] = None,
+    headBandColor: Option[NmToken] = None,
     headBandColorDetails: Option[XjdfString] = None,
     jacket: Option[HardCoverJacket] = None,
     jacketFoldingWidth: Option[Points] = None,
@@ -170,11 +177,15 @@ final case class SoftCoverBinding(
 object SoftCoverBinding:
   given Eq[SoftCoverBinding] = Eq.fromUniversalEquals
 
-/** Tabs in a bound document (Table 4.19). */
+/** Tabs in a bound document (Table 4.19).
+ *
+ *  `@ReinforceColor` is `NamedColor` (§A.2.30): an open catalog typed `NmToken`,
+ *  recommended values in `Catalog.NamedColor` (ADR-0007).
+ */
 final case class Tabs(
     reinforceTabs: Option[Boolean] = None,
     reinforceBind: Option[Boolean] = None,
-    reinforceColor: Option[NamedColor] = None,
+    reinforceColor: Option[NmToken] = None,
     reinforceColorDetails: Option[XjdfString] = None,
     tabBrand: Option[XjdfString] = None,
     tabCount: Option[Long] = None,

@@ -7,6 +7,9 @@ import cats.kernel.Eq
 
 /** The `Media` resource (Table 6.57): a physical medium — paper, film, plate,
  *  textile — consumed by a process. The counterpart of `MediaIntent`.
+ *
+ *  Color attributes are `NamedColor` (§A.2.30): an open catalog, so they are
+ *  typed `NmToken` with recommended values in `Catalog.NamedColor` (ADR-0007).
  */
 final case class Media(
     mediaType: MediaType,
@@ -27,7 +30,7 @@ final case class Media(
     innerCoreDiameter: Option[Microns] = None,
     insideLoss: Option[Microns] = None,
     isoPaperSubstrate: Option[ISOPaperSubstrate] = None,
-    mediaColor: Option[NamedColor] = None,
+    mediaColor: Option[NmToken] = None,
     mediaColorDetails: Option[XjdfString] = None,
     mediaQuality: Option[XjdfString] = None,
     mediaTypeDetails: Option[NmToken] = None,

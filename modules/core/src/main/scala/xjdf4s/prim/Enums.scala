@@ -45,13 +45,18 @@ enum Side extends XjdfEnum:
 object Side extends XjdfEnumCompanion[Side]:
   val all: List[Side] = List(Front, Back)
 
-/** `Sides`: which side of the product SHALL be printed (Table A.2.40). */
+/** `Sides`: which sides of the product SHALL be imaged (§A.2.40 / Table A.40).
+ *
+ *  `Unprinted` is *New in XJDF 2.1*: “Page contents SHALL NOT be imposed on
+ *  either side.” Note that `schema.xsd` still lists only four values; per the
+ *  source-of-truth order (ROADMAP §1.2) the normative text wins (ADR-0007).
+ */
 enum Sides extends XjdfEnum:
-  case OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead
+  case OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead, Unprinted
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Sides extends XjdfEnumCompanion[Sides]:
-  val all: List[Sides] = List(OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead)
+  val all: List[Sides] = List(OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead, Unprinted)
 
 /** `Edge`: an edge of a product in its coordinate system (Table A.2.16). */
 enum Edge extends XjdfEnum:
@@ -105,13 +110,21 @@ enum Status extends XjdfEnum:
 object Status extends XjdfEnumCompanion[Status]:
   val all: List[Status] = List(Aborted, Cleanup, Completed, InProgress, Setup, Stopped, Suspended, Waiting)
 
-/** `DeviceStatus`: the overall status of a Device (Table A.2.14). */
+/** `DeviceStatus`: the overall status of a Device (§A.2.14 / Table A.15).
+ *
+ *  `Cleanup` and `Setup` are *New in XJDF 2.1*. Both names also exist in the
+ *  neighbouring `Status` enumeration (Table A.46); the two are distinct XJDF
+ *  types, so members are always referred to with an explicit qualifier —
+ *  `DeviceStatus.Setup` vs `Status.Setup` — rather than dropped or aliased
+ *  (ADR-0007).
+ */
 enum DeviceStatus extends XjdfEnum:
-  case Idle, NonProductive, Offline, Production, Stopped
+  case Cleanup, Idle, NonProductive, Offline, Production, Setup, Stopped
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object DeviceStatus extends XjdfEnumCompanion[DeviceStatus]:
-  val all: List[DeviceStatus] = List(Idle, NonProductive, Offline, Production, Stopped)
+  val all: List[DeviceStatus] =
+    List(Cleanup, Idle, NonProductive, Offline, Production, Setup, Stopped)
 
 /** `Severity`: class of a notification (Table A.2.37). */
 enum SeverityClass extends XjdfEnum:
@@ -213,18 +226,51 @@ enum MediaDirection extends XjdfEnum:
 object MediaDirection extends XjdfEnumCompanion[MediaDirection]:
   val all: List[MediaDirection] = List(Any, SameDirection, XDirection, YDirection)
 
-/** `ISOPaperSubstrate`: paper surface classification (Table A.2.25). */
+/** `ISOPaperSubstrate`: print substrate classification (§A.2.25 / Table A.26).
+ *
+ *  `LWCPlus`, `LWCStandard`, `NewsPlus`, `SCPlus`, `SCStandard` and `SNP` are
+ *  *New in XJDF 2.1* (from `[ISO12647-4:2014]` and `[ISO12647-3:2013]`); `PS9`
+ *  is *New in XJDF 2.2*.
+ */
 enum ISOPaperSubstrate extends XjdfEnum:
-  case PS1, PS2, PS3, PS4, PS5, PS6, PS7, PS8
+  case LWCPlus, LWCStandard, NewsPlus, PS1, PS2, PS3, PS4, PS5, PS6, PS7, PS8, PS9,
+    SCPlus, SCStandard, SNP
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object ISOPaperSubstrate extends XjdfEnumCompanion[ISOPaperSubstrate]:
-  val all: List[ISOPaperSubstrate] = List(PS1, PS2, PS3, PS4, PS5, PS6, PS7, PS8)
+  val all: List[ISOPaperSubstrate] =
+    List(
+      LWCPlus,
+      LWCStandard,
+      NewsPlus,
+      PS1,
+      PS2,
+      PS3,
+      PS4,
+      PS5,
+      PS6,
+      PS7,
+      PS8,
+      PS9,
+      SCPlus,
+      SCStandard,
+      SNP
+    )
 
-/** `MediaType`: the medium being employed (Table A.2.29). */
+/** `MediaType`: the medium being employed (§A.2.29 / Table A.30).
+ *
+ *  `Synthetic` is *New in XJDF 2.1*. The values `EmbossingFoil`, `Foil`,
+ *  `LaminatingFoil`, `MountingTape`, `SelfAdhesive` and `Vinyl` are *Deprecated
+ *  in XJDF 2.1* and `ShrinkFoil` is *Deprecated in XJDF 2.2*; deprecated values
+ *  remain part of the closed set because a decoder SHALL still be able to read
+ *  documents that use them (ADR-0007, ADR-0010). They are marked in prose only:
+ *  a Scala `@deprecated` annotation would make the `all` listing itself emit
+ *  warnings, and the build runs warning-free by policy.
+ */
 enum MediaType extends XjdfEnum:
-  case Blanket, CorrugatedBoard, Disc, Film, GravureCylinder, ImagingCylinder, Other,
-    Paper, Plate, Screen, Sleeve, Textile, Transparency
+  case Blanket, CorrugatedBoard, Disc, EmbossingFoil, Film, Foil, GravureCylinder,
+    ImagingCylinder, LaminatingFoil, MountingTape, Other, Paper, Plate, Screen,
+    SelfAdhesive, ShrinkFoil, Sleeve, Synthetic, Textile, Transparency, Vinyl
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object MediaType extends XjdfEnumCompanion[MediaType]:
@@ -233,16 +279,24 @@ object MediaType extends XjdfEnumCompanion[MediaType]:
       Blanket,
       CorrugatedBoard,
       Disc,
+      EmbossingFoil,
       Film,
+      Foil,
       GravureCylinder,
       ImagingCylinder,
+      LaminatingFoil,
+      MountingTape,
       Other,
       Paper,
       Plate,
       Screen,
+      SelfAdhesive,
+      ShrinkFoil,
       Sleeve,
+      Synthetic,
       Textile,
-      Transparency
+      Transparency,
+      Vinyl
     )
 
 /** `Automation`: dynamic or static components (Table A.2.4). */
@@ -261,35 +315,9 @@ enum SheetLay extends XjdfEnum:
 object SheetLay extends XjdfEnumCompanion[SheetLay]:
   val all: List[SheetLay] = List(Center, Left, Right)
 
-/** `NamedColor`: a machine-readable color name (Table A.2.30). The full closed
- *  list is defined externally by [Color Names]; the common values are modelled
- *  here.
- */
-enum NamedColor extends XjdfEnum:
-  case Black, Blue, Cyan, DarkBlue, DarkGreen, DarkRed, Gold, Gray, Green, Magenta,
-    Orange, Red, Silver, Violet, White, Yellow
-  def token: NmToken = NmToken.unsafe(this.toString)
-
-object NamedColor extends XjdfEnumCompanion[NamedColor]:
-  val all: List[NamedColor] =
-    List(
-      Black,
-      Blue,
-      Cyan,
-      DarkBlue,
-      DarkGreen,
-      DarkRed,
-      Gold,
-      Gray,
-      Green,
-      Magenta,
-      Orange,
-      Red,
-      Silver,
-      Violet,
-      White,
-      Yellow
-    )
+// `NamedColor` (§A.2.30) is deliberately NOT a closed enum: its values are
+// defined by the external catalog `[Color Names]`, so it is modelled as an open
+// `NmToken` with recommended values in `Catalog.NamedColor` (ADR-0007, N-09).
 
 /** `EndStatus`: the `NodeInfo/@Status` of a workstep at the end of its run
  *  (`ProcessRun/@EndStatus`, Table 3.7).
@@ -376,13 +404,21 @@ enum SpreadType extends XjdfEnum:
 object SpreadType extends XjdfEnumCompanion[SpreadType]:
   val all: List[SpreadType] = List(SinglePage, Spread)
 
-/** `Scope`: the context of resources defined in a ResourceInfo (Table A.2.36). */
+/** `Scope`: the context of resources defined in a ResourceInfo (§A.2.36 /
+ *  Table A.36).
+ *
+ *  `Device` is *New in XJDF 2.2*: “The amount of resources is an absolute
+ *  measurement that is currently available within the scope of a Device.” The
+ *  case shares its name with the `Device` resource, so it is always written
+ *  qualified as `Scope.Device`; `schema.xsd` still lists only four values and
+ *  lags the normative text here (ADR-0007).
+ */
 enum Scope extends XjdfEnum:
-  case Allowed, Estimate, Job, Present
+  case Allowed, Device, Estimate, Job, Present
   def token: NmToken = NmToken.unsafe(this.toString)
 
 object Scope extends XjdfEnumCompanion[Scope]:
-  val all: List[Scope] = List(Allowed, Estimate, Job, Present)
+  val all: List[Scope] = List(Allowed, Device, Estimate, Job, Present)
 
 /** `FitPolicy`: how artwork is fitted into its target box (Table A.2.21). */
 enum FitPolicy extends XjdfEnum:
@@ -510,12 +546,21 @@ enum SoftCoverScoring extends XjdfEnum:
 object SoftCoverScoring extends XjdfEnumCompanion[SoftCoverScoring]:
   val all: List[SoftCoverScoring] = List(TwiceScored, QuadScored, Unscored)
 
-/** `HardCoverBinding/@Jacket` (Table 4.11). */
+/** `HardCoverBinding/@Jacket` (§4.3.3 / Table 4.11, Sheet 1): whether a
+ *  hardcover jacket is needed and how it is attached.
+ *
+ *  Two of the three Scala names differ from their wire tokens — `None` is
+ *  `scala.None` and `Glue` reads as a verb — so every token is written out
+ *  explicitly. There is deliberately no `case other => …` fallback: it is what
+ *  silently produced the non-normative token `"Glued"` (ROADMAP N-08, ADR-0007).
+ */
 enum HardCoverJacket extends XjdfEnum:
-  case Unjacketed, Loose, Glued
+  case Unjacketed, Loose, GlueApplied
   def token: NmToken = this match
-    case Unjacketed => NmToken.unsafe("None")
-    case other => NmToken.unsafe(other.toString)
+    case Unjacketed  => NmToken.unsafe("None")
+    case Loose       => NmToken.unsafe("Loose")
+    case GlueApplied => NmToken.unsafe("Glue")
+end HardCoverJacket
 
 object HardCoverJacket extends XjdfEnumCompanion[HardCoverJacket]:
-  val all: List[HardCoverJacket] = List(Unjacketed, Loose, Glued)
+  val all: List[HardCoverJacket] = List(Unjacketed, Loose, GlueApplied)

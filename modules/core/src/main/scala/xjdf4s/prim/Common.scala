@@ -349,6 +349,320 @@ object Catalog:
     val F8_4: NmToken = NmToken.unsafe("F8-4")
     val F8_5: NmToken = NmToken.unsafe("F8-5")
 
+  /** `NamedColor` (§A.2.30): a machine-readable definition of a color.
+   *
+   *  §A.2.30 defines no value table of its own — it delegates to the external
+   *  catalog `[Color Names]` (SVG 1.1 Second Edition, Appendix G), which is why
+   *  this is an open `NmToken` catalog and not a closed `enum` (ADR-0007).
+   *  The 147 recommended values below are the SVG color keywords, and match the
+   *  147 patterns of `<xs:simpleType name="NamedColor">` in `schema.xsd`
+   *  one-for-one. Values outside this list are legal (§1.10.3.2).
+   *
+   *  Wire tokens are matched case-insensitively by `schema.xsd`; the spelling
+   *  here is the canonical mixed case of `[Color Names]`.
+   */
+  object NamedColor:
+    val AliceBlue: NmToken = NmToken.unsafe("AliceBlue")
+    val AntiqueWhite: NmToken = NmToken.unsafe("AntiqueWhite")
+    val Aqua: NmToken = NmToken.unsafe("Aqua")
+    val Aquamarine: NmToken = NmToken.unsafe("Aquamarine")
+    val Azure: NmToken = NmToken.unsafe("Azure")
+    val Beige: NmToken = NmToken.unsafe("Beige")
+    val Bisque: NmToken = NmToken.unsafe("Bisque")
+    val Black: NmToken = NmToken.unsafe("Black")
+    val BlanchedAlmond: NmToken = NmToken.unsafe("BlanchedAlmond")
+    val Blue: NmToken = NmToken.unsafe("Blue")
+    val BlueViolet: NmToken = NmToken.unsafe("BlueViolet")
+    val Brown: NmToken = NmToken.unsafe("Brown")
+    val BurlyWood: NmToken = NmToken.unsafe("BurlyWood")
+    val CadetBlue: NmToken = NmToken.unsafe("CadetBlue")
+    val Chartreuse: NmToken = NmToken.unsafe("Chartreuse")
+    val Chocolate: NmToken = NmToken.unsafe("Chocolate")
+    val Coral: NmToken = NmToken.unsafe("Coral")
+    val CornflowerBlue: NmToken = NmToken.unsafe("CornflowerBlue")
+    val Cornsilk: NmToken = NmToken.unsafe("Cornsilk")
+    val Crimson: NmToken = NmToken.unsafe("Crimson")
+    val Cyan: NmToken = NmToken.unsafe("Cyan")
+    val DarkBlue: NmToken = NmToken.unsafe("DarkBlue")
+    val DarkCyan: NmToken = NmToken.unsafe("DarkCyan")
+    val DarkGoldenrod: NmToken = NmToken.unsafe("DarkGoldenrod")
+    val DarkGray: NmToken = NmToken.unsafe("DarkGray")
+    val DarkGreen: NmToken = NmToken.unsafe("DarkGreen")
+    val DarkGrey: NmToken = NmToken.unsafe("DarkGrey")
+    val DarkKhaki: NmToken = NmToken.unsafe("DarkKhaki")
+    val DarkMagenta: NmToken = NmToken.unsafe("DarkMagenta")
+    val DarkOliveGreen: NmToken = NmToken.unsafe("DarkOliveGreen")
+    val DarkOrange: NmToken = NmToken.unsafe("DarkOrange")
+    val DarkOrchid: NmToken = NmToken.unsafe("DarkOrchid")
+    val DarkRed: NmToken = NmToken.unsafe("DarkRed")
+    val DarkSalmon: NmToken = NmToken.unsafe("DarkSalmon")
+    val DarkSeaGreen: NmToken = NmToken.unsafe("DarkSeaGreen")
+    val DarkSlateBlue: NmToken = NmToken.unsafe("DarkSlateBlue")
+    val DarkSlateGray: NmToken = NmToken.unsafe("DarkSlateGray")
+    val DarkSlateGrey: NmToken = NmToken.unsafe("DarkSlateGrey")
+    val DarkTurquoise: NmToken = NmToken.unsafe("DarkTurquoise")
+    val DarkViolet: NmToken = NmToken.unsafe("DarkViolet")
+    val DeepPink: NmToken = NmToken.unsafe("DeepPink")
+    val DeepSkyBlue: NmToken = NmToken.unsafe("DeepSkyBlue")
+    val DimGray: NmToken = NmToken.unsafe("DimGray")
+    val DimGrey: NmToken = NmToken.unsafe("DimGrey")
+    val DodgerBlue: NmToken = NmToken.unsafe("DodgerBlue")
+    val FireBrick: NmToken = NmToken.unsafe("FireBrick")
+    val FloralWhite: NmToken = NmToken.unsafe("FloralWhite")
+    val ForestGreen: NmToken = NmToken.unsafe("ForestGreen")
+    val Fuchsia: NmToken = NmToken.unsafe("Fuchsia")
+    val Gainsboro: NmToken = NmToken.unsafe("Gainsboro")
+    val GhostWhite: NmToken = NmToken.unsafe("GhostWhite")
+    val Gold: NmToken = NmToken.unsafe("Gold")
+    val Goldenrod: NmToken = NmToken.unsafe("Goldenrod")
+    val Gray: NmToken = NmToken.unsafe("Gray")
+    val Grey: NmToken = NmToken.unsafe("Grey")
+    val Green: NmToken = NmToken.unsafe("Green")
+    val GreenYellow: NmToken = NmToken.unsafe("GreenYellow")
+    val Honeydew: NmToken = NmToken.unsafe("Honeydew")
+    val HotPink: NmToken = NmToken.unsafe("HotPink")
+    val IndianRed: NmToken = NmToken.unsafe("IndianRed")
+    val Indigo: NmToken = NmToken.unsafe("Indigo")
+    val Ivory: NmToken = NmToken.unsafe("Ivory")
+    val Khaki: NmToken = NmToken.unsafe("Khaki")
+    val Lavender: NmToken = NmToken.unsafe("Lavender")
+    val LavenderBlush: NmToken = NmToken.unsafe("LavenderBlush")
+    val LawnGreen: NmToken = NmToken.unsafe("LawnGreen")
+    val LemonChiffon: NmToken = NmToken.unsafe("LemonChiffon")
+    val LightBlue: NmToken = NmToken.unsafe("LightBlue")
+    val LightCoral: NmToken = NmToken.unsafe("LightCoral")
+    val LightCyan: NmToken = NmToken.unsafe("LightCyan")
+    val LightGoldenrodYellow: NmToken = NmToken.unsafe("LightGoldenrodYellow")
+    val LightGray: NmToken = NmToken.unsafe("LightGray")
+    val LightGreen: NmToken = NmToken.unsafe("LightGreen")
+    val LightGrey: NmToken = NmToken.unsafe("LightGrey")
+    val LightPink: NmToken = NmToken.unsafe("LightPink")
+    val LightSalmon: NmToken = NmToken.unsafe("LightSalmon")
+    val LightSeaGreen: NmToken = NmToken.unsafe("LightSeaGreen")
+    val LightSkyBlue: NmToken = NmToken.unsafe("LightSkyBlue")
+    val LightSlateGray: NmToken = NmToken.unsafe("LightSlateGray")
+    val LightSlateGrey: NmToken = NmToken.unsafe("LightSlateGrey")
+    val LightSteelBlue: NmToken = NmToken.unsafe("LightSteelBlue")
+    val LightYellow: NmToken = NmToken.unsafe("LightYellow")
+    val Lime: NmToken = NmToken.unsafe("Lime")
+    val LimeGreen: NmToken = NmToken.unsafe("LimeGreen")
+    val Linen: NmToken = NmToken.unsafe("Linen")
+    val Magenta: NmToken = NmToken.unsafe("Magenta")
+    val Maroon: NmToken = NmToken.unsafe("Maroon")
+    val MediumAquamarine: NmToken = NmToken.unsafe("MediumAquamarine")
+    val MediumBlue: NmToken = NmToken.unsafe("MediumBlue")
+    val MediumOrchid: NmToken = NmToken.unsafe("MediumOrchid")
+    val MediumPurple: NmToken = NmToken.unsafe("MediumPurple")
+    val MediumSeaGreen: NmToken = NmToken.unsafe("MediumSeaGreen")
+    val MediumSlateBlue: NmToken = NmToken.unsafe("MediumSlateBlue")
+    val MediumSpringGreen: NmToken = NmToken.unsafe("MediumSpringGreen")
+    val MediumTurquoise: NmToken = NmToken.unsafe("MediumTurquoise")
+    val MediumVioletRed: NmToken = NmToken.unsafe("MediumVioletRed")
+    val MidnightBlue: NmToken = NmToken.unsafe("MidnightBlue")
+    val MintCream: NmToken = NmToken.unsafe("MintCream")
+    val MistyRose: NmToken = NmToken.unsafe("MistyRose")
+    val Moccasin: NmToken = NmToken.unsafe("Moccasin")
+    val NavajoWhite: NmToken = NmToken.unsafe("NavajoWhite")
+    val Navy: NmToken = NmToken.unsafe("Navy")
+    val OldLace: NmToken = NmToken.unsafe("OldLace")
+    val Olive: NmToken = NmToken.unsafe("Olive")
+    val OliveDrab: NmToken = NmToken.unsafe("OliveDrab")
+    val Orange: NmToken = NmToken.unsafe("Orange")
+    val OrangeRed: NmToken = NmToken.unsafe("OrangeRed")
+    val Orchid: NmToken = NmToken.unsafe("Orchid")
+    val PaleGoldenrod: NmToken = NmToken.unsafe("PaleGoldenrod")
+    val PaleGreen: NmToken = NmToken.unsafe("PaleGreen")
+    val PaleTurquoise: NmToken = NmToken.unsafe("PaleTurquoise")
+    val PaleVioletRed: NmToken = NmToken.unsafe("PaleVioletRed")
+    val PapayaWhip: NmToken = NmToken.unsafe("PapayaWhip")
+    val PeachPuff: NmToken = NmToken.unsafe("PeachPuff")
+    val Peru: NmToken = NmToken.unsafe("Peru")
+    val Pink: NmToken = NmToken.unsafe("Pink")
+    val Plum: NmToken = NmToken.unsafe("Plum")
+    val PowderBlue: NmToken = NmToken.unsafe("PowderBlue")
+    val Purple: NmToken = NmToken.unsafe("Purple")
+    val Red: NmToken = NmToken.unsafe("Red")
+    val RosyBrown: NmToken = NmToken.unsafe("RosyBrown")
+    val RoyalBlue: NmToken = NmToken.unsafe("RoyalBlue")
+    val SaddleBrown: NmToken = NmToken.unsafe("SaddleBrown")
+    val Salmon: NmToken = NmToken.unsafe("Salmon")
+    val SandyBrown: NmToken = NmToken.unsafe("SandyBrown")
+    val SeaGreen: NmToken = NmToken.unsafe("SeaGreen")
+    val Seashell: NmToken = NmToken.unsafe("Seashell")
+    val Sienna: NmToken = NmToken.unsafe("Sienna")
+    val Silver: NmToken = NmToken.unsafe("Silver")
+    val SkyBlue: NmToken = NmToken.unsafe("SkyBlue")
+    val SlateBlue: NmToken = NmToken.unsafe("SlateBlue")
+    val SlateGray: NmToken = NmToken.unsafe("SlateGray")
+    val SlateGrey: NmToken = NmToken.unsafe("SlateGrey")
+    val Snow: NmToken = NmToken.unsafe("Snow")
+    val SpringGreen: NmToken = NmToken.unsafe("SpringGreen")
+    val SteelBlue: NmToken = NmToken.unsafe("SteelBlue")
+    val Tan: NmToken = NmToken.unsafe("Tan")
+    val Teal: NmToken = NmToken.unsafe("Teal")
+    val Thistle: NmToken = NmToken.unsafe("Thistle")
+    val Tomato: NmToken = NmToken.unsafe("Tomato")
+    val Turquoise: NmToken = NmToken.unsafe("Turquoise")
+    val Violet: NmToken = NmToken.unsafe("Violet")
+    val Wheat: NmToken = NmToken.unsafe("Wheat")
+    val White: NmToken = NmToken.unsafe("White")
+    val WhiteSmoke: NmToken = NmToken.unsafe("WhiteSmoke")
+    val Yellow: NmToken = NmToken.unsafe("Yellow")
+    val YellowGreen: NmToken = NmToken.unsafe("YellowGreen")
+
+    /** The 147 recommended values of `[Color Names]`, in catalog order. */
+    val recommended: List[NmToken] =
+      List(
+        AliceBlue,
+        AntiqueWhite,
+        Aqua,
+        Aquamarine,
+        Azure,
+        Beige,
+        Bisque,
+        Black,
+        BlanchedAlmond,
+        Blue,
+        BlueViolet,
+        Brown,
+        BurlyWood,
+        CadetBlue,
+        Chartreuse,
+        Chocolate,
+        Coral,
+        CornflowerBlue,
+        Cornsilk,
+        Crimson,
+        Cyan,
+        DarkBlue,
+        DarkCyan,
+        DarkGoldenrod,
+        DarkGray,
+        DarkGreen,
+        DarkGrey,
+        DarkKhaki,
+        DarkMagenta,
+        DarkOliveGreen,
+        DarkOrange,
+        DarkOrchid,
+        DarkRed,
+        DarkSalmon,
+        DarkSeaGreen,
+        DarkSlateBlue,
+        DarkSlateGray,
+        DarkSlateGrey,
+        DarkTurquoise,
+        DarkViolet,
+        DeepPink,
+        DeepSkyBlue,
+        DimGray,
+        DimGrey,
+        DodgerBlue,
+        FireBrick,
+        FloralWhite,
+        ForestGreen,
+        Fuchsia,
+        Gainsboro,
+        GhostWhite,
+        Gold,
+        Goldenrod,
+        Gray,
+        Grey,
+        Green,
+        GreenYellow,
+        Honeydew,
+        HotPink,
+        IndianRed,
+        Indigo,
+        Ivory,
+        Khaki,
+        Lavender,
+        LavenderBlush,
+        LawnGreen,
+        LemonChiffon,
+        LightBlue,
+        LightCoral,
+        LightCyan,
+        LightGoldenrodYellow,
+        LightGray,
+        LightGreen,
+        LightGrey,
+        LightPink,
+        LightSalmon,
+        LightSeaGreen,
+        LightSkyBlue,
+        LightSlateGray,
+        LightSlateGrey,
+        LightSteelBlue,
+        LightYellow,
+        Lime,
+        LimeGreen,
+        Linen,
+        Magenta,
+        Maroon,
+        MediumAquamarine,
+        MediumBlue,
+        MediumOrchid,
+        MediumPurple,
+        MediumSeaGreen,
+        MediumSlateBlue,
+        MediumSpringGreen,
+        MediumTurquoise,
+        MediumVioletRed,
+        MidnightBlue,
+        MintCream,
+        MistyRose,
+        Moccasin,
+        NavajoWhite,
+        Navy,
+        OldLace,
+        Olive,
+        OliveDrab,
+        Orange,
+        OrangeRed,
+        Orchid,
+        PaleGoldenrod,
+        PaleGreen,
+        PaleTurquoise,
+        PaleVioletRed,
+        PapayaWhip,
+        PeachPuff,
+        Peru,
+        Pink,
+        Plum,
+        PowderBlue,
+        Purple,
+        Red,
+        RosyBrown,
+        RoyalBlue,
+        SaddleBrown,
+        Salmon,
+        SandyBrown,
+        SeaGreen,
+        Seashell,
+        Sienna,
+        Silver,
+        SkyBlue,
+        SlateBlue,
+        SlateGray,
+        SlateGrey,
+        Snow,
+        SpringGreen,
+        SteelBlue,
+        Tan,
+        Teal,
+        Thistle,
+        Tomato,
+        Turquoise,
+        Violet,
+        Wheat,
+        White,
+        WhiteSmoke,
+        Yellow,
+        YellowGreen
+      )
+  end NamedColor
+
   /** Ink and Varnish Coatings (Table A.3.9). */
   object Coatings:
     val Aqueous: NmToken = NmToken.unsafe("Aqueous")

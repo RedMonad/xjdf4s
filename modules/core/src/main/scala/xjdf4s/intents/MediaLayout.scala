@@ -6,6 +6,9 @@ import cats.kernel.Eq
 
 /** `MediaIntent` (Table 4.32): the media to be used for the Product, described
  *  from the customer's point of view.
+ *
+ *  Color attributes are `NamedColor` (§A.2.30): an open catalog, so they are
+ *  typed `NmToken` with recommended values in `Catalog.NamedColor` (ADR-0007).
  */
 final case class MediaIntent(
     mediaType: MediaType,
@@ -19,7 +22,7 @@ final case class MediaIntent(
     grainDirection: Option[MediaDirection] = None,
     isoPaperSubstrate: Option[ISOPaperSubstrate] = None,
     labColorValue: Option[LabColor] = None,
-    mediaColor: Option[NamedColor] = None,
+    mediaColor: Option[NmToken] = None,
     mediaColorDetails: Option[XjdfString] = None,
     mediaQuality: Option[XjdfString] = None,
     mediaTypeDetails: Option[NmToken] = None,

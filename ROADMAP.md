@@ -146,7 +146,8 @@ PR-3  общий conflict-predicate §3.4 + Patch.mergeResourceSets
 │ Категория                                    │ Кол-во │ Идентификаторы  │
 ├──────────────────────────────────────────────┼────────┼─────────────────┤
 │ Функциональные дефекты ядра (P0)             │   2    │ N-01 … N-02     │
-│ Расхождения со спецификацией XJDF 2.2 (P1)   │  13    │ N-03 … N-15     │
+│ Расхождения со спецификацией XJDF 2.2 (P1)   │  16    │ N-03 … N-15,    │
+│                                              │        │ N-47 … N-49     │
 │ Неполнота корневого валидатора (P1)          │   7    │ N-16 … N-19,    │
 │                                              │        │ N-36 … N-38     │
 │ Архитектурные дефекты (P2)                   │  10    │ N-20 … N-25,    │
@@ -157,7 +158,7 @@ PR-3  общий conflict-predicate §3.4 + Patch.mergeResourceSets
 │                                              │        │ N-42            │
 │ Инженерная инфраструктура (P4)               │   4    │ N-43 … N-46     │
 ├──────────────────────────────────────────────┼────────┼─────────────────┤
-│ Итого подтверждено                           │  46    │                 │
+│ Итого подтверждено                           │  49    │                 │
 │ Отклонено / переклассифицировано             │   6    │ X-01 … X-06     │
 └──────────────────────────────────────────────┴────────┴─────────────────┘
 ```
@@ -504,6 +505,16 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 | N-13 | `Notification` без `@ModuleID`; правило Milestone не проверяется | Table 8.49: `@ModuleID?` \| NMTOKEN. Там же: «`Milestone?` … If Milestone is present, the value of `@Class` SHALL be `"Event"`.» И: «`Comment*` … If multiple Comment elements occur, they SHALL have different `Comment/@Language` values.» | `model/Header.scala:70-78`: `Notification(classification, jobId, jobPartId, queueEntryId, detail, parts, comments)` — нет `moduleId`, нет инварианта | M1.2-5, M1.3-3 |
 | N-14 | `Header/@ID` аудитов включён в **документный** скоуп уникальности ID; при этом `references` не собирает IDREF из аудитов — асимметрия | Table 7.3: «If present, `@ID` SHALL identify the parent message or XJMF and SHALL be unique for all messages and XJMF **initiated by the Sender**» — мессенджинговый скоуп, а не §2.2.3 («IDs and IDREFS are only valid within the scope of a single XJDF instance») | `model/Ticket.scala:57-63`: `val headerIds = auditPool.fold(...)(_.toNonEmptyChain.toChain.flatMap(a => Chain.fromOption(a.origin.id)))` попадает в `declaredIds`; `references` (:66-69) собирает только `resourceSets` и `productList` | M1.2-5 |
 | N-15 | Семь scaladoc-ссылок указывают номер **раздела** вместо номера **таблицы** | сверено по `reference/xjdf/6 – Resources.md` (см. таблицу ниже) | `resources/{Color,Finishing,Layout,Media,NodeInfo,Preview}.scala` | M1.2-6 |
+| N-47 | `ISOPaperSubstrate` неполон: 8 значений из 15 | Table A.26 — 15 значений; отсутствуют `LWCPlus`, `LWCStandard`, `NewsPlus`, `SCPlus`, `SCStandard`, `SNP` *(New in XJDF 2.1)* и `PS9` *(New in XJDF 2.2)* | `prim/Enums.scala`: `case PS1 … PS8` | M1.2-2 |
+| N-48 | `MediaType` неполон: 13 значений из 21 | Table A.30 — 21 значение; отсутствует `Synthetic` *(New in XJDF 2.1)*, а также 7 значений с пометкой Deprecated (`EmbossingFoil`, `Foil`, `LaminatingFoil`, `MountingTape`, `SelfAdhesive`, `ShrinkFoil`, `Vinyl`), которые обязаны декодироваться | `prim/Enums.scala`: `case Blanket … Transparency` | M1.2-2 |
+| N-49 | `Scope` неполон: 4 значения из 5 | Table A.36 — 5 значений; отсутствует `Device` *(New in XJDF 2.2)*: «The amount of resources is an absolute measurement that is currently available within the scope of a Device.» | `prim/Enums.scala`: `case Allowed, Estimate, Job, Present` | M1.2-2 |
+
+**Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
+`prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
+реализована тестом `laws/EnumLaws.scala`). Класс дефекта тот же, что у N-06/N-07:
+при переносе таблицы теряются значения с пометками *New in XJDF 2.1/2.2*. Остальные
+20 закрытых enum сверены и совпали точно. По решению владельца исправляются в PR-5
+вместе с N-06…N-09.
 
 Точная таблица исправлений N-15 (номера строк — позиции заголовков `**Table N.M: …**` в `reference/xjdf/6 – Resources.md`):
 
@@ -1264,7 +1275,7 @@ test("regression: overlay is right-biased"):
 
 **Статус сессии (PR-4):** реализация закоммичена (`65eb147`, `642a1fe`, `c5ef022`; ROADMAP-правки — отдельным коммитом PR-4). Статически проверено: 27 ключей Table 6.4 сверены с текстом и `schema.xsd` (расхождений, кроме N-03/N-04, нет); call sites `byProductRef`/`ProductRef`/`productPart`/`metadata` вне `model/Partition.scala` отсутствуют; N-05 закрыт также в сообщении §6.1.2.1 (`Validation.scala`, `@Option` вместо `@OptionKey`) с регрессионным тестом в `TicketLaws`; решение R5 зафиксировано выше и в Приложении C. Прогон владельца (Приложение D: `sbt -batch compile`, `sbt -batch test` — `PartitionLaws`, `TicketLaws`) — чистый, ошибок нет; статус переведён в `[x] (верифицировано владельцем)`.
 
-#### M1.2-2. Закрытые enum и открытые каталоги (P1) — закрывает N-06, N-07, N-08, N-09
+#### M1.2-2. Закрытые enum и открытые каталоги (P1) — закрывает N-06, N-07, N-08, N-09, N-47, N-48, N-49 — `[~]` реализовано (PR-5; ожидает прогона владельца)
 
 **Файлы:** `prim/Enums.scala`, `prim/Common.scala` (каталоги).
 
@@ -1305,10 +1316,22 @@ test("Table A.40: Sides wire tokens"):
         "TwoSidedHeadToHead", "Unprinted"))
 ```
 
-- отдельный тест «открытый каталог принимает значение вне списка» (`Pantone 123 C` для `NamedColor`);
+- отдельный тест «открытый каталог принимает значение вне списка» для `NamedColor`;
 - машинная сверка всех закрытых enum с Appendix A: при беглом переносе теряются именно пометки (New in XJDF 2.1/2.2).
 
 Побочный продукт: централизованный реестр намеренных расхождений «Scala-имя ↔ wire-токен» (Приложение C) — он понадобится кодекам M2.
+
+**Статус сессии (PR-5).** ADR-0007 зафиксирован в `docs/adr/0007-closed-enums-vs-open-catalogs.md` **до** правок кода. Реализовано: `Sides += Unprinted` (N-06); `DeviceStatus += Cleanup, Setup` (N-07); `HardCoverJacket` = `Unjacketed, Loose, GlueApplied` с явными токенами `None/Loose/Glue` и **без** fallback-ветки (N-08); `NamedColor` мигрирован в открытый `NmToken` + `Catalog.NamedColor` со 147 значениями `[Color Names]` (N-09); дополнительно `ISOPaperSubstrate`, `MediaType`, `Scope` (N-47…N-49). Списки `all` обновлены вместе с enum-ами. Новый сьют `laws/EnumLaws.scala`: golden-множества токенов по Table A.40, A.15, 4.11, A.26, A.30, A.36, семейство «→ `None`», round-trip `fromToken`, отсутствие дублей токенов, расширяемость `Catalog.NamedColor` и машинная сверка 24 закрытых enum с таблицами A.2 прямо из `reference/xjdf/*`.
+
+Три отклонения от буквы плана, все обоснованы источниками (§1.1):
+
+1. **`NamedColor`.** Формулировка плана «мигрирует в открытый `NmToken`» опиралась на §A.2.30, но prose (атрибуты объявлены как `enumeration` с формулой «Allowed value is from: NamedColor» — §1.10.3.1) и `schema.xsd` (147 `xs:pattern`) указывают на закрытый список. Расхождение вынесено владельцу и разрешено в пользу открытого каталога; обе стороны аргументации и причина выбора — в ADR-0007, часть 3, и в Приложении C.
+2. **Тест-фикстура `Pantone 123 C` заменена на `MintCream`.** Значение из плана содержит пробелы и потому не является валидным `NMTOKEN`, а открытые каталоги проекта типизированы через `NmToken`; тест на нём проверял бы не расширяемость каталога, а отказ конструктора. `MintCream` — реальное значение `[Color Names]`, которого не было в прежнем 16-значном enum.
+3. **Список call sites уже, чем ожидалось.** План предполагал правки в `resources/Color.scala`, генераторах `laws/Arbitraries.scala` и, возможно, примерах. Фактически `NamedColor` использовался только в `intents/Binding.scala` (5 полей), `intents/MediaLayout.scala` (1) и `resources/Media.scala` (1); `resources/Color.scala` оперирует `XjdfString`/`CMYKColor`/`LabColor` и `NamedColor` не содержит, генераторы и примеры его не упоминают. Полный список — в ADR-0007, раздел Migration impact.
+
+Существующие тесты на захардкоженные наборы значений enum проверены: литеральных множеств нет, генераторы обращаются к `MediaType.all`/`BindingType.all`/`Side.all`/`PreviewType.all`/`TransferCurveTarget.all`, поэтому расширение enum их не ломает, а автоматически расширяет пространство генерации.
+
+Ожидает прогона владельца (Приложение D). Статус будет переведён в `[x] (верифицировано владельцем)` после чистого гейта.
 
 #### M1.2-3. Кардинальность `PartAmount` (P1) — закрывает N-10
 
@@ -2029,6 +2052,9 @@ M1: одна обязательная быстрая платформа — Temu
 | N-07 | `DeviceStatus` неполон | ✅ + `Cleanup`, `Setup` | M1.2-2 | P1 |
 | N-08 | Токен `Glued` вместо `Glue` | ✅ явный `token` | M1.2-2 | P1 |
 | N-09 | `NamedColor` закрыт | ✅ открытый каталог (ADR-0007) | M1.2-2 | P1 |
+| N-47 | `ISOPaperSubstrate` неполон (8/15) | ✅ пополнен по Table A.26 | M1.2-2 | P1 |
+| N-48 | `MediaType` неполон (13/21) | ✅ пополнен по Table A.30 | M1.2-2 | P1 |
+| N-49 | `Scope` неполон (4/5) | ✅ пополнен по Table A.36 | M1.2-2 | P1 |
 | N-10 | `PartAmount.part` единственный | ✅ `Chain[Part]` | M1.2-3 | P1 |
 | N-11 | `Resource.specific` обязателен | ✅ `Option` | M1.2-4 | P1 |
 | N-12 | `DropItem` неполон | ✅ три поля Table 6.55 | M1.2-5 | P1 |
@@ -2397,14 +2423,15 @@ M1: одна обязательная быстрая платформа — Temu
 | `docs/02-scala3-features.md` | M1.0-2, M1.0-5, M1.5-2 |
 | `docs/03-cats-mapping.md` | M1.0-2, M1.0-5, M1.5-2 |
 | `docs/04-architecture.md` | M1.0-5, M1.5-2 |
-| `docs/adr/*` (новые) | M1.5-4 (ADR-0001 … ADR-0010) |
+| `docs/adr/*` (новые) | M1.5-4 (ADR-0001 … ADR-0010); каждый ADR фиксируется перед своей задачей |
+| `docs/adr/0007-closed-enums-vs-open-catalogs.md` | M1.2-2 (создан в PR-5) |
 | `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4 |
 | `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги |
-| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`) |
+| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`) |
 | `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountRange`), M1.4-6 (алгебры) |
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
 | `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only) |
-| `prim/Common.scala` | M1.4-8 (перенос элементов), каталоги |
+| `prim/Common.scala` | M1.4-8 (перенос элементов), каталоги; M1.2-2 (`Catalog.NamedColor`) |
 | `model/elements/*` (новый пакет) | M1.4-8 |
 | `model/Partition.scala` | M1.2-1, M1.4-3, M1.0-5 (scaladoc-ссылка) |
 | `model/Amounts.scala` | M1.2-3, M1.3-3 (`PartWaste`) |
@@ -2422,12 +2449,13 @@ M1: одна обязательная быстрая платформа — Temu
 | `resources/Delivery.scala` | M1.2-5 (`DropItem`) |
 | `resources/NodeInfo.scala` | M1.2-6, M1.6 (`GangSource`, `MISDetails`) |
 | `resources/AllResources.scala` | M1.2-4 (optional payload), подготовка ADR-0008 |
-| `intents/*` | M1.3-3, M1.6 |
+| `intents/*` | M1.3-3, M1.6; M1.2-2 (`Binding.scala`, `MediaLayout.scala` — тип цветовых полей) |
 | `laws/Arbitraries.scala` | M1.2-1, M1.5-3 |
 | `laws/AlgebraLaws.scala` | M1.0-3, M1.1-4, M1.4-5, M1.4-6 |
 | `laws/PartitionLaws.scala` | M1.2-1, M1.5-1 |
 | `laws/TicketLaws.scala` | M1.0-2, M1.1-1, M1.1-3, M1.3-*, M1.5-3 |
 | `laws/AlignmentLaws.scala` | M1.4-6 |
+| `laws/EnumLaws.scala` (новый) | M1.2-2 (golden-токены, открытые каталоги, сверка с Appendix A) |
 | `examples/SpecExamples.scala` | M1.1-1, M1.2-3, M1.2-4, M1.4-2, M1.5-3 |
 | `examples/Main.scala` | M1.1-1, M1.5-3 |
 
@@ -2442,7 +2470,13 @@ M1: одна обязательная быстрая платформа — Temu
 | `PartitionKey.OptionKey` вместо `Option` | коллизия имени со `scala.Option` | `attributeName = "Option"` + тест на wire-имя |
 | `SeverityClass` вместо `Severity` | коллизия с `@Severity: Int [0..100]` из §5.3.4.1 | документировано в scaladoc |
 | `HardCoverJacket.GlueApplied` / `Unjacketed` | Scala-имена не совпадают с токенами `Glue` / `None` (Table 4.11) | явный `def token` + golden-множество токенов |
-| `BindingType.NoBinding`, `Unbound`, `Uncoated`, `Unscored` и другие случаи «→ `None`» | `None` — зарезервированное имя `scala.None` | явные `token`-маппинги + golden-множество для каждого затронутого enum (полный список составляется при машинной сверке в M1.2-2) |
+| Семейство «→ `None`»: `BindingType.NoBinding` (Table A.8), `BindingOrder.Unbound` (§4.3), `Coating.Uncoated` (Table A.11), `SoftCoverScoring.Unscored` (Table 4.18), `HardCoverJacket.Unjacketed` (Table 4.11) | `None` — зарезервированное имя `scala.None` | явные `token`-маппинги + golden-тест «`→ None` token family» в `laws/EnumLaws.scala`. **Список полон:** машинная сверка M1.2-2 подтвердила, что других case-ов с токеном `None` в модели нет |
+| `HardCoverJacket.GlueApplied` | Scala-имя не совпадает с токеном `Glue` (Table 4.11, Sheet 1); имя `Glue` уже занято смыслом «тип клея» (`GlueType`, Table A.24) | явный `def token` без fallback-ветки + golden-тест на токен `Glue` (регрессия N-08) |
+| `DeviceStatus.Cleanup` / `.Setup` и `Status.Cleanup` / `.Setup` — одинаковые имена в разных enum | это два разных типа спецификации (Table A.15 и Table A.46), совпадение имён нормативно | обращение только с явной квалификацией (`DeviceStatus.Setup`); член спецификации не удаляется (ADR-0007) |
+| `Scope.Device` совпадает по имени с ресурсом `Device` (Table 6.57) | нормативное значение Table A.36 *(New in XJDF 2.2)* | обращение с явной квалификацией `Scope.Device`; коллизии нет, типы живут в разных пакетах |
+| `MediaType` содержит 7 значений с пометкой Deprecated | декодер обязан читать документы, использующие их (ADR-0010: неизвестные/устаревшие данные не отбрасываются молча) | пометки только в scaladoc; аннотация `@deprecated` не ставится — она сделала бы предупреждающим сам список `all`, а сборка держится warning-free |
+| `NamedColor` — открытый `NmToken` + `Catalog.NamedColor`, а не закрытый тип | prose (§1.10.3.1: атрибуты объявлены как `enumeration`) и `schema.xsd` (147 `xs:pattern`) указывают на закрытый список, но §A.2.30 делегирует набор внешнему каталогу `[Color Names]` (SVG 1.1), эволюционирующему вне версий XJDF | решение владельца, зафиксировано в ADR-0007 (часть 3) с обеими сторонами аргументации; 147 значений в `Catalog.NamedColor` + тест на расширяемость; лексическая проверка — в кодеках M2 |
+| `Sides.Unprinted` и `Scope.Device` отсутствуют в `schema.xsd` | XSD отстаёт от нормативного текста Appendix A (обе пометки *New* присутствуют в prose) | по §1.2 приоритет за текстом; расхождение зафиксировано в ADR-0007, чтобы валидация против XSD в M2 не приняла его за дефект домена |
 | `XJDF/@Name` и `@$schema` отсутствуют в домене | JSON Exception, в XML запрещены (Table 3.1) | реализуются в `codec-json` (M2); строка со статусом codec-only |
 | `Comment/@Text` отсутствует в домене | JSON Exception (Table 8.14) | реализуется в `codec-json` (M2) |
 | Валидация `RegExp` — только непустота | Appendix A (Table A.1): «Regular expression as defined by `[XMLSchema]`» — грамматика XSD-regex, несовместимая с `java.util.regex` (в XSD нет lookaround/backreferences; вычитание классов — `[a-z-[aeiou]]`, а не `&&`-пересечение); `schema.xsd` (`regExp`, строки 77–80) — `restriction base="xs:string"` без ограничений | M1.2-1: валидация непустотой; полная XSD-грамматика — на стороне кодеков M2 |
