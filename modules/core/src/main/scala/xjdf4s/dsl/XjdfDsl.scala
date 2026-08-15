@@ -6,7 +6,7 @@ import xjdf4s.model.*
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show
-import cats.data.{Chain, NonEmptyChain, Validated, ValidatedNec}
+import cats.data.{Chain, NonEmptyChain, State, Validated, ValidatedNec}
 import cats.syntax.all.*
 
 /** The declarative DSL of xjdf4s: build tickets the way a Controller writes
@@ -14,6 +14,40 @@ import cats.syntax.all.*
  *  invariant checked and every violation accumulated.
  */
 object dsl:
+
+  // ------------------------------------------------------------------
+  // Fresh IDs
+  // ------------------------------------------------------------------
+
+  /** Runs a pure fresh-ID program with empty per-prefix counters. */
+  def inIds[A](allocator: IdAllocator[A]): A = IdSource.run(allocator)
+
+  /** Allocates the next deterministic ID for `prefix`. */
+  def freshId(prefix: String): IdAllocator[Id] = IdSource.freshId(prefix)
+
+  /** Allocates deterministic IDs for `prefix` in document order. */
+  def freshMany(prefix: String, n: Int): IdAllocator[Chain[Id]] = IdSource.freshMany(prefix, n)
+
+  /** Builds a Product inside the pure ID-allocation DSL. An explicitly supplied
+   *  ID is preserved; otherwise the program allocates a `Product_<n>` ID.
+   */
+  def productWithFreshId(
+      amount: Option[Long] = None,
+      isRoot: Boolean = true,
+      productType: Option[NmToken] = None,
+      id: Option[Id] = None,
+      externalId: Option[NmToken] = None
+  )(intents: Intent*): IdAllocator[Product] =
+    id.fold(freshId("Product"))(State.pure).map { allocatedId =>
+      Product(
+        amount = amount,
+        externalId = externalId,
+        id = Some(allocatedId),
+        isRoot = isRoot,
+        productType = productType,
+        intents = Chain.fromSeq(intents)
+      )
+    }
 
   // ------------------------------------------------------------------
   // Partitions

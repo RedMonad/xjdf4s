@@ -480,6 +480,23 @@ class TicketLaws extends ScalaCheckSuite:
     val t = ticket(NonEmptyChain.one(ProcessType.Cutting), resourceSets = Chain.one(rs))
     assert(t.validate.isInvalid)
 
+  test("IdSource.freshMany produces distinct IDs"):
+    val ids = dsl.inIds(dsl.freshMany("P", 5)).toList
+    assertEquals(ids.distinct.size, 5)
+
+  test("IdSource assigns sequential IDs deterministically"):
+    val program =
+      for
+        first <- dsl.freshId("P")
+        second <- dsl.freshId("P")
+      yield (first, second)
+    assertEquals(dsl.inIds(program), (Id.unsafe("P_0"), Id.unsafe("P_1")))
+    assertEquals(dsl.inIds(program), dsl.inIds(program))
+
+  test("DSL productWithFreshId allocates an ID when none is supplied"):
+    val product = dsl.inIds(dsl.productWithFreshId()())
+    assertEquals(product.id, Some(Id.unsafe("Product_0")))
+
   test("TicketDraft.withJobPart returns Invalid instead of discarding an invalid id"):
     val draft = dsl.TicketDraft.of("J1", ProcessType.Product).toOption.get
     assert(draft.withJobPart("invalid id").isInvalid)

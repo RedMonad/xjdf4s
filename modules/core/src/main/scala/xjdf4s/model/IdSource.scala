@@ -2,56 +2,54 @@ package xjdf4s
 package model
 
 import xjdf4s.prim.Id
-import cats.data.State
+import cats.data.{Chain, State}
+import cats.syntax.all.*
 
-/** Fresh `@ID` allocation is a stateful computation — an effect, modelled
- *  purely with `cats.data.State`: `fresh` threads an internal counter and
- *  returns a new, unique ID for the current document.
+/** A pure ID-allocation program. The state contains one counter per prefix, so
+ *  independently named ID families do not affect each other.
+ */
+type IdAllocator[A] = State[Map[String, Int], A]
+
+/** Pure source of fresh `@ID` values for DSL authoring. Programs are referentially
+ *  transparent: the same initial counter map produces the same IDs.
  */
 object IdSource:
 
-  opaque type Counter = Long
+  /** Allocates the next ID for `prefix`, beginning at `<prefix>_0`. */
+  def freshId(prefix: String): IdAllocator[Id] =
+    State { counters =>
+      val count = counters.getOrElse(prefix, 0)
+      (counters.updated(prefix, count + 1), Id.unsafe(s"${prefix}_$count"))
+    }
 
-  object Counter:
-    val zero: Counter = 0L
+  /** Allocates `n` fresh IDs in order for one prefix. */
+  def freshMany(prefix: String, n: Int): IdAllocator[Chain[Id]] =
+    List.fill(n)(freshId(prefix)).sequence.map(Chain.fromSeq)
 
-  /** Allocates the next ID with the given prefix, e.g. `r_000007`. */
-  def fresh(prefix: String): State[Counter, Id] =
-    State(c => (c + 1L, Id.unsafe(s"${prefix}_${c + 1L}")))
-
-  /** Runs an ID-allocation program, discarding the final counter. */
-  def run[A](program: State[Counter, A]): A =
-    program.runA(Counter.zero).value
-
-  /** Allocates a sequence of IDs with one prefix. */
-  def freshMany(prefix: String, n: Int): State[Counter, List[Id]] =
-    import cats.syntax.traverse.*
-    List.fill(n)(fresh(prefix)).sequence
+  /** Runs a pure allocation program with no prior allocations. */
+  def run[A](program: IdAllocator[A]): A = program.runA(Map.empty).value
 
 end IdSource
 
-/** Context function of ticket authoring: code inside a `WithIds[A]` scope can
- *  allocate fresh IDs via `summon[IdAllocator]`. This is the “build-time
- *  environment” of the declarative DSL.
+/** Compatibility boundary for imperative integration only. This allocator is
+ *  not thread-safe because it mutates a private counter; new domain and DSL
+ *  code must use the pure `IdAllocator[A]` / `IdSource` State program instead.
  */
-trait IdAllocator:
+trait StatefulIdAllocator:
   def fresh(prefix: String): Id
-
-type WithIds[A] = IdAllocator ?=> A
 
 object IdAllocator:
 
-  /** An allocator that runs the pure `State`-based source internally. */
-  def stateful(initial: Long): IdAllocator =
-    new IdAllocator:
+  /** Creates a non-thread-safe imperative allocator for integration boundaries.
+   *  Prefer `IdSource.freshId` and `IdSource.run` in ordinary code.
+   */
+  def stateful(initial: Long): StatefulIdAllocator =
+    new StatefulIdAllocator:
       private var counter = initial
-      def fresh(prefix: String): Id =
-        counter += 1
-        Id.unsafe(s"${prefix}_$counter")
 
-  /** Runs a context-function body with a fresh allocator. */
-  def run[A](body: IdAllocator ?=> A): A =
-    given IdAllocator = stateful(0L)
-    body
+      def fresh(prefix: String): Id =
+        val id = Id.unsafe(s"${prefix}_$counter")
+        counter += 1L
+        id
 
 end IdAllocator
