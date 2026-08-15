@@ -15,6 +15,15 @@ enum PartitionKey:
     ProductPart, QualityMeasurement, Run, RunIndex, Separation, SetIndex, SheetIndex,
     SheetName, Side, StationName, TileID, TransferCurveName, WebName
 
+  /** The XJDF attribute name of this Partition Key (Table 6.4). `OptionKey` is
+   *  the only key whose Scala name differs from its wire name (the collision
+   *  with `scala.Option` forces the rename). `Show[Part]`, validator messages
+   *  and the future M2 codecs must use this, not `toString` of the key.
+   */
+  def attributeName: String = this match
+    case OptionKey => "Option"
+    case other     => other.toString
+
 object PartitionKey:
 
   /** All keys, in Table 6.4 order. (`all`, not `values`: enums synthesize `values`.) */
@@ -52,15 +61,6 @@ object PartitionKey:
   given Show[PartitionKey] = Show.fromToString
 
   given Eq[PartitionKey] = Eq.fromUniversalEquals
-
-  /** The XJDF attribute name of this Partition Key (Table 6.4). `OptionKey` is
-   *  the only key whose Scala name differs from its wire name (the collision
-   *  with `scala.Option` forces the rename). `Show[Part]`, validator messages
-   *  and the future M2 codecs must use this, not `toString` of the key.
-   */
-  def attributeName: String = this match
-    case OptionKey => "Option"
-    case other     => other.toString
 
 end PartitionKey
 
