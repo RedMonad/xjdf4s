@@ -81,6 +81,34 @@ class PartitionLaws extends ScalaCheckSuite:
   property("matches(b) == conflictingKeys(b).isEmpty"):
     forAll { (a: Part, b: Part) => a.matches(b) == a.conflictingKeys(b).isEmpty }
 
+  // --- ADR-0005: tolerance relation and merge-derived partial order ----------
+
+  /** Partial order derived from conflict-free merge (ADR-0005): `a ≤ b` iff the
+   *  merge succeeds and yields `b` — i.e. `b` extends `a` as a partial map of
+   *  Partition Keys. A genuine partial order; `matches` itself is not one.
+   */
+  private def le(a: Part, b: Part): Boolean =
+    a.mergeWith(b).isRight && Part.combine(a, b) == b
+
+  property("Part.matches is symmetric"):
+    forAll { (a: Part, b: Part) => a.matches(b) == b.matches(a) }
+
+  test("Part.matches is a tolerance relation (reflexive, symmetric, non-transitive)"):
+    val a = Part.bySide(Side.Front)
+    val b = Part.empty
+    val c = Part.bySide(Side.Back)
+    // a.matches(b) = true, b.matches(c) = true, but a.matches(c) = false
+    assert(a.matches(b) && b.matches(c) && !a.matches(c))
+
+  property("merge-derived order is reflexive"):
+    forAll { (a: Part) => le(a, a) }
+
+  property("merge-derived order is antisymmetric"):
+    forAll { (a: Part, b: Part) => !(le(a, b) && le(b, a)) || a == b }
+
+  property("merge-derived order is transitive"):
+    forAll { (a: Part, b: Part, c: Part) => !(le(a, b) && le(b, c)) || le(a, c) }
+
   test("regression: overlay is right-biased (X-03 archive)"):
     val l = Part(docIndex = Some(IntegerRange(3, 3)))
     val r = Part(docIndex = Some(IntegerRange(-10, -10)))
