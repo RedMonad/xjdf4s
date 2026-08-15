@@ -7,6 +7,7 @@ import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}
 import munit.ScalaCheckSuite
+import org.scalacheck.Arbitrary
 import org.scalacheck.Prop.*
 
 /** Structural validation against the XJDF specification, driven by the examples
@@ -248,7 +249,8 @@ class TicketLaws extends ScalaCheckSuite:
     assert(invalid.validate.isInvalid)
 
   property("§3.4: every intentionally invalid duplicate-keys ticket is rejected (Invalid generator)"):
-    forAll(Arbitraries.Invalid.arbDuplicateResourceSets) { t =>
+    given Arbitrary[XJDF] = Arbitraries.Invalid.arbDuplicateResourceSets
+    forAll { (t: XJDF) =>
       val report = t.validateReport
       !report.isValid && report.errors.exists(_.code.contains(IssueCode.ResourceSetClash))
     }
