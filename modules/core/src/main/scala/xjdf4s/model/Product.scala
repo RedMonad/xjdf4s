@@ -261,7 +261,7 @@ object Bom:
    *  recursion is observed, use `cataEval` directly.
    */
   def cata[A](algebra: ProductTree[A] => A)(tree: Fix[ProductTree]): A =
-    cataEval(a => Eval.now(algebra(a)))(tree).value
+    cataEval((a: ProductTree[A]) => Eval.now(algebra(a)))(tree).value
 
   // ------------------------------------------------------------------
   // Derived folds
