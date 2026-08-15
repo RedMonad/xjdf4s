@@ -13,7 +13,7 @@ import munit.FunSuite
 class PatchLaws extends FunSuite:
 
   private def mediaSet(
-      cpi: Option[NonEmptyChain[ProcessIndex]] = None,
+      cpi: Option[NonEmptyChain[ProcessIndex]],
       usage: Option[Usage] = Some(Usage.Input),
       resourceId: Option[Id] = None
   ): ResourceSet =
