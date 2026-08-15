@@ -4,7 +4,7 @@ import xjdf4s.laws.Arbitraries.given
 import xjdf4s.model.*
 import xjdf4s.prim.*
 import cats.data.ValidatedNec
-import cats.kernel.{Monoid, Semigroup, Semilattice}
+import cats.kernel.{Monoid, Order, Semigroup}
 import munit.ScalaCheckSuite
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop.*
@@ -31,20 +31,6 @@ class AlgebraLaws extends ScalaCheckSuite:
         M.combine(M.combine(a, b), c) == M.combine(a, M.combine(b, c))
       }
 
-  private def semilatticeLaws[A](name: String)(using arb: Arbitrary[A])(using S: Semilattice[A]) =
-    property(s"semilattice commutativity: $name"):
-      forAll(arb.arbitrary, arb.arbitrary) { (a: A, b: A) =>
-        S.combine(a, b) == S.combine(b, a)
-      }
-    property(s"semilattice idempotency: $name"):
-      forAll(arb.arbitrary) { (a: A) =>
-        S.combine(a, a) == a
-      }
-    property(s"semilattice associativity: $name"):
-      forAll(arb.arbitrary, arb.arbitrary, arb.arbitrary) { (a: A, b: A, c: A) =>
-        S.combine(S.combine(a, b), c) == S.combine(a, S.combine(b, c))
-      }
-
   // --- Part: overlay semigroup -----------------------------------------
   semigroupAssociativity[Part]("Part")
 
@@ -54,8 +40,59 @@ class AlgebraLaws extends ScalaCheckSuite:
   // --- AuditPool: chronological concatenation --------------------------
   semigroupAssociativity[AuditPool]("AuditPool")
 
-  // --- AmountRange: the meet semilattice (constraint intersection) -----
-  semilatticeLaws[AmountRange]("AmountRange.meet")
+  // --- AmountBounds: ADR-0004 / Table 6.3 -------------------------------
+  property("AmountBounds.meet is commutative when defined"):
+    forAll { (a: AmountBounds, b: AmountBounds) =>
+      AmountBounds.meet(a, b) == AmountBounds.meet(b, a)
+    }
+
+  property("AmountBounds.meet is associative as a partial intersection"):
+    forAll { (a: AmountBounds, b: AmountBounds, c: AmountBounds) =>
+      AmountBounds.meet(a, b).flatMap(AmountBounds.meet(_, c)) ==
+        AmountBounds.meet(b, c).flatMap(AmountBounds.meet(a, _))
+    }
+
+  property("AmountBounds.meet is idempotent"):
+    forAll { (a: AmountBounds) => AmountBounds.meet(a, a).contains(a) }
+
+  property("AmountBounds.meet is defined exactly for non-empty intersections"):
+    forAll { (a: AmountBounds, b: AmountBounds) =>
+      val nonEmpty =
+        a.min.forall(lower => b.max.forall(upper => Order[Amount].compare(lower, upper) <= 0)) &&
+          b.min.forall(lower => a.max.forall(upper => Order[Amount].compare(lower, upper) <= 0))
+      AmountBounds.meet(a, b).isDefined == nonEmpty
+    }
+
+  property("AmountBounds.widen is commutative"):
+    forAll { (a: AmountBounds, b: AmountBounds) =>
+      AmountBounds.widen(a, b) == AmountBounds.widen(b, a)
+    }
+
+  property("AmountBounds.widen is associative"):
+    forAll { (a: AmountBounds, b: AmountBounds, c: AmountBounds) =>
+      AmountBounds.widen(AmountBounds.widen(a, b), c) ==
+        AmountBounds.widen(a, AmountBounds.widen(b, c))
+    }
+
+  property("AmountBounds.widen is idempotent"):
+    forAll { (a: AmountBounds) => AmountBounds.widen(a, a) == a }
+
+  test("AmountBounds.meet tightens and returns None for an empty intersection"):
+    val left = AmountBounds(Some(Amount(10)), Some(Amount(20)))
+    val right = AmountBounds(Some(Amount(15)), Some(Amount(25)))
+    assertEquals(AmountBounds.meet(left, right), Some(AmountBounds(Some(Amount(15)), Some(Amount(20)))))
+    assertEquals(
+      AmountBounds.meet(left, AmountBounds(Some(Amount(21)), Some(Amount(30)))),
+      None
+    )
+
+  test("AmountBounds.widen expands the acceptable range"):
+    val left = AmountBounds(Some(Amount(10)), Some(Amount(20)))
+    val right = AmountBounds(Some(Amount(15)), Some(Amount(25)))
+    assertEquals(AmountBounds.widen(left, right), AmountBounds(Some(Amount(10)), Some(Amount(25))))
+
+  test("AmountBounds rejects inverted bounds"):
+    intercept[IllegalArgumentException](AmountBounds(Some(Amount(10)), Some(Amount(5))))
 
   // --- TimeSpan: addition monoid ----------------------------------------
   monoidLaws[TimeSpan]("TimeSpan")

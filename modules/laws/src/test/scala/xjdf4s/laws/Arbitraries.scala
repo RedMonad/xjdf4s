@@ -118,13 +118,14 @@ object Arbitraries:
         webName = webName
       )
 
-  implicit val arbAmountRange: Arbitrary[AmountRange] =
+  implicit val arbAmountBounds: Arbitrary[AmountBounds] =
     Arbitrary:
       for
-        amount <- Gen.option(arbAmount.arbitrary)
-        max    <- Gen.option(arbAmount.arbitrary)
-        min    <- Gen.option(arbAmount.arbitrary)
-      yield AmountRange(amount, max, min)
+        min <- Gen.option(arbAmount.arbitrary)
+        max <- Gen.option(arbAmount.arbitrary)
+      yield (min, max) match
+        case (Some(lower), Some(upper)) if lower.value > upper.value => AmountBounds(Some(upper), Some(lower))
+        case _ => AmountBounds(min, max)
 
   implicit val arbPartAmount: Arbitrary[PartAmount] =
     Arbitrary:

@@ -2,7 +2,7 @@ package xjdf4s
 package prim
 
 import cats.Show
-import cats.kernel.{Eq, Monoid, Order, Semigroup, Semilattice}
+import cats.kernel.{Eq, Monoid, Order, Semigroup}
 
 /** Canonical float rendering: drop the trailing `.0` (e.g. `80` instead of `80.0`). */
 private[xjdf4s] def fmtDouble(d: Double): String =
@@ -549,81 +549,40 @@ object AmountBounds:
 
   given Eq[AmountBounds] = Eq.fromUniversalEquals
 
-end AmountBounds
-
-/** A planned or recorded amount range: `@Amount` together with the tolerances
- *  `@MinAmount`/`@MaxAmount` (PartAmount, Table 6.3).
- *
- *  The *meet* of two ranges — taking the stricter constraint on every axis — is
- *  commutative, associative and idempotent: a lawful `Semilattice`, the
- *  “constraint intersection”. The dual *join* (optimistic widening) is a
- *  semilattice as well; both are modelled here.
- */
-opaque type AmountRange = (amount: Option[Amount], max: Option[Amount], min: Option[Amount])
-
-object AmountRange:
-
-  val unbounded: AmountRange = (amount = None, max = None, min = None)
-
-  def apply(amount: Option[Amount], max: Option[Amount], min: Option[Amount]): AmountRange =
-    (amount = amount, max = max, min = min)
-
-  def exact(a: Amount): AmountRange = apply(Some(a), None, None)
-
-  def between(min: Amount, max: Amount): AmountRange = apply(None, Some(max), Some(min))
-
-  private def stricterMin(a: Option[Amount], b: Option[Amount]): Option[Amount] =
+  private def tighterMin(a: Option[Amount], b: Option[Amount]): Option[Amount] =
     (a, b) match
-      case (None, other) => other
-      case (other, None) => other
       case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) >= 0 then x else y)
+      case (Some(x), None)    => Some(x)
+      case (None, Some(y))    => Some(y)
+      case (None, None)       => None
 
-  private def stricterMax(a: Option[Amount], b: Option[Amount]): Option[Amount] =
+  private def tighterMax(a: Option[Amount], b: Option[Amount]): Option[Amount] =
     (a, b) match
-      case (None, other) => other
-      case (other, None) => other
       case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) <= 0 then x else y)
+      case (Some(x), None)    => Some(x)
+      case (None, Some(y))    => Some(y)
+      case (None, None)       => None
 
-  extension (r: AmountRange)
-    def amount: Option[Amount] = r.amount
-    def max: Option[Amount] = r.max
-    def min: Option[Amount] = r.min
+  private def widerMin(a: Option[Amount], b: Option[Amount]): Option[Amount] =
+    (a, b) match
+      case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) <= 0 then x else y)
+      case _                  => None
 
-    /** Constraint tightening: the greatest lower bound of two ranges. */
-    def meet(o: AmountRange): AmountRange =
-      AmountRange(
-        amount = AmountRange.stricterMin(r.amount, o.amount),
-        max = AmountRange.stricterMax(r.max, o.max),
-        min = AmountRange.stricterMin(r.min, o.min)
-      )
+  private def widerMax(a: Option[Amount], b: Option[Amount]): Option[Amount] =
+    (a, b) match
+      case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) >= 0 then x else y)
+      case _                  => None
 
-    /** Optimistic widening: the least upper bound of two ranges. */
-    def join(o: AmountRange): AmountRange =
-      AmountRange(
-        amount = AmountRange.stricterMax(r.amount, o.amount),
-        max = AmountRange.stricterMax(r.max, o.max),
-        min = AmountRange.stricterMin(r.min, o.min)
-      )
+  /** Tightens two contracts by intersecting their acceptable ranges.
+   *  `None` represents an empty intersection, never a valid range.
+   */
+  def meet(a: AmountBounds, b: AmountBounds): Option[AmountBounds] =
+    val min = tighterMin(a.min, b.min)
+    val max = tighterMax(a.max, b.max)
+    Option.when(isOrdered(min, max))(AmountBounds(min, max))
 
-    /** True when `a` satisfies this range. */
-    def includes(a: Amount): Boolean =
-      r.min.forall(m => Order[Amount].compare(a, m) >= 0) &&
-        r.max.forall(m => Order[Amount].compare(a, m) <= 0)
-  end extension
+  /** Optimistically widens two contracts by unioning their acceptable ranges. */
+  def widen(a: AmountBounds, b: AmountBounds): AmountBounds =
+    AmountBounds(widerMin(a.min, b.min), widerMax(a.max, b.max))
 
-  given Semilattice[AmountRange] with
-    def combine(a: AmountRange, b: AmountRange): AmountRange = a.meet(b)
-
-  given Show[AmountRange] =
-    Show.show { r =>
-      val parts = List(
-        r.min.map(m => s"min ${fmtDouble(m)}"),
-        r.amount.map(a => s"amount ${fmtDouble(a)}"),
-        r.max.map(m => s"max ${fmtDouble(m)}")
-      ).flatten
-      if parts.isEmpty then "unbounded" else parts.mkString(", ")
-    }
-
-  given Eq[AmountRange] = Eq.fromUniversalEquals
-
-end AmountRange
+end AmountBounds
