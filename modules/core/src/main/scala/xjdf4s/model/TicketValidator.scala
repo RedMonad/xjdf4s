@@ -406,7 +406,6 @@ object TicketValidator:
 end TicketValidator
 
 extension (ticket: XJDF)
-
   /** Validates this ticket against the structural requirements of the
    *  specification (uniqueness of ResourceSet keys, index bounds, ID/IDREF
    *  consistency, `@Types` rules, audit chronology, …). All violations are

@@ -119,5 +119,10 @@ extension (ticket: XJDF)
    *  M1.4-1 (ADR-0002): moved from a member of `XJDF` to an extension method
    *  in `Patch.scala` so `Ticket.scala` does not depend on the `Patch`
    *  implementation. Source-compatible wherever `xjdf4s.model.*` is imported.
+   *
+   *  The body uses the static form `Patch.applyTo(patch)(ticket)`: the
+   *  extension-method syntax is not resolvable for the opaque `Patch` from a
+   *  top-level extension body in the defining file, so the call goes through
+   *  the companion's member directly.
    */
-  def withPatch(patch: Patch): XJDF = patch.applyTo(ticket)
+  def withPatch(patch: Patch): XJDF = Patch.applyTo(patch)(ticket)
