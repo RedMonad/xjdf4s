@@ -46,6 +46,12 @@ enum Audit:
       case Resource(h, _) => h
       case Status(h, _) => h
 
+  /** All IDREFs referenced by this audit entry. */
+  def references: Chain[IdRef] =
+    this match
+      case Resource(_, resourceInfo) => resourceInfo.references
+      case _                         => Chain.empty
+
   def time: Timestamp = origin.time
 end Audit
 
@@ -99,6 +105,10 @@ object AuditPool:
 
     /** The `AuditProcessRun` that finalizes the newest workstep. */
     def latestProcessRun: Option[ProcessRun] = processRuns.lastOption
+
+    /** All IDREFs referenced across all audits in this pool. */
+    def references: Chain[IdRef] =
+      pool.toNonEmptyChain.toChain.flatMap(_.references)
   end extension
 
   given Semigroup[AuditPool] with

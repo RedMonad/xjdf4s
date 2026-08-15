@@ -53,20 +53,21 @@ final case class XJDF(
   /** Applies a change-order patch (monoid action of `Patch` on tickets). */
   def withPatch(patch: Patch): XJDF = patch.applyTo(this)
 
-  /** All document-scoped `@ID`s declared inside this ticket. */
+  /** All document-scoped `@ID`s declared inside this ticket (§2.2.3).
+   *  Header/@ID from AuditPool is messaging-scoped (Table 7.3) and excluded.
+   */
   def declaredIds: Chain[Id] =
     val resourceIds =
       resourceSets.flatMap(rs => Chain.fromOption(rs.id) ++ rs.resources.flatMap(r => Chain.fromOption(r.id)))
     val productIds = productList.fold(Chain.empty[Id])(_.declaredIds)
-    val headerIds =
-      auditPool.fold(Chain.empty[Id])(_.toNonEmptyChain.toChain.flatMap(a => Chain.fromOption(a.origin.id)))
-    resourceIds ++ productIds ++ headerIds
+    resourceIds ++ productIds
 
-  /** All IDREFs used inside this ticket. */
+  /** All IDREFs used inside this ticket across resources, products and audits (§2.2.3). */
   def references: Chain[IdRef] =
-    val resourceRefs = resourceSets.flatMap(_.resources.flatMap(_.references))
+    val resourceRefs = resourceSets.flatMap(_.references)
     val productRefs = productList.fold(Chain.empty[IdRef])(_.references)
-    resourceRefs ++ productRefs
+    val auditRefs = auditPool.fold(Chain.empty[IdRef])(_.references)
+    resourceRefs ++ productRefs ++ auditRefs
 
   /** §2.2.2: an individual workstep is uniquely identified by the combination of
    *  `@JobID`, `@JobPartID` and the Partition Keys of its `Part` elements.
