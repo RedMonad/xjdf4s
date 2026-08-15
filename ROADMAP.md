@@ -536,10 +536,10 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 
 | ID | Находка | Норма | Код | Задача |
 | --- | --- | --- | --- | --- |
-| N-16 | §3.4 проверяется только на точное равенство ключа: не ловится ни частичное пересечение CPI (`[0]` vs `[0,1]`), ни смесь «без CPI» + «с CPI» | §3.4: «`ResourceSet` elements with the same values of `@Name`, `@Usage`, `@ProcessUsage` and **common or no entries** in `@CombinedProcessIndex` SHALL NOT be specified.» | `model/Validation.scala:87-98`, `checkResourceSetKeys`: `ticket.resourceSets.toList.groupBy(_.key).collect { case (key, sets) if sets.size > 1 => key }` | M1.3-1 |
-| N-17 | §6.1.2.1 реализован частично: при нескольких родительских `Part` проверка выключается, вторая половина правила отсутствует | Table 6.3, `Part*`: «these PartAmount/Part elements SHALL NOT include any Partition Keys that are already uniquely specified in **any** parent Resource/Part element. If any of these Part elements specify the same Partition Key as the parent Resource/Part element, then the value of that key SHALL match **one of the values** from the parent Resource/Part.» | `model/Validation.scala:170-179`, `checkPartAmountKeys`: `val parentKeys = r.parts.size match { case 1 => r.parts.headOption.toList.flatMap(_.keys); case _ => Nil }` | M1.3-2 |
-| N-18 | Объявленные локальные инварианты не подключены к корневой валидации | соответствующие SHALL глав 3–8 | grep по `isLawful` даёт семь вхождений; из них к корневому обходу подключён **только** `Intent.isLawful` (проверка `@Name == payload.elementName`). Не вызываются нигде в валидаторе: `BindingIntent.isLawful` (`intents/Binding.scala:31`), `VariableIntent.isLawful` (`intents/FoldingVariable.scala:42`), `PartWaste.isLawful` (`model/Amounts.scala:19`), `Disposition.isLawful` (`prim/Common.scala:213`), `Product.hasLawfulAmounts` (`model/Product.scala:36`) | M1.3-3 |
-| N-19 | Целостность и ацикличность BOM не входят в `validate`: тикет с циклом в `@ChildRefs` проходит `isValid` | §3.3.1.1 и структура `ProductList`, `Product/@ChildRefs` | `TicketValidator.validate` (`Validation.scala:41-56`) перечисляет 12 проверок и не вызывает `Bom.fromProductList`; grep показывает, что `fromProductList`, `totalCopies`, `validateAmounts` вызываются только из `examples/Main.scala` | M1.3-4 |
+| N-16 | §3.4 проверяется только на точное равенство ключа: не ловится ни частичное пересечение CPI (`[0]` vs `[0,1]`), ни смесь «без CPI» + «с CPI» | §3.4: «`ResourceSet` elements with the same values of `@Name`, `@Usage`, `@ProcessUsage` and **common or no entries** in `@CombinedProcessIndex` SHALL NOT be specified.» | `model/Validation.scala`, `checkResourceSetKeys`: попарное сравнение через `ResourceSet.clashesWith` (PR-8) | M1.3-1 — `[~]` реализовано |
+| N-17 | §6.1.2.1 реализован частично: при нескольких родительских `Part` проверка выключается, вторая половина правила отсутствует | Table 6.3, `Part*` | реализовано в PR-6 (M1.3-2, `[x]` верифицировано владельцем) | M1.3-2 — `[x]` |
+| N-18 | Объявленные локальные инварианты не подключены к корневой валидации | соответствующие SHALL глав 3–8 | все бывшие `Boolean isLawful/hasLawful*` приведены к `DomainRule` и вызываются из `TicketValidator.checkLocalLaws` (PR-8) | M1.3-3 — `[~]` реализовано |
+| N-19 | Целостность и ацикличность BOM не входят в `validate` | §3.3.1.1 | `checkBomIntegrity` вызывает `Bom.fromProductList` (PR-8) | M1.3-4 — `[~]` реализовано |
 
 Полный текущий список проверок валидатора (для контроля полноты после M1.3):
 
@@ -566,9 +566,9 @@ def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
 
 | ID | Находка | Норма | Задача |
 | --- | --- | --- | --- |
-| N-36 | Дубликат токена в `@Types` (`"Product Product"`) не отклоняется | §3.1.3: «`@Types` of process XJDF SHALL NOT contain the token `"Product"` if any **additional** process type tokens are present.» Слово «additional» допускает толкование, при котором дубликат — тоже нарушение; текст прямо об этом молчит | M1.3-4 |
-| N-37 | Не проверяется правило Table 3.11 для `Product/@PartVersion` | Table 3.11 (Sheet 2): «If `@PartVersion` is specified for a child product, the root products that reference the child products SHALL also contain `@PartVersion` with the same value.» | M1.3-4 |
-| N-38 | Не проверяется уникальность `Comment/@Language` там, где этого требует таблица | Table 8.49, `Comment*`: «If multiple Comment elements occur, they SHALL have different `Comment/@Language` values.» | M1.3-3 |
+| N-36 | Дубликат токена в `@Types` (`"Product Product"`) не отклоняется | §3.1.3 | строгая политика реализована (`ProductTokenDuplicate`), decision record в `docs/SPEC-COVERAGE.md` (PR-8) | M1.3-4 — `[~]` реализовано |
+| N-37 | Не проверяется правило Table 3.11 для `Product/@PartVersion` | Table 3.11 (Sheet 2) | `checkPartVersion` (PR-8) | M1.3-4 — `[~]` реализовано |
+| N-38 | Не проверяется уникальность `Comment/@Language` там, где этого требует таблица | Table 8.49 | `Notification.law` + `CommentLanguageDuplicate` код (PR-8) | M1.3-3 — `[~]` реализовано |
 
 ### 5.4 Архитектурные дефекты (P2)
 
@@ -1444,9 +1444,11 @@ Validation | Domain tests | XML | JSON | Status | Notes
 
 ### M1.3 — Полный корневой валидатор
 
-#### M1.3-1. Уникальность `ResourceSet` по §3.4 (P1) — закрывает N-16
+#### M1.3-1. Уникальность `ResourceSet` по §3.4 (P1) — закрывает N-16 — `[~]` реализовано, ожидает верификации владельцем
 
 Заменить `groupBy(_.key)` попарным сравнением с помощью `clashesWith` из M1.1-2. Выдавать стабильный `IssueCode` и XPath обоих конфликтующих наборов.
+
+**Статус сессии (PR-8):** реализовано в `checkResourceSetKeys` (коммит `aefc38d`); конфликтующие пары ищутся попарно через `ResourceSet.clashesWith`, каждая помечается кодом `IssueCode.ResourceSetClash` и XPath `/XJDF/ResourceSet`. Негативные тесты: частичное пересечение CPI `[0]` vs `[0,1]`; `no-CPI` vs `CPI=[1]`; `Chain(a,a)` (унаследованный тест); валидный `[0]` vs `[1]` (Example 3.6).
 
 **Тесты:** `[CPI=[0], CPI=[0,1]]` → invalid; `[no-CPI, CPI=[1]]` → invalid; `[CPI=[0], CPI=[1]]` → valid (это ровно текущий Example 3.6); `Chain(a, a)` → invalid; точное совпадение ключа → invalid.
 
@@ -1469,9 +1471,25 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 **Статус сессии (PR-6).** Оба правила реализованы (коммит `a79abe2`): ветка `case _ => Nil` удалена — несколько родительских `Part` больше не отключают проверку; добавлен helper `parentValues(parts, key)` (все различные значения ключа по родительским Resource/Part). Правило 1 (ключ, однозначно заданный родителем, не переопределяется) и правило 2 (повторённый ключ обязан совпадать с одним из значений родителя) проверяются для всех `PartAmount.parts`; сообщения используют `PartitionKey.attributeName`. В `TicketLaws` добавлены: Example 6.1 (несколько родительских `Part` `Separation="Cyan" PartVersion="English|French"` + отдельная Black-пластина) как валидный кейс; правило 2 положительное (совпадение с одним из нескольких значений); правило 1 отрицательное (повтор однозначного ключа); правило 2 отрицательное (значение вне списка родителя). Неисчерпывающий match (E029 на `List(_, _*)`) устранён (коммит `eb75c00`): ветка «несколько значений» стала безусловным catch-all `case parents =>`. Прогон владельца (Приложение D) — чистый; статус `[x] (верифицировано владельцем)`.
 
-#### M1.3-3. Шина `DomainRule` и подключение локальных правил (P1) — закрывает N-18, N-38
+#### M1.3-3. Шина `DomainRule` и подключение локальных правил (P1) — закрывает N-18, N-38 — `[~]` реализовано, ожидает верификации владельцем
 
 Заменить/обернуть `Boolean isLawful` композируемым контрактом ADR-0003. Один обход агрегата в `TicketValidator` вызывает все правила по структуре.
+
+**Статус сессии (PR-8, решение владельца «рефакторить все сразу»):** `trait DomainRule[-A]` с методом `check(value, at): Chain[Issue]` введён в `model/Validation.scala` (переедет в `ValidationTypes.scala` при разрыве цикла в M1.4-1). Все бывшие `Boolean`-предикаты приведены к `DomainRule` и явно вызываются из `TicketValidator.checkLocalLaws`:
+
+- `Intent.nameLaw` — `@Name == payload.elementName` (Table 4.1);
+- `BindingIntent.law` — парность details ↔ `@BindingType` (Table 4.8) + запрет `@BindingSide` при `@BindingOrder="None"`;
+- `VariableIntent.law` — `@MinPages ≤ @AveragePages ≤ @MaxPages` (Table 4.36);
+- `PartWaste.law` — задан `@ModuleIDs` или `@WasteDetails` (Table 6.5);
+- `Notification.law` — Milestone ⇒ `@Class="Event"` (Table 8.49) + уникальность `Comment/@Language` (N-38);
+- `Product.amountsLaw` — неотрицательные amounts (§3.3.1.1);
+- `ResourceSetLaw.children/statuses` — `@Name` ↔ payload и запрет `@Status` при `Usage="Output"` (Table 6.1).
+
+`Disposition` (Table 8.23) вынесен в `TicketValidator.dispositionLaw`, чтобы не создавать зависимость `prim → validation` до M1.4-1; хук в обходе ресурсов готов к подключению при реализации FileSpec-несущих ресурсов в M1.6/M3.
+
+`Boolean`-аксессоры (`Intent.isLawful`, `PartWaste.isLawful`, `Notification.hasLawfulMilestone/hasUniqueCommentLanguages`, `ResourceSet.hasLawfulChildren/hasLawfulStatuses`, `Product.hasLawfulAmounts`) сохранены как производные и используются тестами/DSL, но первичной формой закона является `DomainRule`.
+
+**Критерий приёмки:** каждый закон имеет стабильный `IssueCode`; негативные тесты на каждое правило; registry-тест перечисляет типы и доказывает достижимость из корня.
 
 Минимальный набор правил корневого обхода:
 
@@ -1490,7 +1508,7 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 
 **Негативные тесты обязательны на каждое правило:** `SaddleStitching`-детали при `@BindingType="SoftCover"`; `VariableIntent` с `@MaxPages` 5 при `@AveragePages` 9; `Notification` с `Milestone` и `@Class="Warning"`; `Disposition` с двумя временами; `PartWaste` без обоих атрибутов; два `Comment` с одним `@Language`. Позитивные примеры (`brochureJob`, `notebook`) не должны деградировать.
 
-#### M1.3-4. Целостность агрегата (P1) — закрывает N-19, N-36, N-37
+#### M1.3-4. Целостность агрегата (P1) — закрывает N-19, N-36, N-37 — `[~]` реализовано, ожидает верификации владельцем
 
 - Включить `Bom.fromProductList`/эквивалентное правило целостности в `validate`, XPath `/XJDF/ProductList`; дубликаты `Product/@ID` проверяются отдельно от детекции циклов;
 - завершить обход ID/IDREF (с учётом M1.2-5);
@@ -1498,9 +1516,19 @@ def parentValues(parts: Chain[Part], key: PartitionKey): List[PartitionValue] =
 - проверить правило Table 3.11 о `Product/@PartVersion` (N-37);
 - проверить хронологию `AuditPool` (уже есть — сохранить).
 
-#### M1.3-5. Разделение ошибок и предупреждений (P2) — ADR-0006
+**Статус сессии (PR-8):**
+
+- N-19: `checkBomIntegrity` вызывает `Bom.fromProductList` и ретегает ошибки кодами `BomCycle`/`BomUnresolvedChildRef`/`BomNoRoot`; дубликаты `@ID` остаются в `checkIdUniqueness` (НЕ маскируются как BOM-cycle).
+- N-36: строгая политика реализована в `checkTypes` — смешение `Product` с процессными токенами даёт `ProductTokenMixed`, дубликат `Product` — `ProductTokenDuplicate`; decision record в `docs/SPEC-COVERAGE.md` (DR-N36).
+- N-37: `checkPartVersion` проверяет согласованность `@PartVersion` корня и потомка по транзитивному замыканию `@ChildRefs` (Table 3.11).
+- ID/IDREF обход остаётся (`checkReferences`), `AuditPool` хронология сохранена.
+- Негативные тесты: цикл `@ChildRefs`, неразрешённый `@ChildRefs`, дубликат `"Product"`, child-v1/root-без-PartVersion, child-v1/root-v2, совпадающие PartVersion (valid).
+
+#### M1.3-5. Разделение ошибок и предупреждений (P2) — ADR-0006 — `[~]` реализовано, ожидает верификации владельцем
 
 `ValidationReport(errors, warnings)`; SHALL инвалидируют результат, SHOULD/MAY — нет; каждый `Issue` получает стабильный `IssueCode`; вызывающая сторона не анализирует строки сообщений.
+
+**Статус сессии (PR-8):** `ValidationReport(errors, warnings)` с `isValid`, `withWarningsAsErrors`, `escalate(codes)`; `TicketValidator.validateReport(ticket)` — первичная точка входа, `validate` (легаси-`ValidatedNec`) сохранён для существующих вызовов и `XJDF.validate`; добавлен `XJDF.validateReport`. Все core-проверки снабжены стабильными `IssueCode` (реестр в `prim.IssueCode`); `code` остаётся `Option` для DSL-конструкторов и внешних потребителей, но сам валидатор всегда его проставляет — это покрыто негативным тестом «every issue produced by the core validator carries an IssueCode». На текущем срезе core не эмитирует warnings (только errors), поэтому положительный тест — пустой warnings-список; API строгой эскалации готов к SHOULD/MAY правилам M1.6/M3.
 
 #### DoD M1.3
 
@@ -2066,10 +2094,10 @@ M1: одна обязательная быстрая платформа — Temu
 | N-13 | `Notification` без `@ModuleID` и правила Milestone | ✅ поле + `DomainRule` | M1.2-5, M1.3-3 | P1 |
 | N-14 | `Header/@ID` в документном скоупе | ✅ разделить скоупы, дополнить `references` | M1.2-5 | P1 |
 | N-15 | Семь ссылок на таблицы | ✅ + автопроверка | M1.2-6 | P1 |
-| N-16 | §3.4 только точное равенство ключа | ✅ общий предикат | M1.1-2, M1.3-1 | P1 |
+| N-16 | §3.4 только точное равенство ключа | ✅ попарное сравнение через `clashesWith` + `IssueCode.ResourceSetClash` | M1.1-2, M1.3-1 — `[~]` | P1 |
 | N-17 | §6.1.2.1 частично | ✅ оба правила | M1.3-2 | P1 |
-| N-18 | `isLawful` не подключены | ✅ шина `DomainRule` (ADR-0003) | M1.3-3 | P1 |
-| N-19 | BOM вне `validate` | ✅ включить | M1.3-4 | P1 |
+| N-18 | `isLawful` не подключены | ✅ шина `DomainRule` (ADR-0003), все локальные законы подключены | M1.3-3 — `[~]` | P1 |
+| N-19 | BOM вне `validate` | ✅ `checkBomIntegrity` через `Bom.fromProductList` | M1.3-4 — `[~]` | P1 |
 | N-20 | `ChangeOrder` вырожден | ✅ ADR-0001, вариант C | M1.4-2 | P2 |
 | N-21 | Цикл зависимостей | ✅ ADR-0002 | M1.4-1 | P2 |
 | N-22 | `IdAllocator` мёртв | ✅ явное решение (интегрировать/удалить) | M1.4-4 | P2 |
@@ -2086,9 +2114,9 @@ M1: одна обязательная быстрая платформа — Temu
 | N-33 | `matches` назван preorder | ✅ ADR-0005 | M1.5-1 | P3 |
 | N-34 | «свободный моноид» | ✅ полугруппа | M1.5-1 | P3 |
 | N-35 | «сопряжение» как факт | ✅ пометить эвристикой | M1.5-1 | P3 |
-| N-36 | Дубликат `Product` в `@Types` | ✅ decision record + строгая политика | M1.3-4 | P1 |
-| N-37 | `Product/@PartVersion` root/child | ✅ правило Table 3.11 | M1.3-4 | P1 |
-| N-38 | Уникальность `Comment/@Language` | ✅ `DomainRule` | M1.3-3 | P1 |
+| N-36 | Дубликат `Product` в `@Types` | ✅ decision record + строгая политика (`ProductTokenDuplicate`) | M1.3-4 — `[~]` | P1 |
+| N-37 | `Product/@PartVersion` root/child | ✅ `checkPartVersion`, правило Table 3.11 | M1.3-4 — `[~]` | P1 |
+| N-38 | Уникальность `Comment/@Language` | ✅ `Notification.law` (`CommentLanguageDuplicate`) | M1.3-3 — `[~]` | P1 |
 | N-39 | `AllResources` — bottleneck | ✅ ADR-0008 до M3 | M3.1 | P2 |
 | N-40 | `docs/04` без ребра `resources → intents` | ✅ | M1.5-2 | P3 |
 | N-41 | Scaladoc `XjdfVersion` | ✅ Table A.52 vs Table 3.1 | M1.5-2 | P3 |
@@ -2541,4 +2569,4 @@ ThisBuild / scalacOptions ++= Seq(
 
 ---
 
-**Краткий следующий шаг:** PR-1…PR-7 (M1.0 + M1.1 + M1.2-1…M1.2-5 + M1.3-2) выполнены (PR-7 ожидает верификации владельцем). Следующий по плану — PR-8 (M1.3-1, M1.3-3, M1.3-4, M1.3-5: шина `DomainRule`, полный `TicketValidator`, severity).
+**Краткий следующий шаг:** PR-1…PR-7 (M1.0 + M1.1 + M1.2-1…M1.2-5 + M1.3-2) выполнены и верифицированы владельцем. PR-8 (M1.3-1, M1.3-3, M1.3-4, M1.3-5: шина `DomainRule`, полный `TicketValidator`, BOM integrity, `ValidationReport`/severity) реализован статически в коммите `aefc38d` и **ожидает верификации владельцем** (`sbt -batch clean scalafmtCheckAll compile test examples/run`). После зелёного прогона статусы M1.3-1/3/4/5 переводятся в `[x]`; следующий по плану — PR-9 (M1.4-1: `ValidationTypes.scala`, разрыв цикла зависимостей).
