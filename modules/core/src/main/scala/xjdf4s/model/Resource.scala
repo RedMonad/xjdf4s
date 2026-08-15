@@ -202,6 +202,23 @@ end ResourceSet
 
 object ResourceSet:
 
+  /** §3.4: two ResourceSets clash when `@Name`/`@Usage`/`@ProcessUsage` are equal AND
+   *  their `@CombinedProcessIndex` lists have common entries, or either list is absent
+   *  ("no entries" applies to all processes). The single conflict predicate shared by
+   *  the validator and `Patch.mergeResourceSets` (M1.1-2).
+   */
+  def clashesWith(a: ResourceSet, b: ResourceSet): Boolean =
+    a.name == b.name && a.usage == b.usage && a.processUsage == b.processUsage &&
+      cpiOverlap(a.combinedProcessIndex, b.combinedProcessIndex)
+
+  private def cpiOverlap(
+      a: Option[NonEmptyChain[ProcessIndex]],
+      b: Option[NonEmptyChain[ProcessIndex]]
+  ): Boolean = (a, b) match
+    case (None, _) | (_, None) => true
+    case (Some(x), Some(y))    =>
+      x.toChain.toList.toSet.intersect(y.toChain.toList.toSet).nonEmpty
+
   given Show[ResourceSet] =
     Show.show(rs => s"ResourceSet(${rs.name.toNmToken.value}${rs.usage.fold("")(u => s", ${u.token.value}")})")
 

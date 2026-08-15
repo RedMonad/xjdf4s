@@ -66,23 +66,46 @@ object Patch:
   def addComment(comment: Comment): Patch =
     Patch(t => t.copy(comments = t.comments :+ comment))
 
-  /** Merges change-order ResourceSets into a ticket. The result is an `Ior`:
-   *  `Right` — a clean merge; `Both` — merged, but some ResourceSet keys were
-   *  duplicated (the update wins, the issue is reported); `Left` — the update
-   *  cannot be applied at all.
+  /** Merges change-order ResourceSets into a ticket (§1.3.2, §3.4). The result is an `Ior`:
+   *  `Right` — no conflicts, nothing replaced; `Both` — conflicting old ResourceSets were
+   *  replaced by the update (the update wins); `Left` — the update itself is ambiguous
+   *  (§3.4) and cannot be applied deterministically.
+   *
+   *  Conflict is the §3.4 predicate shared with the validator (`ResourceSet.clashesWith`):
+   *  equal `@Name`/`@Usage`/`@ProcessUsage` and common or absent `@CombinedProcessIndex`.
    */
   def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyChain[Issue], XJDF] =
-    val conflicts = update.filter(rs => ticket.resourceSets.exists(_.key == rs.key))
-    val merged = ticket.copy(resourceSets = ticket.resourceSets ++ update)
-    if conflicts.isEmpty then Ior.right(merged)
-    else
-      val issues = conflicts.map: rs =>
-        Issue.warning(
-          XPath("/XJDF/ResourceSet"),
-          s"Duplicate ResourceSet key replaced: ${Show[ResourceSetKey].show(rs.key)}"
+    NonEmptyChain.fromChain(pairsClashing(update)) match
+      case Some(conflicting) =>
+        Ior.left(
+          conflicting.map: rs =>
+            Issue.error(
+              XPath("/XJDF/ResourceSet"),
+              s"Change order contains conflicting ResourceSets (§3.4): ${Show[ResourceSetKey].show(rs.key)}"
+            )
         )
-      NonEmptyChain.fromChain(issues) match
-        case Some(nec) => Ior.both(nec, merged)
-        case None => Ior.right(merged)
+      case None =>
+        val replaced = ticket.resourceSets.filter(rs => update.exists(u => ResourceSet.clashesWith(rs, u)))
+        val retained = ticket.resourceSets.filterNot(rs => update.exists(u => ResourceSet.clashesWith(rs, u)))
+        val merged   = ticket.copy(resourceSets = retained ++ update)
+        NonEmptyChain.fromChain(replaced.map(warnReplaced)) match
+          case Some(warnings) => Ior.both(warnings, merged)
+          case None           => Ior.right(merged)
+
+  /** The ResourceSets of a collection that clash with at least one *later* set (§3.4). */
+  private def pairsClashing(sets: Chain[ResourceSet]): Chain[ResourceSet] =
+    val list = sets.toList
+    Chain.fromSeq(
+      list.zipWithIndex.collect {
+        case (a, i) if list.drop(i + 1).exists(b => ResourceSet.clashesWith(a, b)) => a
+      }
+    )
+
+  /** A warning that an old ResourceSet was replaced by a change order (§3.4). */
+  private def warnReplaced(rs: ResourceSet): Issue =
+    Issue.warning(
+      XPath("/XJDF/ResourceSet"),
+      s"Duplicate ResourceSet replaced (§3.4): ${Show[ResourceSetKey].show(rs.key)}"
+    )
 
 end Patch

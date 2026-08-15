@@ -119,6 +119,32 @@ class AlgebraLaws extends ScalaCheckSuite:
   property("IntegerRange 1 2 selects the middle"):
     IntegerRange(1, 2).select(List("a", "b", "c")) == List("b", "c")
 
+  // --- M1.1-4: IntegerRange boundary cases (§1.10.2, X-02) -----------------
+  test("IntegerRange: empty list selects nothing"):
+    assertEquals(IntegerRange.all.select(Nil), Nil)
+    assertEquals(IntegerRange(-1, 0).select(Nil), Nil)
+
+  test("IntegerRange: out-of-range indices are clamped"):
+    assertEquals(IntegerRange(-100, 100).select(List("a", "b", "c", "d", "e")), List("a", "b", "c", "d", "e"))
+
+  test("IntegerRange: negative indices count from the back"):
+    assertEquals(IntegerRange(-1, -3).select(List("a", "b", "c", "d", "e")), List("e", "d", "c"))
+
+  test("IntegerRange: single-element list"):
+    assertEquals(IntegerRange.all.select(List("a")), List("a"))
+
+  test("IntegerRange: forward range"):
+    assertEquals(IntegerRange(1, 3).select(List("a", "b", "c", "d", "e")), List("b", "c", "d"))
+
+  test("IntegerRange: reverse range"):
+    assertEquals(IntegerRange(3, 1).select(List("a", "b", "c", "d", "e")), List("d", "c", "b"))
+
+  test("IntegerRange: descending range 5 2 is clamped and reversed"):
+    assertEquals(IntegerRange(5, 2).select(List("a", "b", "c", "d", "e")), List("e", "d", "c"))
+
+  test("IntegerRange: size = 0 yields no indices"):
+    assertEquals(IntegerRange.all.indices(0L), Nil)
+
   // --- M1.0-3: compile-probes for the contested findings -------------------
   test("cats provides Monoid[ValidatedNec[Issue, Unit]] (X-01)"):
     // X-01: no hand-written given is needed — cats derives this instance from

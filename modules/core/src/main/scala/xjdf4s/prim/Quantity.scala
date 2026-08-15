@@ -385,9 +385,11 @@ object IntegerRange:
       else
         val f = normalizeIndex(r.from, size)
         val t = normalizeIndex(r.to, size)
-        val lo = math.max(0L, math.min(f, size - 1))
-        val hi = math.max(0L, math.min(t, size - 1))
-        if lo <= hi then (lo to hi).toList else (lo to hi by -1).toList
+        // clamped FROM/TO (not "lower/higher"): a descending range selects in reverse (§1.10.2).
+        val clampedFrom = math.max(0L, math.min(f, size - 1))
+        val clampedTo   = math.max(0L, math.min(t, size - 1))
+        if clampedFrom <= clampedTo then (clampedFrom to clampedTo).toList
+        else (clampedFrom to clampedTo by -1).toList
 
     /** Selects items of a list, applying the counting rules of §1.10.2. */
     def select[A](items: List[A]): List[A] =
