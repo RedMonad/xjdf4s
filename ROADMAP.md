@@ -1794,7 +1794,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 | M1.6-4 | GangSource `[x]` PR-23 | §8.22 | Table 8.27 |
 | M1.6-5 | HolePattern `[x]` PR-17 | §8.25 | Table 8.30 |
 | M1.6-6 | IdentificationField | §8.26 | Table 8.31 |
-| M1.6-7 | MISDetails `[~]` PR-24 | §8.30 | Table 8.48 |
+| M1.6-7 | MISDetails `[x]` PR-24 | §8.30 | Table 8.48 |
 
 **Дополнительно:**
 
@@ -2044,7 +2044,7 @@ binderySignature=Signature-A)`; `scripts/check-spec-coverage.sh` — `RESULT: OK
 `check-spec-coverage.sh` — `RESULT: OK` (статический прогон агента). Статус
 `[x]` — закрыт полностью.
 
-#### M1.6-7. `MISDetails` (Table 8.48, §8.30) — `[~]` реализовано статически (PR-24, ожидает прогона владельца)
+#### M1.6-7. `MISDetails` (Table 8.48, §8.30) — `[x]` выполнено (верифицировано владельцем; PR-24)
 
 Вертикальный срез закрывает второй и последний элемент главы 8, нужный для
 дополнения `NodeInfo` (Table 6.119): после него срез M1.6-8 добавляет ресурсу
@@ -2111,6 +2111,20 @@ binderySignature=Signature-A)`; `scripts/check-spec-coverage.sh` — `RESULT: OK
 (Table 8.48): MISDetails(complexity=0.5, costType=NonChargeable,
 workType=Rework, workTypeDetails=ResourceDamaged)`;
 `scripts/check-spec-coverage.sh` — `RESULT: OK`.
+
+**Прогон владельца (2026-08-16).** `clean` — success (8 disk cache hits);
+`compile` — success (1 s, cache 100%, 67 disk cache hits, 0 предупреждений);
+`testFull` — **343/0** (`MISDetailsLaws` 9, `GangSourceLaws` 8, `CreaseLaws` 5,
+`HoleMakingIntentLaws` 8, `EnumLaws` 30, `LaminatingIntentLaws` 7,
+`PatchLaws` 13, `ContentCheckIntentLaws` 12, `GlueLaws` 15,
+`HolePatternLaws` 14, `ChangeOrderLaws` 8, `CertificationLaws` 18,
+`EmbossingIntentLaws` 12, `AlignmentLaws` 6, `SpecExamplesSuite` 34,
+`BomLaws` 8, `TicketLaws` 59, `PartitionLaws` 27, `AlgebraLaws` 50);
+`examples/run` — exit 0, вывод содержит ожидаемую строку `MIS details
+(Table 8.48): MISDetails(complexity=0.5, costType=NonChargeable,
+workType=Rework, workTypeDetails=ResourceDamaged)` и не содержит регрессий;
+`check-spec-coverage.sh` — `RESULT: OK` (статический прогон агента). Статус
+`[x]` — закрыт полностью.
 
 #### M1.6-5. `HolePattern` (Table 8.30, Appendix F) — `[x]` выполнено (верифицировано владельцем; PR-17)
 
@@ -2497,7 +2511,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 21 | `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (4.23) + `ProofItem` (4.24) + `ProofColorType` + `ProcessType.Preflight` + `IntentPayload.declaredIds`-wiring + подключение `dispositionLaw` (Table 8.23) | M1.6-11 | 20 | `[x]` верифицировано владельцем: 300 тестов, `examples/run` exit 0 |
 | 22 | `Certification` (Table 8.8, §8.7) + `Catalog.CertificationClaim`/`CertificationOrganization` + SHALL `CERTIFICATION-LEVEL-MISSING` (ADR-0012) + wiring в 4 контейнера | M1.6-1 | 21 | `[x]` верифицировано владельцем: 320 тестов, `examples/run` exit 0 |
 | 23 | `GangSource` (Table 8.27, §8.22) + точная XSD-сверка + классификация междокументных NMTOKEN-ссылок | M1.6-4 | 22 | `[x]` верифицировано владельцем: 330 тестов, `examples/run` exit 0 |
-| 24 | `MISDetails` (Table 8.48, §8.30) + `CostType`/`WorkType` + открытый `Catalog.WorkTypeDetails` + prose-диапазон `@Complexity` через `UnitInterval` | M1.6-7 | 23 | `[~]` статически: 343 теста ожидаются, гейт — прогон владельца |
+| 24 | `MISDetails` (Table 8.48, §8.30) + `CostType`/`WorkType` + открытый `Catalog.WorkTypeDetails` + prose-диапазон `@Complexity` через `UnitInterval` | M1.6-7 | 23 | `[x]` верифицировано владельцем: 343 теста, `examples/run` exit 0 |
 | 25+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6, M1.6-8, M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`) | M1.6 | 24 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -3564,7 +3578,7 @@ reference-like атрибута — междокументные NMTOKEN, не I
 `MISDetails`. Верифицировано владельцем: **330 тестов зелёных (330/0)**,
 `examples/run` exit 0; статус `[x]`.
 
-PR-24 (M1.6-7) статически реализовал `MISDetails` (§8.30 / Table 8.48):
+PR-24 (M1.6-7) реализовал `MISDetails` (§8.30 / Table 8.48):
 четыре опциональных атрибута (`@Complexity?` → `UnitInterval` с prose-диапазоном
 0.0..1.0 против голого `xs:float` XSD — приоритет prose по §1.2; `@CostType?` →
 закрытый `CostType`; `@WorkType?` → закрытый `WorkType`; `@WorkTypeDetails?` →
@@ -3574,15 +3588,15 @@ ID/IDREF нет (`references = Chain.empty`), локальных SHALL нет (�
 XSD-атрибутов, inline-энумераций и четырёх контейнеров `MISDetails?`:
 `ResourceInfo`, `PipeParams`, `JobPhase`, `NodeInfo`), +2 golden `EnumLaws`,
 standalone-фикстура `misDetails` + conformance/golden, coverage
-(`RESULT: OK`, Spec tables 112). Wiring `NodeInfo` (`GangSource*` +
-`MISDetails?`) — следующий срез M1.6-8. Ожидаемый прогон владельца: **343
-теста** (330 + 9 + 2 + 2), `examples/run` exit 0 со строкой
+(`RESULT: OK`, Spec tables 112). Верифицировано владельцем: **343 теста
+зелёных (343/0)**, `examples/run` exit 0 со строкой
 `MIS details (Table 8.48): MISDetails(complexity=0.5, costType=NonChargeable,
-workType=Rework, workTypeDetails=ResourceDamaged)`.
+workType=Rework, workTypeDetails=ResourceDamaged)`; статус `[x]` — закрыт
+полностью. Оба элемента для `NodeInfo` (`GangSource`, `MISDetails`) готовы.
 
 Следующий срез PR-25+ выбирается из M1.6-8 (`NodeInfo` += `GangSource*` +
-`MISDetails?` — разблокирован этим срезом), M1.6-6 IdentificationField,
-M1.6-13 ShapeCuttingIntent (требует примитива `PDFPath`), M1.6-14
-NamedFeatures, M1.6-15 Part audit или N-51 `FileSpec.law`.
+`MISDetails?` — полностью разблокирован, рекомендуемый), M1.6-6
+IdentificationField, M1.6-13 ShapeCuttingIntent (требует примитива `PDFPath`),
+M1.6-14 NamedFeatures, M1.6-15 Part audit или N-51 `FileSpec.law`.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
 открытая часть M1.0-1.
