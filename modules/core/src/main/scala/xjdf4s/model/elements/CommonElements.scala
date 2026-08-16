@@ -112,9 +112,10 @@ end Dependent
  *  its referencing ResourceSet is a pipe (`Dependent/@PipeID`, Table 3.13);
  *  that parent-sensitive check lives in `TicketValidator` (ADR-0003).
  *
- *  `@NPage` is retained from the normative Table 8.22 and the XJDF 2.2 release
- *  notes although the `schema.xsd` FileSpec declaration omits it
- *  (ADR-0015/N-56).
+ *  `@CheckSum` uses the Appendix A `hexBinary` data type, represented by the
+ *  checked `HexBinary` primitive (N-57). `@NPage` is retained from the
+ *  normative Table 8.22 and the XJDF 2.2 release notes although the
+ *  `schema.xsd` FileSpec declaration omits it (ADR-0015/N-56).
  */
 final case class FileSpec(
     url: Option[Url] = None,
@@ -122,7 +123,7 @@ final case class FileSpec(
     fileFormat: Option[XjdfString] = None,
     fileTemplate: Option[NmTokens] = None,
     mimeType: Option[XjdfString] = None,
-    checkSum: Option[NmToken] = None,
+    checkSum: Option[HexBinary] = None,
     encoding: Option[NmToken] = None,
     fileSize: Option[Long] = None,
     nPage: Option[Long] = None,

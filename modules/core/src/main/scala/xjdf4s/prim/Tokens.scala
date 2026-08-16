@@ -118,6 +118,53 @@ object XjdfString:
 
 end XjdfString
 
+/** XJDF data type `hexBinary` (§A.1 / Table A.1): arbitrary binary data
+ *  represented by pairs of hexadecimal digits.
+ *
+ *  Both upper- and lower-case digits are valid and an empty representation is
+ *  valid. The `xsd:hexBinary` white-space facet is fixed to `collapse`; case is
+ *  preserved here so the domain remains lossless, while canonical wire casing
+ *  belongs to codecs (ADR-0010).
+ */
+opaque type HexBinary = String
+
+object HexBinary:
+
+  /** Validates and white-space-normalizes an `xsd:hexBinary` lexical value. */
+  def from(raw: String): Option[HexBinary] =
+    Option(raw).map(collapseXmlWhitespace).filter: value =>
+      value.length % 2 == 0 && value.forall(isHexDigit)
+
+  /** Raises `IllegalArgumentException` when `raw` is not valid `xsd:hexBinary`. */
+  def unsafe(raw: String): HexBinary =
+    from(raw).getOrElse(throw new IllegalArgumentException(s"Not a valid hexBinary value: '$raw'"))
+
+  extension (binary: HexBinary) def value: String = binary
+
+  given Show[HexBinary] = Show.show(identity)
+
+  given Eq[HexBinary] = Eq.fromUniversalEquals
+
+  private def isHexDigit(char: Char): Boolean =
+    char >= '0' && char <= '9' || char >= 'a' && char <= 'f' || char >= 'A' && char <= 'F'
+
+  private def collapseXmlWhitespace(raw: String): String =
+    val out = new StringBuilder(raw.length)
+    var pendingSpace = false
+    raw.foreach: char =>
+      if isXmlWhitespace(char) then
+        if out.nonEmpty then pendingSpace = true
+      else
+        if pendingSpace then out.append(' ')
+        out.append(char)
+        pendingSpace = false
+    out.result()
+
+  private def isXmlWhitespace(char: Char): Boolean =
+    char == ' ' || char == '\t' || char == '\n' || char == '\r'
+
+end HexBinary
+
 /** XJDF data type `language` (Table A.1), e.g. `en-US` ([RFC3066]). */
 opaque type LanguageTag = String
 
