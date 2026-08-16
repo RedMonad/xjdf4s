@@ -30,7 +30,7 @@ README ссылается на этот документ, числа — в вы
 | §6.1 | Table 6.1 | Resource payload dispatch | `ResourcePayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 12 payload + `Foreign` escape hatch (ADR-0008) |
 | §3.4 | Table 3.12 | ResourceSet | `ResourceSet` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | уникальность §3.4 попарно через `clashesWith` (N-16, `IssueCode.ResourceSetClash`) |
 | §6.1.2 | Table 6.3 | PartAmount | `PartAmount` | `+` | ✅ | ✅ | ❌ | ❌ | Implemented | `parts: Chain[Part]` (N-10); nominal/`AmountBounds` разделены (ADR-0004) |
-| §6.1.3 | Table 6.4 | Part | `Part` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | все 27 ключей; `matches` — отношение толерантности (ADR-0005); New in XJDF 2.1: `@Product` → `Part.product` |
+| §6.1.3 | Table 6.4 | Part | `Part` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | все 27 ключей; `matches` — отношение толерантности (ADR-0005); New in XJDF 2.1: `@Product` → `Part.product`; M1.6-15 (аудит): все типы, имена, кардинальности, `attributeName`, генераторы, `matches`/`combine` — корректны; M1.2-1 завершён |
 | §6.1.4 | Table 6.5 | PartWaste | `PartWaste` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | law: задан `@ModuleIDs` или `@WasteDetails` |
 | §6.1.1 | Table 6.2 | AmountPool | `AmountPool` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `Semigroup` — кардинальность `T+` запрещает `Monoid` (ADR-0006/§6) |
 | §6.14 | Table 6.27 | Color | `Color` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `@Spectrum`, `ColorMeasurementConditions` — не моделируются (M3) |

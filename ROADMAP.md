@@ -1829,7 +1829,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
   совпадающим `@Name` (для `RunList` это также обеспечивает формулировку
   «predefined or match Expr»). На каждое правило B2 нужен негативный тест;
   владелец выбрал полную конформность B2, а не отдельный B3;
-- M1.6-15: полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1).
+- M1.6-15: полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1) — `[x]` верифицировано владельцем: все 27 ключей корректны, P1/P2-дефектов нет.
 
 #### N-53. `RunList/FileSpec?` (Table 6.148) — `[x]` выполнено (верифицировано владельцем; PR-27)
 
@@ -2935,7 +2935,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 27 | N-53: `RunList.fileSpecs` → `Option[FileSpec]` по Table 6.148/XSD `FileSpec?`; regression-first, migration note и полный список call sites; не объединяется с M1.6-6b (§9.1) | N-53 | 26 | `[x]` верифицировано владельцем: 398 тестов, `examples/run` exit 0 |
 | 28 | M1.6-6b/B1: ADR-0013/N-54 + XJDF `XPath` (`prim.XjdfXPath`, Table A.1) + `Expr` (Table 8.47), без container wiring | M1.6-6b/B1 | 27 | `[x]` верифицировано владельцем: 406/0, `XjdfXPathExprLaws` 8/0, `examples/run` exit 0 |
 | 29 | M1.6-6b/B2: `MetadataMap` (Table 8.46) + `MetadataMap*` в `RunList`/`IdentificationField` + полный набор контекстных SHALL Table 8.31/8.46/§8.29 + ADR-0014/N-55 | M1.6-6b/B2 | 28 | `[x]` верифицировано владельцем: 419/0, `MetadataMapLaws` 11/0, `SpecExamplesSuite` 40/0, `examples/run` exit 0 |
-| 30+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`) | M1.6 | 29 | шаблон среза выполнен |
+| 30+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`). M1.6-15 (аудит `Part`/Table 6.4) — `[x]` закрыт: все 27 ключей корректны, P1/P2-дефектов нет | M1.6 | 29 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -4111,7 +4111,9 @@ M1.6-6b по решению владельца 2026-08-16 разделён на 
 включая правила разрешения `@ValueTemplate` через родителя, Table D.1 и ровно
 один `Expr`; N-55 закрыт через ADR-0014. Верифицировано владельцем: **419/0**,
 `MetadataMapLaws` **11/0**, `SpecExamplesSuite` **40/0**, `examples/run` exit 0,
-статус `[x]`. Затем остаются M1.6-13 ShapeCuttingIntent
-(требует примитива `PDFPath`), M1.6-14 NamedFeatures, M1.6-15 Part audit и
-N-51 `FileSpec.law`. LICENSE остаётся `BLOCKED` до решения владельца; возврат
+статус `[x]`. M1.6-15 (аудит `Part`/Table 6.4) — `[x]` закрыт: все 27 ключей
+корректны, P1/P2-дефектов нет, завершение M1.2-1 подтверждено.
+Затем остаются M1.6-13 ShapeCuttingIntent (требует примитива `PDFPath`),
+M1.6-14 NamedFeatures и N-51 `FileSpec.law`.
+LICENSE остаётся `BLOCKED` до решения владельца; возврат
 обязательного CI — открытая часть M1.0-1.
