@@ -30,7 +30,7 @@ type PostpressSpecificResource =
     resources.LooseBindingParams | resources.PalletizingParams |
     resources.PerforatingParams | resources.ShapeCuttingParams | resources.ShrinkingParams |
     resources.SpinePreparationParams |
-    resources.SpineTapingParams | resources.StitchingParams | resources.StrappingParams |
+    resources.SpineTapingParams | resources.StackingParams | resources.StitchingParams | resources.StrappingParams |
     resources.ThreadSealingParams | resources.ThreadSewingParams | resources.TrimmingParams |
     resources.VarnishingParams | resources.WebInlineFinishingParams | resources.WindingParams |
     resources.WrappingParams

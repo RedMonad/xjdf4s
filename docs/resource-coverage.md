@@ -33,7 +33,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 27 | `ShrinkingParams` | typed |
 | 28 | `SpinePreparationParams` | typed |
 | 29 | `SpineTapingParams` | typed |
-| 30 | `StackingParams` | pending |
+| 30 | `StackingParams` | typed |
 | 31 | `StrappingParams` | typed |
 | 32 | `ThreadSealingParams` | typed |
 | 33 | `Tool` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **95/100** schema-defined descendants.
+Current coverage: **96/100** schema-defined descendants.
