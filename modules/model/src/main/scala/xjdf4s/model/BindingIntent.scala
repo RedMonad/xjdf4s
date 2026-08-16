@@ -150,22 +150,22 @@ final case class Tabs(
 
 /** Binding type and its compatible detail element are represented by one coproduct. */
 enum BindingSpecification:
-  case AdhesiveNote(details: Option[AdhesiveNoteDetails] = None)
-  case ChannelBinding(details: Option[LooseBindingDetails] = None)
-  case CoilBinding(details: Option[LooseBindingDetails] = None)
-  case CombBinding(details: Option[LooseBindingDetails] = None)
+  case AdhesiveNote(details: Option[AdhesiveNoteDetails] = Option.empty)
+  case ChannelBinding(details: Option[LooseBindingDetails] = Option.empty)
+  case CoilBinding(details: Option[LooseBindingDetails] = Option.empty)
+  case CombBinding(details: Option[LooseBindingDetails] = Option.empty)
   case CornerStitch
-  case EdgeGluing(details: Option[EdgeGluingDetails] = None)
-  case HardCover(details: Option[HardCoverBindingDetails] = None)
-  case LooseBinding(details: Option[LooseBindingDetails] = None)
+  case EdgeGluing(details: Option[EdgeGluingDetails] = Option.empty)
+  case HardCover(details: Option[HardCoverBindingDetails] = Option.empty)
+  case LooseBinding(details: Option[LooseBindingDetails] = Option.empty)
   case None
-  case RingBinding(details: Option[LooseBindingDetails] = None)
-  case SaddleStitch(details: Option[StitchingDetails] = None)
-  case SideStitch(details: Option[StitchingDetails] = None)
-  case SoftCover(details: Option[SoftCoverBindingDetails] = None)
-  case StripBinding(details: Option[LooseBindingDetails] = None)
+  case RingBinding(details: Option[LooseBindingDetails] = Option.empty)
+  case SaddleStitch(details: Option[StitchingDetails] = Option.empty)
+  case SideStitch(details: Option[StitchingDetails] = Option.empty)
+  case SoftCover(details: Option[SoftCoverBindingDetails] = Option.empty)
+  case StripBinding(details: Option[LooseBindingDetails] = Option.empty)
   case Tape
-  case WireComb(details: Option[LooseBindingDetails] = None)
+  case WireComb(details: Option[LooseBindingDetails] = Option.empty)
 end BindingSpecification
 
 final case class BindingIntent(
