@@ -66,7 +66,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 60 | `ImageCompressionParams` | typed |
 | 61 | `ImageEnhancementParams` | typed |
 | 62 | `ImageSetterParams` | typed |
-| 63 | `Layout` | pending |
+| 63 | `Layout` | typed |
 | 64 | `LayoutElementProductionParams` | typed |
 | 65 | `LayoutShift` | typed |
 | 66 | `ManualLaborParams` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **99/100** schema-defined descendants.
+Current coverage: **100/100** schema-defined descendants.

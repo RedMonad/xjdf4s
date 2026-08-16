@@ -13,7 +13,7 @@ type FoundationalSpecificResource =
   resources.Assembly | resources.BinderySignature | resources.Bundle | resources.Color | resources.ColorantControl |
     resources.Component | resources.Content |
     resources.Contact | resources.CustomerInfo | resources.Device | resources.DieLayout | resources.ExposedMedia |
-    resources.Ink | resources.Media |
+    resources.Ink | resources.Layout | resources.Media |
     resources.MiscConsumable |
     resources.NodeInfo | resources.Pallet | resources.PrintCondition | resources.RunList | resources.Shape |
     resources.ShapeDef | resources.Tool | resources.TransferCurve | resources.UsageCounter
@@ -54,10 +54,13 @@ type GeneralSpecificResource =
 
 type PressSpecificResource = resources.ConventionalPrintingParams | resources.DigitalPrintingParams
 
-/** Union of all schema-defined SpecificResource descendants implemented so far. */
-type TypedSpecificResource =
+/** Complete union of all 100 schema-defined SpecificResource descendants. */
+type StandardSpecificResource =
   FoundationalSpecificResource | PostpressSpecificResource | PrepressSpecificResource | GeneralSpecificResource |
     PressSpecificResource
+
+/** Compatibility name retained from the incremental construction phase. */
+type TypedSpecificResource = StandardSpecificResource
 
 /** Lossless schema-shaped fallback while dedicated resource records are added slice by slice. */
 final case class NamedSpecificResource(
