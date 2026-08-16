@@ -17,13 +17,15 @@ type FoundationalSpecificResource =
     resources.ShapeDef | resources.Tool | resources.TransferCurve | resources.UsageCounter
 
 type PostpressSpecificResource =
-  resources.BlockPreparationParams | resources.BoxPackingParams | resources.BundlingParams |
-    resources.CaseMakingParams | resources.CasingInParams | resources.CoverApplicationParams |
+  resources.BlockPreparationParams | resources.BoxFoldingParams | resources.BoxPackingParams |
+    resources.BundlingParams | resources.CaseMakingParams | resources.CasingInParams |
+    resources.CoverApplicationParams |
     resources.CreasingParams | resources.CuttingParams | resources.EmbossingParams |
-    resources.EndSheetGluingParams | resources.FoldingParams | resources.GluingParams |
-    resources.HeadBandApplicationParams | resources.HoleMakingParams | resources.InsertingParams |
-    resources.JacketingParams |
-    resources.LabelingParams | resources.LaminatingParams | resources.PalletizingParams |
+    resources.EndSheetGluingParams | resources.FeedingParams | resources.FoldingParams |
+    resources.GluingParams | resources.HeadBandApplicationParams | resources.HoleMakingParams |
+    resources.InsertingParams |
+    resources.JacketingParams | resources.LabelingParams | resources.LaminatingParams |
+    resources.LooseBindingParams | resources.PalletizingParams |
     resources.PerforatingParams | resources.ShapeCuttingParams | resources.ShrinkingParams |
     resources.SpinePreparationParams |
     resources.SpineTapingParams | resources.StitchingParams | resources.StrappingParams |

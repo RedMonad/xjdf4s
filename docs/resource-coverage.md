@@ -41,7 +41,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 35 | `VerificationParams` | typed |
 | 36 | `VerificationResult` | typed |
 | 37 | `WrappingParams` | typed |
-| 38 | `LooseBindingParams` | pending |
+| 38 | `LooseBindingParams` | typed |
 | 39 | `ApprovalDetails` | typed |
 | 40 | `ApprovalParams` | typed |
 | 41 | `Assembly` | typed |
@@ -49,7 +49,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 43 | `BarcodeReproParams` | typed |
 | 44 | `BendingParams` | typed |
 | 45 | `BinderySignature` | pending |
-| 46 | `BoxFoldingParams` | pending |
+| 46 | `BoxFoldingParams` | typed |
 | 47 | `Color` | typed |
 | 48 | `ColorantControl` | typed |
 | 49 | `Component` | typed |
@@ -61,7 +61,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 55 | `DieLayoutProductionParams` | pending |
 | 56 | `DigitalPrintingParams` | typed |
 | 57 | `ExposedMedia` | typed |
-| 58 | `FeedingParams` | pending |
+| 58 | `FeedingParams` | typed |
 | 59 | `FontPolicy` | typed |
 | 60 | `ImageCompressionParams` | pending |
 | 61 | `ImageEnhancementParams` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **80/100** schema-defined descendants.
+Current coverage: **83/100** schema-defined descendants.
