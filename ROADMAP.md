@@ -519,7 +519,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 | N-52 | `NodeInfo/@DueLevel` типизирован как `Option[Long]` вместо закрытой энумерации | Table 6.119: `DueLevel?` \| **enumeration** \| «Description of the severity of a missed deadline (JobCancelled, Penalty, Trivial)»; `schema.xsd` (`<xs:complexType name="NodeInfo">`) объявляет inline-restriction по `xs:NMTOKEN` ровно с этими тремя значениями. Prose и XSD **согласны** — расхождение только в модели, ADR не требуется | `resources/NodeInfo.scala:14` `dueLevel: Option[Long]` — делает представимым `DueLevel = 7`. Класс дефекта тот же, что у N-06/N-07 (потеря enum при переносе таблицы); call sites отсутствуют | M1.6-8 (PR-25) — `[x]` устранено, верифицировано владельцем |
 
 | N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?`: модель допускает несколько `FileSpec` в одном `RunList`, тогда как Table 6.148 объявляет `FileSpec?`, а `schema.xsd` (`<xs:complexType name="RunList">`) — `<xs:element maxOccurs="1" minOccurs="0" ref="FileSpec"/>`. Prose и XSD согласны — расхождение только в модели, ADR не требуется | Table 6.148 (`reference/xjdf/6 – Resources.md`, строка 2056: `FileSpec?` \| element \| «URL plus metadata about the physical characteristics of a file»); `schema.xsd` `RunList` | было: `resources/RunList.scala` `fileSpecs: Chain[FileSpec] = Chain.empty`; стало: `fileSpecs: Option[FileSpec] = None` | Обнаружено при предстартовой сверке Table 8.31 (PR-26, M1.6-6). Исправление — **breaking change** публичного API в чужой таблице/файле. По подтверждённому владельцем порядку от 2026-08-16 выполнено отдельным микро-срезом PR-27 **до** M1.6-6b; объединение с M1.6-6b отклонено по §9.1. Migration note и полный список call sites — в §8, N-53 | M1.6/N-53 (PR-27) — `[x]` устранено, верифицировано владельцем (398/0) |
-| N-54 | Appendix A и `schema.xsd` задают разные базовые типы для XJDF `XPath`: Table A.1 — `xsd:token` (whitespace facet `collapse`), XSD — restriction от `xs:string` (whitespace `preserve`). Release notes 2.1/2.2 разъяснения не содержат; выбор нельзя делать молча | Table A.1: «`XPath` \| `xsd:token` \| None \| Values … represent an XPath expression»; `schema.xsd`: `<xs:simpleType name="XPath"><xs:restriction base="xs:string"/></xs:simpleType>` | До M1.6-6b тип отсутствовал; B1 вводит `prim.XjdfXPath` отдельно от validation locator `model.XPath`, конструктор выполняет XML whitespace collapse и требует непустое выражение | ADR-0013; M1.6-6b/B1 — `[~]` статически реализовано, ожидает прогон владельца |
+| N-54 | Appendix A и `schema.xsd` задают разные базовые типы для XJDF `XPath`: Table A.1 — `xsd:token` (whitespace facet `collapse`), XSD — restriction от `xs:string` (whitespace `preserve`). Release notes 2.1/2.2 разъяснения не содержат; выбор нельзя делать молча | Table A.1: «`XPath` \| `xsd:token` \| None \| Values … represent an XPath expression»; `schema.xsd`: `<xs:simpleType name="XPath"><xs:restriction base="xs:string"/></xs:simpleType>` | До M1.6-6b тип отсутствовал; B1 вводит `prim.XjdfXPath` отдельно от validation locator `model.XPath`, конструктор выполняет XML whitespace collapse и требует непустое выражение | ADR-0013; M1.6-6b/B1 — `[x]` устранено, верифицировано владельцем (406/0) |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -1813,8 +1813,8 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 - M1.6-6b разделён решением владельца 2026-08-16 после статической сверки на
   два последовательных среза по §9.1. **B1**: XJDF-примитив `XPath`
   (Scala-имя `prim.XjdfXPath`, Table A.1) + `Expr` (Table 8.47) + ADR-0013/N-54
-  по конфликту Table A.1 `xsd:token` против XSD `xs:string` — `[~]` статически
-  реализовано, ожидает прогон владельца. **B2**: `MetadataMap` (§8.29 /
+  по конфликту Table A.1 `xsd:token` против XSD `xs:string` — `[x]` выполнено,
+  верифицировано владельцем (406/0). **B2**: `MetadataMap` (§8.29 /
   Table 8.46), `MetadataMap*` wiring в `IdentificationField` (Table 8.31) и
   `RunList` (Table 6.148), полный набор контекстных SHALL.
   Предстартовая сверка исправила прежнюю неполную оценку «два правила»:
@@ -1877,7 +1877,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 `examples/run` — exit 0 за 1 s, вывод `brochureJob`, Example 3.6, barcodeJob
 и остальных фикстур сохранён. Статус `[x]` — закрыт полностью.
 
-#### M1.6-6b/B1. XJDF `XPath` (Table A.1) + `Expr` (Table 8.47) — `[~]` статически реализовано
+#### M1.6-6b/B1. XJDF `XPath` (Table A.1) + `Expr` (Table 8.47) — `[x]` выполнено (верифицировано владельцем)
 
 Срез выбран владельцем 2026-08-16 после обязательной оценки размера:
 M1.6-6b разделяется на B1 и B2; B2 обязан закрыть полный набор найденных
@@ -1917,9 +1917,16 @@ M1.6-6b разделяется на B1 и B2; B2 обязан закрыть п�
 (новый), `docs/02-scala3-features.md`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
 
 **Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
-без предупреждений; ожидается 406 тестов зелёных (398 + 8), `examples/run`
-exit 0; `scripts/check-spec-coverage.sh` — `RESULT: OK`. До прогона владельца
-статус остаётся `[~]` по §1.3.
+без предупреждений; 406 тестов зелёных (398 + 8), `examples/run` exit 0;
+`scripts/check-spec-coverage.sh` — `RESULT: OK`.
+
+**Прогон владельца (2026-08-16).** `compile` — success за 9 s (cache 88%,
+82 disk cache hits, 11 onsite tasks), предупреждений в выводе нет; `testFull` —
+**406/0** за 6 s, включая новый `XjdfXPathExprLaws` **8/0** и все 22 baseline-
+сьюта без регрессий; `examples/run` — exit 0 за 0 s (cache 97%), весь прежний
+вывод примеров сохранён, включая Example 3.6, barcodeJob и brochureJob.
+Статический `scripts/check-spec-coverage.sh` — `RESULT: OK`. Статус `[x]` —
+закрыт полностью.
 
 #### M1.6-1. `Certification` (Table 8.8, §8.7) — `[x]` выполнено (верифицировано владельцем; PR-22)
 
@@ -2885,7 +2892,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 25 | `NodeInfo` += `GangSource*` + `MISDetails?` (Table 6.119, §6.59) + закрытие N-52 (`@DueLevel` → закрытый `DueLevel`) | M1.6-8 | 23, 24 | `[x]` верифицировано владельцем: 357 тестов, `examples/run` exit 0 |
 | 26 | `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (8.33) + `ExtraValues` (8.34) + `FieldEncoding`/`FieldPurpose` + 5 открытых каталогов + SHALL `IDENTIFICATION-FIELD-VALUE-SOURCE` + wiring в `Component` (Table 6.37) + регистрация N-53 | M1.6-6 | 25 | `[x]` верифицировано владельцем: 396 тестов, `examples/run` exit 0 |
 | 27 | N-53: `RunList.fileSpecs` → `Option[FileSpec]` по Table 6.148/XSD `FileSpec?`; regression-first, migration note и полный список call sites; не объединяется с M1.6-6b (§9.1) | N-53 | 26 | `[x]` верифицировано владельцем: 398 тестов, `examples/run` exit 0 |
-| 28 | M1.6-6b/B1: ADR-0013/N-54 + XJDF `XPath` (`prim.XjdfXPath`, Table A.1) + `Expr` (Table 8.47), без container wiring | M1.6-6b/B1 | 27 | `[~]` статически реализовано; 8 новых тестов, ожидается 406/0; прогон владельца |
+| 28 | M1.6-6b/B1: ADR-0013/N-54 + XJDF `XPath` (`prim.XjdfXPath`, Table A.1) + `Expr` (Table 8.47), без container wiring | M1.6-6b/B1 | 27 | `[x]` верифицировано владельцем: 406/0, `XjdfXPathExprLaws` 8/0, `examples/run` exit 0 |
 | 29 | M1.6-6b/B2: `MetadataMap` (Table 8.46) + `MetadataMap*` в `RunList`/`IdentificationField` + полный набор контекстных SHALL Table 8.31/8.46/§8.29 | M1.6-6b/B2 | 28 | каждый SHALL имеет негативный тест; оба контейнера проходят root validator |
 | 30+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`) | M1.6 | 29 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
@@ -3261,7 +3268,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-51 | `FileSpec` неполон: нет SHALL-правила взаимного исключения `@URL`/`@UID` vs `@FileFormat`/`@FileTemplate`; `NetworkHeader*` (New in 2.1) не моделируется; нет строки в `SPEC-COVERAGE.md` | зарегистрировано при сверке Table 4.24 (PR-21, M1.6-11); `FileSpec.law` + подключение к FileSpec-несущим обходам — отдельный срез | M1.6/M3 follow-up | P1 |
 | N-52 | `NodeInfo/@DueLevel` типизирован `Option[Long]` вместо закрытой энумерации Table 6.119 (`JobCancelled`, `Penalty`, `Trivial`) | обнаружено при предстартовой сверке Table 6.119 (PR-25, M1.6-8); prose и XSD согласны, ADR не требуется — новый закрытый `prim.DueLevel`, call sites отсутствуют | M1.6-8 (PR-25) | P1 |
 | N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?` (Table 6.148 и XSD `maxOccurs="1"`) | ✅ `Option[FileSpec]`; regression-first, migration note и полный список call sites; отдельный PR-27 до M1.6-6b, объединение отклонено по §9.1 (решение владельца 2026-08-16) | M1.6/N-53 (PR-27) — `[x]` (верифицировано владельцем, 398/0) | P1 |
-| N-54 | XJDF `XPath`: Table A.1 задаёт `xsd:token`, `schema.xsd` — restriction от `xs:string` | ADR-0013: приоритет prose; `prim.XjdfXPath` с XML whitespace collapse, отдельно от `model.XPath`; oracle-тест фиксирует обе стороны | M1.6-6b/B1 — `[~]` статически реализовано, ожидает прогон владельца | P1 |
+| N-54 | XJDF `XPath`: Table A.1 задаёт `xsd:token`, `schema.xsd` — restriction от `xs:string` | ADR-0013: приоритет prose; `prim.XjdfXPath` с XML whitespace collapse, отдельно от `model.XPath`; oracle-тест фиксирует обе стороны | M1.6-6b/B1 — `[x]` верифицировано владельцем (406/0) | P1 |
 | N-10 | `PartAmount.part` единственный | ✅ `Chain[Part]` | M1.2-3 | P1 |
 | N-11 | `Resource.specific` обязателен | ✅ `Option` | M1.2-4 | P1 |
 | N-12 | `DropItem` неполон | ✅ три поля Table 6.55 | M1.2-5 | P1 |
@@ -3856,7 +3863,7 @@ B2 реализует весь набор с негативным тестом �
 | `GangSource/@JobID` и `@BinderySignatureID` не разрешаются корневым валидатором | Table 8.27: междокументные NMTOKEN-ссылки на source XJDF и его `BinderySignature`, не IDREF текущего документа; без внешнего реестра jobs проверяемого предиката нет | `references = Chain.empty`, scaladoc + тест точных XSD-типов + строка в `SPEC-COVERAGE`; разрешение во внешнем интеграционном слое M4 (ADR-0006, M1.6-4) |
 | `NodeInfo/@PersonalID` не разрешается корневым валидатором | Table 6.119 типизирует атрибут как NMTOKEN и определяет его как `Resource/@ExternalID` контакта; `@ExternalID` — не `@ID`, поэтому ссылка вне документного скоупа §2.2.3 | `NodeInfo.references` не собирает `@PersonalID` (но обходит обоих потомков), scaladoc + тест отсутствия IDREF + строка в `SPEC-COVERAGE`; разрешение вместе с обходом Contact в M3/M4 (ADR-0006, M1.6-8) |
 | `NodeInfo/@JobPriority` остаётся `Option[Long]`, диапазон 0..100 не обеспечивается типом | Table 6.119 описывает шкалу («100 is the highest and 0 is the lowest»), но не задаёт нормативный диапазон формулировкой «in a range from … to …», как Table 8.48 для `@Complexity`; XSD — голый `xs:int` | решение владельца (2026-08-16): прецедент `UnitInterval` не переносится; проверка wire-диапазона — граница кодека M2; зафиксировано строкой реестра покрытия (M1.6-8) |
-| `MetadataMap*` (Table 8.46) не моделируется вместе с ядром `IdentificationField` PR-26 | элемент общий с `RunList` (Table 6.148), тянет `Expr*`, XJDF-тип `XPath` и контекстные SHALL; предстартовая сверка B1 обнаружила, что прежняя оценка «два правила» пропускала разрешение переменных через родителя/Table D.1/ровно один Expr | решение владельца (2026-08-16): M1.6-6b разделён на B1 (`XjdfXPath` + `Expr` + ADR-0013, `[~]`) и B2 (`MetadataMap`, оба wiring, полный набор правил); заглушек полей до B2 нет |
+| `MetadataMap*` (Table 8.46) не моделируется вместе с ядром `IdentificationField` PR-26 | элемент общий с `RunList` (Table 6.148), тянет `Expr*`, XJDF-тип `XPath` и контекстные SHALL; предстартовая сверка B1 обнаружила, что прежняя оценка «два правила» пропускала разрешение переменных через родителя/Table D.1/ровно один Expr | решение владельца (2026-08-16): M1.6-6b разделён на B1 (`XjdfXPath` + `Expr` + ADR-0013, `[x]`, 406/0) и B2 (`MetadataMap`, оба wiring, полный набор правил); заглушек полей до B2 нет |
 | `prim.XjdfXPath` вместо Scala-имени `XPath` для Table A.1 | `model.XPath` уже означает внутренний validation locator; одинаковое имя конфликтует при `model.*` + `prim.*` и маскирует различие законов | wire/spec-имя остаётся `XPath`; `Expr/@Path` принимает только `XjdfXPath`, существующий `model.XPath` не меняется (ADR-0013/N-54) |
 | XJDF `XPath`: Table A.1 `xsd:token` против XSD restriction от `xs:string` | прямое расхождение prose/XSD в whitespace facet; release notes не разъясняют | по §1.2 выбран prose: XML whitespace collapse + непустота; oracle-тест фиксирует обе стороны, полная XPath-грамматика — M2 (ADR-0013/N-54) |
 | Применимость `BarcodeDetails/@BarcodeVersion` и `@ErrorCorrectionLevel` к значению `IdentificationField/@EncodingDetails` не проверяется | Tables 8.33/8.36/8.37 формулируют её как «Values include those from … for DATAMATRIX barcodes» и «Each value can be used only for certain values of `@EncodingDetails`» — без SHALL; сам `@EncodingDetails` открыт (Table 8.32 — образец), поэтому полного предиката не существует | scaladoc обоих каталогов разделяет семейства значений; состав семейств закреплён тестами; ужесточение — только с явной политикой severity (ADR-0006, M1.6-6) |
@@ -4056,9 +4063,10 @@ M1.6-6b, объединение отклонено по §9.1. Верифици�
 **398/0**, новый `RunListLaws` 2/0, `examples/run` exit 0; статус `[x]`.
 
 M1.6-6b по решению владельца 2026-08-16 разделён на B1 и B2 после статической
-оценки. B1 (`prim.XjdfXPath` + `Expr` + ADR-0013/N-54) реализован статически:
-8 новых тестов, ожидаемый total 406; статус `[~]` до прогона владельца. B2
-реализует `MetadataMap`, оба wiring и полный набор контекстных SHALL, включая
+оценки. B1 (`prim.XjdfXPath` + `Expr` + ADR-0013/N-54) выполнен и
+верифицирован владельцем: **406/0**, новый сьют **8/0**, `examples/run` exit 0,
+статус `[x]`. B2 реализует `MetadataMap`, оба wiring и полный набор
+контекстных SHALL, включая
 обнаруженные при сверке правила разрешения `@ValueTemplate` через родителя,
 Table D.1 и ровно один `Expr`. Затем остаются M1.6-13 ShapeCuttingIntent
 (требует примитива `PDFPath`), M1.6-14 NamedFeatures, M1.6-15 Part audit и
