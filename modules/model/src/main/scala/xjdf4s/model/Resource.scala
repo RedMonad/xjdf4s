@@ -16,20 +16,29 @@ type FoundationalSpecificResource =
 
 type PostpressSpecificResource =
   resources.BlockPreparationParams | resources.CaseMakingParams | resources.CasingInParams |
-    resources.CoverApplicationParams | resources.EndSheetGluingParams | resources.GluingParams |
-    resources.HeadBandApplicationParams | resources.JacketingParams | resources.LaminatingParams |
+    resources.CoverApplicationParams | resources.CreasingParams | resources.EndSheetGluingParams |
+    resources.FoldingParams | resources.GluingParams | resources.HeadBandApplicationParams |
+    resources.HoleMakingParams | resources.JacketingParams | resources.LaminatingParams |
     resources.PerforatingParams | resources.ShrinkingParams | resources.SpinePreparationParams |
     resources.SpineTapingParams | resources.StitchingParams | resources.StrappingParams |
-    resources.ThreadSealingParams | resources.TrimmingParams | resources.VarnishingParams |
-    resources.WindingParams | resources.WrappingParams
+    resources.ThreadSealingParams | resources.ThreadSewingParams | resources.TrimmingParams |
+    resources.VarnishingParams | resources.WindingParams | resources.WrappingParams
 
 type PrepressSpecificResource =
   resources.BendingParams | resources.ColorCorrectionParams | resources.DevelopingParams |
     resources.ImageEnhancementParams | resources.ImageSetterParams | resources.LayoutShift |
     resources.ManualLaborParams | resources.PreviewGenerationParams | resources.TrappingParams
 
+type GeneralSpecificResource =
+  resources.ApprovalDetails | resources.ApprovalParams | resources.Preview | resources.VerificationParams |
+    resources.VerificationResult
+
+type PressSpecificResource = resources.ConventionalPrintingParams | resources.DigitalPrintingParams
+
 /** Union of all schema-defined SpecificResource descendants implemented so far. */
-type TypedSpecificResource = FoundationalSpecificResource | PostpressSpecificResource | PrepressSpecificResource
+type TypedSpecificResource =
+  FoundationalSpecificResource | PostpressSpecificResource | PrepressSpecificResource | GeneralSpecificResource |
+    PressSpecificResource
 
 /** Lossless schema-shaped fallback while dedicated resource records are added slice by slice. */
 final case class NamedSpecificResource(

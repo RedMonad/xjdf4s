@@ -13,7 +13,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 7 | `CaseMakingParams` | typed |
 | 8 | `CasingInParams` | typed |
 | 9 | `CoverApplicationParams` | typed |
-| 10 | `CreasingParams` | pending |
+| 10 | `CreasingParams` | typed |
 | 11 | `CuttingParams` | pending |
 | 12 | `DevelopingParams` | typed |
 | 13 | `Device` | pending |
@@ -38,12 +38,12 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 32 | `ThreadSealingParams` | typed |
 | 33 | `Tool` | typed |
 | 34 | `VarnishingParams` | typed |
-| 35 | `VerificationParams` | pending |
-| 36 | `VerificationResult` | pending |
+| 35 | `VerificationParams` | typed |
+| 36 | `VerificationResult` | typed |
 | 37 | `WrappingParams` | typed |
 | 38 | `LooseBindingParams` | pending |
-| 39 | `ApprovalDetails` | pending |
-| 40 | `ApprovalParams` | pending |
+| 39 | `ApprovalDetails` | typed |
+| 40 | `ApprovalParams` | typed |
 | 41 | `Assembly` | pending |
 | 42 | `BarcodeCompParams` | pending |
 | 43 | `BarcodeReproParams` | pending |
@@ -55,11 +55,11 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 49 | `Component` | typed |
 | 50 | `Contact` | typed |
 | 51 | `Content` | pending |
-| 52 | `ConventionalPrintingParams` | pending |
+| 52 | `ConventionalPrintingParams` | typed |
 | 53 | `DeliveryParams` | pending |
 | 54 | `DieLayout` | pending |
 | 55 | `DieLayoutProductionParams` | pending |
-| 56 | `DigitalPrintingParams` | pending |
+| 56 | `DigitalPrintingParams` | typed |
 | 57 | `ExposedMedia` | typed |
 | 58 | `FeedingParams` | pending |
 | 59 | `FontPolicy` | pending |
@@ -75,7 +75,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 69 | `PDLCreationParams` | pending |
 | 70 | `PreflightParams` | pending |
 | 71 | `PreflightReport` | pending |
-| 72 | `Preview` | pending |
+| 72 | `Preview` | typed |
 | 73 | `QualityControlParams` | pending |
 | 74 | `QualityControlResult` | pending |
 | 75 | `RegisterMark` | pending |
@@ -87,10 +87,10 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 81 | `TransferCurve` | pending |
 | 82 | `UsageCounter` | typed |
 | 83 | `BundlingParams` | pending |
-| 84 | `FoldingParams` | pending |
-| 85 | `HoleMakingParams` | pending |
+| 84 | `FoldingParams` | typed |
+| 85 | `HoleMakingParams` | typed |
 | 86 | `StitchingParams` | typed |
-| 87 | `ThreadSewingParams` | pending |
+| 87 | `ThreadSewingParams` | typed |
 | 88 | `TrimmingParams` | typed |
 | 89 | `WebInlineFinishingParams` | pending |
 | 90 | `ColorCorrectionParams` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **40/100** schema-defined descendants.
+Current coverage: **51/100** schema-defined descendants.
