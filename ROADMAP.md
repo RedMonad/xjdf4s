@@ -523,7 +523,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 | N-55 | Example 8.7 нарушает SHALL Table 8.31: родительский `IdentificationField/@ValueTemplate="job doc sheet"` не содержит имена дочерних mapping `JobID`, `DocIndex`, `SheetIndex` | Table 8.31: «If MetadataMap elements are present, `MetadataMap/@Name` SHALL be included in `@ValueTemplate`»; Example 8.7 содержит противоположную буквальную фикстуру; XSD отношение не выражает, release notes не разъясняют | По §1.2 выбран prose: root validator проверяет SHALL; буквальный фрагмент — негативная regression-фикстура, позитивная Example 8.7-based фикстура расширяет parent template именами mapping | ADR-0014; M1.6-6b/B2 — `[x]` устранено, верифицировано владельцем (419/0) |
 | N-56 | `FileSpec/@NPage` есть в нормативной Table 8.22 и помечен *New in XJDF 2.2*, но отсутствует в XSD-объявлении `FileSpec`; release notes отдельно подтверждают добавление. Модель уже содержит поле, однако prose/XSD-расхождение ранее не было оформлено | Table 8.22: «`@NPage` SHALL specify the total number of reader Pages…»; Appendix H: «Added `@NPage` to FileSpec»; `schema.xsd` не содержит `NPage` внутри `<xs:element name="FileSpec">` | `FileSpec.nPage: Option[Long]` сохранён по приоритету prose/release notes; oracle-тест фиксирует наличие в prose и отсутствие в XSD; M2 обязан кодировать атрибут с известным schema-exception | ADR-0015; N-51 — `[x]` устранено и верифицировано владельцем (440/0) |
 | N-57 | `FileSpec/@CheckSum` типизирован как `Option[NmToken]`, хотя prose и XSD согласованно требуют `hexBinary`; модель допускает не-hex значение и теряет точный wire-контракт | Table 8.22: `@CheckSum? | hexBinary`; `schema.xsd`: `<xs:attribute name="CheckSum" type="xs:hexBinary" use="optional"/>` | `model/elements/CommonElements.scala` `FileSpec.checkSum`; точное расхождение подтверждено предстартовой сверкой Table/XSD/модели | Отдельный regression-first breaking slice до M2: номинальный `HexBinary`/байтовое представление, migration note и полный список call sites; не входит в N-51 |
-| N-58 | Четыре уже смоделированных контейнера хранят `FileSpec?` как `Chain[FileSpec]`, разрешая неконформное множество: `CuttingParams`, `FoldingParams`, `Layout`, `Preview` | Tables 6.53, 6.74, 6.95, 6.134 объявляют соответственно `FileSpec(CIP3)?`, `FileSpec(CIP3)?`, `FileSpec(ExternalImpositionTemplate)?`, `FileSpec?`; XSD у всех четырёх задаёт `minOccurs="0" maxOccurs="1"` | `resources/Finishing.scala`, `Layout.scala`, `Preview.scala`; N-51 обходит текущую структуру без расширения scope, а точные четыре расхождения зарегистрированы по предстартовой сверке Table/XSD/модели | N-58 — `[~]` реализовано: четыре поля → `Option[FileSpec]`, общий optional-wiring валидатора, migration note, полный список call sites и 5 regression/XSD-oracle-тестов; ожидает обязательного прогона владельца |
+| N-58 | Четыре уже смоделированных контейнера хранят `FileSpec?` как `Chain[FileSpec]`, разрешая неконформное множество: `CuttingParams`, `FoldingParams`, `Layout`, `Preview` | Tables 6.53, 6.74, 6.95, 6.134 объявляют соответственно `FileSpec(CIP3)?`, `FileSpec(CIP3)?`, `FileSpec(ExternalImpositionTemplate)?`, `FileSpec?`; XSD у всех четырёх задаёт `minOccurs="0" maxOccurs="1"` | `resources/Finishing.scala`, `Layout.scala`, `Preview.scala`; N-51 обходит текущую структуру без расширения scope, а точные четыре расхождения зарегистрированы по предстартовой сверке Table/XSD/модели | N-58 — `[x]` устранено и верифицировано владельцем: четыре поля → `Option[FileSpec]`, общий optional-wiring валидатора, migration note, полный список call sites и 5 regression/XSD-oracle-тестов; 445/0, `examples/run` exit 0 |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -1812,7 +1812,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 - M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[x]` выполнено (верифицировано владельцем; PR-25);
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — реализовать модель и правило приоритета явных Traits;
 - N-51: `FileSpec.law`, parent-sensitive pipe-контекст, `NetworkHeader*` и обход всех уже смоделированных FileSpec-контейнеров — `[x]` выполнено и верифицировано владельцем (440/0, `examples/run` exit 0); ADR-0015/N-56 фиксирует `@NPage`, N-57/N-58 зарегистрированы как отдельные breaking follow-up и не расширяют срез;
-- N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` исправлен с `Chain[FileSpec]` на `Option[FileSpec]`; prose и XSD согласны, ADR не нужен; regression-first, migration note и полный список call sites — `[~]` реализовано, ожидает обязательного прогона владельца (ожидается 445/0);
+- N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` исправлен с `Chain[FileSpec]` на `Option[FileSpec]`; prose и XSD согласны, ADR не нужен; regression-first, migration note и полный список call sites — `[x]` выполнено и верифицировано владельцем (445/0, `examples/run` exit 0);
 - N-53 (микро-срез PR-27): `RunList.fileSpecs: Chain[FileSpec]` →
   `Option[FileSpec]` по Table 6.148 / XSD `FileSpec?`; breaking change с
   migration note и полным списком call sites. Порядок подтверждён владельцем
@@ -2045,7 +2045,7 @@ XJDF(job=metadataMapJob, types=Cutting)` и весь прежний вывод �
 включая `contentCheckJob`, выполнен успешно. Критерии приёмки пройдены,
 статус `[x]` — закрыт полностью.
 
-#### N-58. `FileSpec?` в четырёх ресурсах — `[~]` реализовано, ожидает прогона владельца
+#### N-58. `FileSpec?` в четырёх ресурсах — `[x]` выполнено (верифицировано владельцем)
 
 - **Сверка Table/XSD (§1.2).** Tables 6.53, 6.74, 6.95 и 6.134 объявляют
   соответственно `FileSpec(CIP3)?`, `FileSpec(CIP3)?`,
@@ -2087,7 +2087,14 @@ XJDF(job=metadataMapJob, types=Cutting)` и весь прежний вывод �
 
 **Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
 без предупреждений; минимум 445 тестов зелёных (440 + 5), `examples/run`
-exit 0. До подтверждения владельца статус остаётся `[~]` по §1.3.
+exit 0.
+
+**Прогон владельца (2026-08-16).** `clean` — success (8 disk cache hits),
+`compile` — success (67 disk cache hits); `testFull` — **445/0** за 5 s,
+включая новый `FileSpecCardinalityLaws` **5/0** и сохранённый `FileSpecLaws`
+**21/0**; `examples/run` — exit 0, весь прежний набор примеров выполнен
+успешно. Предупреждений в предоставленном выводе нет. Статус `[x]` — закрыт
+полностью.
 
 #### M1.6-1. `Certification` (Table 8.8, §8.7) — `[x]` выполнено (верифицировано владельцем; PR-22)
 
@@ -3056,7 +3063,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 28 | M1.6-6b/B1: ADR-0013/N-54 + XJDF `XPath` (`prim.XjdfXPath`, Table A.1) + `Expr` (Table 8.47), без container wiring | M1.6-6b/B1 | 27 | `[x]` верифицировано владельцем: 406/0, `XjdfXPathExprLaws` 8/0, `examples/run` exit 0 |
 | 29 | M1.6-6b/B2: `MetadataMap` (Table 8.46) + `MetadataMap*` в `RunList`/`IdentificationField` + полный набор контекстных SHALL Table 8.31/8.46/§8.29 + ADR-0014/N-55 | M1.6-6b/B2 | 28 | `[x]` верифицировано владельцем: 419/0, `MetadataMapLaws` 11/0, `SpecExamplesSuite` 40/0, `examples/run` exit 0 |
 | 30 | N-51: `FileSpec.law` + parent-sensitive pipe-check + `NetworkHeader*` (Tables 8.22–8.24) + ADR-0015/N-56; регистрация N-57/N-58 без их breaking-исправлений | N-51 | 29 | `[x]` верифицировано владельцем: 440/0, `FileSpecLaws` 21/0, `examples/run` exit 0 |
-| 31 | N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` → `Option[FileSpec]`; regression-first, общий optional-wiring, migration note и полный список call sites | N-58 | 30 | `[~]` реализовано; ожидает gate владельца, ожидается 445/0 и `examples/run` exit 0 |
+| 31 | N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` → `Option[FileSpec]`; regression-first, общий optional-wiring, migration note и полный список call sites | N-58 | 30 | `[x]` верифицировано владельцем: 445/0, `FileSpecCardinalityLaws` 5/0, `examples/run` exit 0 |
 | 32+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-13, M1.6-14; N-57 отдельным breaking slice). M1.6-15 (аудит `Part`/Table 6.4) — `[x]` закрыт: все 27 ключей корректны, P1/P2-дефектов нет | M1.6 | 31 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -3435,7 +3442,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-55 | Example 8.7 нарушает SHALL Table 8.31 (`MetadataMap/@Name` отсутствует в parent template) | ADR-0014: выбран prose; негативная буквальная и позитивная адаптированная фикстуры | M1.6-6b/B2 — `[x]` верифицировано владельцем (419/0) | P1 |
 | N-56 | `FileSpec/@NPage` есть в Table 8.22/release notes 2.2, но отсутствует в XSD | ADR-0015: выбран prose; `nPage` сохранён, oracle фиксирует schema-gap | N-51 — `[x]` верифицировано владельцем (440/0) | P1 |
 | N-57 | `FileSpec/@CheckSum` смоделирован `NmToken`, а prose/XSD требуют `hexBinary` | зарегистрировано точной предстартовой сверкой Table/XSD/модели; нужен отдельный breaking slice | M1.6 follow-up | P1 |
-| N-58 | `FileSpec?` в CuttingParams/FoldingParams/Layout/Preview смоделирован как `Chain` | `[~]` четыре поля → `Option[FileSpec]`; общий optional-wiring, migration note, полный список call sites и 5 regression/XSD-oracle-тестов; ожидает прогона владельца | M1.6 follow-up / PR-31 | P1 |
+| N-58 | `FileSpec?` в CuttingParams/FoldingParams/Layout/Preview смоделирован как `Chain` | ✅ четыре поля → `Option[FileSpec]`; общий optional-wiring, migration note, полный список call sites и 5 regression/XSD-oracle-тестов; верифицировано владельцем (445/0) | M1.6 follow-up / PR-31 — `[x]` | P1 |
 | N-10 | `PartAmount.part` единственный | ✅ `Chain[Part]` | M1.2-3 | P1 |
 | N-11 | `Resource.specific` обязателен | ✅ `Option` | M1.2-4 | P1 |
 | N-12 | `DropItem` неполон | ✅ три поля Table 6.55 | M1.2-5 | P1 |
@@ -3958,7 +3965,7 @@ B2 реализует весь набор с негативным тестом �
 | `laws/MISDetailsLaws.scala` (новый) | M1.6-7 (создан в PR-24) |
 | `laws/IdentificationFieldLaws.scala` (новый) | M1.6-6 (создан в PR-26) |
 | `laws/RunListLaws.scala` (новый) | N-53 (regression + XSD-oracle кардинальности `FileSpec?`, PR-27) |
-| `laws/FileSpecLaws.scala` (новый) | N-51 (21 regression/conformance/XSD-oracle тест, включая N-56; N-57/N-58 только зарегистрированы как follow-up) |
+| `laws/FileSpecLaws.scala` (новый) | N-51 (21 regression/conformance/XSD-oracle тест, включая N-56); N-58 (четыре carrier-конструктора мигрированы на `Some`) |
 | `resources/Component.scala` | M1.6-6 (`Component.identificationFields`, `references` обходит цепочку, PR-26) |
 | `intents/ColorProduction.scala` | M1.6-1 (`SurfaceColor.certifications`, `ProductionIntent.certifications`, PR-22) |
 | `intents/MediaLayout.scala` | M1.6-1 (`MediaIntent.certifications`, PR-22) |
@@ -4247,9 +4254,9 @@ M1.6-6b по решению владельца 2026-08-16 разделён на 
 N-51 (`FileSpec.law` + `NetworkHeader*` + parent-sensitive pipe-check) —
 `[x]` закрыт и верифицирован владельцем: **440/0**, новый `FileSpecLaws`
 **21/0**, `examples/run` exit 0; N-56 закрыт через ADR-0015. N-58 (`FileSpec?`
-в четырёх ресурсах → `Option[FileSpec]`) — `[~]` реализован с 5 новыми тестами
-и ожидает обязательного прогона владельца (ожидается 445/0). Затем остаются
-N-57, M1.6-13 ShapeCuttingIntent (требует примитива `PDFPath`) и M1.6-14
+в четырёх ресурсах → `Option[FileSpec]`) — `[x]` закрыт и верифицирован
+владельцем: **445/0**, новый `FileSpecCardinalityLaws` **5/0**, `examples/run`
+exit 0. Затем остаются N-57, M1.6-13 ShapeCuttingIntent (требует примитива `PDFPath`) и M1.6-14
 NamedFeatures.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат
 обязательного CI — открытая часть M1.0-1.
