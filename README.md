@@ -1,71 +1,38 @@
 # xjdf4s
 
-Доменная модель **[XJDF 2.2](https://www.cip4.org)** (Exchange Job Definition
-Format) на **Scala 3.8.4**, построенная вокруг **cats 2.13.0** и
-категориального взгляда на спецификацию. Сборка — **sbt 2.0.2**.
+Доменная модель [XJDF 2.2](https://www.cip4.org) (Exchange Job Definition
+Format, CIP4) на Scala 3.
 
-XJDF — формат обмена данными для полиграфических рабочих процессов (CIP4):
-описание продукта (`ProductList`), производственных инструкций
-(`ResourceSet`) и записей исполнения (`AuditPool`) в виде одной транзакции
-между Controller и Device.
+XJDF — формат обмена данными для полиграфических рабочих процессов: описание
+продукта (`ProductList`), производственных инструкций (`ResourceSet`) и записей
+исполнения (`AuditPool`) в виде одной транзакции между Controller и Device.
 
-## Идея
+> **Статус: активный рефакторинг / pre-alpha.**
+> Ядро проходит стабилизацию по результатам независимого аудита конформности.
+> Публичный API нестабилен, кодеки XML/JSON в разработке. Использование в
+> production не рекомендуется.
 
-Тикет — это не «большой объект», а **морфизм** Controller → Device;
-`XJDF/@Types` — слово свободной категории процессов; `ProductList` — начальная
-алгебра (катаморфизм по BOM); `AuditPool` — свободный моноид над аудитами;
-change order — действие моноида эндоморфизмов на тикетах. Подробно:
-`docs/01-category-theory-view.md`.
+## Быстрый старт
 
-Код использует: opaque types (все типы Appendix A), named tuples
-(`XYPair`, `Matrix`, `WorkstepKey`…), enum (40+ закрытых перечислений и
-GADT-суммы полезных нагрузок), union types (`BindingDetails`,
-`OrientationSpec`), match types (`ValueOf[PartitionKey]`), trait-параметры,
-context functions. Intersection types сознательно не используются для
-change order: `XJDF & Partial` вырожден при `XJDF <: Partial` (N-20,
-ADR-0001); честная демонстрация — в M4 (`Query & WithSubscription`).
-cats даёт законы: `ValidatedNec` (валидация-аккумулятор), `Semigroup`/`Monoid`/
-`CommutativeMonoid`/`Order` (Part, AmountPool, AuditPool, Matrix, Patch,
-XYPair, Points, TimeSpan и др.), `FunctionK` (выравнивание сигнал→аудит,
-Table 3.2), `Ior`, `State`, `Show`/`Eq`/`Order`.
+Требуется JDK 21 и sbt 2.x.
+
+```bash
+sbt compile          # собрать
+sbt test             # законы и conformance-примеры
+sbt examples/run     # демо: примеры спецификации, BOM, change order
+```
 
 ## Модули
 
 | Модуль | Артефакт | Содержимое |
-|---|---|---|
+| --- | --- | --- |
 | `modules/core` | `xjdf4s-core` | примитивы, модель, ресурсы, интенты, DSL, валидатор |
-| `modules/laws` | `xjdf4s-laws` | законы структур (munit + ScalaCheck) и conformance-сьюты примеров |
-| `modules/examples` | `xjdf4s-examples` | демо примеров спецификации: `sbt examples/run` |
+| `modules/laws` | `xjdf4s-laws` | законы структур (munit + ScalaCheck) и conformance-сьюты |
+| `modules/examples` | `xjdf4s-examples` | демо примеров спецификации |
 
-## Быстрый старт
+## План работ
 
-```bash
-sbt compile          # собрать
-sbt test             # законы и примеры спецификации
-sbt examples/run     # демо: примеры, BOM-катаморфизм, change order, матрицы
-```
+Операционный план рефакторинга — в каталоге [`roadmap/`](roadmap/00-Contract.md).
+Каждая фаза — отдельный файл; текущая фаза M1 переоткрыта по результатам аудита.
 
-## Минимальный пример
-
-```scala
-import xjdf4s.dsl.dsl
-import xjdf4s.model.*
-
-// Example 3.1 спецификации: <XJDF JobID="J1" Types="Product" Version="2.2"/>
-val ticket: ValidatedNec[Issue, XJDF] =
-  dsl.TicketDraft.of("J1", ProcessType.Product).andThen(_.build)
-```
-
-## Документация
-
-- `ROADMAP.md` — консолидированный план работ (M0 — прототип; M1 в работе, M2–M6 впереди);
-- `docs/01-category-theory-view.md` — XJDF через призму теории категорий;
-- `docs/02-scala3-features.md` — соответствие «спецификация → Scala 3»;
-- `docs/03-cats-mapping.md` — какие абстракции cats и зачем;
-- `docs/04-architecture.md` — модули, пакеты, принципы;
-- `docs/SPEC-COVERAGE.md` — реестр покрытия спецификации; сводка **вычисляется**
-  чекером `scripts/check-spec-coverage.sh`, приблизительные числа не хранятся.
-
-Вся модель сверена с `./reference/xjdf/*` (каждый тип в scaladoc ссылается на
-таблицу/раздел спецификации); языковые фичи — с `./reference/scala/*`;
-cats — с `./reference/cats/*`; сборка — с `./reference/sbt/*`.
+Нормативная база — `reference/xjdf/*` (главы 1–9, Appendix A–H, `schema.xsd`).
