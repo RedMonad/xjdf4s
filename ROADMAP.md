@@ -520,7 +520,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 
 | N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?`: модель допускает несколько `FileSpec` в одном `RunList`, тогда как Table 6.148 объявляет `FileSpec?`, а `schema.xsd` (`<xs:complexType name="RunList">`) — `<xs:element maxOccurs="1" minOccurs="0" ref="FileSpec"/>`. Prose и XSD согласны — расхождение только в модели, ADR не требуется | Table 6.148 (`reference/xjdf/6 – Resources.md`, строка 2056: `FileSpec?` \| element \| «URL plus metadata about the physical characteristics of a file»); `schema.xsd` `RunList` | было: `resources/RunList.scala` `fileSpecs: Chain[FileSpec] = Chain.empty`; стало: `fileSpecs: Option[FileSpec] = None` | Обнаружено при предстартовой сверке Table 8.31 (PR-26, M1.6-6). Исправление — **breaking change** публичного API в чужой таблице/файле. По подтверждённому владельцем порядку от 2026-08-16 выполнено отдельным микро-срезом PR-27 **до** M1.6-6b; объединение с M1.6-6b отклонено по §9.1. Migration note и полный список call sites — в §8, N-53 | M1.6/N-53 (PR-27) — `[x]` устранено, верифицировано владельцем (398/0) |
 | N-54 | Appendix A и `schema.xsd` задают разные базовые типы для XJDF `XPath`: Table A.1 — `xsd:token` (whitespace facet `collapse`), XSD — restriction от `xs:string` (whitespace `preserve`). Release notes 2.1/2.2 разъяснения не содержат; выбор нельзя делать молча | Table A.1: «`XPath` \| `xsd:token` \| None \| Values … represent an XPath expression»; `schema.xsd`: `<xs:simpleType name="XPath"><xs:restriction base="xs:string"/></xs:simpleType>` | До M1.6-6b тип отсутствовал; B1 вводит `prim.XjdfXPath` отдельно от validation locator `model.XPath`, конструктор выполняет XML whitespace collapse и требует непустое выражение | ADR-0013; M1.6-6b/B1 — `[x]` устранено, верифицировано владельцем (406/0) |
-| N-55 | Example 8.7 нарушает SHALL Table 8.31: родительский `IdentificationField/@ValueTemplate="job doc sheet"` не содержит имена дочерних mapping `JobID`, `DocIndex`, `SheetIndex` | Table 8.31: «If MetadataMap elements are present, `MetadataMap/@Name` SHALL be included in `@ValueTemplate`»; Example 8.7 содержит противоположную буквальную фикстуру; XSD отношение не выражает, release notes не разъясняют | По §1.2 выбран prose: root validator проверяет SHALL; буквальный фрагмент — негативная regression-фикстура, позитивная Example 8.7-based фикстура расширяет parent template именами mapping | ADR-0014; M1.6-6b/B2 — `[~]` реализовано статически, ожидает прогон владельца |
+| N-55 | Example 8.7 нарушает SHALL Table 8.31: родительский `IdentificationField/@ValueTemplate="job doc sheet"` не содержит имена дочерних mapping `JobID`, `DocIndex`, `SheetIndex` | Table 8.31: «If MetadataMap elements are present, `MetadataMap/@Name` SHALL be included in `@ValueTemplate`»; Example 8.7 содержит противоположную буквальную фикстуру; XSD отношение не выражает, release notes не разъясняют | По §1.2 выбран prose: root validator проверяет SHALL; буквальный фрагмент — негативная regression-фикстура, позитивная Example 8.7-based фикстура расширяет parent template именами mapping | ADR-0014; M1.6-6b/B2 — `[x]` устранено, верифицировано владельцем (419/0) |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -1930,7 +1930,7 @@ M1.6-6b разделяется на B1 и B2; B2 обязан закрыть п�
 Статический `scripts/check-spec-coverage.sh` — `RESULT: OK`. Статус `[x]` —
 закрыт полностью.
 
-#### M1.6-6b/B2. `MetadataMap` (Table 8.46) и полная интеграция — `[~]` реализовано статически, ожидает прогон владельца (PR-29)
+#### M1.6-6b/B2. `MetadataMap` (Table 8.46) и полная интеграция — `[x]` выполнено (верифицировано владельцем; PR-29)
 
 - **Предстартовая сверка.** §8.29 и Tables 8.31/8.46/8.47 подтверждают четыре
   контекстных SHALL: три для `IdentificationField/MetadataMap` (имя mapping в
@@ -1961,9 +1961,13 @@ M1.6-6b разделяется на B1 и B2; B2 обязан закрыть п�
 `examples/SpecExamples.scala`, `docs/SPEC-COVERAGE.md`,
 `docs/adr/0014-metadata-map-example-8-7.md` (новый), `ROADMAP.md`.
 
-**Ожидаемый гейт владельца:** `sbt -batch clean compile test examples/run`;
-419 тестов зелёных (406 + 11 + 2), `examples/run` exit 0; после подтверждения
-статус меняется на `[x]`.
+**Прогон владельца (2026-08-16).** `clean`/`compile` — чисто за 13 s
+(83% cache, 78 disk cache hits, 15 onsite tasks); `testFull` — **419/0** за
+6 s, включая новый `MetadataMapLaws` **11/0**, расширенный
+`SpecExamplesSuite` **40/0** и все baseline-сьюты без регрессий;
+`examples/run` — exit 0, вывод содержит `Metadata map (Examples 8.6/8.7):
+XJDF(job=metadataMapJob, types=Cutting)` и весь прежний вывод сохранён.
+Статус `[x]` — закрыт полностью.
 
 #### M1.6-1. `Certification` (Table 8.8, §8.7) — `[x]` выполнено (верифицировано владельцем; PR-22)
 
@@ -2930,7 +2934,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 26 | `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (8.33) + `ExtraValues` (8.34) + `FieldEncoding`/`FieldPurpose` + 5 открытых каталогов + SHALL `IDENTIFICATION-FIELD-VALUE-SOURCE` + wiring в `Component` (Table 6.37) + регистрация N-53 | M1.6-6 | 25 | `[x]` верифицировано владельцем: 396 тестов, `examples/run` exit 0 |
 | 27 | N-53: `RunList.fileSpecs` → `Option[FileSpec]` по Table 6.148/XSD `FileSpec?`; regression-first, migration note и полный список call sites; не объединяется с M1.6-6b (§9.1) | N-53 | 26 | `[x]` верифицировано владельцем: 398 тестов, `examples/run` exit 0 |
 | 28 | M1.6-6b/B1: ADR-0013/N-54 + XJDF `XPath` (`prim.XjdfXPath`, Table A.1) + `Expr` (Table 8.47), без container wiring | M1.6-6b/B1 | 27 | `[x]` верифицировано владельцем: 406/0, `XjdfXPathExprLaws` 8/0, `examples/run` exit 0 |
-| 29 | M1.6-6b/B2: `MetadataMap` (Table 8.46) + `MetadataMap*` в `RunList`/`IdentificationField` + полный набор контекстных SHALL Table 8.31/8.46/§8.29 + ADR-0014/N-55 | M1.6-6b/B2 | 28 | `[~]` реализовано статически: каждый SHALL имеет негативный тест; оба контейнера проходят root validator; ожидает прогон владельца |
+| 29 | M1.6-6b/B2: `MetadataMap` (Table 8.46) + `MetadataMap*` в `RunList`/`IdentificationField` + полный набор контекстных SHALL Table 8.31/8.46/§8.29 + ADR-0014/N-55 | M1.6-6b/B2 | 28 | `[x]` верифицировано владельцем: 419/0, `MetadataMapLaws` 11/0, `SpecExamplesSuite` 40/0, `examples/run` exit 0 |
 | 30+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`) | M1.6 | 29 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -4103,10 +4107,11 @@ M1.6-6b, объединение отклонено по §9.1. Верифици�
 M1.6-6b по решению владельца 2026-08-16 разделён на B1 и B2 после статической
 оценки. B1 (`prim.XjdfXPath` + `Expr` + ADR-0013/N-54) выполнен и
 верифицирован владельцем: **406/0**, новый сьют **8/0**, `examples/run` exit 0,
-статус `[x]`. B2 реализует `MetadataMap`, оба wiring и полный набор
-контекстных SHALL, включая
-обнаруженные при сверке правила разрешения `@ValueTemplate` через родителя,
-Table D.1 и ровно один `Expr`. Затем остаются M1.6-13 ShapeCuttingIntent
+статус `[x]`. B2 реализовал `MetadataMap`, оба wiring и полный набор контекстных SHALL,
+включая правила разрешения `@ValueTemplate` через родителя, Table D.1 и ровно
+один `Expr`; N-55 закрыт через ADR-0014. Верифицировано владельцем: **419/0**,
+`MetadataMapLaws` **11/0**, `SpecExamplesSuite` **40/0**, `examples/run` exit 0,
+статус `[x]`. Затем остаются M1.6-13 ShapeCuttingIntent
 (требует примитива `PDFPath`), M1.6-14 NamedFeatures, M1.6-15 Part audit и
 N-51 `FileSpec.law`. LICENSE остаётся `BLOCKED` до решения владельца; возврат
 обязательного CI — открытая часть M1.0-1.
