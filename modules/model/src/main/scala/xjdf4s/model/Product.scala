@@ -8,6 +8,12 @@ trait ProductIntent extends XjdfNode,
   def elementName: QualifiedName
 end ProductIntent
 
+/** The 14 schema-defined ProductIntent descendants; ProductIntent itself stays open for ICS extensions. */
+type StandardProductIntent =
+  AssemblingIntent | BindingIntent | ColorIntent | ContentCheckIntent | EmbossingIntent | FoldingIntent |
+    HoleMakingIntent | IntentResource | LaminatingIntent | LayoutIntent | MediaIntent | ProductionIntent |
+    ShapeCuttingIntent | VariableIntent
+
 /** Lossless fallback for a product intent defined by an ICS or a foreign namespace. */
 final case class NamedProductIntent(
     elementName: QualifiedName,

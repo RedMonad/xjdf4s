@@ -22,6 +22,26 @@ object NonEmptyVector:
     def concat[B >: A](other: IterableOnce[B]): NonEmptyVector[B] = values ++ other
 end NonEmptyVector
 
+/** An immutable sequence whose XSD cardinality is `2..unbounded`. */
+opaque type TwoOrMore[+A] = Vector[A]
+
+object TwoOrMore:
+  def apply[A](first: A, second: A, rest: A*): TwoOrMore[A] = Vector(first, second) ++ rest
+
+  def from[A](values: IterableOnce[A]): Either[ValidationError, TwoOrMore[A]] =
+    val vector = Vector.from(values)
+    Either.cond(
+      vector.size >= 2,
+      vector,
+      ValidationError.InvalidValue("TwoOrMore", vector.size.toString, "at least two values"),
+    )
+
+  extension [A](values: TwoOrMore[A])
+    def toVector: Vector[A] = values
+    def size: Int = values.size
+    def map[B](f: A => B): TwoOrMore[B] = values.map(f)
+end TwoOrMore
+
 /** An immutable sequence whose XSD cardinality is `0..2`. */
 opaque type AtMostTwo[+A] = Vector[A]
 

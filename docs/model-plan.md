@@ -13,6 +13,9 @@ python3 reference/xjdf/tool/xsdq.py hierarchy 'complexType:{http://www.CIP4.org/
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}XJMF' --depth 1 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}AuditStatus' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}AssemblingIntent' --depth 1 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}BindingIntent' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}MediaIntent' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py hierarchy 'complexType:{http://www.CIP4.org/JDFSchema_2_0}ProductIntent' --compact --index reference/xjdf/tool/xsd-index.json
 ```
 
 The index reports 365 elements, 366 complex types and 228 simple types. `SpecificResource` alone has 100 derived
@@ -41,7 +44,9 @@ than the indexed `boolean`.
   ResourceSet/Resource, partition keys, headers and abstract message families.
 - **Slice 2 (implemented):** the five closed audit variants, status/resource/notification subelements, process-run data and
   amount/partition constraints. Remaining generic `FileSpec` children belong to the broader subelement slice.
-- **Slice 3 (in progress):** chapter-4 product-intent ADTs; `AssemblingIntent` and its child/glue algebra are implemented.
+- **Slice 3 (implemented):** all 14 schema-defined chapter-4 ProductIntent descendants and their direct child algebras.
+  `ProductIntent` remains open only because section 3.5.4 explicitly permits extension intents; `StandardProductIntent`
+  exposes the complete closed union supplied by XJDF 2.2.
 - **Slice 4:** all 100 `SpecificResource` descendants grouped by general/prepress/press/postpress process domains.
 - **Slice 5:** every concrete XJMF query/command/signal/response and audit payload.
 - **Slice 6:** schema-derived XML and JSON codecs, validation laws, round-trip fixtures and compatibility tests.

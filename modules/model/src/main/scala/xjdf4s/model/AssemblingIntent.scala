@@ -2,8 +2,6 @@ package xjdf4s.model
 
 import xjdf4s.core.*
 
-private val XjdfNamespace = "http://www.CIP4.org/JDFSchema_2_0"
-
 final case class AssemblyItem(
     childRef: XsdId,
     extensions: Extensions = Extensions.empty,
@@ -75,4 +73,4 @@ final case class AssemblingIntent(
     stickOns: Vector[StickOn] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends ProductIntent:
-  val elementName: QualifiedName = QualifiedName(XjdfNamespace, "AssemblingIntent")
+  val elementName: QualifiedName = XjdfNames.element("AssemblingIntent")
