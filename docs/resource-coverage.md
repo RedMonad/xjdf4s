@@ -22,7 +22,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 16 | `GluingParams` | typed |
 | 17 | `HeadBandApplicationParams` | typed |
 | 18 | `InsertingParams` | typed |
-| 19 | `InterpretingParams` | pending |
+| 19 | `InterpretingParams` | typed |
 | 20 | `JacketingParams` | typed |
 | 21 | `LabelingParams` | typed |
 | 22 | `LaminatingParams` | typed |
@@ -58,7 +58,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 52 | `ConventionalPrintingParams` | typed |
 | 53 | `DeliveryParams` | typed |
 | 54 | `DieLayout` | pending |
-| 55 | `DieLayoutProductionParams` | pending |
+| 55 | `DieLayoutProductionParams` | typed |
 | 56 | `DigitalPrintingParams` | typed |
 | 57 | `ExposedMedia` | typed |
 | 58 | `FeedingParams` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **89/100** schema-defined descendants.
+Current coverage: **91/100** schema-defined descendants.

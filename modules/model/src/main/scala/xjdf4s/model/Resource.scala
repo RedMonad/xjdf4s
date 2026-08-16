@@ -36,9 +36,9 @@ type PostpressSpecificResource =
 type PrepressSpecificResource =
   resources.BarcodeCompParams | resources.BarcodeReproParams | resources.BendingParams |
     resources.ColorCorrectionParams | resources.ColorSpaceConversionParams | resources.DevelopingParams |
-    resources.FontPolicy |
+    resources.DieLayoutProductionParams | resources.FontPolicy |
     resources.ImageCompressionParams | resources.ImageEnhancementParams | resources.ImageSetterParams |
-    resources.InkZoneCalculationParams |
+    resources.InkZoneCalculationParams | resources.InterpretingParams |
     resources.InkZoneProfile | resources.LayoutElementProductionParams | resources.LayoutShift |
     resources.ManualLaborParams | resources.PreflightParams |
     resources.PreflightReport | resources.PreviewGenerationParams | resources.RegisterMark |
