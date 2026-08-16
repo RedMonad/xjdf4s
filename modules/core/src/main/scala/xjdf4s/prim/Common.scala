@@ -573,6 +573,49 @@ object Catalog:
     val recommended: List[NmToken] = List(Grommet)
   end HoleReinforcement
 
+  /** Certification claims (Table 8.8 `@Claim`): the name of the certification
+   *  as defined by the issuing organization. The data type is `string` and the
+   *  spec says "Values include", so this is an open catalog (ADR-0007) — any
+   *  string remains legal, e.g. the parameterised `PEFC nn%`.
+   *
+   *  Note that the values are `XjdfString`, not `NmToken`: `FSC 100%` and
+   *  `FSC Mix 70%` contain spaces and `%`, which no NMTOKEN may carry.
+   */
+  object CertificationClaim:
+    val Fsc100: XjdfString = XjdfString.unsafe("FSC 100%")
+    val FscMix70: XjdfString = XjdfString.unsafe("FSC Mix 70%")
+    val FscMixCredit: XjdfString = XjdfString.unsafe("FSC Mix Credit")
+    val FscRecycled85: XjdfString = XjdfString.unsafe("FSC Recycled 85%")
+    val FscRecycledCredit: XjdfString = XjdfString.unsafe("FSC Recycled Credit")
+    val PefcCertified: XjdfString = XjdfString.unsafe("PEFC Certified")
+    val PefcRecycled: XjdfString = XjdfString.unsafe("PEFC Recycled")
+
+    /** The `PEFC nn%` claim of Table 8.8, with the percentage filled in. */
+    def pefcPercent(percent: Int): XjdfString = XjdfString.unsafe(s"PEFC $percent%")
+
+    val recommended: List[XjdfString] = List(
+      Fsc100, FscMix70, FscMixCredit, FscRecycled85, FscRecycledCredit,
+      PefcCertified, PefcRecycled
+    )
+  end CertificationClaim
+
+  /** Certification organizations (Table 8.8 `@Organization`): the identifier of
+   *  the issuing organization. `NMTOKEN` with "Values include" — an open
+   *  catalog (ADR-0007).
+   */
+  object CertificationOrganization:
+    /** China's National Forest Certification System. */
+    val CFCC: NmToken = NmToken.unsafe("CFCC")
+    /** Forest Stewardship Council. */
+    val FSC: NmToken = NmToken.unsafe("FSC")
+    /** Sustainable Forest Management Requirements. */
+    val IFCC: NmToken = NmToken.unsafe("IFCC")
+    /** The Programme for the Endorsement of Forest Certification. */
+    val PEFC: NmToken = NmToken.unsafe("PEFC")
+
+    val recommended: List[NmToken] = List(CFCC, FSC, IFCC, PEFC)
+  end CertificationOrganization
+
   /** Pipe protocols of `Dependent/@PipeProtocol` (Table 3.13). */
   object PipeProtocol:
     val IdentificationField: NmToken = NmToken.unsafe("IdentificationField")

@@ -1,7 +1,9 @@
 package xjdf4s
 package intents
 
+import xjdf4s.model.elements.Certification
 import xjdf4s.prim.*
+import cats.data.Chain
 import cats.kernel.Eq
 
 /** `MediaIntent` (Table 4.32): the media to be used for the Product, described
@@ -9,6 +11,12 @@ import cats.kernel.Eq
  *
  *  Color attributes are `NamedColor` (§A.2.30): an open catalog, so they are
  *  typed `NmToken` with recommended values in `Catalog.NamedColor` (ADR-0007).
+ *
+ *  `Certification*`: "Each Certification SHALL specify a minimum requested
+ *  paper certification level. If more than one Certification is present, at
+ *  least one of the paper certification levels SHALL be met." Cardinality `*`
+ *  (`schema.xsd` `minOccurs="0" maxOccurs="unbounded"`) → `Chain`; the
+ *  per-element SHALL is `Certification.law` (M1.6-1, ADR-0012).
  */
 final case class MediaIntent(
     mediaType: MediaType,
@@ -31,7 +39,8 @@ final case class MediaIntent(
     stockType: Option[NmToken] = None,
     texture: Option[NmToken] = None,
     thickness: Option[Microns] = None,
-    weight: Option[Grammage] = None
+    weight: Option[Grammage] = None,
+    certifications: Chain[Certification] = Chain.empty
 )
 
 object MediaIntent:

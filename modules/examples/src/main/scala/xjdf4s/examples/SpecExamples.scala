@@ -3,7 +3,7 @@ package xjdf4s.examples
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.{Crease, FileSpec, Glue => GlueElement, HolePattern}
+import xjdf4s.model.elements.{Certification, Crease, FileSpec, Glue => GlueElement, HolePattern}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show
@@ -234,6 +234,61 @@ object SpecExamples:
         isRoot = true,
         amount = Some(100L),
         intents = Chain.one(intent)
+      )
+      draft
+        .withProductList(ProductList(products = NonEmptyChain.one(product)))
+        .build
+    }
+
+  /** Fixture (§8.7 / Table 8.8): a sustainability-certified product intent
+   *  (M1.6-1). The same `Certification` element is reused by three of its four
+   *  modelled containers — `ColorIntent/SurfaceColor` (Table 4.21, ink
+   *  certification), `MediaIntent` (Table 4.32, paper certification) and
+   *  `ProductionIntent` (Table 4.33, production certification) — so the
+   *  local-law bus is exercised across several containers of one element.
+   *
+   *  Two `Certification`s are given for production on purpose: Table 4.33 says
+   *  "If more than one Certification is present, at least one of the
+   *  certification levels SHALL be met", which constrains production and not
+   *  the document, so the ticket stays valid (SPEC-COVERAGE, Deliberate
+   *  Deviations).
+   */
+  val certificationJob: ValidatedNec[Issue, XJDF] =
+    chainV(dsl.TicketDraft.of("certificationJob", ProcessType.Product)) { draft =>
+      val fscMix = Certification(
+        claim = Some(Catalog.CertificationClaim.FscMix70),
+        identifier = Some(XjdfString.unsafe("FSC-C012345")),
+        organization = Some(Catalog.CertificationOrganization.FSC)
+      )
+      val pefc = Certification(
+        claim = Some(Catalog.CertificationClaim.pefcPercent(70)),
+        organization = Some(Catalog.CertificationOrganization.PEFC)
+      )
+      val colorPayload = IntentPayload.Color(
+        ColorIntent(front = Some(SurfaceColor(
+          surface = Side.Front,
+          coverage = Some(Coverage.unsafe(80.0)),
+          certifications = Chain.one(fscMix)
+        )))
+      )
+      val mediaPayload = IntentPayload.Media(
+        MediaIntent(MediaType.Paper, weight = Some(Grammage(120.0)), certifications = Chain.one(fscMix))
+      )
+      val productionPayload = IntentPayload.Production(
+        ProductionIntent(
+          printPreference = Some(PrintPreference.HighestQuality),
+          certifications = Chain(fscMix, pefc)
+        )
+      )
+      val product = Product(
+        id = Some(Id.unsafe("P1")),
+        isRoot = true,
+        amount = Some(250L),
+        intents = Chain(
+          Intent(name = IntentName.of(colorPayload.elementName), specific = colorPayload),
+          Intent(name = IntentName.of(mediaPayload.elementName), specific = mediaPayload),
+          Intent(name = IntentName.of(productionPayload.elementName), specific = productionPayload)
+        )
       )
       draft
         .withProductList(ProductList(products = NonEmptyChain.one(product)))
@@ -524,6 +579,7 @@ object SpecExamples:
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),
       "Laminating intent (Table 4.30):" -> laminatingJob.map(Show[XJDF].show),
       "Embossing intent (Table 4.25):" -> embossingJob.map(Show[XJDF].show),
+      "Certification (Table 8.8):" -> certificationJob.map(Show[XJDF].show),
       "Content check intent (Table 4.22):" -> contentCheckJob.map(Show[XJDF].show),
       "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
       "Brochure job:" -> brochureJob.map(Show[XJDF].show),

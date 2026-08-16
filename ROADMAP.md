@@ -636,6 +636,7 @@ def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
 | ADR-0009 | Law-инфраструктура: `cats-laws`/`discipline-munit` или локальные сьюты | до M1.4-6 — `[x]` (зафиксирован в `docs/adr/0009-law-infrastructure.md`; рукописные сьюты сохранены; верифицировано владельцем в PR-12) | M1.4-6 | `docs/adr/0009-law-infrastructure.md` (PR-12) |
 | ADR-0010 | Нормализация кодеков и сохранение расширений | до заморозки API M2 | M2.2 | `docs/adr/0010-codec-normalization.md` (PR-13) |
 | ADR-0011 | Две Glue-энумерации: элемент `Glue` (Table 8.29) vs «Allowed value is from: Glue» (Table A.24); N-50 | до M1.6-3 | M1.6-3 | `docs/adr/0011-glue-enumerations.md` (зафиксирован в PR-15 при регистрации N-50) |
+| ADR-0012 | Пустой `Certification` (Table 8.8): prose SHALL «Each Certification SHALL specify a … certification level» против трёх `use="optional"` в XSD; плюс отказ проверять контейнерное «at least one … SHALL be met» | до M1.6-1 | M1.6-1 | `docs/adr/0012-certification-level-required.md` (PR-22) |
 
 ### ADR-0001 — ChangeOrder как номинальный partial-документ
 
@@ -1787,11 +1788,11 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 
 | Задача | Элемент | Раздел | Таблица |
 | --- | --- | --- | --- |
-| M1.6-1 | Certification | §8.7 | Table 8.8 |
-| M1.6-2 | Crease | §8.14 | Table 8.17 |
-| M1.6-3 | Glue | §8.24 | Table 8.29 |
+| M1.6-1 | Certification `[~]` PR-22 | §8.7 | Table 8.8 |
+| M1.6-2 | Crease `[x]` PR-15 | §8.14 | Table 8.17 |
+| M1.6-3 | Glue `[x]` PR-16 | §8.24 | Table 8.29 |
 | M1.6-4 | GangSource | §8.22 | Table 8.27 |
-| M1.6-5 | HolePattern | §8.25 | Table 8.30 |
+| M1.6-5 | HolePattern `[x]` PR-17 | §8.25 | Table 8.30 |
 | M1.6-6 | IdentificationField | §8.26 | Table 8.31 |
 | M1.6-7 | MISDetails | §8.30 | Table 8.48 |
 
@@ -1800,6 +1801,93 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 - M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?`;
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — реализовать модель и правило приоритета явных Traits;
 - M1.6-15: полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1).
+
+#### M1.6-1. `Certification` (Table 8.8, §8.7) — `[~]` реализовано, ожидает прогона владельца (PR-22)
+
+Возврат к общим элементам главы 8 после серии интентов главы 4. Выбор
+подтверждён владельцем 2026-08-16 вместе с двумя решениями по трактовке
+(см. ADR-0012).
+
+- **Сверка Table 8.8 и XSD (§1.2).** Таблица объявляет ровно три атрибута, все
+  опциональные: `@Claim?` (string, «Values include» — 8 значений, включая
+  параметрическое `PEFC nn%`), `@Identifier?` (string), `@Organization?`
+  (NMTOKEN, «Values include: CFCC, FSC, IFCC, PEFC»). `schema.xsd`
+  (`<xs:element name="Certification">`) подтверждает: три `use="optional"`,
+  подэлементов нет, ID/IDREF-атрибутов нет → `references` = `Chain.empty`
+  (факт сверен, а не предположен).
+- **Кардинальность контейнеров.** Во **всех шести** контейнерах XSD даёт
+  `minOccurs="0" maxOccurs="unbounded"` → `Chain[Certification]`:
+  `ColorIntent/SurfaceColor` (Table 4.21), `ProductionIntent` (Table 4.33),
+  `MediaIntent` (Table 4.32), `Media` (Table 6.114), `Ink` (Table 6.83),
+  `MiscConsumable` (Table 6.117). Первые четыре смоделированы и подключены;
+  `Ink` и `MiscConsumable` как ресурсы отсутствуют в модели — при их появлении
+  (M3) обход расширяется вызовом того же `containerLaw`.
+- **ADR-0012 (расхождение prose vs XSD).** Все контейнеры формулируют «Each
+  Certification SHALL specify a … certification level», тогда как XSD допускает
+  пустой `<Certification/>`. По §1.2 приоритет — текст: пустой элемент
+  отвергается (`IssueCode.CertificationLevelMissing`,
+  `CERTIFICATION-LEVEL-MISSING`), XSD остаётся тест-оракулом. «Уровень» не
+  сужается до `@Claim` — достаточно любого из трёх атрибутов (решение владельца,
+  Alternatives B отклонён).
+- **Контейнерное правило не превращается в проверку.** «If more than one
+  Certification is present, at least one of the … levels SHALL be met» —
+  требование к фактическому производству: документ не выражает, какой уровень
+  *выполнен*. Трактовать его как структурное «at least one present» нельзя —
+  кардинальность `*` заведомо допускает ноль. Зафиксировано двумя строками
+  реестра отклонений `docs/SPEC-COVERAGE.md` + scaladoc + позитивный тест
+  (решение владельца).
+- **Модель.** `Certification` в `model/elements/CommonElements.scala`
+  (`claim: Option[XjdfString]`, `identifier: Option[XjdfString]`,
+  `organization: Option[NmToken]`), метод `specifiesLevel`, `references`,
+  `law` (`(Certification, XPath) => Chain[Issue]`, ADR-0003) и
+  `containerLaw(Chain[Certification], XPath)` с XPath-индексацией
+  `…/Certification[i]` — единая точка обхода для всех контейнеров, чтобы
+  правило не разошлось между ними.
+- **Открытые каталоги (ADR-0007).** `Catalog.CertificationClaim` —
+  **`XjdfString`**, а не `NmToken`: значения содержат пробелы и `%`
+  (`FSC 100%`, `FSC Mix 70%`), плюс `pefcPercent(nn)` для `PEFC nn%`;
+  `Catalog.CertificationOrganization` — `NmToken` (`CFCC`, `FSC`, `IFCC`,
+  `PEFC`). Оба с тестами расширяемости.
+- **Wiring четырёх контейнеров.** `SurfaceColor.certifications`,
+  `MediaIntent.certifications`, `ProductionIntent.certifications`,
+  `Media.certifications` (все `= Chain.empty` — аддитивно, breaking change нет).
+  Валидатор: `checkColorIntentCertifications` (обе поверхности `front`/`back`,
+  XSD `maxOccurs="2"`; XPath именует поверхность), ветви `IntentPayload.Media`
+  и `IntentPayload.Production` в `checkIntentLocalLaws`, ветвь
+  `ResourcePayload.MediaResource` в `checkResourceLocalLaws`.
+  `Media.references` перестал быть константой и обходит `certifications`.
+- **Тесты:** `laws/CertificationLaws.scala` (18 тестов: позитивные на каждый из
+  трёх атрибутов по отдельности и на полный элемент, негативный на SHALL с
+  проверкой кода/severity/XPath, индексация `containerLaw`, расширяемость обоих
+  каталогов, по одному негативному на каждый из четырёх контейнеров, обход
+  обеих поверхностей `ColorIntent`, позитивный на «несколько Certification
+  валидны»); `TicketLaws` registry-тест дополнен четырьмя контейнерами.
+- **Фикстура:** `SpecExamples.certificationJob` — один `Certification` (FSC Mix
+  70%) переиспользован тремя контейнерами интентов + второй (PEFC 70%) в
+  `ProductionIntent`; conformance + golden в `SpecExamplesSuite`.
+- **Строки в `docs/SPEC-COVERAGE.md`:** `Certification` (Resources), два
+  открытых каталога (Enumerations), обновлены `SurfaceColor`, `MediaIntent`,
+  `ProductionIntent`, `Media`, две строки отклонений, две строки version notes
+  (Tables 4.21, 4.33).
+- **Побочная правка.** Найдена и исправлена ошибка нумерации при сверке:
+  ресурс `Ink` — Table **6.83**, а не 6.44 (чекер `check-spec-coverage.sh`
+  поймал несуществующую ссылку).
+
+**Файлы:** `model/elements/CommonElements.scala`, `model/ValidationTypes.scala`,
+`model/TicketValidator.scala`, `prim/Common.scala`,
+`intents/ColorProduction.scala`, `intents/MediaLayout.scala`,
+`resources/Media.scala`, `laws/CertificationLaws.scala` (новый),
+`laws/TicketLaws.scala`, `laws/SpecExamplesSuite.scala`,
+`examples/SpecExamples.scala`, `docs/SPEC-COVERAGE.md`,
+`docs/adr/0012-certification-level-required.md` (новый), `ROADMAP.md`.
+
+**Критерии приёмки:** чистая сборка `sbt -batch clean compile test
+examples/run`; 320 тестов зелёных (300 + `CertificationLaws` 18 +
+`SpecExamplesSuite` 2); `examples/run` exit 0 со строкой
+`Certification (Table 8.8)`; `check-spec-coverage.sh` — `RESULT: OK`
+(проверено в песочнице).
+
+**Статус:** `[~]` — ожидает прогона владельца.
 
 #### M1.6-2. `Crease` (Table 8.17) — `[x]` выполнено (верифицировано владельцем; PR-15)
 
@@ -2263,7 +2351,8 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 19 | `LaminatingIntent` (Table 4.30, §4.9) + `LaminatingTemperature` + открытый `Catalog.Texture` | M1.6-9 | 18 | `[x]` верифицировано владельцем: 268 тестов, `examples/run` exit 0 |
 | 20 | `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) + `EmbossDirection`/`EmbossType` + SHALL `@Separation`↔`Color/@ColorType="DieLine"` | M1.6-10 | 19 | `[x]` верифицировано владельцем: 284 теста, `examples/run` exit 0 |
 | 21 | `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (4.23) + `ProofItem` (4.24) + `ProofColorType` + `ProcessType.Preflight` + `IntentPayload.declaredIds`-wiring + подключение `dispositionLaw` (Table 8.23) | M1.6-11 | 20 | `[x]` верифицировано владельцем: 300 тестов, `examples/run` exit 0 |
-| 22+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-1, M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/11/12; плюс N-51 `FileSpec.law`) | M1.6 | 21 | шаблон среза выполнен |
+| 22 | `Certification` (Table 8.8, §8.7) + `Catalog.CertificationClaim`/`CertificationOrganization` + SHALL `CERTIFICATION-LEVEL-MISSING` (ADR-0012) + wiring в 4 контейнера | M1.6-1 | 21 | `[~]` реализовано, ожидает прогона владельца: ожидается 320 тестов, `examples/run` exit 0 |
+| 23+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/11/12; плюс N-51 `FileSpec.law`) | M1.6 | 22 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -3023,6 +3112,33 @@ Table 8.29 (`@GlueType`):
 (`EnumGlue` — 3 значения для «Allowed value is from: Glue»-атрибутов; inline
 `Glue/@GlueType` — 5 значений). Модель содержит оба набора (ADR-0011, M1.6-3).
 
+### Table 8.8 (`Certification`): prose SHALL против optional-атрибутов XSD
+
+Все контейнеры `Certification*` (Tables 4.21, 4.32, 4.33, 6.114, 6.83, 6.117) требуют:
+
+> Each Certification SHALL specify a … certification level. If more than one Certification is present, at least one of the … certification levels SHALL be met.
+
+`schema.xsd` при этом объявляет все три атрибута опциональными:
+
+```xml
+<xs:element name="Certification">
+    <xs:complexType>
+        <xs:attribute name="Claim" type="xs:string" use="optional"/>
+        <xs:attribute name="Identifier" type="xs:string" use="optional"/>
+        <xs:attribute name="Organization" type="xs:NMTOKEN" use="optional"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+</xs:element>
+```
+
+Разрешение (ADR-0012, M1.6-1): по §1.2 приоритет prose — пустой
+`<Certification/>` отвергается кодом `CERTIFICATION-LEVEL-MISSING`; достаточно
+любого из трёх атрибутов («уровень» не сужается до `@Claim`). Второе
+предложение — требование к фактическому производству, а не инвариант документа:
+XJDF не выражает, какой уровень выполнен, и кардинальность `*` заведомо
+допускает ноль элементов, поэтому проверка не вводится; отклонение
+зафиксировано в `docs/SPEC-COVERAGE.md`.
+
 ---
 
 ## Приложение B. Карта затрагиваемых файлов M1
@@ -3053,6 +3169,11 @@ Table 8.29 (`@GlueType`):
 | `docs/adr/0009-law-infrastructure.md` | M1.4-6 (создан в PR-12) |
 | `docs/adr/0010-codec-normalization.md` | M2.2 (файл создан в PR-13) |
 | `docs/adr/0011-glue-enumerations.md` (новый) | M1.6-3 (ADR зафиксирован в PR-15 при регистрации N-50) |
+| `docs/adr/0012-certification-level-required.md` (новый) | M1.6-1 (PR-22) |
+| `laws/CertificationLaws.scala` (новый) | M1.6-1 (создан в PR-22) |
+| `intents/ColorProduction.scala` | M1.6-1 (`SurfaceColor.certifications`, `ProductionIntent.certifications`, PR-22) |
+| `intents/MediaLayout.scala` | M1.6-1 (`MediaIntent.certifications`, PR-22) |
+| `resources/Media.scala` | M1.6-1 (`Media.certifications`, `references` обходит цепочку, PR-22) |
 | `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4, M1.6-2 (строки Crease/WorkingDirection, раздел Enumerations) |
 | `scripts/check-spec-coverage.sh` (новый) | M1.2-6 (создан в PR-13; в CI подключается вместе с возвратом CI); M1.6-2 (поддержка номеров таблиц Appendix A `Table A.NN`) |
 | `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги |
@@ -3061,7 +3182,7 @@ Table 8.29 (`@GlueType`):
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
 | `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only, PR-13) |
 | `prim/Common.scala` | M1.4-8: элементы удалены, оставлены `Url` и открытые каталоги; M1.2-2 (`Catalog.NamedColor`) |
-| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`; M1.6-2: `Crease` |
+| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`; M1.6-2: `Crease`; M1.6-1: `Certification` |
 | `model/Partition.scala` | M1.2-1, M1.4-3, M1.0-5 (scaladoc-ссылка) |
 | `model/Amounts.scala` | M1.2-3, M1.3-3 (`PartWaste`) |
 | `model/Product.scala` | M1.1-1, M1.3-3, M1.3-4, M1.4-7 |
@@ -3235,9 +3356,25 @@ PR-21 (M1.6-11) реализовал `ContentCheckIntent` (Table 4.22, §4.5) +
 зарегистрирована находка N-51 (неполнота `FileSpec`, M1.6/M3 follow-up).
 Верифицировано владельцем: **300 тестов зелёных (300/0)**, `examples/run`
 exit 0, статус `[x]` (включая фикс E008 `.toChain` на `Chain`-поле, коммит
-`203b372`). Закрыты 4 из 5 интентов главы 4. Следующий срез PR-22+
-выбирается из M1.6-1 Certification, M1.6-4/7/8 GangSource+MISDetails+NodeInfo,
-M1.6-6 IdentificationField, M1.6-13 ShapeCuttingIntent (требует примитива
-`PDFPath`), M1.6-14 NamedFeatures, M1.6-15 Part audit или N-51 `FileSpec.law`.
+`203b372`). Закрыты 4 из 5 интентов главы 4.
+
+PR-22 (M1.6-1) реализовал `Certification` (Table 8.8, §8.7): элемент из трёх
+опциональных атрибутов, два открытых каталога (`Catalog.CertificationClaim` —
+`XjdfString`, `Catalog.CertificationOrganization` — `NmToken`), SHALL «Each
+Certification SHALL specify a … certification level» вопреки трём
+`use="optional"` в XSD (ADR-0012, приоритет prose по §1.2) с кодом
+`CERTIFICATION-LEVEL-MISSING`, `containerLaw` с XPath-индексацией и подключение
+всех четырёх смоделированных контейнеров (`ColorIntent/SurfaceColor`,
+`MediaIntent`, `ProductionIntent`, `Media`); контейнерное «at least one of the
+levels SHALL be met» сознательно не проверяется (требование к производству, не
+к документу) — две строки реестра отклонений. 18 тестов `CertificationLaws`,
+фикстура `certificationJob`, registry-тест `TicketLaws` расширен. Побочно
+исправлена ошибка нумерации: ресурс `Ink` — Table 6.83, а не 6.44. Статус
+`[~]` — ожидает прогона владельца (ожидается **320 тестов**).
+
+Следующий срез PR-23+ выбирается из M1.6-4/7/8
+GangSource+MISDetails+NodeInfo, M1.6-6 IdentificationField, M1.6-13
+ShapeCuttingIntent (требует примитива `PDFPath`), M1.6-14 NamedFeatures,
+M1.6-15 Part audit или N-51 `FileSpec.law`.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
 открытая часть M1.0-1.

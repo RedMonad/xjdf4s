@@ -3,7 +3,7 @@ package xjdf4s.laws
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.{Comment, Disposition, FileSpec, Milestone}
+import xjdf4s.model.elements.{Certification, Comment, Disposition, FileSpec, Milestone}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}
@@ -667,6 +667,35 @@ class TicketLaws extends ScalaCheckSuite:
         fileSpec = Some(FileSpec(disposition = Some(Disposition(
           minDuration = Some(TimeSpan.ofHours(24)))))))))))
     assert(ticketWithProduct(productWithIntent(contentCheckIntent)).validate.isValid)
+
+    // Certification law reached through all four modelled containers
+    // (SurfaceColor, MediaIntent, ProductionIntent — intents; Media —
+    // resource; Table 8.8, M1.6-1). Lawful Certifications prove reachability.
+    val certification = Certification(organization = Some(Catalog.CertificationOrganization.FSC))
+    val colorIntent = Intent(IntentName.unsafe("ColorIntent"),
+      IntentPayload.Color(ColorIntent(front = Some(SurfaceColor(surface = Side.Front,
+        certifications = Chain.one(certification))))))
+    assert(ticketWithProduct(productWithIntent(colorIntent)).validate.isValid)
+
+    val mediaIntent = Intent(IntentName.unsafe("MediaIntent"),
+      IntentPayload.Media(MediaIntent(MediaType.Paper, certifications = Chain.one(certification))))
+    assert(ticketWithProduct(productWithIntent(mediaIntent)).validate.isValid)
+
+    val productionIntent = Intent(IntentName.unsafe("ProductionIntent"),
+      IntentPayload.Production(ProductionIntent(certifications = Chain.one(certification))))
+    assert(ticketWithProduct(productWithIntent(productionIntent)).validate.isValid)
+
+    val mediaResourceTicket = ticket(
+      NonEmptyChain.one(ProcessType.Cutting),
+      resourceSets = Chain.one(ResourceSet(
+        ResourceSetName.unsafe("Media"),
+        usage = Some(Usage.Input),
+        resources = Chain.one(Resource(specific = Some(ResourcePayload.MediaResource(
+          Media(MediaType.Paper, certifications = Chain.one(certification))
+        ))))
+      ))
+    )
+    assert(mediaResourceTicket.validate.isValid)
 
     // Notification laws
     val header = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(1))

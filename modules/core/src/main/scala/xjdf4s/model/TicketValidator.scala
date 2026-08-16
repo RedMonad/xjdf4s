@@ -10,7 +10,7 @@ import xjdf4s.intents.{
   IntentPayload,
   VariableIntent
 }
-import xjdf4s.model.elements.{Disposition, Glue => GlueElement, HolePattern => HolePatternElement}
+import xjdf4s.model.elements.{Certification, Disposition, Glue => GlueElement, HolePattern => HolePatternElement}
 import xjdf4s.prim.*
 import xjdf4s.resources.ResourcePayload
 import cats.Show
@@ -115,11 +115,16 @@ object TicketValidator:
     resourceIssues ++ productIssues ++ notificationIssues
 
   private def checkResourceLocalLaws(resource: Resource, at: XPath): Chain[Issue] =
-    resource.amountPool.fold(Chain.empty[Issue]) { pool =>
+    val amountIssues = resource.amountPool.fold(Chain.empty[Issue]) { pool =>
       pool.toList.foldLeft(Chain.empty[Issue]) { (acc, pa) =>
         acc ++ pa.partWaste.foldLeft(Chain.empty[Issue])((w, pw) => w ++ PartWaste.law.check(pw, at))
       }
     }
+    val certificationIssues = resource.specific match
+      case Some(ResourcePayload.MediaResource(m)) =>
+        Certification.containerLaw(m.certifications, XPath(s"$at/Media"))
+      case _ => Chain.empty
+    amountIssues ++ certificationIssues
     // Note: Disposition (Table 8.23) is a child of FileSpec inside chapter-6
     // resources; once resources carrying FileSpec are implemented (M3), the
     // traversal extends here with `TicketValidator.dispositionLaw.check(d, at)`.
@@ -138,6 +143,11 @@ object TicketValidator:
       case IntentPayload.Assembly(a) => checkAssemblyGlueLaws(a, path)
       case IntentPayload.ContentCheck(c) => checkContentCheckLaws(c, path)
       case IntentPayload.HoleMaking(h) => checkHoleMakingLaws(h, path)
+      case IntentPayload.Color(c) => checkColorIntentCertifications(c, path)
+      case IntentPayload.Media(m) =>
+        Certification.containerLaw(m.certifications, path)
+      case IntentPayload.Production(p) =>
+        Certification.containerLaw(p.certifications, path)
       case IntentPayload.Variable(v) => VariableIntent.law.check(v, path)
       case _                         => Chain.empty
     nameIssues ++ payloadIssues
@@ -164,6 +174,21 @@ object TicketValidator:
   private def checkHoleMakingLaws(h: HoleMakingIntent, path: XPath): Chain[Issue] =
     h.holePatterns.toChain.zipWithIndex.flatMap { (hp, i) =>
       HolePatternElement.law(hp, XPath(s"$path/HolePattern[$i]"))
+    }
+
+  /** Validates the `Certification` elements nested inside
+   *  `ColorIntent/SurfaceColor` (Table 4.21, `Certification*`). `ColorIntent`
+   *  models the two surfaces as `front`/`back` (`maxOccurs="2"` in
+   *  `schema.xsd`), so both are walked; the XPath names the surface rather
+   *  than an index, matching the model shape (M1.6-1).
+   */
+  private def checkColorIntentCertifications(c: xjdf4s.intents.ColorIntent, path: XPath): Chain[Issue] =
+    val surfaces = Chain.fromOption(c.front) ++ Chain.fromOption(c.back)
+    surfaces.flatMap { sc =>
+      Certification.containerLaw(
+        sc.certifications,
+        XPath(s"$path/SurfaceColor[@Surface='${sc.surface.token.value}']")
+      )
     }
 
   /** Validates the `Disposition` elements nested inside

@@ -1,6 +1,7 @@
 package xjdf4s
 package resources
 
+import xjdf4s.model.elements.Certification
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
@@ -10,6 +11,11 @@ import cats.kernel.Eq
  *
  *  Color attributes are `NamedColor` (§A.2.30): an open catalog, so they are
  *  typed `NmToken` with recommended values in `Catalog.NamedColor` (ADR-0007).
+ *
+ *  `Certification*` (Table 6.114): "Each Certification SHALL specify a paper
+ *  certification level." Cardinality `*` (`schema.xsd`
+ *  `minOccurs="0" maxOccurs="unbounded"`) → `Chain`; the per-element SHALL is
+ *  `Certification.law` (M1.6-1, ADR-0012).
  */
 final case class Media(
     mediaType: MediaType,
@@ -39,10 +45,15 @@ final case class Media(
     stockType: Option[NmToken] = None,
     texture: Option[NmToken] = None,
     thickness: Option[Microns] = None,
-    weight: Option[Grammage] = None
+    weight: Option[Grammage] = None,
+    certifications: Chain[Certification] = Chain.empty
 ):
 
-  def references: Chain[IdRef] = Chain.empty
+  /** `Media` itself declares no IDREF attributes, and neither does the nested
+   *  `Certification` (Table 8.8) — the chain is walked so the fact stays
+   *  checked rather than assumed (M1.6-1).
+   */
+  def references: Chain[IdRef] = certifications.flatMap(_.references)
 end Media
 
 object Media:

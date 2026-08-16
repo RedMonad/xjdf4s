@@ -149,6 +149,11 @@ object IssueCode:
    *  have `@ColorType="DieLine"` (Table 4.26). */
   val EmbossingColorNotDieLine: IssueCode = unsafe("EMBOSSING-COLOR-NOT-DIELINE")
 
+  /** A `Certification` element specifies no certification level: none of
+   *  `@Claim`, `@Identifier`, `@Organization` is present (Table 8.8 with
+   *  Tables 4.21/4.32/4.33/6.114; ADR-0012). */
+  val CertificationLevelMissing: IssueCode = unsafe("CERTIFICATION-LEVEL-MISSING")
+
 end IssueCode
 
 /** A validation finding: a stable machine-readable code, the severity class,

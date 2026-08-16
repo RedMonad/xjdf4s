@@ -336,3 +336,90 @@ object HolePattern:
   given Eq[HolePattern] = Eq.fromUniversalEquals
 
 end HolePattern
+
+/** The `Certification` element (§8.7 / Table 8.8): the certification
+ *  properties of a resource or a process — a sustainability claim such as
+ *  `FSC Mix 70%`, the identification number issued for it and the issuing
+ *  organization.
+ *
+ *  *(New in XJDF 2.1)* in every chapter-4 container it appears in
+ *  (`ColorIntent/SurfaceColor`, `ProductionIntent`); `MediaIntent` and `Media`
+ *  carry it without a version note.
+ *
+ *  Containers (`Certification*` everywhere, `schema.xsd`
+ *  `minOccurs="0" maxOccurs="unbounded"`): `ColorIntent/SurfaceColor`
+ *  (Table 4.21), `ProductionIntent` (Table 4.33), `MediaIntent` (Table 4.32),
+ *  `Media` (Table 6.114), plus `Ink` (Table 6.83) and `MiscConsumable`
+ *  (Table 6.117), which this library does not model yet.
+ *
+ *  All three attributes are strings/NMTOKEN and are optional in `schema.xsd`,
+ *  yet Table 4.21/4.32/4.33 and Table 6.114 state that "Each Certification
+ *  SHALL specify a … certification level". An element carrying none of the
+ *  three therefore specifies nothing and violates that SHALL — see
+ *  `Certification.law` and ADR-0012.
+ *
+ *  The container-level sentence "If more than one Certification is present, at
+ *  least one of the … levels SHALL be met" constrains actual production, not
+ *  the document: a ticket cannot state whether a level *was met*. It is
+ *  deliberately not a validation rule (SPEC-COVERAGE, Deliberate Deviations).
+ *
+ *  Data types (Table 8.8):
+ *  - `@Claim` → `XjdfString` (open catalog `Catalog.CertificationClaim`,
+ *    "Values include", ADR-0007)
+ *  - `@Identifier` → `XjdfString` (free-form, issued by the organization)
+ *  - `@Organization` → `NmToken` (open catalog
+ *    `Catalog.CertificationOrganization`, "Values include", ADR-0007)
+ */
+final case class Certification(
+    claim: Option[XjdfString] = None,
+    identifier: Option[XjdfString] = None,
+    organization: Option[NmToken] = None
+):
+
+  /** True when at least one attribute of Table 8.8 is present, i.e. the
+   *  element actually specifies a certification level (see `law`).
+   */
+  def specifiesLevel: Boolean =
+    claim.isDefined || identifier.isDefined || organization.isDefined
+
+  /** `Certification` carries no ID or IDREF attributes (Table 8.8, verified
+   *  against `schema.xsd`), so it contributes no references.
+   */
+  def references: Chain[IdRef] = Chain.empty
+
+end Certification
+
+object Certification:
+
+  /** Local SHALL rule for `Certification` (Table 8.8 + Tables 4.21/4.32/4.33,
+   *  6.114; ADR-0003, ADR-0012): each `Certification` SHALL specify a
+   *  certification level. `schema.xsd` declares all three attributes
+   *  `use="optional"`, so an empty `<Certification/>` is schema-valid but
+   *  specifies nothing; per ROADMAP §1.2 the prose wins and the XSD stays a
+   *  test oracle.
+   */
+  def law(certification: Certification, at: XPath): Chain[Issue] =
+    if certification.specifiesLevel then Chain.empty
+    else
+      Chain.one(Issue.errorC(
+        IssueCode.CertificationLevelMissing,
+        at,
+        "Each Certification SHALL specify a certification level: at least one of " +
+          "@Claim, @Identifier or @Organization is required (Table 8.8, Tables 4.21/4.32/4.33/6.114)"
+      ))
+
+  /** Applies `law` to every element of a container's `Certification*` chain,
+   *  indexing the XPath by position. The four modelled containers
+   *  (`SurfaceColor`, `ProductionIntent`, `MediaIntent`, `Media`) share this
+   *  traversal so the rule cannot drift between them.
+   */
+  def containerLaw(certifications: Chain[Certification], at: XPath): Chain[Issue] =
+    certifications.zipWithIndex.flatMap { (c, i) =>
+      law(c, XPath(s"$at/Certification[$i]"))
+    }
+
+  given Show[Certification] = Show.fromToString
+
+  given Eq[Certification] = Eq.fromUniversalEquals
+
+end Certification

@@ -79,6 +79,9 @@ class SpecExamplesSuite extends FunSuite:
   test("Fixture (§4.5 / Tables 4.22–4.24): contentCheckJob constructs and validates"):
     assertValidTicket("contentCheckJob")(SpecExamples.contentCheckJob)
 
+  test("Fixture (§8.7 / Table 8.8): certificationJob constructs and validates"):
+    assertValidTicket("certificationJob")(SpecExamples.certificationJob)
+
   test("Example 3.3 (Table 3.3): mediaConsumptionAudit constructs"):
     assertConstructs("Example 3.3")(SpecExamples.mediaConsumptionAudit)
 
@@ -164,6 +167,12 @@ class SpecExamplesSuite extends FunSuite:
     assertEquals(
       showOf("embossingJob")(SpecExamples.embossingJob),
       "XJDF(job=embossingJob, types=Embossing, ProductList(Product(?×200, root)))"
+    )
+
+  test("golden: certificationJob Show render (Table 8.8 fixture)"):
+    assertEquals(
+      showOf("certificationJob")(SpecExamples.certificationJob),
+      "XJDF(job=certificationJob, types=Product, ProductList(Product(?×250, root)))"
     )
 
   test("golden: contentCheckJob Show render (Table 4.22 fixture)"):
