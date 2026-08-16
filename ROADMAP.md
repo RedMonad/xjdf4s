@@ -1788,7 +1788,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 
 | Задача | Элемент | Раздел | Таблица |
 | --- | --- | --- | --- |
-| M1.6-1 | Certification `[~]` PR-22 | §8.7 | Table 8.8 |
+| M1.6-1 | Certification `[x]` PR-22 | §8.7 | Table 8.8 |
 | M1.6-2 | Crease `[x]` PR-15 | §8.14 | Table 8.17 |
 | M1.6-3 | Glue `[x]` PR-16 | §8.24 | Table 8.29 |
 | M1.6-4 | GangSource | §8.22 | Table 8.27 |
@@ -1802,7 +1802,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — реализовать модель и правило приоритета явных Traits;
 - M1.6-15: полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1).
 
-#### M1.6-1. `Certification` (Table 8.8, §8.7) — `[~]` реализовано, ожидает прогона владельца (PR-22)
+#### M1.6-1. `Certification` (Table 8.8, §8.7) — `[x]` выполнено (верифицировано владельцем; PR-22)
 
 Возврат к общим элементам главы 8 после серии интентов главы 4. Выбор
 подтверждён владельцем 2026-08-16 вместе с двумя решениями по трактовке
@@ -1887,7 +1887,15 @@ examples/run`; 320 тестов зелёных (300 + `CertificationLaws` 18 +
 `Certification (Table 8.8)`; `check-spec-coverage.sh` — `RESULT: OK`
 (проверено в песочнице).
 
-**Статус:** `[~]` — ожидает прогона владельца.
+**Прогон владельца (2026-08-16).** `clean`/`compile` — чисто (78 disk cache
+hits, 0 предупреждений); `testFull` — **320/0** (AlgebraLaws 50, TicketLaws 59,
+SpecExamplesSuite 30, EnumLaws 28, PartitionLaws 27, **CertificationLaws 18**,
+GlueLaws 15, HolePatternLaws 14, PatchLaws 13, ContentCheckIntentLaws 12,
+EmbossingIntentLaws 12, ChangeOrderLaws 8, HoleMakingIntentLaws 8, BomLaws 8,
+LaminatingIntentLaws 7, AlignmentLaws 6, CreaseLaws 5); `examples/run` — exit 0,
+вывод содержит новую строку `Certification (Table 8.8): XJDF(job=certificationJob,
+types=Product, ProductList(Product(?×250, root)))` и не содержит регрессий;
+`check-spec-coverage.sh` — `RESULT: OK`. Статус `[x]` — закрыт полностью.
 
 #### M1.6-2. `Crease` (Table 8.17) — `[x]` выполнено (верифицировано владельцем; PR-15)
 
@@ -2351,7 +2359,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 19 | `LaminatingIntent` (Table 4.30, §4.9) + `LaminatingTemperature` + открытый `Catalog.Texture` | M1.6-9 | 18 | `[x]` верифицировано владельцем: 268 тестов, `examples/run` exit 0 |
 | 20 | `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) + `EmbossDirection`/`EmbossType` + SHALL `@Separation`↔`Color/@ColorType="DieLine"` | M1.6-10 | 19 | `[x]` верифицировано владельцем: 284 теста, `examples/run` exit 0 |
 | 21 | `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (4.23) + `ProofItem` (4.24) + `ProofColorType` + `ProcessType.Preflight` + `IntentPayload.declaredIds`-wiring + подключение `dispositionLaw` (Table 8.23) | M1.6-11 | 20 | `[x]` верифицировано владельцем: 300 тестов, `examples/run` exit 0 |
-| 22 | `Certification` (Table 8.8, §8.7) + `Catalog.CertificationClaim`/`CertificationOrganization` + SHALL `CERTIFICATION-LEVEL-MISSING` (ADR-0012) + wiring в 4 контейнера | M1.6-1 | 21 | `[~]` реализовано, ожидает прогона владельца: ожидается 320 тестов, `examples/run` exit 0 |
+| 22 | `Certification` (Table 8.8, §8.7) + `Catalog.CertificationClaim`/`CertificationOrganization` + SHALL `CERTIFICATION-LEVEL-MISSING` (ADR-0012) + wiring в 4 контейнера | M1.6-1 | 21 | `[x]` верифицировано владельцем: 320 тестов, `examples/run` exit 0 |
 | 23+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/11/12; плюс N-51 `FileSpec.law`) | M1.6 | 22 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -3369,8 +3377,9 @@ Certification SHALL specify a … certification level» вопреки трём
 levels SHALL be met» сознательно не проверяется (требование к производству, не
 к документу) — две строки реестра отклонений. 18 тестов `CertificationLaws`,
 фикстура `certificationJob`, registry-тест `TicketLaws` расширен. Побочно
-исправлена ошибка нумерации: ресурс `Ink` — Table 6.83, а не 6.44. Статус
-`[~]` — ожидает прогона владельца (ожидается **320 тестов**).
+исправлена ошибка нумерации: ресурс `Ink` — Table 6.83, а не 6.44.
+Верифицировано владельцем: **320 тестов зелёных (320/0)**, `examples/run`
+exit 0, `check-spec-coverage.sh` — `RESULT: OK`; статус `[x]`.
 
 Следующий срез PR-23+ выбирается из M1.6-4/7/8
 GangSource+MISDetails+NodeInfo, M1.6-6 IdentificationField, M1.6-13
