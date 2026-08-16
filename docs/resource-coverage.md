@@ -16,7 +16,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 10 | `CreasingParams` | typed |
 | 11 | `CuttingParams` | typed |
 | 12 | `DevelopingParams` | typed |
-| 13 | `Device` | pending |
+| 13 | `Device` | typed |
 | 14 | `EmbossingParams` | typed |
 | 15 | `EndSheetGluingParams` | typed |
 | 16 | `GluingParams` | typed |
@@ -50,8 +50,8 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 44 | `BendingParams` | typed |
 | 45 | `BinderySignature` | pending |
 | 46 | `BoxFoldingParams` | pending |
-| 47 | `Color` | pending |
-| 48 | `ColorantControl` | pending |
+| 47 | `Color` | typed |
+| 48 | `ColorantControl` | typed |
 | 49 | `Component` | typed |
 | 50 | `Contact` | typed |
 | 51 | `Content` | pending |
@@ -70,7 +70,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 64 | `LayoutElementProductionParams` | pending |
 | 65 | `LayoutShift` | typed |
 | 66 | `ManualLaborParams` | typed |
-| 67 | `Media` | pending |
+| 67 | `Media` | typed |
 | 68 | `MiscConsumable` | typed |
 | 69 | `PDLCreationParams` | pending |
 | 70 | `PreflightParams` | typed |
@@ -79,10 +79,10 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 73 | `QualityControlParams` | pending |
 | 74 | `QualityControlResult` | pending |
 | 75 | `RegisterMark` | typed |
-| 76 | `RunList` | pending |
+| 76 | `RunList` | typed |
 | 77 | `SeparationControlParams` | typed |
-| 78 | `ShapeDef` | pending |
-| 79 | `ShapeDefProductionParams` | pending |
+| 78 | `ShapeDef` | typed |
+| 79 | `ShapeDefProductionParams` | typed |
 | 80 | `SheetOptimizingParams` | pending |
 | 81 | `TransferCurve` | typed |
 | 82 | `UsageCounter` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **73/100** schema-defined descendants.
+Current coverage: **80/100** schema-defined descendants.

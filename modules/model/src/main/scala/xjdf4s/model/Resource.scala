@@ -10,9 +10,11 @@ end SpecificResource
 
 /** Typed resources completed in the foundational resource slice. */
 type FoundationalSpecificResource =
-  resources.Assembly | resources.Bundle | resources.Component | resources.Contact | resources.CustomerInfo |
-    resources.ExposedMedia | resources.Ink | resources.MiscConsumable | resources.NodeInfo | resources.Pallet |
-    resources.PrintCondition | resources.Shape | resources.Tool | resources.TransferCurve | resources.UsageCounter
+  resources.Assembly | resources.Bundle | resources.Color | resources.ColorantControl | resources.Component |
+    resources.Contact | resources.CustomerInfo | resources.Device | resources.ExposedMedia | resources.Ink | resources.Media |
+    resources.MiscConsumable |
+    resources.NodeInfo | resources.Pallet | resources.PrintCondition | resources.RunList | resources.Shape |
+    resources.ShapeDef | resources.Tool | resources.TransferCurve | resources.UsageCounter
 
 type PostpressSpecificResource =
   resources.BlockPreparationParams | resources.BoxPackingParams | resources.BundlingParams |
@@ -34,7 +36,8 @@ type PrepressSpecificResource =
     resources.ImageEnhancementParams | resources.ImageSetterParams | resources.InkZoneProfile |
     resources.LayoutShift | resources.ManualLaborParams | resources.PreflightParams |
     resources.PreflightReport | resources.PreviewGenerationParams | resources.RegisterMark |
-    resources.ScreeningParams | resources.SeparationControlParams | resources.TrappingParams
+    resources.ScreeningParams | resources.SeparationControlParams | resources.ShapeDefProductionParams |
+    resources.TrappingParams
 
 type GeneralSpecificResource =
   resources.ApprovalDetails | resources.ApprovalParams | resources.DeliveryParams | resources.Preview |
