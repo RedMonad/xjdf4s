@@ -1,11 +1,12 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.SeverityClass
 import xjdf4s.prim.*
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Wire tokens of the closed XJDF enumerations (§1.10.3.1) and extensibility of
  *  the open catalogs (§1.10.3.2).
@@ -212,32 +213,32 @@ class EnumLaws extends FunSuite:
   test("closed enumerations have no duplicate wire tokens"):
     val closed: List[(String, List[XjdfEnum])] =
       List(
-        "Sides"               -> Sides.all,
-        "DeviceStatus"        -> DeviceStatus.all,
-        "HardCoverJacket"     -> HardCoverJacket.all,
-        "ISOPaperSubstrate"   -> ISOPaperSubstrate.all,
-        "MediaType"           -> MediaType.all,
-        "Scope"               -> Scope.all,
-        "Status"              -> Status.all,
-        "EmbossDirection"     -> EmbossDirection.all,
-        "EmbossType"          -> EmbossType.all,
-        "BindingType"         -> BindingType.all,
+        "Sides" -> Sides.all,
+        "DeviceStatus" -> DeviceStatus.all,
+        "HardCoverJacket" -> HardCoverJacket.all,
+        "ISOPaperSubstrate" -> ISOPaperSubstrate.all,
+        "MediaType" -> MediaType.all,
+        "Scope" -> Scope.all,
+        "Status" -> Status.all,
+        "EmbossDirection" -> EmbossDirection.all,
+        "EmbossType" -> EmbossType.all,
+        "BindingType" -> BindingType.all,
         "LaminatingTemperature" -> LaminatingTemperature.all,
-        "WorkingDirection"    -> WorkingDirection.all,
-        "GlueType"            -> GlueType.all,
-        "EnumGlue"            -> EnumGlue.all,
-        "GluingTechnique"     -> GluingTechnique.all,
+        "WorkingDirection" -> WorkingDirection.all,
+        "GlueType" -> GlueType.all,
+        "EnumGlue" -> EnumGlue.all,
+        "GluingTechnique" -> GluingTechnique.all,
         "HoleCenterReference" -> HoleCenterReference.all,
-        "HoleReferenceEdge"   -> HoleReferenceEdge.all,
-        "HoleShape"           -> HoleShape.all,
-        "PreflightLevel"      -> PreflightLevel.all,
-        "ProofColorType"      -> ProofColorType.all,
-        "CostType"            -> CostType.all,
-        "WorkType"            -> WorkType.all,
-        "DueLevel"            -> DueLevel.all,
-        "FieldEncoding"       -> FieldEncoding.all,
-        "FieldPurpose"        -> FieldPurpose.all,
-        "DataType"            -> DataType.all
+        "HoleReferenceEdge" -> HoleReferenceEdge.all,
+        "HoleShape" -> HoleShape.all,
+        "PreflightLevel" -> PreflightLevel.all,
+        "ProofColorType" -> ProofColorType.all,
+        "CostType" -> CostType.all,
+        "WorkType" -> WorkType.all,
+        "DueLevel" -> DueLevel.all,
+        "FieldEncoding" -> FieldEncoding.all,
+        "FieldPurpose" -> FieldPurpose.all,
+        "DataType" -> DataType.all
       )
     closed.foreach: (name, all) =>
       assertEquals(all.map(_.token.value).distinct.size, all.size, s"$name has duplicate tokens")
@@ -282,34 +283,34 @@ class EnumLaws extends FunSuite:
    */
   private val appendixAEnums: List[(String, List[XjdfEnum])] =
     List(
-      "Anchor"            -> Anchor.all,
-      "Automation"        -> Automation.all,
-      "BindingType"       -> BindingType.all,
-      "Coating"           -> Coating.all,
-      "DataType"          -> DataType.all,
-      "DeviceStatus"      -> DeviceStatus.all,
-      "Edge"              -> Edge.all,
-      "EmbossDirection"   -> EmbossDirection.all,
-      "EmbossType"        -> EmbossType.all,
-      "Face"              -> Face.all,
-      "FitPolicy"         -> FitPolicy.all,
-      "Glue"              -> EnumGlue.all,
+      "Anchor" -> Anchor.all,
+      "Automation" -> Automation.all,
+      "BindingType" -> BindingType.all,
+      "Coating" -> Coating.all,
+      "DataType" -> DataType.all,
+      "DeviceStatus" -> DeviceStatus.all,
+      "Edge" -> Edge.all,
+      "EmbossDirection" -> EmbossDirection.all,
+      "EmbossType" -> EmbossType.all,
+      "Face" -> Face.all,
+      "FitPolicy" -> FitPolicy.all,
+      "Glue" -> EnumGlue.all,
       "ISOPaperSubstrate" -> ISOPaperSubstrate.all,
-      "MediaDirection"    -> MediaDirection.all,
-      "MediaType"         -> MediaType.all,
-      "Opacity"           -> Opacity.all,
-      "Orientation"       -> Orientation.all,
-      "Scope"             -> Scope.all,
-      "Severity"          -> SeverityClass.all,
-      "SheetLay"          -> SheetLay.all,
-      "Side"              -> Side.all,
-      "Sides"             -> Sides.all,
-      "SpreadType"        -> SpreadType.all,
-      "StapleShape"       -> StapleShape.all,
-      "Status"            -> Status.all,
-      "TightBacking"      -> TightBacking.all,
-      "Usage"             -> Usage.all,
-      "WorkingDirection"  -> WorkingDirection.all
+      "MediaDirection" -> MediaDirection.all,
+      "MediaType" -> MediaType.all,
+      "Opacity" -> Opacity.all,
+      "Orientation" -> Orientation.all,
+      "Scope" -> Scope.all,
+      "Severity" -> SeverityClass.all,
+      "SheetLay" -> SheetLay.all,
+      "Side" -> Side.all,
+      "Sides" -> Sides.all,
+      "SpreadType" -> SpreadType.all,
+      "StapleShape" -> StapleShape.all,
+      "Status" -> Status.all,
+      "TightBacking" -> TightBacking.all,
+      "Usage" -> Usage.all,
+      "WorkingDirection" -> WorkingDirection.all
     )
 
   /** Values that the normative text lists but this model deliberately omits,
@@ -334,8 +335,8 @@ class EnumLaws extends FunSuite:
   /** The value column of the enumeration table of `name`, in table order. */
   private def specValues(name: String): List[String] =
     val header = raw"\*\*Table A\.\d+: " + java.util.regex.Pattern.quote(name) + raw" Enumeration Values\*\*"
-    val lines  = appendixA.linesIterator.toList
-    val start  = lines.indexWhere(_.matches(header))
+    val lines = appendixA.linesIterator.toList
+    val start = lines.indexWhere(_.matches(header))
     assert(start >= 0, s"no Appendix A table found for enumeration $name")
     val row = raw"^\|\s*`([^`]+)`.*".r
     lines
@@ -349,8 +350,8 @@ class EnumLaws extends FunSuite:
     val problems = appendixAEnums.flatMap: (name, all) =>
       val modelled = all.map(_.token.value).toSet
       val expected = specValues(name).toSet -- acceptedOmissions.getOrElse(name, Set.empty)
-      val missing  = (expected -- modelled).toList.sorted
-      val extra    = (modelled -- expected).toList.sorted
+      val missing = (expected -- modelled).toList.sorted
+      val extra = (modelled -- expected).toList.sorted
       Option.when(missing.nonEmpty || extra.nonEmpty)(
         s"$name: missing=${missing.mkString(",")} extra=${extra.mkString(",")}"
       )

@@ -40,8 +40,6 @@ end ContentCheckIntent
 object ContentCheckIntent:
   given Eq[ContentCheckIntent] = Eq.fromUniversalEquals
 
-end ContentCheckIntent
-
 /** `PreflightItem` (§4.5.1 / Table 4.23): the preflight rules for the pages
  *  in a Product. The single optional attribute `@PreflightLevel` is a closed
  *  enumeration (`Basic`, `Extended`, `Premium`); the details of each level
@@ -53,8 +51,6 @@ final case class PreflightItem(
 
 object PreflightItem:
   given Eq[PreflightItem] = Eq.fromUniversalEquals
-
-end PreflightItem
 
 /** `ProofItem` (§4.5.2 / Table 4.24): one customer proof to be provided —
  *  its amount, color quality, page selection and the remote target the proof
@@ -92,5 +88,3 @@ final case class ProofItem(
 
 object ProofItem:
   given Eq[ProofItem] = Eq.fromUniversalEquals
-
-end ProofItem

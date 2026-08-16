@@ -1,8 +1,8 @@
 package xjdf4s.laws
 
 import xjdf4s.intents.{HoleMakingIntent, IntentPayload}
-import xjdf4s.model.elements.HolePattern
 import xjdf4s.model.*
+import xjdf4s.model.elements.HolePattern
 import xjdf4s.prim.*
 import cats.data.{Chain, NonEmptyChain}
 import munit.FunSuite

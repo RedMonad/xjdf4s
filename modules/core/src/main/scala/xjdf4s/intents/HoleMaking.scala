@@ -24,5 +24,3 @@ final case class HoleMakingIntent(
 
 object HoleMakingIntent:
   given Eq[HoleMakingIntent] = Eq.fromUniversalEquals
-
-end HoleMakingIntent

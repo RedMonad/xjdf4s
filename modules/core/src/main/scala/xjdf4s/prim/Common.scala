@@ -509,8 +509,18 @@ object Catalog:
     val Vellum: NmToken = NmToken.unsafe("Vellum")
 
     val recommended: List[NmToken] = List(
-      Antique, Calendared, Gloss, IPPCourse, IPPFine, IPPMedium,
-      Linen, Matte, Smooth, Stipple, Uncalendared, Vellum
+      Antique,
+      Calendared,
+      Gloss,
+      IPPCourse,
+      IPPFine,
+      IPPMedium,
+      Linen,
+      Matte,
+      Smooth,
+      Stipple,
+      Uncalendared,
+      Vellum
     )
   end Texture
 
@@ -557,11 +567,40 @@ object Catalog:
     val C9_5mRound0t: NmToken = NmToken.unsafe("C9.5m-round-0t")
 
     val recommended: List[NmToken] = List(
-      NonePattern, S1Generic, SGeneric, R2Generic, R2mDIN, R2mISO, R2mMIB, R2iUSa, R2iUSb,
-      R3Generic, R3iUS, R4Generic, R4mDINA4, R4mDINA5, R4mSwedish, R4iUS,
-      R5Generic, R5iUSa, R5iUSb, R5iUSc, R6Generic, R6m4h2s, R6mDINA5,
-      R7Generic, R7iUSa, R7iUSb, R7iUSc, R11m7h4s, P16_9iRect0t, P12mRect0t,
-      W2_1iRound0t, W2_1iSquare0t, W3_1iSquare0t, C9_5mRound0t
+      NonePattern,
+      S1Generic,
+      SGeneric,
+      R2Generic,
+      R2mDIN,
+      R2mISO,
+      R2mMIB,
+      R2iUSa,
+      R2iUSb,
+      R3Generic,
+      R3iUS,
+      R4Generic,
+      R4mDINA4,
+      R4mDINA5,
+      R4mSwedish,
+      R4iUS,
+      R5Generic,
+      R5iUSa,
+      R5iUSb,
+      R5iUSc,
+      R6Generic,
+      R6m4h2s,
+      R6mDINA5,
+      R7Generic,
+      R7iUSa,
+      R7iUSb,
+      R7iUSc,
+      R11m7h4s,
+      P16_9iRect0t,
+      P12mRect0t,
+      W2_1iRound0t,
+      W2_1iSquare0t,
+      W3_1iSquare0t,
+      C9_5mRound0t
     )
   end HolePattern
 
@@ -571,7 +610,6 @@ object Catalog:
   object HoleReinforcement:
     val Grommet: NmToken = NmToken.unsafe("Grommet")
     val recommended: List[NmToken] = List(Grommet)
-  end HoleReinforcement
 
   /** Certification claims (Table 8.8 `@Claim`): the name of the certification
    *  as defined by the issuing organization. The data type is `string` and the
@@ -594,8 +632,13 @@ object Catalog:
     def pefcPercent(percent: Int): XjdfString = XjdfString.unsafe(s"PEFC $percent%")
 
     val recommended: List[XjdfString] = List(
-      Fsc100, FscMix70, FscMixCredit, FscRecycled85, FscRecycledCredit,
-      PefcCertified, PefcRecycled
+      Fsc100,
+      FscMix70,
+      FscMixCredit,
+      FscRecycled85,
+      FscRecycledCredit,
+      PefcCertified,
+      PefcRecycled
     )
   end CertificationClaim
 
@@ -606,10 +649,13 @@ object Catalog:
   object CertificationOrganization:
     /** China's National Forest Certification System. */
     val CFCC: NmToken = NmToken.unsafe("CFCC")
+
     /** Forest Stewardship Council. */
     val FSC: NmToken = NmToken.unsafe("FSC")
+
     /** Sustainable Forest Management Requirements. */
     val IFCC: NmToken = NmToken.unsafe("IFCC")
+
     /** The Programme for the Endorsement of Forest Certification. */
     val PEFC: NmToken = NmToken.unsafe("PEFC")
 
@@ -632,16 +678,20 @@ object Catalog:
   object WorkTypeDetails:
     /** The customer requested change(s) requiring the work. */
     val CustomerRequest: NmToken = NmToken.unsafe("CustomerRequest")
+
     /** Equipment used to produce the resource malfunctioned; the resource
      *  needs to be created again.
      */
     val EquipmentMalfunction: NmToken = NmToken.unsafe("EquipmentMalfunction")
+
     /** Change was made for production efficiency or another internal reason. */
     val InternalChange: NmToken = NmToken.unsafe("InternalChange")
+
     /** A resource needs to be created again to account for a damaged resource
      *  (damaged plate, etc.).
      */
     val ResourceDamaged: NmToken = NmToken.unsafe("ResourceDamaged")
+
     /** Incorrect operation of equipment or incorrect creation of a resource
      *  requires creating the resource again.
      */
@@ -658,11 +708,14 @@ object Catalog:
    */
   object EncodingDetails:
     val BOBST: NmToken = NmToken.unsafe("BOBST")
+
     /** A binary representation for 6 dot Braille messages ([Braille ASCII]). */
     val BrailleASCII: NmToken = NmToken.unsafe("BrailleASCII")
+
     /** A binary representation for Braille messages ([Braille Unicode]). */
     val BrailleUnicode: NmToken = NmToken.unsafe("BrailleUnicode")
     val CODABAR: NmToken = NmToken.unsafe("CODABAR")
+
     /** Spelled `CODABAR_Tradional` in Table 8.32 — the typo is normative. */
     val CODABAR_Tradional: NmToken = NmToken.unsafe("CODABAR_Tradional")
     val CODABLOCK: NmToken = NmToken.unsafe("CODABLOCK")
@@ -672,6 +725,7 @@ object Catalog:
     val Code39: NmToken = NmToken.unsafe("Code39")
     val Code39_Extended: NmToken = NmToken.unsafe("Code39_Extended")
     val DATAMATRIX: NmToken = NmToken.unsafe("DATAMATRIX")
+
     /** Includes Bookland_EAN and ISSN. */
     val EAN: NmToken = NmToken.unsafe("EAN")
     val EAN_13: NmToken = NmToken.unsafe("EAN_13")
@@ -710,13 +764,53 @@ object Catalog:
     val UPC_SCS: NmToken = NmToken.unsafe("UPC_SCS")
 
     val recommended: List[NmToken] = List(
-      BOBST, BrailleASCII, BrailleUnicode, CODABAR, CODABAR_Tradional, CODABLOCK, CODABLOCK_F,
-      Code128, Code25, Code39, Code39_Extended, DATAMATRIX, EAN, EAN_13, EAN_8, EAN_Coupon,
-      EAN_128, HIBC_Code39, HIBC_Code128, HIBC_Code39_2, HIBC_CODABLOCK_F, HIBC_QR,
-      HIBC_DATAMATRIX, Interleave25, ITF_14, ITF_6, ITF_16, KURANDT, LAETUS_PHARMA, MSI,
-      NDC_HRI, PARAF, Plessey, PDF417, PZN, QR, RSS_14, RSS_14_Stacked,
-      RSS_14_Stacked_Omnidir, RSS_14_Truncated, RSS_Limited, RSS_Expanded,
-      RSS_Expanded_Stacked, UPC_A, UPC_Coupon, UPC_E, UPC_SCS
+      BOBST,
+      BrailleASCII,
+      BrailleUnicode,
+      CODABAR,
+      CODABAR_Tradional,
+      CODABLOCK,
+      CODABLOCK_F,
+      Code128,
+      Code25,
+      Code39,
+      Code39_Extended,
+      DATAMATRIX,
+      EAN,
+      EAN_13,
+      EAN_8,
+      EAN_Coupon,
+      EAN_128,
+      HIBC_Code39,
+      HIBC_Code128,
+      HIBC_Code39_2,
+      HIBC_CODABLOCK_F,
+      HIBC_QR,
+      HIBC_DATAMATRIX,
+      Interleave25,
+      ITF_14,
+      ITF_6,
+      ITF_16,
+      KURANDT,
+      LAETUS_PHARMA,
+      MSI,
+      NDC_HRI,
+      PARAF,
+      Plessey,
+      PDF417,
+      PZN,
+      QR,
+      RSS_14,
+      RSS_14_Stacked,
+      RSS_14_Stacked_Omnidir,
+      RSS_14_Truncated,
+      RSS_Limited,
+      RSS_Expanded,
+      RSS_Expanded_Stacked,
+      UPC_A,
+      UPC_Coupon,
+      UPC_E,
+      UPC_SCS
     )
   end EncodingDetails
 
@@ -728,7 +822,6 @@ object Catalog:
     /** End product identification, e.g. scanning in the supermarket. */
     val ProductIdentification: NmToken = NmToken.unsafe("ProductIdentification")
     val recommended: List[NmToken] = List(ProductIdentification)
-  end PurposeDetails
 
   /** Barcode versions of `BarcodeDetails/@BarcodeVersion` (§8.26.1 /
    *  Tables 8.36 and 8.37): `NMTOKEN` with "Values include those from" — an
@@ -746,11 +839,35 @@ object Catalog:
 
     /** The 29 DATAMATRIX sizes of Table 8.36, in table order. */
     val dataMatrixVersions: List[NmToken] = List(
-      (8, 18), (10, 10), (12, 12), (12, 26), (12, 36), (14, 14),
-      (8, 32), (16, 48), (18, 18), (20, 20), (22, 22), (24, 24),
-      (16, 16), (26, 26), (40, 40), (44, 44), (48, 48), (52, 52), (64, 64),
-      (16, 36), (32, 32), (72, 72), (80, 80), (88, 88), (96, 96),
-      (104, 104), (120, 120), (132, 132), (144, 144)
+      (8, 18),
+      (10, 10),
+      (12, 12),
+      (12, 26),
+      (12, 36),
+      (14, 14),
+      (8, 32),
+      (16, 48),
+      (18, 18),
+      (20, 20),
+      (22, 22),
+      (24, 24),
+      (16, 16),
+      (26, 26),
+      (40, 40),
+      (44, 44),
+      (48, 48),
+      (52, 52),
+      (64, 64),
+      (16, 36),
+      (32, 32),
+      (72, 72),
+      (80, 80),
+      (88, 88),
+      (96, 96),
+      (104, 104),
+      (120, 120),
+      (132, 132),
+      (144, 144)
     ).map((rows, columns) => dataMatrix(rows, columns))
 
     /** The 40 QR versions of Table 8.37: `QR_1` … `QR_40`. */
@@ -791,8 +908,10 @@ object Catalog:
      *  code part.
      */
     val CompositeCode: NmToken = NmToken.unsafe("CompositeCode")
+
     /** The additional message for the EAN128 part of a UPC or EAN coupon. */
     val Coupon: NmToken = NmToken.unsafe("Coupon")
+
     /** UPC supplemental 2/5 digit symbology. */
     val Supplemental: NmToken = NmToken.unsafe("Supplemental")
 

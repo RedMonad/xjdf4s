@@ -1,5 +1,9 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.*
 import xjdf4s.model.elements.{BarcodeDetails, ExtraValues, IdentificationField}
 import xjdf4s.prim.*
@@ -8,9 +12,6 @@ import cats.Show
 import cats.data.{Chain, NonEmptyChain}
 import cats.kernel.Eq
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Tests for the `IdentificationField` element (§8.26 / Table 8.31) together
  *  with its two modelled children `BarcodeDetails` (§8.26.1 / Table 8.33) and

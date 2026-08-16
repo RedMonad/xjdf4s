@@ -2,7 +2,7 @@ package xjdf4s
 package intents
 
 import xjdf4s.model.{DomainRule, Issue, IssueCode, XPath}
-import xjdf4s.model.elements.{Glue => GlueElement, HolePattern}
+import xjdf4s.model.elements.{Glue as GlueElement, HolePattern}
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
@@ -46,12 +46,12 @@ final case class BindingIntent(
       case None => true
       case Some(d) =>
         d match
-          case _: AdhesiveNote    => bindingType == BindingType.AdhesiveNote
-          case _: EdgeGluing      => bindingType == BindingType.EdgeGluing
+          case _: AdhesiveNote => bindingType == BindingType.AdhesiveNote
+          case _: EdgeGluing => bindingType == BindingType.EdgeGluing
           case _: HardCoverBinding => bindingType == BindingType.HardCover
-          case _: LooseBinding    => BindingIntent.looseTypes.contains(bindingType)
+          case _: LooseBinding => BindingIntent.looseTypes.contains(bindingType)
           case _: SaddleStitching => bindingType == BindingType.SaddleStitch
-          case _: SideStitching   => bindingType == BindingType.SideStitch
+          case _: SideStitching => bindingType == BindingType.SideStitch
           case _: SoftCoverBinding => bindingType == BindingType.SoftCover
 
   /** Table 4.8: `@BindingSide` SHALL NOT be provided if `@BindingOrder="None"`
@@ -121,6 +121,7 @@ object AdhesiveNote:
     an.glue.fold(Chain.empty[IdRef])(GlueElement.references)
 
   given Eq[AdhesiveNote] = Eq.fromUniversalEquals
+end AdhesiveNote
 
 /** Details of EdgeGluing (Table 4.10). */
 final case class EdgeGluing(edgeGlue: Option[EnumGlue] = None)

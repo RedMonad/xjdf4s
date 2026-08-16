@@ -1,5 +1,9 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.intents.{ContentCheckIntent, IntentPayload, ProofItem}
 import xjdf4s.model.*
 import xjdf4s.model.elements.{Dependent, Disposition, FileLocation, FileSpec, NetworkHeader}
@@ -7,9 +11,6 @@ import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.data.{Chain, NonEmptyChain}
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Regression and conformance tests for `FileSpec` and `NetworkHeader`
  *  (§8.19 / Tables 8.22 and 8.24), N-51.
@@ -35,10 +36,12 @@ class FileSpecLaws extends FunSuite:
     templateLocation.copy(url = Some(url))
 
   private def conflictingLocationAndDisposition: FileSpec =
-    conflictingLocation.copy(disposition = Some(Disposition(
-      minDuration = Some(TimeSpan.ofHours(24)),
-      until = Some(Timestamp.unsafe("2026-09-01T00:00:00+02:00"))
-    )))
+    conflictingLocation.copy(disposition =
+      Some(Disposition(
+        minDuration = Some(TimeSpan.ofHours(24)),
+        until = Some(Timestamp.unsafe("2026-09-01T00:00:00+02:00"))
+      ))
+    )
 
   private def contentCheckTicket(fileSpec: FileSpec): XJDF =
     val payload = IntentPayload.ContentCheck(
@@ -285,5 +288,6 @@ class FileSpecLaws extends FunSuite:
     val source = Source.fromFile(file, "UTF-8")
     try source.mkString
     finally source.close()
+  end loadReference
 
 end FileSpecLaws

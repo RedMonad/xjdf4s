@@ -66,14 +66,14 @@ final case class GeneralID(
   def hasLawfulValue: Boolean =
     dataType match
       case None => true
-      case Some(DataType.BooleanType)  => idValue.value == "true" || idValue.value == "false"
+      case Some(DataType.BooleanType) => idValue.value == "true" || idValue.value == "false"
       case Some(DataType.DateTimeType) => Timestamp.from(idValue.value).isDefined
       case Some(DataType.DurationType) => TimeSpan.from(idValue.value).isDefined
-      case Some(DataType.FloatType)    => idValue.value.toFloatOption.isDefined
-      case Some(DataType.IntegerType)  => idValue.value.toLongOption.isDefined
-      case Some(DataType.NmTokenType)  => NmToken.from(idValue.value).isDefined
+      case Some(DataType.FloatType) => idValue.value.toFloatOption.isDefined
+      case Some(DataType.IntegerType) => idValue.value.toLongOption.isDefined
+      case Some(DataType.NmTokenType) => NmToken.from(idValue.value).isDefined
       case Some(DataType.NamedFeature) => true
-      case Some(DataType.StringType)   => true
+      case Some(DataType.StringType) => true
 
   /** GeneralID declares no document-scoped IDREF attributes (Table 8.28). */
   def references: Chain[IdRef] = Chain.empty
@@ -276,12 +276,10 @@ end FileSpec
  */
 final case class NetworkHeader(name: XjdfString, value: XjdfString):
   def references: Chain[IdRef] = Chain.empty
-end NetworkHeader
 
 object NetworkHeader:
   given Show[NetworkHeader] = Show.show(h => s"NetworkHeader(${h.name.value})")
   given Eq[NetworkHeader] = Eq.fromUniversalEquals
-end NetworkHeader
 
 /** A lawful projection of FileSpec location attributes (§8.19 / Table 8.22).
  *  The case names carry a suffix so they do not clash with the opaque type
@@ -921,7 +919,6 @@ object IdentificationField:
         "Exactly one of @Format, @Value or the pair @ValueFormat and @ValueTemplate SHALL be " +
           s"specified (Table 8.31): $detail"
       ))
-  end law
 
   /** Applies `law` to every element of a container's `IdentificationField*`
    *  chain, indexing the XPath by position — the shared traversal keeps the

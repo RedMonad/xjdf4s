@@ -112,6 +112,7 @@ object TraitSet:
     def entries: List[(XjdfXPath, XjdfString)] = entriesOf(traits)
 
     def toMap: Map[XjdfXPath, XjdfString] = underlying(traits)
+  end extension
 
   private def entriesOf(traits: TraitSet): List[(XjdfXPath, XjdfString)] =
     underlying(traits).toList.sortBy((path, _) => path.value)

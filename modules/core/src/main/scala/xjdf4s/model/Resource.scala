@@ -246,6 +246,7 @@ object ResourceSetLaw:
           )
         }
       else Chain.empty
+end ResourceSetLaw
 
 object ResourceSet:
 
@@ -263,7 +264,7 @@ object ResourceSet:
       b: Option[NonEmptyChain[ProcessIndex]]
   ): Boolean = (a, b) match
     case (None, _) | (_, None) => true
-    case (Some(x), Some(y))    =>
+    case (Some(x), Some(y)) =>
       x.toChain.toList.toSet.intersect(y.toChain.toList.toSet).nonEmpty
 
   given Show[ResourceSet] =

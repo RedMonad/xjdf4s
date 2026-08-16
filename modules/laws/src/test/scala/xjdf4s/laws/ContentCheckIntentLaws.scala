@@ -169,9 +169,11 @@ class ContentCheckIntentLaws extends FunSuite:
       minDuration = Some(TimeSpan.ofHours(24)),
       until = Some(Timestamp.unsafe("2026-09-01T00:00:00+02:00"))
     )
-    val item = proofItem.copy(fileSpec = Some(
-      FileSpec.ofUrl(Url.unsafe("file:///proofs/customer-proof.pdf")).copy(disposition = Some(badDisposition))
-    ))
+    val item = proofItem.copy(fileSpec =
+      Some(
+        FileSpec.ofUrl(Url.unsafe("file:///proofs/customer-proof.pdf")).copy(disposition = Some(badDisposition))
+      )
+    )
     val intent = contentCheckIntent(
       IntentPayload.ContentCheck(contentCheck.copy(proofItems = Chain.one(item)))
     )
@@ -182,9 +184,11 @@ class ContentCheckIntentLaws extends FunSuite:
 
   test("Table 8.23: Disposition with only @MinDuration is accepted") {
     val goodDisposition = Disposition(minDuration = Some(TimeSpan.ofHours(24)))
-    val item = proofItem.copy(fileSpec = Some(
-      FileSpec.ofUrl(Url.unsafe("file:///proofs/customer-proof.pdf")).copy(disposition = Some(goodDisposition))
-    ))
+    val item = proofItem.copy(fileSpec =
+      Some(
+        FileSpec.ofUrl(Url.unsafe("file:///proofs/customer-proof.pdf")).copy(disposition = Some(goodDisposition))
+      )
+    )
     val intent = contentCheckIntent(
       IntentPayload.ContentCheck(contentCheck.copy(proofItems = Chain.one(item)))
     )

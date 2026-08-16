@@ -22,7 +22,8 @@ enum PartitionKey:
    */
   def attributeName: String = this match
     case OptionKey => "Option"
-    case other     => other.toString
+    case other => other.toString
+end PartitionKey
 
 object PartitionKey:
 
@@ -469,7 +470,8 @@ object PartBuilder:
       case PartitionKey.Side => expectSide(key, value).map(v => part.copy(side = Some(v)))
       case PartitionKey.StationName => expectToken(key, value).map(v => part.copy(stationName = Some(v)))
       case PartitionKey.TileID => expectTile(key, value).map(v => part.copy(tileId = Some(v)))
-      case PartitionKey.TransferCurveName => expectTransferCurveTarget(key, value).map(v => part.copy(transferCurveName = Some(v)))
+      case PartitionKey.TransferCurveName =>
+        expectTransferCurveTarget(key, value).map(v => part.copy(transferCurveName = Some(v)))
       case PartitionKey.WebName => expectToken(key, value).map(v => part.copy(webName = Some(v)))
 
   private def mismatch[A](key: PartitionKey, expected: String, value: PartitionValue): Either[Issue, A] =

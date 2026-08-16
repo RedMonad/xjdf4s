@@ -4,7 +4,7 @@ import cats.Show
 import cats.data.{Validated, ValidatedNec}
 import munit.FunSuite
 import xjdf4s.examples.SpecExamples
-import xjdf4s.model.{Bom, Issue, ResourceSetName, XJDF, namedFeatures, validate}
+import xjdf4s.model.{namedFeatures, validate, Bom, Issue, ResourceSetName, XJDF}
 import xjdf4s.prim.{Amount, XjdfXPath}
 
 /** Conformance suite for the worked examples of the XJDF specification
@@ -146,7 +146,7 @@ class SpecExamplesSuite extends FunSuite:
 
   private def showOf[A: Show](label: String)(v: ValidatedNec[Issue, A]): String =
     v match
-      case Validated.Valid(a)    => Show[A].show(a)
+      case Validated.Valid(a) => Show[A].show(a)
       case Validated.Invalid(es) =>
         fail(s"$label failed to construct: ${es.toChain.toList.map(_.message).mkString("; ")}")
 

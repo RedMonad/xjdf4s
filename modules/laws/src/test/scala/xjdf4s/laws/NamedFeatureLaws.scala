@@ -1,5 +1,9 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.*
 import xjdf4s.model.elements.GeneralID
 import xjdf4s.prim.*
@@ -7,9 +11,6 @@ import cats.Show
 import cats.data.{Chain, NonEmptyChain}
 import cats.kernel.{Eq, Monoid}
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** NamedFeatures (§3.1.3.1), the `GeneralID` element (§8.23 / Table 8.28) and
  *  the `DataType` enumeration (§A.2.13 / Table A.14), M1.6-14.
@@ -77,8 +78,16 @@ class NamedFeatureLaws extends FunSuite:
 
     assertEquals(
       xsdValues.sorted,
-      List("NamedFeature", "xs:NMTOKEN", "xs:boolean", "xs:dateTime", "xs:duration", "xs:float", "xs:int",
-        "xs:string").sorted
+      List(
+        "NamedFeature",
+        "xs:NMTOKEN",
+        "xs:boolean",
+        "xs:dateTime",
+        "xs:duration",
+        "xs:float",
+        "xs:int",
+        "xs:string"
+      ).sorted
     )
     assertEquals(proseValues.size, xsdValues.size)
     assertEquals(proseValues.toSet.intersect(xsdValues.toSet), Set("NamedFeature"))
@@ -377,5 +386,6 @@ class NamedFeatureLaws extends FunSuite:
     val source = Source.fromFile(file, "UTF-8")
     try source.mkString
     finally source.close()
+  end loadReference
 
 end NamedFeatureLaws

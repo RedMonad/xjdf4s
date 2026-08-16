@@ -393,7 +393,7 @@ object IntegerRange:
         val t = normalizeIndex(r.to, size)
         // clamped FROM/TO (not "lower/higher"): a descending range selects in reverse (§1.10.2).
         val clampedFrom = math.max(0L, math.min(f, size - 1))
-        val clampedTo   = math.max(0L, math.min(t, size - 1))
+        val clampedTo = math.max(0L, math.min(t, size - 1))
         if clampedFrom <= clampedTo then (clampedFrom to clampedTo).toList
         else (clampedFrom to clampedTo by -1).toList
 
@@ -540,6 +540,7 @@ final case class AmountBounds(min: Option[Amount], max: Option[Amount]):
   def includes(amount: Amount): Boolean =
     min.forall(lower => Order[Amount].compare(amount, lower) >= 0) &&
       max.forall(upper => Order[Amount].compare(amount, upper) <= 0)
+end AmountBounds
 
 object AmountBounds:
 
@@ -563,26 +564,26 @@ object AmountBounds:
   private def tighterMin(a: Option[Amount], b: Option[Amount]): Option[Amount] =
     (a, b) match
       case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) >= 0 then x else y)
-      case (Some(x), None)    => Some(x)
-      case (None, Some(y))    => Some(y)
-      case (None, None)       => None
+      case (Some(x), None) => Some(x)
+      case (None, Some(y)) => Some(y)
+      case (None, None) => None
 
   private def tighterMax(a: Option[Amount], b: Option[Amount]): Option[Amount] =
     (a, b) match
       case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) <= 0 then x else y)
-      case (Some(x), None)    => Some(x)
-      case (None, Some(y))    => Some(y)
-      case (None, None)       => None
+      case (Some(x), None) => Some(x)
+      case (None, Some(y)) => Some(y)
+      case (None, None) => None
 
   private def widerMin(a: Option[Amount], b: Option[Amount]): Option[Amount] =
     (a, b) match
       case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) <= 0 then x else y)
-      case _                  => None
+      case _ => None
 
   private def widerMax(a: Option[Amount], b: Option[Amount]): Option[Amount] =
     (a, b) match
       case (Some(x), Some(y)) => Some(if Order[Amount].compare(x, y) >= 0 then x else y)
-      case _                  => None
+      case _ => None
 
   /** Tightens two contracts by intersecting their acceptable ranges.
    *  `None` represents an empty intersection, never a valid range.

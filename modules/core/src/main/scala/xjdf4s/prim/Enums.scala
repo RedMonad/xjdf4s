@@ -612,10 +612,9 @@ object SoftCoverScoring extends XjdfEnumCompanion[SoftCoverScoring]:
 enum HardCoverJacket extends XjdfEnum:
   case Unjacketed, Loose, GlueApplied
   def token: NmToken = this match
-    case Unjacketed  => NmToken.unsafe("None")
-    case Loose       => NmToken.unsafe("Loose")
+    case Unjacketed => NmToken.unsafe("None")
+    case Loose => NmToken.unsafe("Loose")
     case GlueApplied => NmToken.unsafe("Glue")
-end HardCoverJacket
 
 object HardCoverJacket extends XjdfEnumCompanion[HardCoverJacket]:
   val all: List[HardCoverJacket] = List(Unjacketed, Loose, GlueApplied)
@@ -787,14 +786,14 @@ enum DataType extends XjdfEnum:
   case BooleanType, DateTimeType, DurationType, FloatType, IntegerType, NamedFeature, NmTokenType, StringType
 
   def token: NmToken = this match
-    case BooleanType  => NmToken.unsafe("boolean")
+    case BooleanType => NmToken.unsafe("boolean")
     case DateTimeType => NmToken.unsafe("dateTime")
     case DurationType => NmToken.unsafe("duration")
-    case FloatType    => NmToken.unsafe("float")
-    case IntegerType  => NmToken.unsafe("integer")
+    case FloatType => NmToken.unsafe("float")
+    case IntegerType => NmToken.unsafe("integer")
     case NamedFeature => NmToken.unsafe("NamedFeature")
-    case NmTokenType  => NmToken.unsafe("NMTOKEN")
-    case StringType   => NmToken.unsafe("string")
+    case NmTokenType => NmToken.unsafe("NMTOKEN")
+    case StringType => NmToken.unsafe("string")
 end DataType
 
 object DataType extends XjdfEnumCompanion[DataType]:

@@ -1,14 +1,15 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.elements.MISDetails
 import xjdf4s.prim.*
 import cats.Show
 import cats.data.Chain
 import cats.kernel.Eq
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Tests for the `MISDetails` element (§8.30 / Table 8.48): exact attribute
  *  mapping, the prose range of `@Complexity`, ID/IDREF absence and the four

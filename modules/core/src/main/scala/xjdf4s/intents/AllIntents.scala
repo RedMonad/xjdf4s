@@ -70,7 +70,7 @@ enum IntentPayload:
   def declaredIds: Chain[Id] =
     this match
       case ContentCheck(c) => c.declaredIds
-      case _               => Chain.empty
+      case _ => Chain.empty
 end IntentPayload
 
 object IntentPayload:

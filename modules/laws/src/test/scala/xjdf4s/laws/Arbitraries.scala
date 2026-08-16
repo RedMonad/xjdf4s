@@ -244,5 +244,6 @@ object Arbitraries:
           types = types,
           resourceSets = Chain(rs, rs)
         )
+  end Invalid
 
 end Arbitraries

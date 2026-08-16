@@ -7,17 +7,17 @@ import xjdf4s.model.elements.{
   BarcodeDetails,
   Certification,
   Crease,
+  Expr,
   ExtraValues,
   FileSpec,
   GangSource,
   GeneralID,
-  Glue => GlueElement,
+  Glue as GlueElement,
   HolePattern,
   IdentificationField,
   MetadataMap,
   MISDetails,
-  NetworkHeader,
-  Expr
+  NetworkHeader
 }
 import xjdf4s.prim.*
 import xjdf4s.resources.*
@@ -274,8 +274,12 @@ object SpecExamples:
     val identificationField = IdentificationField(
       valueFormat = Some(XjdfString.unsafe("%6s%3i%2i%s%s%s")),
       valueTemplate = Some(NmTokens.of(
-        NmToken.unsafe("job"), NmToken.unsafe("doc"), NmToken.unsafe("sheet"),
-        NmToken.unsafe("JobID"), NmToken.unsafe("DocIndex"), NmToken.unsafe("SheetIndex")
+        NmToken.unsafe("job"),
+        NmToken.unsafe("doc"),
+        NmToken.unsafe("sheet"),
+        NmToken.unsafe("JobID"),
+        NmToken.unsafe("DocIndex"),
+        NmToken.unsafe("SheetIndex")
       )),
       metadataMaps = Chain(
         MetadataMap(NmToken.unsafe("JobID"), XjdfString.unsafe("Job_%s"), NmTokens.of(NmToken.unsafe("job"))),
@@ -499,11 +503,13 @@ object SpecExamples:
         organization = Some(Catalog.CertificationOrganization.PEFC)
       )
       val colorPayload = IntentPayload.Color(
-        ColorIntent(front = Some(SurfaceColor(
-          surface = Side.Front,
-          coverage = Some(Coverage.unsafe(80.0)),
-          certifications = Chain.one(fscMix)
-        )))
+        ColorIntent(front =
+          Some(SurfaceColor(
+            surface = Side.Front,
+            coverage = Some(Coverage.unsafe(80.0)),
+            certifications = Chain.one(fscMix)
+          ))
+        )
       )
       val mediaPayload = IntentPayload.Media(
         MediaIntent(MediaType.Paper, weight = Some(Grammage(120.0)), certifications = Chain.one(fscMix))
@@ -731,7 +737,8 @@ object SpecExamples:
       agentVersion = Some(XjdfString.unsafe("V_2.0"))
     )
     val consumedMedia = Resource(
-      specific = Some(ResourcePayload.MediaResource(Media(MediaType.Paper, weight = Some(Grammage(90.0))))))
+      specific = Some(ResourcePayload.MediaResource(Media(MediaType.Paper, weight = Some(Grammage(90.0)))))
+    )
     val audit = Audit.Resource(
       header = header,
       resourceInfo = ResourceInfo(

@@ -88,10 +88,10 @@ object Patch:
       case None =>
         val replaced = ticket.resourceSets.filter(rs => update.exists(u => ResourceSet.clashesWith(rs, u)))
         val retained = ticket.resourceSets.filterNot(rs => update.exists(u => ResourceSet.clashesWith(rs, u)))
-        val merged   = ticket.copy(resourceSets = retained ++ update)
+        val merged = ticket.copy(resourceSets = retained ++ update)
         NonEmptyChain.fromChain(replaced.map(warnReplaced)) match
           case Some(warnings) => Ior.both(warnings, merged)
-          case None           => Ior.right(merged)
+          case None => Ior.right(merged)
 
   /** The ResourceSets of a collection that clash with at least one *later* set (§3.4). */
   private def pairsClashing(sets: Chain[ResourceSet]): Chain[ResourceSet] =

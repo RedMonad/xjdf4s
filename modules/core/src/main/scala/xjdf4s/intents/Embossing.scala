@@ -26,8 +26,6 @@ final case class EmbossingIntent(
 object EmbossingIntent:
   given Eq[EmbossingIntent] = Eq.fromUniversalEquals
 
-end EmbossingIntent
-
 /** `EmbossingItem` (Table 4.26): one embossed image — its type, direction,
  *  geometry and the foil material used.
  *
@@ -61,5 +59,3 @@ final case class EmbossingItem(
 
 object EmbossingItem:
   given Eq[EmbossingItem] = Eq.fromUniversalEquals
-
-end EmbossingItem

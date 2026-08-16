@@ -83,7 +83,7 @@ final case class Notification(
   def hasLawfulMilestone: Boolean =
     detail match
       case Some(_: Milestone) => classification == SeverityClass.Event
-      case _                  => true
+      case _ => true
 
   /** Table 8.49: If multiple Comment elements occur, they SHALL have different `Comment/@Language` values. */
   def hasUniqueCommentLanguages: Boolean =

@@ -1,12 +1,13 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.elements.FileSpec
 import xjdf4s.prim.Url
 import xjdf4s.resources.RunList
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Regression tests for the `RunList` resource (§6.73 / Table 6.148), N-53. */
 class RunListLaws extends FunSuite:
@@ -47,5 +48,6 @@ class RunListLaws extends FunSuite:
     val end = schema.indexOf(endToken, start)
     assert(end > start, s"$startToken is not closed by $endToken in schema.xsd")
     schema.substring(start, end + endToken.length)
+  end runListSchema
 
 end RunListLaws

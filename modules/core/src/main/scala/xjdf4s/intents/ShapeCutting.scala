@@ -27,8 +27,6 @@ end ShapeCuttingIntent
 object ShapeCuttingIntent:
   given Eq[ShapeCuttingIntent] = Eq.fromUniversalEquals
 
-end ShapeCuttingIntent
-
 /** `ShapeCut` (§4.13.1 / Table 4.35): one line, path or bounded shape to cut.
  *
  *  Exact table-to-type mapping:

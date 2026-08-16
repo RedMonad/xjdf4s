@@ -1,15 +1,16 @@
 package xjdf4s.laws
 
-import xjdf4s.model.{XPath as ValidationXPath}
+import java.io.File
+
+import scala.io.Source
+
+import xjdf4s.model.XPath as ValidationXPath
 import xjdf4s.model.elements.Expr
 import xjdf4s.prim.*
 import cats.Show
 import cats.data.Chain
 import cats.kernel.Eq
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Tests for the XJDF `XPath` data type (Appendix A / Table A.1) and the
  *  `Expr` element (§8.29.1 / Table 8.47), M1.6-6b/B1.
@@ -114,5 +115,6 @@ class XjdfXPathExprLaws extends FunSuite:
     val source = Source.fromFile(file, "UTF-8")
     try source.mkString
     finally source.close()
+  end loadReference
 
 end XjdfXPathExprLaws

@@ -39,8 +39,8 @@ class BomLaws extends FunSuite:
 
   private def depth(t: Bom.Tree): Int =
     t.unfix match
-      case ProductTree.Leaf(_)          => 1
-      case ProductTree.Node(_, kids)    => 1 + kids.toList.map(depth).maxOption.getOrElse(0)
+      case ProductTree.Leaf(_) => 1
+      case ProductTree.Node(_, kids) => 1 + kids.toList.map(depth).maxOption.getOrElse(0)
 
   test("leaf without @ID unfolds to a single leaf tree"):
     val pl = ProductList.of(Product(amount = Some(1)))
@@ -50,7 +50,7 @@ class BomLaws extends FunSuite:
     assertEquals(forest.size, 1)
     forest.head.unfix match
       case ProductTree.Leaf(p) => assertEquals(p.amount, Some(1L))
-      case _                   => fail("expected a leaf")
+      case _ => fail("expected a leaf")
 
   test("a valid tree of depth 3 unfolds without false cycles"):
     val c = product(1, Some("C"), isRoot = false)
@@ -140,7 +140,7 @@ class BomLaws extends FunSuite:
     assert(result.isRight)
     val tree = result.toOption.get.head
     val measuredDepth = Bom.cataEval[Int] {
-      case ProductTree.Leaf(_)       => Eval.now(1)
+      case ProductTree.Leaf(_) => Eval.now(1)
       case ProductTree.Node(_, kids) => Eval.now(1 + (if kids.isEmpty then 0 else kids.toList.max))
     }(tree).value
     assertEquals(measuredDepth, n)

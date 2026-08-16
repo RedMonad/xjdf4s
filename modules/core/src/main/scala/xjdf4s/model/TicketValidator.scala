@@ -17,8 +17,8 @@ import xjdf4s.model.elements.{
   Disposition,
   FileSpec,
   GeneralID,
-  Glue => GlueElement,
-  HolePattern => HolePatternElement,
+  Glue as GlueElement,
+  HolePattern as HolePatternElement,
   IdentificationField,
   MetadataMap
 }
@@ -58,7 +58,7 @@ object TicketValidator:
   def validate(ticket: XJDF): ValidationResult[Unit] =
     NonEmptyChain.fromChain(allIssues(ticket)) match
       case Some(nec) => Validated.invalid(nec)
-      case None      => Validated.valid(())
+      case None => Validated.valid(())
 
   /** Runs every check and returns the flat chain of findings in traversal
    *  order. Each check is a `XJDF => Chain[Issue]` — the sequence is the
@@ -110,7 +110,8 @@ object TicketValidator:
       ticket.productList.fold(Chain.empty[Issue]) { pl =>
         pl.products.toChain.flatMap { p =>
           val path = p.id.fold(XPath("/XJDF/ProductList/Product"))(id =>
-            XPath(s"/XJDF/ProductList/Product[@ID='${id.value}']"))
+            XPath(s"/XJDF/ProductList/Product[@ID='${id.value}']")
+          )
           Product.amountsLaw.check(p, path) ++
             GeneralID.containerLaw(p.generalIds, path) ++
             p.intents.flatMap(checkIntentLocalLaws(_, path))
@@ -135,6 +136,7 @@ object TicketValidator:
       GeneralID.containerLaw(ticket.generalIds, XPath("/XJDF"))
 
     resourceIssues ++ productIssues ++ notificationIssues ++ ticketGeneralIdIssues
+  end checkLocalLaws
 
   private def checkResourceLocalLaws(resource: Resource, at: XPath, parentIsPipe: Boolean): Chain[Issue] =
     val amountIssues = resource.amountPool.fold(Chain.empty[Issue]) { pool =>
@@ -216,11 +218,12 @@ object TicketValidator:
         val parentTemplate = field.valueTemplate.fold(Set.empty[String])(_.toList.map(_.value).toSet)
         val nameIssue =
           if parentTemplate.contains(mapping.name.value) then Chain.empty
-          else Chain.one(Issue.errorC(
-            IssueCode.MetadataMapNameNotInParentTemplate,
-            mapPath,
-            "MetadataMap/@Name SHALL be included in the parent IdentificationField/@ValueTemplate (Table 8.31)"
-          ))
+          else
+            Chain.one(Issue.errorC(
+              IssueCode.MetadataMapNameNotInParentTemplate,
+              mapPath,
+              "MetadataMap/@Name SHALL be included in the parent IdentificationField/@ValueTemplate (Table 8.31)"
+            ))
         val variableIssues = mapping.valueTemplate.toList
           .filterNot(token => parentTemplate.contains(token.value))
           .distinct
@@ -234,11 +237,12 @@ object TicketValidator:
           }
         val expressionIssue =
           if mapping.expressions.isEmpty then Chain.empty
-          else Chain.one(Issue.errorC(
-            IssueCode.MetadataMapExprForbiddenInIdentificationField,
-            mapPath,
-            "Expr SHALL NOT be specified in IdentificationField/MetadataMap (Table 8.46)"
-          ))
+          else
+            Chain.one(Issue.errorC(
+              IssueCode.MetadataMapExprForbiddenInIdentificationField,
+              mapPath,
+              "Expr SHALL NOT be specified in IdentificationField/MetadataMap (Table 8.46)"
+            ))
         nameIssue ++ Chain.fromSeq(variableIssues) ++ expressionIssue
       }
     }
@@ -267,13 +271,37 @@ object TicketValidator:
 
   private val predefinedTemplateVariables: Set[String] =
     Set(
-      "ActualAmount", "Amount", "CustomerID", "CustomerName", "Date",
-      "DeviceID", "DeviceName", "EndTime", "Error", "ErrorStats",
-      "ExposedMediaName", "Generated", "Input", "JobID", "JobName",
-      "JobPartID", "MediaBrand", "MoonPhase", "Operator", "OperatorText",
-      "PressProfileName", "PrintQuality", "ProoferProfileName", "Resolution",
-      "ResolutionX", "ResolutionY", "ScreeningFamily", "StartTime", "Time",
-      "TotalPagesInDoc", "Warning"
+      "ActualAmount",
+      "Amount",
+      "CustomerID",
+      "CustomerName",
+      "Date",
+      "DeviceID",
+      "DeviceName",
+      "EndTime",
+      "Error",
+      "ErrorStats",
+      "ExposedMediaName",
+      "Generated",
+      "Input",
+      "JobID",
+      "JobName",
+      "JobPartID",
+      "MediaBrand",
+      "MoonPhase",
+      "Operator",
+      "OperatorText",
+      "PressProfileName",
+      "PrintQuality",
+      "ProoferProfileName",
+      "Resolution",
+      "ResolutionX",
+      "ResolutionY",
+      "ScreeningFamily",
+      "StartTime",
+      "Time",
+      "TotalPagesInDoc",
+      "Warning"
     ) ++ PartitionKey.all.map(_.attributeName)
 
   /** Table D.1 also defines the parameterized variable `GeneralID:XXX`. */
@@ -285,7 +313,7 @@ object TicketValidator:
     val path = XPath(s"$parentPath/Intent[@Name='${intent.name.toNmToken.value}']")
     val nameIssues = Intent.nameLaw.check(intent, path)
     val payloadIssues = intent.specific match
-      case IntentPayload.Binding(b)  =>
+      case IntentPayload.Binding(b) =>
         BindingIntent.law.check(b, path) ++ checkBindingGlueLaws(b, path) ++ checkBindingHolePatternLaws(b, path)
       case IntentPayload.Assembly(a) => checkAssemblyGlueLaws(a, path)
       case IntentPayload.ContentCheck(c) => checkContentCheckLaws(c, path)
@@ -297,7 +325,7 @@ object TicketValidator:
       case IntentPayload.Production(p) =>
         Certification.containerLaw(p.certifications, path)
       case IntentPayload.Variable(v) => VariableIntent.law.check(v, path)
-      case _                         => Chain.empty
+      case _ => Chain.empty
     nameIssues ++ payloadIssues
 
   /** Validates `Glue` elements nested inside `BindingIntent/AdhesiveNote` (Table 8.29). */
@@ -509,10 +537,10 @@ object TicketValidator:
               case Some(_) => issue
               case None =>
                 val code = issue.message match
-                  case msg if msg.startsWith("Cycle")         => IssueCode.BomCycle
-                  case msg if msg.startsWith("Unresolved")    => IssueCode.BomUnresolvedChildRef
+                  case msg if msg.startsWith("Cycle") => IssueCode.BomCycle
+                  case msg if msg.startsWith("Unresolved") => IssueCode.BomUnresolvedChildRef
                   case msg if msg.contains("at least one root") => IssueCode.BomNoRoot
-                  case _                                      => IssueCode.LocalLawViolation
+                  case _ => IssueCode.LocalLawViolation
                 issue.copy(code = Some(code))
             Chain.one(retagged)
           case Right(_) => Chain.empty
@@ -573,7 +601,7 @@ object TicketValidator:
       if visited.contains(ref) then List(ref)
       else
         byId.get(ref) match
-          case None        => List(ref)
+          case None => List(ref)
           case Some(child) => ref :: collectRefs(child, byId, visited + ref)
     }.distinct
 
@@ -728,3 +756,4 @@ extension (ticket: XJDF)
    */
   def validateReport: ValidationReport =
     TicketValidator.validateReport(ticket)
+end extension

@@ -195,14 +195,15 @@ class PartitionLaws extends ScalaCheckSuite:
     assertEquals(tagOf(PartitionKey.TileID), "Tile")
     assertEquals(tagOf(PartitionKey.PreviewType), "ByPreviewType")
     assertEquals(tagOf(PartitionKey.TransferCurveName), "ByTransferCurveTarget")
-    val nonTokenKeys = (rangeKeys ++ List(
-      PartitionKey.Metadata,
-      PartitionKey.ProductPart,
-      PartitionKey.Side,
-      PartitionKey.TileID,
-      PartitionKey.PreviewType,
-      PartitionKey.TransferCurveName
-    )).toSet
+    val nonTokenKeys =
+      (rangeKeys ++ List(
+        PartitionKey.Metadata,
+        PartitionKey.ProductPart,
+        PartitionKey.Side,
+        PartitionKey.TileID,
+        PartitionKey.PreviewType,
+        PartitionKey.TransferCurveName
+      )).toSet
     PartitionKey.values.filterNot(nonTokenKeys).foreach(k => assertEquals(tagOf(k), "Token"))
 
   property("the ValueOf match type agrees with the typed fields at the type level"):

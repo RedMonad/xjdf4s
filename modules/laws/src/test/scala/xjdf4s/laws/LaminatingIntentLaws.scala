@@ -56,7 +56,10 @@ class LaminatingIntentLaws extends FunSuite:
   test("Table 4.30 / A.80: @Texture remains open beyond recommended values"):
     val vendorTexture = NmToken.unsafe("VendorTexture")
     assert(!Catalog.Texture.recommended.contains(vendorTexture))
-    assertEquals(LaminatingIntent(NonEmptyChain.one(Side.Front), texture = Some(vendorTexture)).texture, Some(vendorTexture))
+    assertEquals(
+      LaminatingIntent(NonEmptyChain.one(Side.Front), texture = Some(vendorTexture)).texture,
+      Some(vendorTexture)
+    )
 
   test("Table 4.30: a LaminatingIntent ticket validates through the root validator"):
     val payload = IntentPayload.Laminating(laminating)

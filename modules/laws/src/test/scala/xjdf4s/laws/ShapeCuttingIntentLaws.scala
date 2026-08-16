@@ -1,13 +1,14 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.intents.{IntentPayload, ShapeCut, ShapeCuttingIntent}
 import xjdf4s.model.*
 import xjdf4s.prim.*
 import cats.data.{Chain, NonEmptyChain}
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Tests for `ShapeCuttingIntent` and `ShapeCut` (§4.13 / Tables 4.34–4.35),
  *  M1.6-13(B2).
@@ -233,5 +234,6 @@ class ShapeCuttingIntentLaws extends FunSuite:
     val source = Source.fromFile(file, "UTF-8")
     try source.mkString
     finally source.close()
+  end loadReference
 
 end ShapeCuttingIntentLaws

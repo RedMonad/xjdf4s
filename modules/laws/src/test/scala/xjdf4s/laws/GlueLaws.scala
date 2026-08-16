@@ -1,7 +1,7 @@
 package xjdf4s.laws
 
-import xjdf4s.model.elements.{Glue => GlueElement}
 import xjdf4s.model.{IssueCode, XPath}
+import xjdf4s.model.elements.Glue as GlueElement
 import xjdf4s.prim.*
 import munit.FunSuite
 

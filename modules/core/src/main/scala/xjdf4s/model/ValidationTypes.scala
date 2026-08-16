@@ -82,7 +82,8 @@ object IssueCode:
   val RelatedJobPartIdWithoutJobId: IssueCode = unsafe("XJDF-RELATED-JOBPARTID-WITHOUT-JOBID")
 
   /** Two `ResourceSet`s clash per §3.4 (same Name/Usage/ProcessUsage with
-   *  common or no `@CombinedProcessIndex` entries). */
+   *  common or no `@CombinedProcessIndex` entries).
+   */
   val ResourceSetClash: IssueCode = unsafe("RESOURCESET-CLASH")
 
   /** A `Resource` payload element name does not match the parent `@Name`. */
@@ -146,16 +147,19 @@ object IssueCode:
   val HolePatternPatternRequired: IssueCode = unsafe("HOLE-PATTERN-PATTERN-REQUIRED")
 
   /** A `Color` resource specified for an `EmbossingItem/@Separation` does not
-   *  have `@ColorType="DieLine"` (Table 4.26). */
+   *  have `@ColorType="DieLine"` (Table 4.26).
+   */
   val EmbossingColorNotDieLine: IssueCode = unsafe("EMBOSSING-COLOR-NOT-DIELINE")
 
   /** A `Certification` element specifies no certification level: none of
    *  `@Claim`, `@Identifier`, `@Organization` is present (Table 8.8 with
-   *  Tables 4.21/4.32/4.33/6.114; ADR-0012). */
+   *  Tables 4.21/4.32/4.33/6.114; ADR-0012).
+   */
   val CertificationLevelMissing: IssueCode = unsafe("CERTIFICATION-LEVEL-MISSING")
 
   /** An `IdentificationField` does not specify exactly one of `@Format`,
-   *  `@Value` or the pair `@ValueFormat` + `@ValueTemplate` (Table 8.31). */
+   *  `@Value` or the pair `@ValueFormat` + `@ValueTemplate` (Table 8.31).
+   */
   val IdentificationFieldValueSource: IssueCode = unsafe("IDENTIFICATION-FIELD-VALUE-SOURCE")
 
   /** `MetadataMap/@Name` is absent from its parent `IdentificationField/@ValueTemplate` (Table 8.31). */
@@ -186,11 +190,13 @@ object IssueCode:
   val GeneralIdValueDataTypeMismatch: IssueCode = unsafe("GENERALID-VALUE-DATATYPE-MISMATCH")
 
   /** `ShapeCut/@ShapeType="Path"` provides neither `@CutPath` nor
-   *  `@ShapeTypeDetails` (Table 4.35 SHOULD). */
+   *  `@ShapeTypeDetails` (Table 4.35 SHOULD).
+   */
   val ShapeCutPathDetailsRecommended: IssueCode = unsafe("SHAPECUT-PATH-DETAILS-RECOMMENDED")
 
   /** Informational: an explicit Trait overrode a Trait implied by a
-   *  NamedFeature (§3.1.3.1) — expected behaviour, reported for traceability. */
+   *  NamedFeature (§3.1.3.1) — expected behaviour, reported for traceability.
+   */
   val NamedFeatureTraitOverridden: IssueCode = unsafe("NAMEDFEATURE-TRAIT-OVERRIDDEN")
 
 end IssueCode
@@ -248,8 +254,6 @@ end Issue
  */
 trait DomainRule[-A]:
   def check(value: A, at: XPath): Chain[Issue]
-
-end DomainRule
 
 /** ADR-0002: the canonical result type of the core validator — the applicative
  *  functor that accumulates every finding of a traversal. An alias for

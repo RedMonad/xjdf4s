@@ -4,7 +4,7 @@ import xjdf4s.intents.{ColorIntent, IntentPayload, MediaIntent, ProductionIntent
 import xjdf4s.model.*
 import xjdf4s.model.elements.Certification
 import xjdf4s.prim.*
-import xjdf4s.resources.{Media => MediaResourceValue, ResourcePayload}
+import xjdf4s.resources.{Media as MediaResourceValue, ResourcePayload}
 import cats.data.{Chain, NonEmptyChain}
 import munit.FunSuite
 
@@ -174,7 +174,10 @@ class CertificationLaws extends FunSuite:
 
   test("Table 4.33: an empty Certification under ProductionIntent is rejected by the validator") {
     val payload = IntentPayload.Production(
-      ProductionIntent(printPreference = Some(PrintPreference.HighestQuality), certifications = Chain.one(Certification()))
+      ProductionIntent(
+        printPreference = Some(PrintPreference.HighestQuality),
+        certifications = Chain.one(Certification())
+      )
     )
     val t = ticketWithIntent(payload)
     assert(t.validate.isInvalid)
@@ -218,9 +221,11 @@ class CertificationLaws extends FunSuite:
           ResourceSetName.unsafe("Media"),
           usage = Some(Usage.Input),
           resources = Chain.one(
-            Resource(specific = Some(ResourcePayload.MediaResource(
-              MediaResourceValue(MediaType.Paper, certifications = Chain.one(fscMix))
-            )))
+            Resource(specific =
+              Some(ResourcePayload.MediaResource(
+                MediaResourceValue(MediaType.Paper, certifications = Chain.one(fscMix))
+              ))
+            )
           )
         )
       )
@@ -231,11 +236,15 @@ class CertificationLaws extends FunSuite:
     assert(mediaResourceTicket.validate.isValid, mediaResourceTicket.validateReport.issues.toList.toString)
   }
 
-  test("Table 4.33: more than one Certification is accepted — the 'at least one level met' sentence is not a document rule") {
+  test(
+    "Table 4.33: more than one Certification is accepted — the 'at least one level met' sentence is not a document rule"
+  ) {
     // Deliberate deviation: a ticket cannot state which level was met, so the
     // container sentence is documented, not validated.
     val payload = IntentPayload.Production(
-      ProductionIntent(certifications = Chain(fscMix, Certification(organization = Some(Catalog.CertificationOrganization.PEFC))))
+      ProductionIntent(certifications =
+        Chain(fscMix, Certification(organization = Some(Catalog.CertificationOrganization.PEFC)))
+      )
     )
     val t = ticketWithIntent(payload)
     assert(t.validate.isValid, t.validateReport.issues.toList.toString)

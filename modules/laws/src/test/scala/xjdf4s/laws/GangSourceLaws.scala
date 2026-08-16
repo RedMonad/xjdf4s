@@ -1,14 +1,15 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.elements.GangSource
 import xjdf4s.prim.*
 import cats.Show
 import cats.data.Chain
 import cats.kernel.Eq
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Tests for the `GangSource` element (§8.22 / Table 8.27): exact attribute
  *  mapping, cardinalities and ID/IDREF classification (M1.6-4, PR-23).

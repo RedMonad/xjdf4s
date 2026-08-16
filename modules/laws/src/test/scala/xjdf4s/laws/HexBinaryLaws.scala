@@ -1,13 +1,14 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.elements.FileSpec
 import xjdf4s.prim.HexBinary
 import cats.Show
 import cats.kernel.Eq
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Regression and conformance tests for the XJDF `hexBinary` data type
  *  (Appendix A / Table A.1) and `FileSpec/@CheckSum` (Table 8.22), N-57.
@@ -94,5 +95,6 @@ class HexBinaryLaws extends FunSuite:
     val source = Source.fromFile(file, "UTF-8")
     try source.mkString
     finally source.close()
+  end loadReference
 
 end HexBinaryLaws

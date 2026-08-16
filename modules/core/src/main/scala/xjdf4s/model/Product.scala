@@ -244,7 +244,8 @@ object Bom:
       }
       trees.flatMap(ts =>
         NonEmptyChain.fromChain(ts).toRight(
-          Issue.errorC(IssueCode.BomNoRoot, XPath("/XJDF/ProductList"), "Empty product list"))
+          Issue.errorC(IssueCode.BomNoRoot, XPath("/XJDF/ProductList"), "Empty product list")
+        )
       )
 
   // ------------------------------------------------------------------

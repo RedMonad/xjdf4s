@@ -1,5 +1,9 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.*
 import xjdf4s.model.elements.{Expr, IdentificationField, MetadataMap}
 import xjdf4s.prim.*
@@ -8,9 +12,6 @@ import cats.Show
 import cats.data.{Chain, NonEmptyChain}
 import cats.kernel.Eq
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Context and mapping tests for `MetadataMap` (§8.29 / Table 8.46),
  *  including literal Example 8.6 and the ADR-0014-conformant adaptation of

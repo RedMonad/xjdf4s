@@ -2,7 +2,7 @@ package xjdf4s
 package intents
 
 import xjdf4s.model.{DomainRule, Issue, IssueCode, XPath}
-import xjdf4s.model.elements.{Glue => GlueElement}
+import xjdf4s.model.elements.Glue as GlueElement
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
@@ -44,10 +44,10 @@ final case class VariableIntent(
   def isLawful: Boolean =
     val okMin = (minPages, averagePages) match
       case (Some(mn), Some(av)) => mn <= av
-      case _                     => true
+      case _ => true
     val okMax = (averagePages, maxPages) match
       case (Some(av), Some(mx)) => av <= mx
-      case _                     => true
+      case _ => true
     okMin && okMax
 end VariableIntent
 
@@ -81,6 +81,7 @@ object VariableIntent:
       minIssue ++ maxIssue
 
   given Eq[VariableIntent] = Eq.fromUniversalEquals
+end VariableIntent
 
 /** `AssemblingIntent` (Table 4.3): placing or inserting one component within
  *  another. `@Container` SHALL reference the main Product — an IDREF, not the

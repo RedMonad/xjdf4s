@@ -1,12 +1,13 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.prim.PDFPath
 import cats.Show
 import cats.kernel.Eq
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Tests for the XJDF `PDFPath` data type (§A.1 / Table A.1),
  *  M1.6-13(B1).
@@ -88,5 +89,6 @@ class PDFPathLaws extends FunSuite:
     val source = Source.fromFile(file, "UTF-8")
     try source.mkString
     finally source.close()
+  end loadReference
 
 end PDFPathLaws

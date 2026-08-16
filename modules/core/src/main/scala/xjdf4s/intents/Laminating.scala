@@ -24,5 +24,3 @@ final case class LaminatingIntent(
 
 object LaminatingIntent:
   given Eq[LaminatingIntent] = Eq.fromUniversalEquals
-
-end LaminatingIntent

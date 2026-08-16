@@ -430,13 +430,13 @@ class TicketLaws extends ScalaCheckSuite:
     val t = ticket(NonEmptyChain.one(ProcessType.Cutting), resourceSets = Chain.one(rs))
     val messages = t.validate.toEither match
       case Left(issues) => issues.toChain.toList.map(_.message)
-      case Right(_)     => fail("expected the shadowing PartAmount to be rejected")
+      case Right(_) => fail("expected the shadowing PartAmount to be rejected")
     assert(messages.exists(_.contains("@Option")), messages.mkString("; "))
     assert(!messages.exists(_.contains("@OptionKey")), messages.mkString("; "))
 
   test("§6.1.2.1 / Example 6.1: Versioned Set Of Plates with multiple parent Part elements is valid"):
     val cyanEnglish = sepVersionPart("Cyan", "English")
-    val cyanFrench  = sepVersionPart("Cyan", "French")
+    val cyanFrench = sepVersionPart("Cyan", "French")
     val blackEnglish = sepVersionPart("Black", "English")
     val rs = ResourceSet(
       name = ResourceSetName.unsafe("ExposedMedia"),
@@ -451,7 +451,7 @@ class TicketLaws extends ScalaCheckSuite:
 
   test("§6.1.2.1 Rule 2: a PartAmount/Part may repeat a parent key when it matches one of several parent values"):
     val cyanEnglish = sepVersionPart("Cyan", "English")
-    val cyanFrench  = sepVersionPart("Cyan", "French")
+    val cyanFrench = sepVersionPart("Cyan", "French")
     val child = PartBuilder.empty.withTokenUnsafe(PartitionKey.PartVersion, NmToken.unsafe("English")).build
     val resource = exposedMedia(cyanEnglish, cyanFrench)
       .copy(amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child)))))
@@ -478,7 +478,7 @@ class TicketLaws extends ScalaCheckSuite:
 
   test("§6.1.2.1 Rule 2: a repeated key value SHALL match one of the parent values (mismatch is rejected)"):
     val cyanEnglish = sepVersionPart("Cyan", "English")
-    val cyanFrench  = sepVersionPart("Cyan", "French")
+    val cyanFrench = sepVersionPart("Cyan", "French")
     val child = PartBuilder.empty.withTokenUnsafe(PartitionKey.PartVersion, NmToken.unsafe("German")).build
     val resource = exposedMedia(cyanEnglish, cyanFrench)
       .copy(amountPool = Some(AmountPool.of(PartAmount(parts = Chain.one(child)))))
@@ -497,7 +497,7 @@ class TicketLaws extends ScalaCheckSuite:
   test("IdSource assigns sequential IDs deterministically"):
     val program =
       for
-        first <- dsl.freshId("P")
+        first  <- dsl.freshId("P")
         second <- dsl.freshId("P")
       yield (first, second)
     assertEquals(dsl.inIds(program), (Id.unsafe("P_0"), Id.unsafe("P_1")))
@@ -648,15 +648,23 @@ class TicketLaws extends ScalaCheckSuite:
     // The types carrying local laws in M1.3-3. If a new given DomainRule[T] is
     // added, it MUST be wired into TicketValidator.checkLocalLaws AND listed
     // here (the test exercises a positive path for each, proving reachability).
-    val intent = Intent(IntentName.unsafe("BindingIntent"),
-      IntentPayload.Binding(BindingIntent(bindingType = BindingType.SaddleStitch,
-        details = Some(SaddleStitching()))))
+    val intent = Intent(
+      IntentName.unsafe("BindingIntent"),
+      IntentPayload.Binding(BindingIntent(
+        bindingType = BindingType.SaddleStitch,
+        details = Some(SaddleStitching())
+      ))
+    )
     val productWithBind = productWithIntent(intent)
     assert(ticketWithProduct(productWithBind).validate.isValid)
 
-    val variableIntent = Intent(IntentName.unsafe("VariableIntent"),
-      IntentPayload.Variable(VariableIntent(variableType = VariableType.OneLine,
-        averagePages = Some(4L))))
+    val variableIntent = Intent(
+      IntentName.unsafe("VariableIntent"),
+      IntentPayload.Variable(VariableIntent(
+        variableType = VariableType.OneLine,
+        averagePages = Some(4L)
+      ))
+    )
     assert(ticketWithProduct(productWithIntent(variableIntent)).validate.isValid)
 
     val shapeCuttingIntent = Intent(
@@ -692,17 +700,27 @@ class TicketLaws extends ScalaCheckSuite:
     // (SurfaceColor, MediaIntent, ProductionIntent — intents; Media —
     // resource; Table 8.8, M1.6-1). Lawful Certifications prove reachability.
     val certification = Certification(organization = Some(Catalog.CertificationOrganization.FSC))
-    val colorIntent = Intent(IntentName.unsafe("ColorIntent"),
-      IntentPayload.Color(ColorIntent(front = Some(SurfaceColor(surface = Side.Front,
-        certifications = Chain.one(certification))))))
+    val colorIntent = Intent(
+      IntentName.unsafe("ColorIntent"),
+      IntentPayload.Color(ColorIntent(front =
+        Some(SurfaceColor(
+          surface = Side.Front,
+          certifications = Chain.one(certification)
+        ))
+      ))
+    )
     assert(ticketWithProduct(productWithIntent(colorIntent)).validate.isValid)
 
-    val mediaIntent = Intent(IntentName.unsafe("MediaIntent"),
-      IntentPayload.Media(MediaIntent(MediaType.Paper, certifications = Chain.one(certification))))
+    val mediaIntent = Intent(
+      IntentName.unsafe("MediaIntent"),
+      IntentPayload.Media(MediaIntent(MediaType.Paper, certifications = Chain.one(certification)))
+    )
     assert(ticketWithProduct(productWithIntent(mediaIntent)).validate.isValid)
 
-    val productionIntent = Intent(IntentName.unsafe("ProductionIntent"),
-      IntentPayload.Production(ProductionIntent(certifications = Chain.one(certification))))
+    val productionIntent = Intent(
+      IntentName.unsafe("ProductionIntent"),
+      IntentPayload.Production(ProductionIntent(certifications = Chain.one(certification)))
+    )
     assert(ticketWithProduct(productWithIntent(productionIntent)).validate.isValid)
 
     val mediaResourceTicket = ticket(
@@ -710,20 +728,24 @@ class TicketLaws extends ScalaCheckSuite:
       resourceSets = Chain.one(ResourceSet(
         ResourceSetName.unsafe("Media"),
         usage = Some(Usage.Input),
-        resources = Chain.one(Resource(specific = Some(ResourcePayload.MediaResource(
-          Media(MediaType.Paper, certifications = Chain.one(certification))
-        ))))
+        resources = Chain.one(Resource(specific =
+          Some(ResourcePayload.MediaResource(
+            Media(MediaType.Paper, certifications = Chain.one(certification))
+          ))
+        ))
       ))
     )
     assert(mediaResourceTicket.validate.isValid)
 
     // Notification laws
     val header = Header(NmToken.unsafe("Dev"), Timestamp.ofEpochSecond(1))
-    val notif = Notification(classification = SeverityClass.Information,
+    val notif = Notification(
+      classification = SeverityClass.Information,
       comments = Chain(
         Comment(text = CommentText("en"), language = Some(LanguageTag.unsafe("en"))),
         Comment(text = CommentText("fr"), language = Some(LanguageTag.unsafe("fr")))
-      ))
+      )
+    )
     val notifTicket = ticket(
       NonEmptyChain.one(ProcessType.Product),
       auditPool = Some(AuditPool.of(Audit.Notified(header, notif)))
@@ -753,26 +775,51 @@ class TicketLaws extends ScalaCheckSuite:
   // --- M1.3-4: aggregate integrity (N-19, N-36, N-37) ---------------------
 
   test("N-19: ticket with a cycle in @ChildRefs is rejected by validate"):
-    val a = Product(id = Some(Id.unsafe("A")), isRoot = true,
-      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
-        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
-          childRefs = Some(IdRefs.of(IdRef.unsafe("B"))))))))
-    val b = Product(id = Some(Id.unsafe("B")), isRoot = false,
-      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
-        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
-          childRefs = Some(IdRefs.of(IdRef.unsafe("A"))))))))
-    val t = ticket(NonEmptyChain.one(ProcessType.Product),
-      productList = Some(ProductList(NonEmptyChain.of(a, b))))
+    val a = Product(
+      id = Some(Id.unsafe("A")),
+      isRoot = true,
+      intents = Chain.one(Intent(
+        IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(
+          BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("B")))
+        ))
+      ))
+    )
+    val b = Product(
+      id = Some(Id.unsafe("B")),
+      isRoot = false,
+      intents = Chain.one(Intent(
+        IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(
+          BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("A")))
+        ))
+      ))
+    )
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.of(a, b)))
+    )
     assert(t.validate.isInvalid)
     assertHasCode(t, IssueCode.BomCycle)
 
   test("N-19: unresolved @ChildRefs is rejected by validate"):
-    val a = Product(id = Some(Id.unsafe("A")), isRoot = true,
-      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
-        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
-          childRefs = Some(IdRefs.of(IdRef.unsafe("MISSING"))))))))
-    val t = ticket(NonEmptyChain.one(ProcessType.Product),
-      productList = Some(ProductList(NonEmptyChain.one(a))))
+    val a = Product(
+      id = Some(Id.unsafe("A")),
+      isRoot = true,
+      intents = Chain.one(Intent(
+        IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(
+          BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("MISSING")))
+        ))
+      ))
+    )
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.one(a)))
+    )
     assert(t.validate.isInvalid)
     assertHasCode(t, IssueCode.BomUnresolvedChildRef)
 
@@ -782,40 +829,76 @@ class TicketLaws extends ScalaCheckSuite:
     assertHasCode(t, IssueCode.ProductTokenDuplicate)
 
   test("N-37: child with @PartVersion=v1, root without @PartVersion is rejected"):
-    val child = Product(id = Some(Id.unsafe("C")), isRoot = false,
-      partVersion = Some(NmToken.unsafe("v1")))
-    val root = Product(id = Some(Id.unsafe("R")), isRoot = true,
-      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
-        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
-          childRefs = Some(IdRefs.of(IdRef.unsafe("C"))))))))
-    val t = ticket(NonEmptyChain.one(ProcessType.Product),
-      productList = Some(ProductList(NonEmptyChain.of(root, child))))
+    val child = Product(
+      id = Some(Id.unsafe("C")),
+      isRoot = false,
+      partVersion = Some(NmToken.unsafe("v1"))
+    )
+    val root = Product(
+      id = Some(Id.unsafe("R")),
+      isRoot = true,
+      intents = Chain.one(Intent(
+        IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(
+          BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("C")))
+        ))
+      ))
+    )
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.of(root, child)))
+    )
     assert(t.validate.isInvalid)
     assertHasCode(t, IssueCode.PartVersionMismatch)
 
   test("N-37: child @PartVersion=v1, root @PartVersion=v2 is rejected"):
-    val child = Product(id = Some(Id.unsafe("C")), isRoot = false,
-      partVersion = Some(NmToken.unsafe("v1")))
-    val root = Product(id = Some(Id.unsafe("R")), isRoot = true,
+    val child = Product(
+      id = Some(Id.unsafe("C")),
+      isRoot = false,
+      partVersion = Some(NmToken.unsafe("v1"))
+    )
+    val root = Product(
+      id = Some(Id.unsafe("R")),
+      isRoot = true,
       partVersion = Some(NmToken.unsafe("v2")),
-      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
-        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
-          childRefs = Some(IdRefs.of(IdRef.unsafe("C"))))))))
-    val t = ticket(NonEmptyChain.one(ProcessType.Product),
-      productList = Some(ProductList(NonEmptyChain.of(root, child))))
+      intents = Chain.one(Intent(
+        IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(
+          BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("C")))
+        ))
+      ))
+    )
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.of(root, child)))
+    )
     assert(t.validate.isInvalid)
     assertHasCode(t, IssueCode.PartVersionMismatch)
 
   test("N-37: matching @PartVersion on child and root is accepted"):
-    val child = Product(id = Some(Id.unsafe("C")), isRoot = false,
-      partVersion = Some(NmToken.unsafe("v1")))
-    val root = Product(id = Some(Id.unsafe("R")), isRoot = true,
+    val child = Product(
+      id = Some(Id.unsafe("C")),
+      isRoot = false,
+      partVersion = Some(NmToken.unsafe("v1"))
+    )
+    val root = Product(
+      id = Some(Id.unsafe("R")),
+      isRoot = true,
       partVersion = Some(NmToken.unsafe("v1")),
-      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
-        IntentPayload.Binding(BindingIntent(BindingType.SaddleStitch,
-          childRefs = Some(IdRefs.of(IdRef.unsafe("C"))))))))
-    val t = ticket(NonEmptyChain.one(ProcessType.Product),
-      productList = Some(ProductList(NonEmptyChain.of(root, child))))
+      intents = Chain.one(Intent(
+        IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(BindingIntent(
+          BindingType.SaddleStitch,
+          childRefs = Some(IdRefs.of(IdRef.unsafe("C")))
+        ))
+      ))
+    )
+    val t = ticket(
+      NonEmptyChain.one(ProcessType.Product),
+      productList = Some(ProductList(NonEmptyChain.of(root, child)))
+    )
     assert(t.validate.isValid)
 
   // --- M1.3-5: ValidationReport / severity (ADR-0006) ---------------------
@@ -873,8 +956,10 @@ class TicketLaws extends ScalaCheckSuite:
     val p = Product(
       id = Some(Id.unsafe("P1")),
       amount = Some(-3L),
-      intents = Chain.one(Intent(IntentName.unsafe("BindingIntent"),
-        IntentPayload.Binding(badBinding)))
+      intents = Chain.one(Intent(
+        IntentName.unsafe("BindingIntent"),
+        IntentPayload.Binding(badBinding)
+      ))
     )
     val t = ticketWithProduct(p)
     val report = TicketValidator.validateReport(t)

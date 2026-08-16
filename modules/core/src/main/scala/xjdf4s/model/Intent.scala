@@ -25,7 +25,8 @@ final case class Intent(
   def references: Chain[IdRef] = specific.references
 
   /** All document-scoped `@ID`s declared inside this intent (e.g.
-   *  `ContentCheckIntent/ProofItem/@ID`, Table 4.24). */
+   *  `ContentCheckIntent/ProofItem/@ID`, Table 4.24).
+   */
   def declaredIds: Chain[Id] = specific.declaredIds
 end Intent
 

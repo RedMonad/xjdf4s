@@ -1,5 +1,9 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.*
 import xjdf4s.model.elements.{GangSource, MISDetails}
 import xjdf4s.prim.*
@@ -7,9 +11,6 @@ import xjdf4s.resources.{NodeInfo, ResourcePayload}
 import cats.data.{Chain, NonEmptyChain}
 import cats.kernel.Eq
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Tests for the `NodeInfo` resource (§6.59 / Table 6.119) after it gained its
  *  two child elements — `GangSource*` and `MISDetails?` (M1.6-8, PR-25).

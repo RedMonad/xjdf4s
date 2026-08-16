@@ -1,7 +1,7 @@
 package xjdf4s.laws
 
-import xjdf4s.model.elements.HolePattern
 import xjdf4s.model.{IssueCode, XPath}
+import xjdf4s.model.elements.HolePattern
 import xjdf4s.prim.*
 import munit.FunSuite
 
@@ -55,7 +55,9 @@ class HolePatternLaws extends FunSuite:
     assertEquals(HolePattern.law(hp, at).toList, Nil)
   }
 
-  test("Table 8.30: empty HolePattern without center/extent/shape but with pattern is valid per SHALL (pattern required when any missing)") {
+  test(
+    "Table 8.30: empty HolePattern without center/extent/shape but with pattern is valid per SHALL (pattern required when any missing)"
+  ) {
     // Empty center/extent/shape -> needs pattern; pattern empty would fail, but here pattern present is valid.
     // Actually this test checks that pattern present satisfies the SHALL even if all three are missing.
     val hp = HolePattern(pattern = Some(Catalog.HolePattern.R3Generic))

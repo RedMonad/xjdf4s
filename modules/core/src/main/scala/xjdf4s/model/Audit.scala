@@ -50,7 +50,7 @@ enum Audit:
   def references: Chain[IdRef] =
     this match
       case Resource(_, resourceInfo) => resourceInfo.references
-      case _                         => Chain.empty
+      case _ => Chain.empty
 
   def time: Timestamp = origin.time
 end Audit

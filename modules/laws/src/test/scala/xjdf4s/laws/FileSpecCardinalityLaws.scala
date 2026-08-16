@@ -1,12 +1,13 @@
 package xjdf4s.laws
 
+import java.io.File
+
+import scala.io.Source
+
 import xjdf4s.model.elements.FileSpec
 import xjdf4s.prim.Url
 import xjdf4s.resources.{CuttingParams, FoldingParams, Layout, Preview}
 import munit.FunSuite
-
-import java.io.File
-import scala.io.Source
 
 /** Regression tests for `FileSpec?` cardinality in Tables 6.53, 6.74, 6.95
  *  and 6.134 (N-58).
@@ -86,5 +87,6 @@ class FileSpecCardinalityLaws extends FunSuite:
     val source = Source.fromFile(file, "UTF-8")
     try source.mkString
     finally source.close()
+  end schema
 
 end FileSpecCardinalityLaws
