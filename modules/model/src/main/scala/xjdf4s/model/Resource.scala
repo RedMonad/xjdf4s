@@ -49,7 +49,8 @@ type PrepressSpecificResource =
 
 type GeneralSpecificResource =
   resources.ApprovalDetails | resources.ApprovalParams | resources.DeliveryParams | resources.Preview |
-    resources.VerificationParams | resources.VerificationResult
+    resources.QualityControlParams | resources.QualityControlResult | resources.VerificationParams |
+    resources.VerificationResult
 
 type PressSpecificResource = resources.ConventionalPrintingParams | resources.DigitalPrintingParams
 

@@ -76,8 +76,8 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 70 | `PreflightParams` | typed |
 | 71 | `PreflightReport` | typed |
 | 72 | `Preview` | typed |
-| 73 | `QualityControlParams` | pending |
-| 74 | `QualityControlResult` | pending |
+| 73 | `QualityControlParams` | typed |
+| 74 | `QualityControlResult` | typed |
 | 75 | `RegisterMark` | typed |
 | 76 | `RunList` | typed |
 | 77 | `SeparationControlParams` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **97/100** schema-defined descendants.
+Current coverage: **99/100** schema-defined descendants.
