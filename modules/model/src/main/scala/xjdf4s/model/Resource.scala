@@ -10,23 +10,26 @@ end SpecificResource
 
 /** Typed resources completed in the foundational resource slice. */
 type FoundationalSpecificResource =
-  resources.Component | resources.Contact | resources.CustomerInfo | resources.ExposedMedia | resources.Ink |
-    resources.MiscConsumable | resources.NodeInfo | resources.PrintCondition | resources.Shape | resources.Tool |
-    resources.UsageCounter
+  resources.Assembly | resources.Bundle | resources.Component | resources.Contact | resources.CustomerInfo |
+    resources.ExposedMedia | resources.Ink | resources.MiscConsumable | resources.NodeInfo | resources.Pallet |
+    resources.PrintCondition | resources.Shape | resources.Tool | resources.TransferCurve | resources.UsageCounter
 
 type PostpressSpecificResource =
-  resources.BlockPreparationParams | resources.CaseMakingParams | resources.CasingInParams |
-    resources.CoverApplicationParams | resources.CreasingParams | resources.EndSheetGluingParams |
+  resources.BlockPreparationParams | resources.BoxPackingParams | resources.BundlingParams |
+    resources.CaseMakingParams | resources.CasingInParams | resources.CoverApplicationParams |
+    resources.CreasingParams | resources.EmbossingParams | resources.EndSheetGluingParams |
     resources.FoldingParams | resources.GluingParams | resources.HeadBandApplicationParams |
-    resources.HoleMakingParams | resources.JacketingParams | resources.LaminatingParams |
+    resources.HoleMakingParams | resources.InsertingParams | resources.JacketingParams |
+    resources.LabelingParams | resources.LaminatingParams | resources.PalletizingParams |
     resources.PerforatingParams | resources.ShrinkingParams | resources.SpinePreparationParams |
     resources.SpineTapingParams | resources.StitchingParams | resources.StrappingParams |
     resources.ThreadSealingParams | resources.ThreadSewingParams | resources.TrimmingParams |
     resources.VarnishingParams | resources.WindingParams | resources.WrappingParams
 
 type PrepressSpecificResource =
-  resources.BendingParams | resources.ColorCorrectionParams | resources.DevelopingParams |
-    resources.ImageEnhancementParams | resources.ImageSetterParams | resources.LayoutShift |
+  resources.BarcodeCompParams | resources.BendingParams | resources.ColorCorrectionParams |
+    resources.DevelopingParams | resources.FontPolicy | resources.ImageEnhancementParams |
+    resources.ImageSetterParams | resources.InkZoneProfile | resources.LayoutShift |
     resources.ManualLaborParams | resources.PreviewGenerationParams | resources.TrappingParams
 
 type GeneralSpecificResource =

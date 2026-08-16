@@ -8,8 +8,8 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 2 | `NodeInfo` | typed |
 | 3 | `Shape` | typed |
 | 4 | `BlockPreparationParams` | typed |
-| 5 | `BoxPackingParams` | pending |
-| 6 | `Bundle` | pending |
+| 5 | `BoxPackingParams` | typed |
+| 6 | `Bundle` | typed |
 | 7 | `CaseMakingParams` | typed |
 | 8 | `CasingInParams` | typed |
 | 9 | `CoverApplicationParams` | typed |
@@ -17,17 +17,17 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 11 | `CuttingParams` | pending |
 | 12 | `DevelopingParams` | typed |
 | 13 | `Device` | pending |
-| 14 | `EmbossingParams` | pending |
+| 14 | `EmbossingParams` | typed |
 | 15 | `EndSheetGluingParams` | typed |
 | 16 | `GluingParams` | typed |
 | 17 | `HeadBandApplicationParams` | typed |
-| 18 | `InsertingParams` | pending |
+| 18 | `InsertingParams` | typed |
 | 19 | `InterpretingParams` | pending |
 | 20 | `JacketingParams` | typed |
-| 21 | `LabelingParams` | pending |
+| 21 | `LabelingParams` | typed |
 | 22 | `LaminatingParams` | typed |
-| 23 | `Pallet` | pending |
-| 24 | `PalletizingParams` | pending |
+| 23 | `Pallet` | typed |
+| 24 | `PalletizingParams` | typed |
 | 25 | `PerforatingParams` | typed |
 | 26 | `ShapeCuttingParams` | pending |
 | 27 | `ShrinkingParams` | typed |
@@ -44,8 +44,8 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 38 | `LooseBindingParams` | pending |
 | 39 | `ApprovalDetails` | typed |
 | 40 | `ApprovalParams` | typed |
-| 41 | `Assembly` | pending |
-| 42 | `BarcodeCompParams` | pending |
+| 41 | `Assembly` | typed |
+| 42 | `BarcodeCompParams` | typed |
 | 43 | `BarcodeReproParams` | pending |
 | 44 | `BendingParams` | typed |
 | 45 | `BinderySignature` | pending |
@@ -62,7 +62,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 56 | `DigitalPrintingParams` | typed |
 | 57 | `ExposedMedia` | typed |
 | 58 | `FeedingParams` | pending |
-| 59 | `FontPolicy` | pending |
+| 59 | `FontPolicy` | typed |
 | 60 | `ImageCompressionParams` | pending |
 | 61 | `ImageEnhancementParams` | typed |
 | 62 | `ImageSetterParams` | typed |
@@ -84,9 +84,9 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 78 | `ShapeDef` | pending |
 | 79 | `ShapeDefProductionParams` | pending |
 | 80 | `SheetOptimizingParams` | pending |
-| 81 | `TransferCurve` | pending |
+| 81 | `TransferCurve` | typed |
 | 82 | `UsageCounter` | typed |
-| 83 | `BundlingParams` | pending |
+| 83 | `BundlingParams` | typed |
 | 84 | `FoldingParams` | typed |
 | 85 | `HoleMakingParams` | typed |
 | 86 | `StitchingParams` | typed |
@@ -97,7 +97,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 91 | `ColorSpaceConversionParams` | pending |
 | 92 | `Ink` | typed |
 | 93 | `InkZoneCalculationParams` | pending |
-| 94 | `InkZoneProfile` | pending |
+| 94 | `InkZoneProfile` | typed |
 | 95 | `PreviewGenerationParams` | typed |
 | 96 | `RenderingParams` | pending |
 | 97 | `ScreeningParams` | pending |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **51/100** schema-defined descendants.
+Current coverage: **64/100** schema-defined descendants.
