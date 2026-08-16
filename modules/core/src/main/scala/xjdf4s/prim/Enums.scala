@@ -730,3 +730,39 @@ enum FieldPurpose extends XjdfEnum:
 
 object FieldPurpose extends XjdfEnumCompanion[FieldPurpose]:
   val all: List[FieldPurpose] = List(Label, Separation, Verification)
+
+/** `GeneralID/@DataType` (§A.2.13 / Table A.14): the data type of the value
+ *  carried by `GeneralID/@IDValue`, used where the type cannot be inferred
+ *  from the context (§8.23 / Table 8.28).
+ *
+ *  Two of the eight Scala names differ from their normative tokens — `String`
+ *  and `Boolean` would shadow the Scala predefs — so every token is written
+ *  out explicitly and there is deliberately no `case other => …` fallback
+ *  (the same policy as `HardCoverJacket`, ADR-0007).
+ *
+ *  Prose and `schema.xsd` disagree on the lexical form of seven of the eight
+ *  values: Table A.14 lists `boolean`, `dateTime`, `duration`, `float`,
+ *  `integer`, `NamedFeature`, `NMTOKEN`, `string`, while the inline XSD
+ *  restriction on `GeneralID/@DataType` lists `xs:boolean`, `xs:dateTime`,
+ *  `xs:duration`, `xs:float`, `xs:int`, `NamedFeature`, `xs:NMTOKEN`,
+ *  `xs:string`. ROADMAP §1.2 gives priority to the prose, so the tokens below
+ *  follow Table A.14; the XSD spelling is recorded as a known schema gap by
+ *  ADR-0016/N-59 and is a codec concern (M2, ADR-0010).
+ */
+enum DataType extends XjdfEnum:
+  case BooleanType, DateTimeType, DurationType, FloatType, IntegerType, NamedFeature, NmTokenType, StringType
+
+  def token: NmToken = this match
+    case BooleanType  => NmToken.unsafe("boolean")
+    case DateTimeType => NmToken.unsafe("dateTime")
+    case DurationType => NmToken.unsafe("duration")
+    case FloatType    => NmToken.unsafe("float")
+    case IntegerType  => NmToken.unsafe("integer")
+    case NamedFeature => NmToken.unsafe("NamedFeature")
+    case NmTokenType  => NmToken.unsafe("NMTOKEN")
+    case StringType   => NmToken.unsafe("string")
+end DataType
+
+object DataType extends XjdfEnumCompanion[DataType]:
+  val all: List[DataType] =
+    List(BooleanType, DateTimeType, DurationType, FloatType, IntegerType, NamedFeature, NmTokenType, StringType)

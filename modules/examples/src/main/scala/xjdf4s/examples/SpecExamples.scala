@@ -10,6 +10,7 @@ import xjdf4s.model.elements.{
   ExtraValues,
   FileSpec,
   GangSource,
+  GeneralID,
   Glue => GlueElement,
   HolePattern,
   IdentificationField,
@@ -304,6 +305,50 @@ object SpecExamples:
         }
       }
     }
+
+  /** Fixture (§3.1.3.1 / Tables 8.28, A.14): a Gray Box that specifies its
+   *  setup abstractly. `XJDF/@Types` names the processes to execute and the
+   *  two `GeneralID[@DataType="NamedFeature"]` elements name the sets of
+   *  resources for them — «a named set of parameters for processes that SHALL
+   *  be executed without defining the details or even the resources».
+   *
+   *  `IDUsage="pool"`/`IDValue="bar snax"` is the literal example of
+   *  Table A.14. The third `GeneralID` is an ordinary typed identifier, not a
+   *  NamedFeature: it shows that `@DataType` discriminates the two and that
+   *  `@IDValue` corresponds to `@DataType` (Table 8.28).
+   */
+  val namedFeatureJob: ValidatedNec[Issue, XJDF] =
+    chainV(dsl.TicketDraft.of("namedFeatureJob", ProcessType.DigitalPrinting, ProcessType.Cutting)) { draft =>
+      chainV(draft.withNamedFeature("pool", "bar snax")) { withPool =>
+        chainV(withPool.withNamedFeature("paper", "glossy")) { withPaper =>
+          withPaper
+            .withGeneralId(GeneralID(
+              idUsage = NmToken.unsafe("Copies"),
+              idValue = XjdfString.unsafe("500"),
+              dataType = Some(DataType.IntegerType)
+            ))
+            .build
+        }
+      }
+    }
+
+  /** §3.1.3.1: the Traits `namedFeatureJob` implies, resolved against the
+   *  Traits the ticket states explicitly. «Explicitly specified Traits SHALL
+   *  override any implied Traits» — `@Gloss` is stated explicitly and wins
+   *  over the value implied by `paper=glossy`, while the implied `@Weight`
+   *  stays in force.
+   */
+  val namedFeatureTraits: ValidatedNec[Issue, TraitResolution] =
+    val mediaGloss = XjdfXPath.unsafe("/XJDF/ResourceSet[@Name='Media']/Resource/Media/@Gloss")
+    val mediaWeight = XjdfXPath.unsafe("/XJDF/ResourceSet[@Name='Media']/Resource/Media/@Weight")
+    val registry = NamedFeatures.registryOf(
+      Map(
+        NamedFeature(NmToken.unsafe("paper"), XjdfString.unsafe("glossy")) ->
+          TraitSet.of(mediaGloss -> XjdfString.unsafe("Glossy"), mediaWeight -> XjdfString.unsafe("150"))
+      )
+    )
+    val explicitTraits = TraitSet.of(mediaGloss -> XjdfString.unsafe("Matte"))
+    namedFeatureJob.map(ticket => NamedFeatures.resolveTicket(ticket, registry, explicitTraits))
 
   /** Example 8.15 (Table 8.29): a binding ticket demonstrating the `Glue`
    *  element with `@GlueType="Removable"` inside `AdhesiveNote`.
@@ -776,6 +821,8 @@ object SpecExamples:
       "Gang job (Table 6.119):" -> gangJob.map(Show[XJDF].show),
       "Barcode job (Table 8.31):" -> barcodeJob.map(Show[XJDF].show),
       "Metadata map (Examples 8.6/8.7):" -> metadataMapJob.map(Show[XJDF].show),
+      "Named features (§3.1.3.1 / Table 8.28):" -> namedFeatureJob.map(Show[XJDF].show),
+      "Named feature traits (§3.1.3.1):" -> namedFeatureTraits.map(Show[TraitResolution].show),
       "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
       "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),

@@ -3,7 +3,7 @@ package xjdf4s.laws
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.{Certification, Comment, Disposition, FileSpec, Milestone}
+import xjdf4s.model.elements.{Certification, Comment, Disposition, FileSpec, GeneralID, Milestone}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.data.{Chain, NonEmptyChain, ValidatedNec}
@@ -716,6 +716,27 @@ class TicketLaws extends ScalaCheckSuite:
       auditPool = Some(AuditPool.of(Audit.Notified(header, notif)))
     )
     assert(notifTicket.validate.isValid)
+
+    // GeneralID law (Table 8.28) reached through all four modelled
+    // `GeneralID*` containers: XJDF, ResourceSet, Product and Resource
+    // (M1.6-14). A lawful @IDValue/@DataType pair proves reachability.
+    val namedFeature = GeneralID.namedFeature(NmToken.unsafe("pool"), XjdfString.unsafe("bar snax"))
+    val generalIdTicket = XJDF(
+      jobId = JobId.unsafe("TicketLaws"),
+      types = NonEmptyChain.one(ProcessType.Cutting),
+      productList = Some(ProductList(NonEmptyChain.one(
+        Product(id = Some(Id.unsafe("P1")), generalIds = Chain.one(namedFeature))
+      ))),
+      resourceSets = Chain.one(ResourceSet(
+        ResourceSetName.unsafe("Component"),
+        usage = Some(Usage.Input),
+        resources = Chain.one(Resource(generalIds = Chain.one(namedFeature))),
+        generalIds = Chain.one(namedFeature)
+      )),
+      generalIds = Chain.one(namedFeature)
+    )
+    assert(generalIdTicket.validate.isValid)
+
   // --- M1.3-4: aggregate integrity (N-19, N-36, N-37) ---------------------
 
   test("N-19: ticket with a cycle in @ChildRefs is rejected by validate"):

@@ -14,6 +14,7 @@ import xjdf4s.model.elements.{
   Certification,
   Disposition,
   FileSpec,
+  GeneralID,
   Glue => GlueElement,
   HolePattern => HolePatternElement,
   IdentificationField,
@@ -93,7 +94,8 @@ object TicketValidator:
       ticket.resourceSets.flatMap { rs =>
         val rsPath = XPath(s"/XJDF/ResourceSet[@Name='${rs.name.toNmToken.value}']")
         val rsRuleIssues = ResourceSetLaw.children.check(rs, rsPath) ++
-          ResourceSetLaw.statuses.check(rs, rsPath)
+          ResourceSetLaw.statuses.check(rs, rsPath) ++
+          GeneralID.containerLaw(rs.generalIds, rsPath)
         val isPipe = rs.dependents.exists(_.pipeId.isDefined)
         val perResource = rs.resources.flatMap { r =>
           val path = XPath(s"${rsPath.value}/Resource")
@@ -108,6 +110,7 @@ object TicketValidator:
           val path = p.id.fold(XPath("/XJDF/ProductList/Product"))(id =>
             XPath(s"/XJDF/ProductList/Product[@ID='${id.value}']"))
           Product.amountsLaw.check(p, path) ++
+            GeneralID.containerLaw(p.generalIds, path) ++
             p.intents.flatMap(checkIntentLocalLaws(_, path))
         }
       }
@@ -121,7 +124,15 @@ object TicketValidator:
         }
       }
 
-    resourceIssues ++ productIssues ++ notificationIssues
+    // §3.1.3.1 / Table 8.28: the NamedFeature setup definitions of the ticket
+    // itself. The four modelled `GeneralID*` containers are XJDF, ResourceSet,
+    // Product and Resource (Tables 3.1, 3.11, 3.12, 6.1); `Content`,
+    // `PreflightTest`, `PreflightCheck` and `GangElement` gain the same
+    // one-line traversal when they are modelled (M3/M4).
+    val ticketGeneralIdIssues: Chain[Issue] =
+      GeneralID.containerLaw(ticket.generalIds, XPath("/XJDF"))
+
+    resourceIssues ++ productIssues ++ notificationIssues ++ ticketGeneralIdIssues
 
   private def checkResourceLocalLaws(resource: Resource, at: XPath, parentIsPipe: Boolean): Chain[Issue] =
     val amountIssues = resource.amountPool.fold(Chain.empty[Issue]) { pool =>
@@ -147,7 +158,9 @@ object TicketValidator:
         checkRunListMetadataMaps(r.metadataMaps, XPath(s"$at/RunList"))
       case _ => Chain.empty
     val fileSpecIssues = checkResourceFileSpecs(resource, at, parentIsPipe)
-    amountIssues ++ certificationIssues ++ identificationFieldIssues ++ runListMetadataIssues ++ fileSpecIssues
+    val generalIdIssues = GeneralID.containerLaw(resource.generalIds, at)
+    amountIssues ++ certificationIssues ++ identificationFieldIssues ++ runListMetadataIssues ++
+      fileSpecIssues ++ generalIdIssues
 
   /** Applies the local FileSpec law, the parent-sensitive pipe implication and
    *  the nested Disposition law to every currently modelled FileSpec-bearing

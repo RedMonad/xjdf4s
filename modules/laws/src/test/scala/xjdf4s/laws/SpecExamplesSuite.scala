@@ -4,8 +4,8 @@ import cats.Show
 import cats.data.{Validated, ValidatedNec}
 import munit.FunSuite
 import xjdf4s.examples.SpecExamples
-import xjdf4s.model.{Bom, Issue, ResourceSetName, XJDF, validate}
-import xjdf4s.prim.Amount
+import xjdf4s.model.{Bom, Issue, ResourceSetName, XJDF, namedFeatures, validate}
+import xjdf4s.prim.{Amount, XjdfXPath}
 
 /** Conformance suite for the worked examples of the XJDF specification
  *  (M1.5-3, PR-13). The example *values* live in `modules/examples`
@@ -75,6 +75,26 @@ class SpecExamplesSuite extends FunSuite:
 
   test("Examples 8.6/8.7 (Table 8.46): metadataMapJob constructs and validates"):
     assertValidTicket("metadataMapJob")(SpecExamples.metadataMapJob)
+
+  test("Fixture (§3.1.3.1 / Tables 8.28, A.14): namedFeatureJob constructs and validates"):
+    assertValidTicket("namedFeatureJob")(SpecExamples.namedFeatureJob)
+    SpecExamples.namedFeatureJob.toOption.foreach { ticket =>
+      assertEquals(
+        ticket.namedFeatures.toList.map(f => f.name.value -> f.value.value),
+        List("pool" -> "bar snax", "paper" -> "glossy")
+      )
+      assertEquals(ticket.generalIds.toList.size, 3)
+    }
+
+  test("Fixture (§3.1.3.1): namedFeatureTraits resolves with explicit Traits winning"):
+    assertConstructs("namedFeatureTraits")(SpecExamples.namedFeatureTraits)
+    SpecExamples.namedFeatureTraits.toOption.foreach { resolution =>
+      val gloss = XjdfXPath.unsafe("/XJDF/ResourceSet[@Name='Media']/Resource/Media/@Gloss")
+      val weight = XjdfXPath.unsafe("/XJDF/ResourceSet[@Name='Media']/Resource/Media/@Weight")
+      assertEquals(resolution.resolved.get(gloss).map(_.value), Some("Matte"))
+      assertEquals(resolution.resolved.get(weight).map(_.value), Some("150"))
+      assertEquals(resolution.overridden.toList, List(gloss))
+    }
 
   test("Fixture (Table 8.29, Example 8.15): gluingJob constructs and validates"):
     assertValidTicket("gluingJob")(SpecExamples.gluingJob)
@@ -182,6 +202,20 @@ class SpecExamplesSuite extends FunSuite:
     assertEquals(
       showOf("metadataMapJob")(SpecExamples.metadataMapJob),
       "XJDF(job=metadataMapJob, types=Cutting)"
+    )
+
+  test("golden: namedFeatureJob Show render (§3.1.3.1 / Table 8.28 fixture)"):
+    assertEquals(
+      showOf("namedFeatureJob")(SpecExamples.namedFeatureJob),
+      "XJDF(job=namedFeatureJob, types=DigitalPrinting Cutting)"
+    )
+
+  test("golden: namedFeatureTraits Show render (§3.1.3.1 fixture)"):
+    assertEquals(
+      showOf("namedFeatureTraits")(SpecExamples.namedFeatureTraits),
+      "TraitResolution(TraitSet(" +
+        "/XJDF/ResourceSet[@Name='Media']/Resource/Media/@Gloss=Matte, " +
+        "/XJDF/ResourceSet[@Name='Media']/Resource/Media/@Weight=150), overridden=1)"
     )
 
   test("golden: gluingJob Show render (Table 8.29 fixture)"):

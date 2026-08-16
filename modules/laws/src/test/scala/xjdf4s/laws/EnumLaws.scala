@@ -202,7 +202,8 @@ class EnumLaws extends FunSuite:
         ("WorkType", WorkType.all, WorkType.fromToken),
         ("DueLevel", DueLevel.all, DueLevel.fromToken),
         ("FieldEncoding", FieldEncoding.all, FieldEncoding.fromToken),
-        ("FieldPurpose", FieldPurpose.all, FieldPurpose.fromToken)
+        ("FieldPurpose", FieldPurpose.all, FieldPurpose.fromToken),
+        ("DataType", DataType.all, DataType.fromToken)
       )
     companions.foreach: (name, all, fromToken) =>
       all.foreach: v =>
@@ -235,7 +236,8 @@ class EnumLaws extends FunSuite:
         "WorkType"            -> WorkType.all,
         "DueLevel"            -> DueLevel.all,
         "FieldEncoding"       -> FieldEncoding.all,
-        "FieldPurpose"        -> FieldPurpose.all
+        "FieldPurpose"        -> FieldPurpose.all,
+        "DataType"            -> DataType.all
       )
     closed.foreach: (name, all) =>
       assertEquals(all.map(_.token.value).distinct.size, all.size, s"$name has duplicate tokens")
@@ -284,6 +286,7 @@ class EnumLaws extends FunSuite:
       "Automation"        -> Automation.all,
       "BindingType"       -> BindingType.all,
       "Coating"           -> Coating.all,
+      "DataType"          -> DataType.all,
       "DeviceStatus"      -> DeviceStatus.all,
       "Edge"              -> Edge.all,
       "EmbossDirection"   -> EmbossDirection.all,

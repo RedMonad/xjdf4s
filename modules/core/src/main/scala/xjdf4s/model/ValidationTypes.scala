@@ -182,6 +182,13 @@ object IssueCode:
   /** A locationless FileSpec is not contained by a ResourceSet pipe (Tables 8.22/3.13). */
   val FileSpecLocationMissing: IssueCode = unsafe("FILESPEC-LOCATION-MISSING")
 
+  /** `GeneralID/@IDValue` does not correspond to `@DataType` (Table 8.28). */
+  val GeneralIdValueDataTypeMismatch: IssueCode = unsafe("GENERALID-VALUE-DATATYPE-MISMATCH")
+
+  /** Informational: an explicit Trait overrode a Trait implied by a
+   *  NamedFeature (§3.1.3.1) — expected behaviour, reported for traceability. */
+  val NamedFeatureTraitOverridden: IssueCode = unsafe("NAMEDFEATURE-TRAIT-OVERRIDDEN")
+
 end IssueCode
 
 /** A validation finding: a stable machine-readable code, the severity class,

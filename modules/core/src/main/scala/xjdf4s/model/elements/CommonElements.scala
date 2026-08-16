@@ -32,19 +32,84 @@ object Comment:
 
 end Comment
 
-/** The `GeneralID` element (Table 8.28): a generic identifier, e.g.
- *  `GeneralID[@Datatype="NamedFeature"]` (§3.1.3.1).
+/** The `GeneralID` element (§8.23 / Table 8.28): a generic identifier. The
+ *  name or usage is `@IDUsage`, the value is `@IDValue`, and `@DataType`
+ *  states the data type of that value where it cannot be inferred from the
+ *  context (§A.2.13 / Table A.14).
+ *
+ *  `GeneralID[@DataType="NamedFeature"]` is the global setup definition of
+ *  §3.1.3.1; `model.NamedFeature` is its projection.
+ *
+ *  Migration note (M1.6-14): `dataType` changed from `Option[NmToken]` to the
+ *  closed `Option[DataType]` — Table 8.28 declares the attribute as
+ *  «enumeration … Allowed value is from: DataType», so an arbitrary NMTOKEN
+ *  was representable where it is not lawful. `GeneralID.NamedFeatureDataType`
+ *  is replaced by `DataType.NamedFeature`; the wire token is unchanged.
  */
 final case class GeneralID(
     idUsage: NmToken,
     idValue: XjdfString,
-    dataType: Option[NmToken] = None
-)
+    dataType: Option[DataType] = None
+):
+
+  /** True for the NamedFeature setup definitions of §3.1.3.1. */
+  def isNamedFeature: Boolean = dataType.contains(DataType.NamedFeature)
+
+  /** Table 8.28: «The data type of the value SHALL correspond to
+   *  `GeneralID/@DataType`». True when `@IDValue` is a lexical value of the
+   *  declared type, and vacuously true when no `@DataType` is specified.
+   *
+   *  `NamedFeature` and `string` accept any `@IDValue`: Table A.14 defines
+   *  the former as a named value whose item is the value itself, and the
+   *  latter is exactly the `XjdfString` the field already holds.
+   */
+  def hasLawfulValue: Boolean =
+    dataType match
+      case None => true
+      case Some(DataType.BooleanType)  => idValue.value == "true" || idValue.value == "false"
+      case Some(DataType.DateTimeType) => Timestamp.from(idValue.value).isDefined
+      case Some(DataType.DurationType) => TimeSpan.from(idValue.value).isDefined
+      case Some(DataType.FloatType)    => idValue.value.toFloatOption.isDefined
+      case Some(DataType.IntegerType)  => idValue.value.toLongOption.isDefined
+      case Some(DataType.NmTokenType)  => NmToken.from(idValue.value).isDefined
+      case Some(DataType.NamedFeature) => true
+      case Some(DataType.StringType)   => true
+
+  /** GeneralID declares no document-scoped IDREF attributes (Table 8.28). */
+  def references: Chain[IdRef] = Chain.empty
+
+end GeneralID
 
 object GeneralID:
 
-  /** The predefined `NamedFeature` data type (§3.1.3.1). */
-  val NamedFeatureDataType: NmToken = NmToken.unsafe("NamedFeature")
+  /** A `GeneralID[@DataType="NamedFeature"]` setup definition (§3.1.3.1). */
+  def namedFeature(idUsage: NmToken, idValue: XjdfString): GeneralID =
+    GeneralID(idUsage, idValue, Some(DataType.NamedFeature))
+
+  /** Table 8.28: `@IDValue` SHALL correspond to `@DataType` (ADR-0003). The
+   *  rule is purely local — it reads only the element's own attributes — so
+   *  it is a `DomainRule` reached from the root traversal through every
+   *  `GeneralID*` container (`XJDF`, `ResourceSet`, `Product`, `Resource`).
+   */
+  val law: DomainRule[GeneralID] =
+    (generalId: GeneralID, at: XPath) =>
+      if generalId.hasLawfulValue then Chain.empty
+      else
+        Chain.one(Issue.errorC(
+          IssueCode.GeneralIdValueDataTypeMismatch,
+          at,
+          s"GeneralID/@IDValue='${generalId.idValue.value}' SHALL correspond to @DataType=" +
+            s"'${generalId.dataType.fold("")(_.token.value)}' (Table 8.28)"
+        ))
+
+  /** Applies `law` to every element of a container's `GeneralID*` chain,
+   *  indexing the XPath by position (same shape as
+   *  `Certification.containerLaw`).
+   */
+  def containerLaw(generalIds: Chain[GeneralID], at: XPath): Chain[Issue] =
+    generalIds.zipWithIndex.flatMap { (g, i) =>
+      law.check(g, XPath(s"$at/GeneralID[$i]"))
+    }
 
   given Show[GeneralID] = Show.show(g => s"GeneralID(${g.idUsage.value}=${g.idValue.value})")
 

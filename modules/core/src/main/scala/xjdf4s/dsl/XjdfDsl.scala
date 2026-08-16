@@ -275,6 +275,23 @@ object dsl:
     def withComment(comment: Comment): TicketDraft =
       copy(comments = comments :+ comment)
 
+    /** Adds a `GeneralID` element to `XJDF/GeneralID*` (Table 3.1). */
+    def withGeneralId(generalId: GeneralID): TicketDraft =
+      copy(generalIds = generalIds :+ generalId)
+
+    /** Adds a NamedFeature setup definition —
+     *  `GeneralID[@DataType="NamedFeature"]` (§3.1.3.1). Invalid raw values
+     *  are preserved as Issues rather than thrown.
+     */
+    def withNamedFeature(name: String, value: String): ValidatedNec[Issue, TicketDraft] =
+      val nameV = NmToken
+        .from(name)
+        .toValidNec(Issue.error(XPath("/XJDF/GeneralID/@IDUsage"), s"Invalid IDUsage: '$name'"))
+      val valueV = XjdfString
+        .from(value)
+        .toValidNec(Issue.error(XPath("/XJDF/GeneralID/@IDValue"), s"Invalid IDValue: '$value'"))
+      (nameV, valueV).mapN((n, v) => withGeneralId(GeneralID.namedFeature(n, v)))
+
     def build: ValidatedNec[Issue, XJDF] =
       (jobId, NonEmptyChain.fromChain(types)) match
         case (None, _) =>
