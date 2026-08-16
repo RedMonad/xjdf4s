@@ -14,7 +14,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 8 | `CasingInParams` | typed |
 | 9 | `CoverApplicationParams` | typed |
 | 10 | `CreasingParams` | typed |
-| 11 | `CuttingParams` | pending |
+| 11 | `CuttingParams` | typed |
 | 12 | `DevelopingParams` | typed |
 | 13 | `Device` | pending |
 | 14 | `EmbossingParams` | typed |
@@ -29,7 +29,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 23 | `Pallet` | typed |
 | 24 | `PalletizingParams` | typed |
 | 25 | `PerforatingParams` | typed |
-| 26 | `ShapeCuttingParams` | pending |
+| 26 | `ShapeCuttingParams` | typed |
 | 27 | `ShrinkingParams` | typed |
 | 28 | `SpinePreparationParams` | typed |
 | 29 | `SpineTapingParams` | typed |
@@ -46,7 +46,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 40 | `ApprovalParams` | typed |
 | 41 | `Assembly` | typed |
 | 42 | `BarcodeCompParams` | typed |
-| 43 | `BarcodeReproParams` | pending |
+| 43 | `BarcodeReproParams` | typed |
 | 44 | `BendingParams` | typed |
 | 45 | `BinderySignature` | pending |
 | 46 | `BoxFoldingParams` | pending |
@@ -56,7 +56,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 50 | `Contact` | typed |
 | 51 | `Content` | pending |
 | 52 | `ConventionalPrintingParams` | typed |
-| 53 | `DeliveryParams` | pending |
+| 53 | `DeliveryParams` | typed |
 | 54 | `DieLayout` | pending |
 | 55 | `DieLayoutProductionParams` | pending |
 | 56 | `DigitalPrintingParams` | typed |
@@ -73,14 +73,14 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 67 | `Media` | pending |
 | 68 | `MiscConsumable` | typed |
 | 69 | `PDLCreationParams` | pending |
-| 70 | `PreflightParams` | pending |
-| 71 | `PreflightReport` | pending |
+| 70 | `PreflightParams` | typed |
+| 71 | `PreflightReport` | typed |
 | 72 | `Preview` | typed |
 | 73 | `QualityControlParams` | pending |
 | 74 | `QualityControlResult` | pending |
-| 75 | `RegisterMark` | pending |
+| 75 | `RegisterMark` | typed |
 | 76 | `RunList` | pending |
-| 77 | `SeparationControlParams` | pending |
+| 77 | `SeparationControlParams` | typed |
 | 78 | `ShapeDef` | pending |
 | 79 | `ShapeDefProductionParams` | pending |
 | 80 | `SheetOptimizingParams` | pending |
@@ -100,9 +100,9 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 94 | `InkZoneProfile` | typed |
 | 95 | `PreviewGenerationParams` | typed |
 | 96 | `RenderingParams` | pending |
-| 97 | `ScreeningParams` | pending |
+| 97 | `ScreeningParams` | typed |
 | 98 | `TrappingParams` | typed |
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **64/100** schema-defined descendants.
+Current coverage: **73/100** schema-defined descendants.

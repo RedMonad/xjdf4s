@@ -17,24 +17,28 @@ type FoundationalSpecificResource =
 type PostpressSpecificResource =
   resources.BlockPreparationParams | resources.BoxPackingParams | resources.BundlingParams |
     resources.CaseMakingParams | resources.CasingInParams | resources.CoverApplicationParams |
-    resources.CreasingParams | resources.EmbossingParams | resources.EndSheetGluingParams |
-    resources.FoldingParams | resources.GluingParams | resources.HeadBandApplicationParams |
-    resources.HoleMakingParams | resources.InsertingParams | resources.JacketingParams |
+    resources.CreasingParams | resources.CuttingParams | resources.EmbossingParams |
+    resources.EndSheetGluingParams | resources.FoldingParams | resources.GluingParams |
+    resources.HeadBandApplicationParams | resources.HoleMakingParams | resources.InsertingParams |
+    resources.JacketingParams |
     resources.LabelingParams | resources.LaminatingParams | resources.PalletizingParams |
-    resources.PerforatingParams | resources.ShrinkingParams | resources.SpinePreparationParams |
+    resources.PerforatingParams | resources.ShapeCuttingParams | resources.ShrinkingParams |
+    resources.SpinePreparationParams |
     resources.SpineTapingParams | resources.StitchingParams | resources.StrappingParams |
     resources.ThreadSealingParams | resources.ThreadSewingParams | resources.TrimmingParams |
     resources.VarnishingParams | resources.WindingParams | resources.WrappingParams
 
 type PrepressSpecificResource =
-  resources.BarcodeCompParams | resources.BendingParams | resources.ColorCorrectionParams |
-    resources.DevelopingParams | resources.FontPolicy | resources.ImageEnhancementParams |
-    resources.ImageSetterParams | resources.InkZoneProfile | resources.LayoutShift |
-    resources.ManualLaborParams | resources.PreviewGenerationParams | resources.TrappingParams
+  resources.BarcodeCompParams | resources.BarcodeReproParams | resources.BendingParams |
+    resources.ColorCorrectionParams | resources.DevelopingParams | resources.FontPolicy |
+    resources.ImageEnhancementParams | resources.ImageSetterParams | resources.InkZoneProfile |
+    resources.LayoutShift | resources.ManualLaborParams | resources.PreflightParams |
+    resources.PreflightReport | resources.PreviewGenerationParams | resources.RegisterMark |
+    resources.ScreeningParams | resources.SeparationControlParams | resources.TrappingParams
 
 type GeneralSpecificResource =
-  resources.ApprovalDetails | resources.ApprovalParams | resources.Preview | resources.VerificationParams |
-    resources.VerificationResult
+  resources.ApprovalDetails | resources.ApprovalParams | resources.DeliveryParams | resources.Preview |
+    resources.VerificationParams | resources.VerificationResult
 
 type PressSpecificResource = resources.ConventionalPrintingParams | resources.DigitalPrintingParams
 
