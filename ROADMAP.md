@@ -1796,7 +1796,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 | M1.6-3 | Glue `[x]` PR-16 | §8.24 | Table 8.29 |
 | M1.6-4 | GangSource `[x]` PR-23 | §8.22 | Table 8.27 |
 | M1.6-5 | HolePattern `[x]` PR-17 | §8.25 | Table 8.30 |
-| M1.6-6 | IdentificationField `[~]` PR-26 (ядро + `BarcodeDetails`/`ExtraValues`; `MetadataMap` → M1.6-6b) | §8.26 | Table 8.31 |
+| M1.6-6 | IdentificationField `[x]` PR-26 (ядро + `BarcodeDetails`/`ExtraValues`; `MetadataMap` → M1.6-6b) | §8.26 | Table 8.31 |
 | M1.6-7 | MISDetails `[x]` PR-24 | §8.30 | Table 8.48 |
 
 **Дополнительно:**
@@ -2241,7 +2241,7 @@ standalone-фикстуры `Gang source (Table 8.27)` и `MIS details (Table 8.
 сохранили прежний вывод; `check-spec-coverage.sh` — `RESULT: OK`
 (статический прогон агента). Статус `[x]` — закрыт полностью.
 
-#### M1.6-6. `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (Table 8.33) + `ExtraValues` (Table 8.34) — `[~]` PR-26
+#### M1.6-6. `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (Table 8.33) + `ExtraValues` (Table 8.34) — `[x]` выполнено (верифицировано владельцем; PR-26)
 
 Последний невыполненный общий элемент главы 8: его закрытие завершает секцию
 «общие элементы главы 8» в M1.6. Выбор и **глубина моделирования** подтверждены
@@ -2372,6 +2372,21 @@ standalone-фикстуры `Gang source (Table 8.27)` и `MIS details (Table 8.
 2 `EnumLaws` + 2 `SpecExamplesSuite`); `examples/run` exit 0 со строкой
 `Barcode job (Table 8.31): XJDF(job=barcodeJob, types=Cutting)`;
 `scripts/check-spec-coverage.sh` — `RESULT: OK`.
+
+**Прогон владельца (2026-08-16).** `compile` — success (9 s, cache 83%,
+78 disk cache hits, 15 onsite tasks); `testFull` — **396/0** при 22 сьютах
+(`AlgebraLaws` 50, `TicketLaws` 59, `SpecExamplesSuite` 38,
+`IdentificationFieldLaws` 35, `EnumLaws` 33, `PartitionLaws` 27,
+`CertificationLaws` 18, `GlueLaws` 15, `HolePatternLaws` 14, `PatchLaws` 13,
+`EmbossingIntentLaws` 12, `ContentCheckIntentLaws` 12, `NodeInfoLaws` 11,
+`MISDetailsLaws` 9, `GangSourceLaws` 8, `HoleMakingIntentLaws` 8,
+`ChangeOrderLaws` 8, `BomLaws` 8, `LaminatingIntentLaws` 7, `AlignmentLaws` 6,
+`CreaseLaws` 5), 6 s; `examples/run` — exit 0 (0 s), вывод содержит новую
+строку `Barcode job (Table 8.31): XJDF(job=barcodeJob, types=Cutting)`;
+регрессий нет — Example 3.6 (`XJDF(job=CPI_Example, types=Cutting Folding)`),
+`Gang job (Table 6.119)` и обе standalone-фикстуры главы 8 сохранили прежний
+вывод; `check-spec-coverage.sh` — `RESULT: OK` (статический прогон агента).
+Статус `[x]` — закрыт полностью.
 
 #### M1.6-5. `HolePattern` (Table 8.30, Appendix F) — `[x]` выполнено (верифицировано владельцем; PR-17)
 
@@ -2760,7 +2775,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 23 | `GangSource` (Table 8.27, §8.22) + точная XSD-сверка + классификация междокументных NMTOKEN-ссылок | M1.6-4 | 22 | `[x]` верифицировано владельцем: 330 тестов, `examples/run` exit 0 |
 | 24 | `MISDetails` (Table 8.48, §8.30) + `CostType`/`WorkType` + открытый `Catalog.WorkTypeDetails` + prose-диапазон `@Complexity` через `UnitInterval` | M1.6-7 | 23 | `[x]` верифицировано владельцем: 343 теста, `examples/run` exit 0 |
 | 25 | `NodeInfo` += `GangSource*` + `MISDetails?` (Table 6.119, §6.59) + закрытие N-52 (`@DueLevel` → закрытый `DueLevel`) | M1.6-8 | 23, 24 | `[x]` верифицировано владельцем: 357 тестов, `examples/run` exit 0 |
-| 26 | `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (8.33) + `ExtraValues` (8.34) + `FieldEncoding`/`FieldPurpose` + 5 открытых каталогов + SHALL `IDENTIFICATION-FIELD-VALUE-SOURCE` + wiring в `Component` (Table 6.37) + регистрация N-53 | M1.6-6 | 25 | `[~]` ожидает прогона владельца |
+| 26 | `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (8.33) + `ExtraValues` (8.34) + `FieldEncoding`/`FieldPurpose` + 5 открытых каталогов + SHALL `IDENTIFICATION-FIELD-VALUE-SOURCE` + wiring в `Component` (Table 6.37) + регистрация N-53 | M1.6-6 | 25 | `[x]` верифицировано владельцем: 396 тестов, `examples/run` exit 0 |
 | 27+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6b, M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`, N-53 `RunList/FileSpec?`) | M1.6 | 26 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -3853,9 +3868,37 @@ standalone-фикстура `misDetails` + conformance/golden, coverage
 workType=Rework, workTypeDetails=ResourceDamaged)`; статус `[x]` — закрыт
 полностью. Оба элемента для `NodeInfo` (`GangSource`, `MISDetails`) готовы.
 
-Следующий срез PR-25+ выбирается из M1.6-8 (`NodeInfo` += `GangSource*` +
-`MISDetails?` — полностью разблокирован, рекомендуемый), M1.6-6
-IdentificationField, M1.6-13 ShapeCuttingIntent (требует примитива `PDFPath`),
+PR-25 (M1.6-8) дополнил `NodeInfo` (§6.59 / Table 6.119) обоими подэлементами
+(`GangSource*` → `Chain`, `MISDetails?` → `Option`) и закрыл N-52
+(`@DueLevel`: `Option[Long]` → закрытый `prim.DueLevel`; prose и XSD согласны ⇒
+дефект модели класса N-06/N-07, ADR не требуется, call sites отсутствовали).
+Верифицировано владельцем: **357 тестов зелёных (357/0)**, `examples/run`
+exit 0.
+
+PR-26 (M1.6-6) реализовал `IdentificationField` (§8.26 / Table 8.31) вместе с
+`BarcodeDetails` (Table 8.33) и `ExtraValues` (Table 8.34) — **последний
+невыполненный общий элемент главы 8**, чем секция «общие элементы главы 8» в
+M1.6 закрыта. Десять опциональных атрибутов, два закрытых inline-enum
+(`FieldEncoding`, `FieldPurpose`), пять открытых каталогов (ADR-0007:
+`EncodingDetails` Table 8.32 — 47 значений с сохранённой нормативной опечаткой
+`CODABAR_Tradional`, `PurposeDetails`, `BarcodeVersion` Tables 8.36/8.37 —
+29 DATAMATRIX + 40 QR с параметрическими конструкторами,
+`ErrorCorrectionLevel`, `ExtraValuesUsage`), единственный локальный SHALL
+«exactly one of `@Format`, `@Value` or the pair `@ValueFormat` and
+`@ValueTemplate`» → `IssueCode.IDENTIFICATION-FIELD-VALUE-SOURCE` (`law` +
+`containerLaw`), пять негативных тестов на три способа нарушения; wiring
+`Component/IdentificationField*` (Table 6.37) в `checkResourceLocalLaws`;
+ID/IDREF в трёх таблицах отсутствуют (сверено по XSD). `MetadataMap*`
+(Table 8.46) вынесен в срез M1.6-6b решением владельца по §9.1; попутно
+зарегистрирована N-53 (`RunList.fileSpecs` vs `FileSpec?`). Верифицировано
+владельцем: **396 тестов зелёных (396/0)**, `examples/run` exit 0 со строкой
+`Barcode job (Table 8.31): XJDF(job=barcodeJob, types=Cutting)`; coverage
+`RESULT: OK` (Resources 24, отклонений 19, Spec tables 121); статус `[x]` —
+закрыт полностью.
+
+Следующий срез PR-27+ выбирается из M1.6-6b (`MetadataMap` + `Expr` + примитив
+`XPath`; естественно объединяется с исправлением N-53, так как оба трогают
+`RunList`), M1.6-13 ShapeCuttingIntent (требует примитива `PDFPath`),
 M1.6-14 NamedFeatures, M1.6-15 Part audit или N-51 `FileSpec.law`.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
 открытая часть M1.0-1.
