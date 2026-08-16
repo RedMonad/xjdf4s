@@ -516,7 +516,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 | N-49 | `Scope` неполон: 4 значения из 5 | Table A.36 — 5 значений; отсутствует `Device` *(New in XJDF 2.2)*: «The amount of resources is an absolute measurement that is currently available within the scope of a Device.» | `prim/Enums.scala`: `case Allowed, Estimate, Job, Present` | M1.2-2 |
 | N-50 | Glue-энумерации смешаны: `prim.GlueType` (3 значения) используется и для полей, которые по Table 4.5/4.7/4.9 и XSD являются **элементом** `Glue` (`BindIn.glue`, `StickOn.glue`, `AdhesiveNote.glue`); набор `Glue/@GlueType` из 5 значений не смоделирован | Внутренний конфликт спецификации: Table A.24 (§A.2.23) — 3 значения (`ColdGlue`, `Hotmelt`, `PUR`); Table 8.29 `@GlueType` — 5 значений («Allowed values are: … `Permanent` … `Removable`»); `schema.xsd`: `EnumGlue` (3) для «from: Glue»-атрибутов vs inline-ограничение `Glue/@GlueType` (5); Example 8.15: `GlueType="Removable"`. По §1.2 приоритет — prose Table 8.29 и пример → **два разных закрытых набора** | `prim/Enums.scala:180-185` (`GlueType`, 3 значения); `intents/Binding.scala:111,117,137,213`; `intents/FoldingVariable.scala:119,143` | ADR-0011, M1.6-3 (PR-16) |
 | N-51 | `FileSpec` (Table 8.22, `model/elements/CommonElements.scala`) неполон: (1) SHALL-правило взаимного исключения локаций — «If neither `@URL` nor `@UID` is present, both `@FileFormat` and `@FileTemplate` SHALL be present, unless the resource is a pipe. If either `@URL` or `@UID` is specified, then `@FileFormat` and `@FileTemplate` SHALL NOT be specified» — не проверяется: case class допускает одновременное задание `url` и `fileFormat`/`fileTemplate`, а `location` молча выбирает по приоритету; (2) `NetworkHeader*` *(New in XJDF 2.1)* не моделируется; (3) строки в `SPEC-COVERAGE.md` нет (тип вне `resources/*`/`intents/*`, чекер не требует) | Table 8.22 (`reference/xjdf/8 – Subelements.md`, строки 519+); `schema.xsd` `FileSpec` | `model/elements/CommonElements.scala` (`FileSpec`, `FileLocation`) | M1.6/M3 follow-up: `FileSpec.law` (`DomainRule`) + подключение к обходам всех FileSpec-несущих контейнеров (первый подключён в M1.6-11 — `ContentCheckIntent/ProofItem/FileSpec`); `NetworkHeader` — по решению о его моделировании. Зарегистрировано в PR-21 (M1.6-11) при сверке Table 4.24 |
-| N-52 | `NodeInfo/@DueLevel` типизирован как `Option[Long]` вместо закрытой энумерации | Table 6.119: `DueLevel?` \| **enumeration** \| «Description of the severity of a missed deadline (JobCancelled, Penalty, Trivial)»; `schema.xsd` (`<xs:complexType name="NodeInfo">`) объявляет inline-restriction по `xs:NMTOKEN` ровно с этими тремя значениями. Prose и XSD **согласны** — расхождение только в модели, ADR не требуется | `resources/NodeInfo.scala:14` `dueLevel: Option[Long]` — делает представимым `DueLevel = 7`. Класс дефекта тот же, что у N-06/N-07 (потеря enum при переносе таблицы); call sites отсутствуют | M1.6-8 (PR-25) |
+| N-52 | `NodeInfo/@DueLevel` типизирован как `Option[Long]` вместо закрытой энумерации | Table 6.119: `DueLevel?` \| **enumeration** \| «Description of the severity of a missed deadline (JobCancelled, Penalty, Trivial)»; `schema.xsd` (`<xs:complexType name="NodeInfo">`) объявляет inline-restriction по `xs:NMTOKEN` ровно с этими тремя значениями. Prose и XSD **согласны** — расхождение только в модели, ADR не требуется | `resources/NodeInfo.scala:14` `dueLevel: Option[Long]` — делает представимым `DueLevel = 7`. Класс дефекта тот же, что у N-06/N-07 (потеря enum при переносе таблицы); call sites отсутствуют | M1.6-8 (PR-25) — `[x]` устранено, верифицировано владельцем |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -1799,7 +1799,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 
 **Дополнительно:**
 
-- M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[~]` выполнено, ожидает прогона владельца (PR-25);
+- M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[x]` выполнено (верифицировано владельцем; PR-25);
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — реализовать модель и правило приоритета явных Traits;
 - M1.6-15: полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1).
 
@@ -2127,7 +2127,7 @@ workType=Rework, workTypeDetails=ResourceDamaged)` и не содержит ре
 `check-spec-coverage.sh` — `RESULT: OK` (статический прогон агента). Статус
 `[x]` — закрыт полностью.
 
-#### M1.6-8. `NodeInfo` += `GangSource*` + `MISDetails?` (Table 6.119, §6.59) — `[~]` выполнено, ожидает прогона владельца (PR-25)
+#### M1.6-8. `NodeInfo` += `GangSource*` + `MISDetails?` (Table 6.119, §6.59) — `[x]` выполнено (верифицировано владельцем; PR-25)
 
 Срез иного типа, чем девять предыдущих: **дополнение существующего ресурса
 главы 6**, а не создание нового элемента. Завершает триаду, начатую PR-23
@@ -2215,6 +2215,21 @@ standalone именно ради этого wiring-а. Выбор подтвер
 + 2 `SpecExamplesSuite`); `examples/run` exit 0 со строкой `Gang job
 (Table 6.119): XJDF(job=gangJob, types=Cutting)`; conformance-тест Example 3.6
 не деградирует; `scripts/check-spec-coverage.sh` — `RESULT: OK`.
+
+**Прогон владельца (2026-08-16).** `compile` — success (12 s, cache 83%,
+78 disk cache hits, 15 onsite tasks, 0 предупреждений); `testFull` —
+**357/0** (`TicketLaws` 59, `AlgebraLaws` 50, `SpecExamplesSuite` 36,
+`EnumLaws` 31, `PartitionLaws` 27, `CertificationLaws` 18, `GlueLaws` 15,
+`HolePatternLaws` 14, `PatchLaws` 13, `EmbossingIntentLaws` 12,
+`ContentCheckIntentLaws` 12, **`NodeInfoLaws` 11**, `MISDetailsLaws` 9,
+`HoleMakingIntentLaws` 8, `GangSourceLaws` 8, `ChangeOrderLaws` 8,
+`BomLaws` 8, `LaminatingIntentLaws` 7, `AlignmentLaws` 6, `CreaseLaws` 5);
+`examples/run` — exit 0 (1 s), вывод содержит новую строку `Gang job
+(Table 6.119): XJDF(job=gangJob, types=Cutting)`; Example 3.6 не
+деградировал (`XJDF(job=CPI_Example, types=Cutting Folding)`), обе
+standalone-фикстуры `Gang source (Table 8.27)` и `MIS details (Table 8.48)`
+сохранили прежний вывод; `check-spec-coverage.sh` — `RESULT: OK`
+(статический прогон агента). Статус `[x]` — закрыт полностью.
 
 #### M1.6-5. `HolePattern` (Table 8.30, Appendix F) — `[x]` выполнено (верифицировано владельцем; PR-17)
 
@@ -2602,7 +2617,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 22 | `Certification` (Table 8.8, §8.7) + `Catalog.CertificationClaim`/`CertificationOrganization` + SHALL `CERTIFICATION-LEVEL-MISSING` (ADR-0012) + wiring в 4 контейнера | M1.6-1 | 21 | `[x]` верифицировано владельцем: 320 тестов, `examples/run` exit 0 |
 | 23 | `GangSource` (Table 8.27, §8.22) + точная XSD-сверка + классификация междокументных NMTOKEN-ссылок | M1.6-4 | 22 | `[x]` верифицировано владельцем: 330 тестов, `examples/run` exit 0 |
 | 24 | `MISDetails` (Table 8.48, §8.30) + `CostType`/`WorkType` + открытый `Catalog.WorkTypeDetails` + prose-диапазон `@Complexity` через `UnitInterval` | M1.6-7 | 23 | `[x]` верифицировано владельцем: 343 теста, `examples/run` exit 0 |
-| 25 | `NodeInfo` += `GangSource*` + `MISDetails?` (Table 6.119, §6.59) + закрытие N-52 (`@DueLevel` → закрытый `DueLevel`) | M1.6-8 | 23, 24 | `[~]` 357 тестов, `examples/run` exit 0 — ожидает прогона владельца |
+| 25 | `NodeInfo` += `GangSource*` + `MISDetails?` (Table 6.119, §6.59) + закрытие N-52 (`@DueLevel` → закрытый `DueLevel`) | M1.6-8 | 23, 24 | `[x]` верифицировано владельцем: 357 тестов, `examples/run` exit 0 |
 | 26+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6, M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`) | M1.6 | 25 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
