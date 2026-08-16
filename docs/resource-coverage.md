@@ -54,10 +54,10 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 48 | `ColorantControl` | typed |
 | 49 | `Component` | typed |
 | 50 | `Contact` | typed |
-| 51 | `Content` | pending |
+| 51 | `Content` | typed |
 | 52 | `ConventionalPrintingParams` | typed |
 | 53 | `DeliveryParams` | typed |
-| 54 | `DieLayout` | pending |
+| 54 | `DieLayout` | typed |
 | 55 | `DieLayoutProductionParams` | typed |
 | 56 | `DigitalPrintingParams` | typed |
 | 57 | `ExposedMedia` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **93/100** schema-defined descendants.
+Current coverage: **95/100** schema-defined descendants.

@@ -11,8 +11,9 @@ end SpecificResource
 /** Typed resources completed in the foundational resource slice. */
 type FoundationalSpecificResource =
   resources.Assembly | resources.BinderySignature | resources.Bundle | resources.Color | resources.ColorantControl |
-    resources.Component |
-    resources.Contact | resources.CustomerInfo | resources.Device | resources.ExposedMedia | resources.Ink | resources.Media |
+    resources.Component | resources.Content |
+    resources.Contact | resources.CustomerInfo | resources.Device | resources.DieLayout | resources.ExposedMedia |
+    resources.Ink | resources.Media |
     resources.MiscConsumable |
     resources.NodeInfo | resources.Pallet | resources.PrintCondition | resources.RunList | resources.Shape |
     resources.ShapeDef | resources.Tool | resources.TransferCurve | resources.UsageCounter
