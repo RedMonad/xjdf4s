@@ -1820,6 +1820,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 **Дополнительно:**
 
 - M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[x]` выполнено (верифицировано владельцем; PR-25);
+- M1.6-13(B1): отдельный примитив `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация непустоты и полный parser в M2.3 — `[~]` реализовано статически, ожидает прогона владельца; B2 не начат;
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — `[x]` выполнено и верифицировано владельцем: модель, правило приоритета явных Traits, SHALL Table 8.28 и закрытый `DataType` (ADR-0016/N-59); 482/0, `NamedFeatureLaws` 26/0, `examples/run` exit 0;
 - N-51: `FileSpec.law`, parent-sensitive pipe-контекст, `NetworkHeader*` и обход всех уже смоделированных FileSpec-контейнеров — `[x]` выполнено и верифицировано владельцем (440/0, `examples/run` exit 0); ADR-0015/N-56 фиксирует `@NPage`, N-57/N-58 зарегистрированы как отдельные breaking follow-up и не расширяют срез;
 - N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` исправлен с `Chain[FileSpec]` на `Option[FileSpec]`; prose и XSD согласны, ADR не нужен; regression-first, migration note и полный список call sites — `[x]` выполнено и верифицировано владельцем (445/0, `examples/run` exit 0);
@@ -2157,6 +2158,51 @@ exit 0.
 `FileSpecCardinalityLaws` **5/0**; `examples/run` — exit 0, весь прежний набор
 примеров выполнен успешно. Предупреждений в предоставленном выводе нет.
 Статус `[x]` — закрыт полностью.
+
+#### M1.6-13(B1). Примитив `PDFPath` (§A.1 / Table A.1) — `[~]` реализовано статически, ожидает прогона владельца
+
+Первый из двух последовательных срезов M1.6-13; B2 (`ShapeCuttingIntent`,
+`ShapeCut`, `CutBox`/`CutPath`) зависит от этого примитива и в B1 не входит.
+Старт подтверждён владельцем 2026-08-16.
+
+- **Нормативная сверка (§1.2).** Appendix A / Table A.1 определяет `PDFPath`
+  как restriction от `xsd:string`: значение «conforms to a sequence of PDF
+  path operators», ограниченную разделом «Path Construction Operators»
+  `[PDF1.6]`. `schema.xsd` согласованно объявляет `<xs:simpleType
+  name="PDFPath"><xs:restriction base="xs:string"/></xs:simpleType>` и не
+  добавляет pattern/length/enumeration facets. §9.10.1 также сохраняет
+  `PDFPath` единой строкой в JSON. Release notes 2.1/2.2 разъяснений не
+  содержат. Расхождения prose/XSD нет, ADR и новая находка не требуются.
+- **Область операторов.** Нормативная ссылка ограничивает значения
+  path-construction operators PDF 1.6 (`m`, `l`, `c`, `v`, `y`, `h`, `re`),
+  вместе с требуемыми числовыми операндами. Painting/clipping и прочие PDF
+  operators в тип не входят. Полная проверка должна учитывать PDF-лексемы,
+  arity операторов и состояние текущего path; частичный список/regex дал бы
+  ложную гарантию конформности.
+- **Уровень M1-валидации.** По прецеденту `RegExp`/риска R5 конструктор
+  проверяет только минимальную безопасную границу: отвергает `null`, пустую и
+  whitespace-only строку, но сохраняет непустое `xsd:string` verbatim.
+  Полный тотальный parser `PDFPath` на `cats-parse`, включая valid/invalid
+  corpus, whitespace, round-trip и fuzz, остаётся ровно в M2.3. Ослабление
+  записано в реестре сознательных отклонений `docs/SPEC-COVERAGE.md`.
+- **Модель.** Новый отдельный opaque-тип `prim.PDFPath`; он не связан ни с
+  XJDF-типом `prim.XjdfXPath`, ни с validation locator `model.XPath`.
+  Предоставлены `from`/`unsafe`, `.value`, `Show` и `Eq`.
+- **Тесты.** Новый `PDFPathLaws` содержит 7 тестов: три валидных
+  path-construction последовательности, сохранение `xsd:string`, негативные
+  границы выбранной M1-валидации, `Show`/`Eq`/лексический round-trip, явное
+  закрепление отложенного grammar parsing и два prose/XSD oracle-теста
+  (базовый тип и отсутствие lexical facets).
+- **Совместимость.** Срез аддитивен; call sites до изменения отсутствовали.
+  Первые потребители (`ShapeCut/@CutPath`, `CutPath`) добавляются только в B2.
+
+**Файлы:** `prim/Tokens.scala`, `laws/PDFPathLaws.scala` (новый),
+`docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
+без предупреждений; минимум 489 тестов зелёных (482 + 7), `examples/run`
+exit 0; `scripts/check-spec-coverage.sh` — `RESULT: OK`. До подтверждения
+владельцем статус остаётся `[~]` по §1.3.
 
 #### M1.6-14. NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) — `[x]` выполнено (верифицировано владельцем; PR-33)
 
@@ -3261,7 +3307,8 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 31 | N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` → `Option[FileSpec]`; regression-first, общий optional-wiring, migration note и полный список call sites | N-58 | 30 | `[x]` верифицировано владельцем: 445/0, `FileSpecCardinalityLaws` 5/0, `examples/run` exit 0 |
 | 32 | N-57: `FileSpec/@CheckSum` → `Option[HexBinary]`; новый Appendix A primitive, regression-first, XSD oracle, round-trip, migration note и полный список call sites | N-57 | 31 | `[x]` верифицировано владельцем: 452/0, `HexBinaryLaws` 7/0, `examples/run` exit 0 |
 | 33 | M1.6-14: NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) + закрытый `DataType` (Table A.14) + ADR-0016/N-59; `TraitSet`/`TraitResolution`, SHALL Table 8.28 в четырёх контейнерах, breaking change с migration note и полным списком call sites | M1.6-14 | 32 | `[x]` верифицировано владельцем: 482/0, `NamedFeatureLaws` 26/0, `SpecExamplesSuite` 44/0, `examples/run` exit 0 |
-| 34+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-13(B1) `PDFPath`, затем M1.6-13(B2) `ShapeCuttingIntent`). M1.6-15 (аудит `Part`/Table 6.4) — `[x]` закрыт: все 27 ключей корректны, P1/P2-дефектов нет | M1.6 | 33 | шаблон среза выполнен |
+| 34 | M1.6-13(B1): `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация + XSD oracle; полный grammar parser остаётся M2.3 | M1.6-13(B1) | 33 | `[~]` реализовано статически: `PDFPathLaws` 7 тестов; ожидается прогон владельца |
+| 35 | M1.6-13(B2): `ShapeCuttingIntent` + `ShapeCut` (Tables 4.34–4.35), `CutBox`/`CutPath` | M1.6-13(B2) | 34 | не начато; отдельный срез после верификации B1 |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -4107,6 +4154,14 @@ ADR-0013/N-54: Scala-тип `prim.XjdfXPath` следует prose и отдел�
 validation locator `model.XPath`; `Expr(name, path)` структурен, implied
 `text()` относится к вычислению, контекстные правила реализуются в B2.
 
+### Table A.1 (`PDFPath`)
+
+> `PDFPath` | `xsd:string` | Restriction | Values of type `PDFPath` are encoded as a string that conforms to a sequence of PDF path operators. PDF operators are limited to those described in “Path Construction Operators” in `[PDF1.6]`.
+
+`schema.xsd` согласованно задаёт restriction от `xs:string` без lexical
+facets. M1.6-13(B1) сохраняет строку verbatim и проверяет только непустую
+границу; полный parser PDF path-construction operators — M2.3.
+
 ### §8.29 / Table 8.46 (`MetadataMap`) — контекстные SHALL для B2
 
 > If MetadataMap is defined in an IdentificationField, then `IdentificationField/@ValueTemplate` SHALL provide a list of variables that can be further processed in `MetadataMap/@ValueTemplate`.
@@ -4174,7 +4229,8 @@ B2 реализует весь набор с негативным тестом �
 | `resources/Media.scala` | M1.6-1 (`Media.certifications`, `references` обходит цепочку, PR-22) |
 | `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4, M1.6-2 (строки Crease/WorkingDirection, раздел Enumerations) |
 | `scripts/check-spec-coverage.sh` (новый) | M1.2-6 (создан в PR-13; в CI подключается вместе с возвратом CI); M1.6-2 (поддержка номеров таблиц Appendix A `Table A.NN`) |
-| `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги; M1.6-6b/B1 (`XjdfXPath`, ADR-0013/N-54); N-57 (`HexBinary`) |
+| `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги; M1.6-6b/B1 (`XjdfXPath`, ADR-0013/N-54); N-57 (`HexBinary`); M1.6-13(B1) (`PDFPath`) |
+| `laws/PDFPathLaws.scala` (новый) | M1.6-13(B1) (`PDFPath`: M1-границы, Show/Eq/round-trip, prose/XSD oracle) |
 | `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`); M1.6-2 (`WorkingDirection`); M1.6-7 (`CostType`, `WorkType`, PR-24); M1.6-6 (`FieldEncoding`, `FieldPurpose`, PR-26) |
 | `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountBounds`), M1.4-6 (алгебры) |
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
@@ -4236,6 +4292,7 @@ B2 реализует весь набор с негативным тестом �
 | `XJDF/@Name` и `@$schema` отсутствуют в домене | JSON Exception, в XML запрещены (Table 3.1) | реализуются в `codec-json` (M2); строка со статусом codec-only |
 | `Comment/@Text` отсутствует в домене | JSON Exception (Table 8.14) | реализуется в `codec-json` (M2) |
 | Валидация `RegExp` — только непустота | Appendix A (Table A.1): «Regular expression as defined by `[XMLSchema]`» — грамматика XSD-regex, несовместимая с `java.util.regex` (в XSD нет lookaround/backreferences; вычитание классов — `[a-z-[aeiou]]`, а не `&&`-пересечение); `schema.xsd` (`regExp`, строки 77–80) — `restriction base="xs:string"` без ограничений | M1.2-1: валидация непустотой; полная XSD-грамматика — на стороне кодеков M2 |
+| Валидация `PDFPath` в M1 — только непустое/не-whitespace значение | Table A.1 требует последовательность path-construction operators `[PDF1.6]`, а `schema.xsd` задаёт только restriction от `xs:string` без facets; неполная regex-проверка операторов создала бы ложную гарантию | M1.6-13(B1): минимальная граница с verbatim-сохранением; полный тотальный parser чисел, операторов, arity и path state — M2.3 |
 | `XjdfVersion.from` принимает только `"2.2"` | Table 3.1 требует `"2.2"` для соответствующих спецификации документов, хотя Table A.52 перечисляет `2.0`/`2.1`/`2.2` | scaladoc-объяснение (M1.5-2); при поддержке 2.0/2.1 — отдельное решение |
 | `Monoid[Matrix]` вместо `Group` | вырожденная матрица необратима | `inverse: Option[Matrix]` + задокументированная причина; опциональный `InvertibleMatrix` вне M1 |
 | `Semigroup` (не `Monoid`) для `AuditPool`, `AmountPool`, `NmTokens`, `ProcessPath` | носитель `NonEmptyChain`, кардинальность `T+` запрещает пустое значение | явная запись в scaladoc и в `docs/01` |
@@ -4463,7 +4520,8 @@ exit 0. N-57 (`FileSpec/@CheckSum` → `HexBinary`) — `[x]` закрыт и
 `examples/run` exit 0. M1.6-14 (NamedFeatures §3.1.3.1 + `GeneralID` Table 8.28
 + закрытый `DataType` Table A.14, ADR-0016/N-59) — `[x]` закрыт и верифицирован
 владельцем: **482/0**, новый `NamedFeatureLaws` **26/0**, `SpecExamplesSuite`
-**44/0**, `examples/run` exit 0. Затем остаётся M1.6-13: B1 — примитив
-`PDFPath`, B2 — `ShapeCuttingIntent`.
+**44/0**, `examples/run` exit 0. M1.6-13(B1) (`PDFPath`) реализован
+статически и остаётся `[~]` до прогона владельца; затем отдельным срезом
+выполняется B2 (`ShapeCuttingIntent`).
 LICENSE остаётся `BLOCKED` до решения владельца; возврат
 обязательного CI — открытая часть M1.0-1.

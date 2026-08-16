@@ -215,6 +215,38 @@ object RegExp:
 
 end RegExp
 
+/** XJDF data type `PDFPath` (§A.1 / Table A.1): a string containing a sequence
+ *  of PDF 1.6 path-construction operators.
+ *
+ *  Table A.1 limits the grammar to the operators in `[PDF1.6]`, while
+ *  `schema.xsd` only restricts the type from `xs:string` and supplies no
+ *  lexical facets. A complete grammar must account for PDF numbers, operands,
+ *  operator arities and path state; it is therefore deliberately deferred to
+ *  the total `cats-parse` parser in M2.3. The M1 constructor rejects null,
+ *  empty and whitespace-only values without normalizing the `xsd:string`
+ *  representation. This conservative boundary is documented in
+ *  `docs/SPEC-COVERAGE.md`.
+ */
+opaque type PDFPath = String
+
+object PDFPath:
+
+  /** Validates the M1 lexical boundary: at least one non-whitespace character. */
+  def from(raw: String): Option[PDFPath] =
+    Option(raw).filter(_.exists(char => !char.isWhitespace))
+
+  /** Raises `IllegalArgumentException` when `raw` is empty or whitespace-only. */
+  def unsafe(raw: String): PDFPath =
+    from(raw).getOrElse(throw new IllegalArgumentException(s"Not a valid PDFPath: '$raw'"))
+
+  extension (path: PDFPath) def value: String = path
+
+  given Show[PDFPath] = Show.show(identity)
+
+  given Eq[PDFPath] = Eq.fromUniversalEquals
+
+end PDFPath
+
 /** XJDF data type `XPath` (Table A.1): an XPath expression encoded as an
  *  `xsd:token`.
  *
