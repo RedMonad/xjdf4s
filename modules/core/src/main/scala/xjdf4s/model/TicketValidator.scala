@@ -10,7 +10,13 @@ import xjdf4s.intents.{
   IntentPayload,
   VariableIntent
 }
-import xjdf4s.model.elements.{Certification, Disposition, Glue => GlueElement, HolePattern => HolePatternElement}
+import xjdf4s.model.elements.{
+  Certification,
+  Disposition,
+  Glue => GlueElement,
+  HolePattern => HolePatternElement,
+  IdentificationField
+}
 import xjdf4s.prim.*
 import xjdf4s.resources.ResourcePayload
 import cats.Show
@@ -124,7 +130,14 @@ object TicketValidator:
       case Some(ResourcePayload.MediaResource(m)) =>
         Certification.containerLaw(m.certifications, XPath(s"$at/Media"))
       case _ => Chain.empty
-    amountIssues ++ certificationIssues
+    // Table 6.37: `Component/IdentificationField*` (Table 8.31, M1.6-6). The
+    // other modelled containers of the element (`Device`, `Media`) gain the
+    // same one-line traversal when they carry the chain.
+    val identificationFieldIssues = resource.specific match
+      case Some(ResourcePayload.ComponentResource(c)) =>
+        IdentificationField.containerLaw(c.identificationFields, XPath(s"$at/Component"))
+      case _ => Chain.empty
+    amountIssues ++ certificationIssues ++ identificationFieldIssues
     // Note: Disposition (Table 8.23) is a child of FileSpec inside chapter-6
     // resources; once resources carrying FileSpec are implemented (M3), the
     // traversal extends here with `TicketValidator.dispositionLaw.check(d, at)`.

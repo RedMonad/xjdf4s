@@ -650,4 +650,152 @@ object Catalog:
     val recommended: List[NmToken] =
       List(CustomerRequest, EquipmentMalfunction, InternalChange, ResourceDamaged, UserError)
   end WorkTypeDetails
+
+  /** Encoding details of `IdentificationField/@EncodingDetails` (§8.26 /
+   *  Table 8.32): the barcode scheme of the mark. `NMTOKEN`; Table 8.32 is
+   *  explicitly a sample — "Values that are not present in this list MAY be
+   *  valid in an XJDF workflow" — so this is an open catalog (ADR-0007).
+   */
+  object EncodingDetails:
+    val BOBST: NmToken = NmToken.unsafe("BOBST")
+    /** A binary representation for 6 dot Braille messages ([Braille ASCII]). */
+    val BrailleASCII: NmToken = NmToken.unsafe("BrailleASCII")
+    /** A binary representation for Braille messages ([Braille Unicode]). */
+    val BrailleUnicode: NmToken = NmToken.unsafe("BrailleUnicode")
+    val CODABAR: NmToken = NmToken.unsafe("CODABAR")
+    /** Spelled `CODABAR_Tradional` in Table 8.32 — the typo is normative. */
+    val CODABAR_Tradional: NmToken = NmToken.unsafe("CODABAR_Tradional")
+    val CODABLOCK: NmToken = NmToken.unsafe("CODABLOCK")
+    val CODABLOCK_F: NmToken = NmToken.unsafe("CODABLOCK_F")
+    val Code128: NmToken = NmToken.unsafe("Code128")
+    val Code25: NmToken = NmToken.unsafe("Code25")
+    val Code39: NmToken = NmToken.unsafe("Code39")
+    val Code39_Extended: NmToken = NmToken.unsafe("Code39_Extended")
+    val DATAMATRIX: NmToken = NmToken.unsafe("DATAMATRIX")
+    /** Includes Bookland_EAN and ISSN. */
+    val EAN: NmToken = NmToken.unsafe("EAN")
+    val EAN_13: NmToken = NmToken.unsafe("EAN_13")
+    val EAN_8: NmToken = NmToken.unsafe("EAN_8")
+    val EAN_Coupon: NmToken = NmToken.unsafe("EAN_Coupon")
+    val EAN_128: NmToken = NmToken.unsafe("EAN_128")
+    val HIBC_Code39: NmToken = NmToken.unsafe("HIBC_Code39")
+    val HIBC_Code128: NmToken = NmToken.unsafe("HIBC_Code128")
+    val HIBC_Code39_2: NmToken = NmToken.unsafe("HIBC_Code39_2")
+    val HIBC_CODABLOCK_F: NmToken = NmToken.unsafe("HIBC_CODABLOCK_F")
+    val HIBC_QR: NmToken = NmToken.unsafe("HIBC_QR")
+    val HIBC_DATAMATRIX: NmToken = NmToken.unsafe("HIBC_DATAMATRIX")
+    val Interleave25: NmToken = NmToken.unsafe("Interleave25")
+    val ITF_14: NmToken = NmToken.unsafe("ITF_14")
+    val ITF_6: NmToken = NmToken.unsafe("ITF_6")
+    val ITF_16: NmToken = NmToken.unsafe("ITF_16")
+    val KURANDT: NmToken = NmToken.unsafe("KURANDT")
+    val LAETUS_PHARMA: NmToken = NmToken.unsafe("LAETUS_PHARMA")
+    val MSI: NmToken = NmToken.unsafe("MSI")
+    val NDC_HRI: NmToken = NmToken.unsafe("NDC_HRI")
+    val PARAF: NmToken = NmToken.unsafe("PARAF")
+    val Plessey: NmToken = NmToken.unsafe("Plessey")
+    val PDF417: NmToken = NmToken.unsafe("PDF417")
+    val PZN: NmToken = NmToken.unsafe("PZN")
+    val QR: NmToken = NmToken.unsafe("QR")
+    val RSS_14: NmToken = NmToken.unsafe("RSS_14")
+    val RSS_14_Stacked: NmToken = NmToken.unsafe("RSS_14_Stacked")
+    val RSS_14_Stacked_Omnidir: NmToken = NmToken.unsafe("RSS_14_Stacked_Omnidir")
+    val RSS_14_Truncated: NmToken = NmToken.unsafe("RSS_14_Truncated")
+    val RSS_Limited: NmToken = NmToken.unsafe("RSS_Limited")
+    val RSS_Expanded: NmToken = NmToken.unsafe("RSS_Expanded")
+    val RSS_Expanded_Stacked: NmToken = NmToken.unsafe("RSS_Expanded_Stacked")
+    val UPC_A: NmToken = NmToken.unsafe("UPC_A")
+    val UPC_Coupon: NmToken = NmToken.unsafe("UPC_Coupon")
+    val UPC_E: NmToken = NmToken.unsafe("UPC_E")
+    val UPC_SCS: NmToken = NmToken.unsafe("UPC_SCS")
+
+    val recommended: List[NmToken] = List(
+      BOBST, BrailleASCII, BrailleUnicode, CODABAR, CODABAR_Tradional, CODABLOCK, CODABLOCK_F,
+      Code128, Code25, Code39, Code39_Extended, DATAMATRIX, EAN, EAN_13, EAN_8, EAN_Coupon,
+      EAN_128, HIBC_Code39, HIBC_Code128, HIBC_Code39_2, HIBC_CODABLOCK_F, HIBC_QR,
+      HIBC_DATAMATRIX, Interleave25, ITF_14, ITF_6, ITF_16, KURANDT, LAETUS_PHARMA, MSI,
+      NDC_HRI, PARAF, Plessey, PDF417, PZN, QR, RSS_14, RSS_14_Stacked,
+      RSS_14_Stacked_Omnidir, RSS_14_Truncated, RSS_Limited, RSS_Expanded,
+      RSS_Expanded_Stacked, UPC_A, UPC_Coupon, UPC_E, UPC_SCS
+    )
+  end EncodingDetails
+
+  /** Purpose details of `IdentificationField/@PurposeDetails` (§8.26 /
+   *  Table 8.31): `NMTOKEN` with "Values include" — an open catalog
+   *  (ADR-0007) whose single normative entry is `ProductIdentification`.
+   */
+  object PurposeDetails:
+    /** End product identification, e.g. scanning in the supermarket. */
+    val ProductIdentification: NmToken = NmToken.unsafe("ProductIdentification")
+    val recommended: List[NmToken] = List(ProductIdentification)
+  end PurposeDetails
+
+  /** Barcode versions of `BarcodeDetails/@BarcodeVersion` (§8.26.1 /
+   *  Tables 8.36 and 8.37): `NMTOKEN` with "Values include those from" — an
+   *  open catalog (ADR-0007). Two disjoint families, each valid only for
+   *  matching values of `IdentificationField/@EncodingDetails`:
+   *  `DM_<rows>_by_<columns>` for `DATAMATRIX`/`HIBC_DATAMATRIX` (Table 8.36)
+   *  and `QR_<version>` for `QR` (Table 8.37).
+   */
+  object BarcodeVersion:
+    /** A DATAMATRIX version token, e.g. `dataMatrix(12, 26)` = `DM_12_by_26`. */
+    def dataMatrix(rows: Int, columns: Int): NmToken = NmToken.unsafe(s"DM_${rows}_by_$columns")
+
+    /** A QR version token, e.g. `qr(7)` = `QR_7`. */
+    def qr(version: Int): NmToken = NmToken.unsafe(s"QR_$version")
+
+    /** The 29 DATAMATRIX sizes of Table 8.36, in table order. */
+    val dataMatrixVersions: List[NmToken] = List(
+      (8, 18), (10, 10), (12, 12), (12, 26), (12, 36), (14, 14),
+      (8, 32), (16, 48), (18, 18), (20, 20), (22, 22), (24, 24),
+      (16, 16), (26, 26), (40, 40), (44, 44), (48, 48), (52, 52), (64, 64),
+      (16, 36), (32, 32), (72, 72), (80, 80), (88, 88), (96, 96),
+      (104, 104), (120, 120), (132, 132), (144, 144)
+    ).map((rows, columns) => dataMatrix(rows, columns))
+
+    /** The 40 QR versions of Table 8.37: `QR_1` … `QR_40`. */
+    val qrVersions: List[NmToken] = (1 to 40).toList.map(qr)
+
+    val recommended: List[NmToken] = dataMatrixVersions ++ qrVersions
+  end BarcodeVersion
+
+  /** Error correction levels of `BarcodeDetails/@ErrorCorrectionLevel`
+   *  (§8.26.1 / Table 8.33): `NMTOKEN` with "Values include" — an open
+   *  catalog (ADR-0007). Each value is usable only for certain values of
+   *  `IdentificationField/@EncodingDetails`: `PDF417_EC_0` … `PDF417_EC_8`
+   *  for `PDF417`, `QR_EC_L`/`QR_EC_M`/`QR_EC_Q`/`QR_EC_H` for `QR`.
+   */
+  object ErrorCorrectionLevel:
+    /** A PDF417 error correction level, e.g. `pdf417(3)` = `PDF417_EC_3`. */
+    def pdf417(level: Int): NmToken = NmToken.unsafe(s"PDF417_EC_$level")
+
+    val QR_EC_L: NmToken = NmToken.unsafe("QR_EC_L")
+    val QR_EC_M: NmToken = NmToken.unsafe("QR_EC_M")
+    val QR_EC_Q: NmToken = NmToken.unsafe("QR_EC_Q")
+    val QR_EC_H: NmToken = NmToken.unsafe("QR_EC_H")
+
+    /** `PDF417_EC_0` … `PDF417_EC_8` (Table 8.33). */
+    val pdf417Levels: List[NmToken] = (0 to 8).toList.map(pdf417)
+
+    /** The four QR levels of Table 8.33, in table order. */
+    val qrLevels: List[NmToken] = List(QR_EC_L, QR_EC_M, QR_EC_Q, QR_EC_H)
+
+    val recommended: List[NmToken] = pdf417Levels ++ qrLevels
+  end ErrorCorrectionLevel
+
+  /** Usages of `ExtraValues/@Usage` (§8.26.2 / Table 8.34): `NMTOKEN` with
+   *  "Values include" — an open catalog (ADR-0007).
+   */
+  object ExtraValuesUsage:
+    /** Applicable for barcodes like RSS-14 that have an optional composite
+     *  code part.
+     */
+    val CompositeCode: NmToken = NmToken.unsafe("CompositeCode")
+    /** The additional message for the EAN128 part of a UPC or EAN coupon. */
+    val Coupon: NmToken = NmToken.unsafe("Coupon")
+    /** UPC supplemental 2/5 digit symbology. */
+    val Supplemental: NmToken = NmToken.unsafe("Supplemental")
+
+    val recommended: List[NmToken] = List(CompositeCode, Coupon, Supplemental)
+  end ExtraValuesUsage
 end Catalog

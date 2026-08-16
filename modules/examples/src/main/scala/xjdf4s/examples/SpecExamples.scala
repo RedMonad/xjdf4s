@@ -3,7 +3,18 @@ package xjdf4s.examples
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.{Certification, Crease, FileSpec, GangSource, Glue => GlueElement, HolePattern, MISDetails}
+import xjdf4s.model.elements.{
+  BarcodeDetails,
+  Certification,
+  Crease,
+  ExtraValues,
+  FileSpec,
+  GangSource,
+  Glue => GlueElement,
+  HolePattern,
+  IdentificationField,
+  MISDetails
+}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show
@@ -178,6 +189,65 @@ object SpecExamples:
     ) { nodeInfoSet =>
       chainV(dsl.TicketDraft.of("gangJob", ProcessType.Cutting)) { draft =>
         draft.withResources(nodeInfoSet).build
+      }
+    }
+
+  /** Fixture (§8.26 / Table 8.31, after Example 8.4): a Component carrying two
+   *  `IdentificationField` marks — the EAN_13 product barcode of Example 8.4
+   *  and a QR code whose matrix geometry lives in `BarcodeDetails`
+   *  (Table 8.33) and whose supplemental digits live in `ExtraValues`
+   *  (Table 8.34).
+   *
+   *  Example 8.4 itself places the field in `Content/BarcodeProductionParams`,
+   *  which is not modelled; `Component/IdentificationField*` (Table 6.37) is
+   *  the container wired in M1.6-6, so the fixture exercises the same element
+   *  through the container the library actually has.
+   *
+   *  Each field specifies exactly one value source, as the SHALL of Table 8.31
+   *  requires: `@Value` for the first, the pair `@ValueFormat` +
+   *  `@ValueTemplate` for the second.
+   */
+  val barcodeJob: ValidatedNec[Issue, XJDF] =
+    chainV(
+      dsl.component(
+        Component(
+          productType = Some(Catalog.ProductType.Book),
+          identificationFields = Chain(
+            IdentificationField(
+              encoding = Some(FieldEncoding.Barcode),
+              encodingDetails = Some(Catalog.EncodingDetails.EAN_13),
+              purpose = Some(FieldPurpose.Label),
+              purposeDetails = Some(Catalog.PurposeDetails.ProductIdentification),
+              position = Some(Face.Front),
+              boundingBox = Some(Rectangle.unsafe(0.0, 0.0, 113.0, 73.5)),
+              value = Some(XjdfString.unsafe("0123456789128"))
+            ),
+            IdentificationField(
+              encoding = Some(FieldEncoding.Barcode),
+              encodingDetails = Some(Catalog.EncodingDetails.QR),
+              purpose = Some(FieldPurpose.Verification),
+              valueFormat = Some(XjdfString.unsafe("Job_%s")),
+              valueTemplate = Some(NmTokens.of(NmToken.unsafe("job"))),
+              barcodeDetails = Some(
+                BarcodeDetails(
+                  barcodeVersion = Some(Catalog.BarcodeVersion.qr(7)),
+                  errorCorrectionLevel = Some(Catalog.ErrorCorrectionLevel.QR_EC_M),
+                  xCells = Some(45L),
+                  yCells = Some(45L)
+                )
+              ),
+              extraValues = Some(
+                ExtraValues(Catalog.ExtraValuesUsage.Supplemental, XjdfString.unsafe("12345"))
+              )
+            )
+          )
+        )
+      )
+    ) { component =>
+      chainV(dsl.resourceSet("Component", usage = Some(Usage.Output))(component)) { components =>
+        chainV(dsl.TicketDraft.of("barcodeJob", ProcessType.Cutting)) { draft =>
+          draft.withResources(components).build
+        }
       }
     }
 
@@ -642,6 +712,7 @@ object SpecExamples:
       "Gang source (Table 8.27):" -> gangSource.map(Show[GangSource].show),
       "MIS details (Table 8.48):" -> misDetails.map(Show[MISDetails].show),
       "Gang job (Table 6.119):" -> gangJob.map(Show[XJDF].show),
+      "Barcode job (Table 8.31):" -> barcodeJob.map(Show[XJDF].show),
       "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
       "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),

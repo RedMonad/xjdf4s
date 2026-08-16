@@ -146,8 +146,8 @@ PR-3  общий conflict-predicate §3.4 + Patch.mergeResourceSets
 │ Категория                                    │ Кол-во │ Идентификаторы  │
 ├──────────────────────────────────────────────┼────────┼─────────────────┤
 │ Функциональные дефекты ядра (P0)             │   2    │ N-01 … N-02     │
-│ Расхождения со спецификацией XJDF 2.2 (P1)   │  19    │ N-03 … N-15,    │
-│                                              │        │ N-47 … N-52     │
+│ Расхождения со спецификацией XJDF 2.2 (P1)   │  20    │ N-03 … N-15,    │
+│                                              │        │ N-47 … N-53     │
 │ Неполнота корневого валидатора (P1)          │   7    │ N-16 … N-19,    │
 │                                              │        │ N-36 … N-38     │
 │ Архитектурные дефекты (P2)                   │  10    │ N-20 … N-25,    │
@@ -158,7 +158,7 @@ PR-3  общий conflict-predicate §3.4 + Patch.mergeResourceSets
 │                                              │        │ N-42            │
 │ Инженерная инфраструктура (P4)               │   4    │ N-43 … N-46     │
 ├──────────────────────────────────────────────┼────────┼─────────────────┤
-│ Итого подтверждено                           │  51    │                 │
+│ Итого подтверждено                           │  52    │                 │
 │ Отклонено / переклассифицировано             │   6    │ X-01 … X-06     │
 └──────────────────────────────────────────────┴────────┴─────────────────┘
 ```
@@ -517,6 +517,8 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 | N-50 | Glue-энумерации смешаны: `prim.GlueType` (3 значения) используется и для полей, которые по Table 4.5/4.7/4.9 и XSD являются **элементом** `Glue` (`BindIn.glue`, `StickOn.glue`, `AdhesiveNote.glue`); набор `Glue/@GlueType` из 5 значений не смоделирован | Внутренний конфликт спецификации: Table A.24 (§A.2.23) — 3 значения (`ColdGlue`, `Hotmelt`, `PUR`); Table 8.29 `@GlueType` — 5 значений («Allowed values are: … `Permanent` … `Removable`»); `schema.xsd`: `EnumGlue` (3) для «from: Glue»-атрибутов vs inline-ограничение `Glue/@GlueType` (5); Example 8.15: `GlueType="Removable"`. По §1.2 приоритет — prose Table 8.29 и пример → **два разных закрытых набора** | `prim/Enums.scala:180-185` (`GlueType`, 3 значения); `intents/Binding.scala:111,117,137,213`; `intents/FoldingVariable.scala:119,143` | ADR-0011, M1.6-3 (PR-16) |
 | N-51 | `FileSpec` (Table 8.22, `model/elements/CommonElements.scala`) неполон: (1) SHALL-правило взаимного исключения локаций — «If neither `@URL` nor `@UID` is present, both `@FileFormat` and `@FileTemplate` SHALL be present, unless the resource is a pipe. If either `@URL` or `@UID` is specified, then `@FileFormat` and `@FileTemplate` SHALL NOT be specified» — не проверяется: case class допускает одновременное задание `url` и `fileFormat`/`fileTemplate`, а `location` молча выбирает по приоритету; (2) `NetworkHeader*` *(New in XJDF 2.1)* не моделируется; (3) строки в `SPEC-COVERAGE.md` нет (тип вне `resources/*`/`intents/*`, чекер не требует) | Table 8.22 (`reference/xjdf/8 – Subelements.md`, строки 519+); `schema.xsd` `FileSpec` | `model/elements/CommonElements.scala` (`FileSpec`, `FileLocation`) | M1.6/M3 follow-up: `FileSpec.law` (`DomainRule`) + подключение к обходам всех FileSpec-несущих контейнеров (первый подключён в M1.6-11 — `ContentCheckIntent/ProofItem/FileSpec`); `NetworkHeader` — по решению о его моделировании. Зарегистрировано в PR-21 (M1.6-11) при сверке Table 4.24 |
 | N-52 | `NodeInfo/@DueLevel` типизирован как `Option[Long]` вместо закрытой энумерации | Table 6.119: `DueLevel?` \| **enumeration** \| «Description of the severity of a missed deadline (JobCancelled, Penalty, Trivial)»; `schema.xsd` (`<xs:complexType name="NodeInfo">`) объявляет inline-restriction по `xs:NMTOKEN` ровно с этими тремя значениями. Prose и XSD **согласны** — расхождение только в модели, ADR не требуется | `resources/NodeInfo.scala:14` `dueLevel: Option[Long]` — делает представимым `DueLevel = 7`. Класс дефекта тот же, что у N-06/N-07 (потеря enum при переносе таблицы); call sites отсутствуют | M1.6-8 (PR-25) — `[x]` устранено, верифицировано владельцем |
+
+| N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?`: модель допускает несколько `FileSpec` в одном `RunList`, тогда как Table 6.148 объявляет `FileSpec?`, а `schema.xsd` (`<xs:complexType name="RunList">`) — `<xs:element maxOccurs="1" minOccurs="0" ref="FileSpec"/>`. Prose и XSD согласны — расхождение только в модели, ADR не требуется | Table 6.148 (`reference/xjdf/6 – Resources.md`, строка 2056: `FileSpec?` \| element \| «URL plus metadata about the physical characteristics of a file»); `schema.xsd` `RunList` | `resources/RunList.scala:30` `fileSpecs: Chain[FileSpec] = Chain.empty` | Обнаружено при предстартовой сверке Table 8.31 (PR-26, M1.6-6). Класс дефекта тот же, что N-08/N-09 (кардинальность). В отличие от N-52, исправление — **breaking change** публичного API в чужой таблице/файле, поэтому по решению владельца от 2026-08-16 находка регистрируется здесь, а исправляется отдельным микро-срезом вместе с migration note и полным списком call sites (естественный кандидат — объединить с M1.6-6b, который и так трогает `RunList`) | зарегистрировано, срез не назначен |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -1794,13 +1796,21 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 | M1.6-3 | Glue `[x]` PR-16 | §8.24 | Table 8.29 |
 | M1.6-4 | GangSource `[x]` PR-23 | §8.22 | Table 8.27 |
 | M1.6-5 | HolePattern `[x]` PR-17 | §8.25 | Table 8.30 |
-| M1.6-6 | IdentificationField | §8.26 | Table 8.31 |
+| M1.6-6 | IdentificationField `[~]` PR-26 (ядро + `BarcodeDetails`/`ExtraValues`; `MetadataMap` → M1.6-6b) | §8.26 | Table 8.31 |
 | M1.6-7 | MISDetails `[x]` PR-24 | §8.30 | Table 8.48 |
 
 **Дополнительно:**
 
 - M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[x]` выполнено (верифицировано владельцем; PR-25);
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — реализовать модель и правило приоритета явных Traits;
+- M1.6-6b: `MetadataMap` (§8.29 / Table 8.46) + `Expr` (Table 8.47) + примитив `XPath`
+  (тип данных спецификации, не путать с `model.XPath` локатора валидатора) —
+  подключение к обоим контейнерам: `IdentificationField` (Table 8.31,
+  `MetadataMap*`) и `RunList` (Table 6.148, `MetadataMap*`, сейчас не
+  смоделирован); два контекстно-зависимых SHALL: «`Expr` SHALL NOT be
+  specified in an `IdentificationField/MetadataMap`» и «`MetadataMap/@Name`
+  SHALL be included in `@ValueTemplate`»; выделено из M1.6-6 решением
+  владельца 2026-08-16 по §9.1 («один семантический выбор на PR»);
 - M1.6-15: полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1).
 
 #### M1.6-1. `Certification` (Table 8.8, §8.7) — `[x]` выполнено (верифицировано владельцем; PR-22)
@@ -2231,6 +2241,138 @@ standalone-фикстуры `Gang source (Table 8.27)` и `MIS details (Table 8.
 сохранили прежний вывод; `check-spec-coverage.sh` — `RESULT: OK`
 (статический прогон агента). Статус `[x]` — закрыт полностью.
 
+#### M1.6-6. `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (Table 8.33) + `ExtraValues` (Table 8.34) — `[~]` PR-26
+
+Последний невыполненный общий элемент главы 8: его закрытие завершает секцию
+«общие элементы главы 8» в M1.6. Выбор и **глубина моделирования** подтверждены
+владельцем 2026-08-16: ядро `IdentificationField` вместе с двумя малыми
+подэлементами в одном срезе, `MetadataMap` — отдельным срезом M1.6-6b.
+
+- **Сверка Table 8.31 и XSD (§1.2).** Таблица объявляет ровно 10 атрибутов, все
+  опциональные, и три подэлемента. `schema.xsd`
+  (`<xs:element name="IdentificationField">`) подтверждает: 9 именованных
+  атрибутов `use="optional"` (`BoundingBox` `rectangle`, `EncodingDetails`
+  `xs:NMTOKEN`, `Format` `regExp`, `Orientation` `matrix`, `Position` `Face`,
+  `PurposeDetails` `xs:NMTOKEN`, `Value` `xs:string`, `ValueFormat`
+  `xs:string`, `ValueTemplate` `xs:NMTOKENS`) плюс два inline-enum
+  (`@Encoding`, `@Purpose`); ID/IDREF-атрибутов нет → `references` собирает
+  только цепочку потомков (факт сверен, не предположен). Version notes у
+  таблицы отсутствуют.
+- **Кардинальности подэлементов** (по `minOccurs`/`maxOccurs`, не предположены):
+  `BarcodeDetails?` (`maxOccurs="1"`) → `Option[BarcodeDetails]`,
+  `ExtraValues?` (`maxOccurs="1"` — **один** элемент, не список, вопреки
+  множественному имени) → `Option[ExtraValues]`, `MetadataMap*`
+  (`maxOccurs="unbounded"`) → не моделируется в этом срезе. Все три
+  зафиксированы тестом сверки XSD, включая отложенный.
+- **SHALL (единственный локальный).** «Exactly one of `@Format`, `@Value` or
+  the pair `@ValueFormat` and `@ValueTemplate` SHALL be specified» — повторён
+  в четырёх строках таблицы, реализован одним `IdentificationField.law` с
+  одним кодом `IssueCode.IdentificationFieldValueSource`
+  (`IDENTIFICATION-FIELD-VALUE-SOURCE`). XSD выразить исключение не может (все
+  четыре атрибута `use="optional"`) — по §1.2 приоритет prose, XSD остаётся
+  тест-оракулом; **ADR не требуется**: формулировка явная, интерпретировать
+  нечего (в отличие от ADR-0012, где решался вопрос о пустом элементе).
+  Три способа нарушения — по негативному тесту на каждый: ноль источников;
+  более одного; половина пары (`@ValueFormat` без `@ValueTemplate` или
+  наоборот, в том числе рядом с законным `@Value`).
+- **Закрытые enum.** `@Encoding` → `prim.FieldEncoding` (`ASCII`, `Barcode`,
+  `Braille`, `RFID`), `@Purpose` → `prim.FieldPurpose` (`Label`, `Separation`,
+  `Verification`). Обе таблицы inline в главе 8, не в Appendix A, поэтому
+  `appendixAEnums` не расширяется — по прецеденту `CostType`/`WorkType`
+  (M1.6-7) и `DueLevel` (M1.6-8): golden-токены в `EnumLaws`, машинная сверка
+  с inline-энумерациями XSD — в `IdentificationFieldLaws`. Scala-имена с
+  префиксом `Field`: `Encoding` и `Purpose` — слишком общие идентификаторы
+  для доменного пакета (запись в реестре покрытия).
+- **Открытые каталоги (ADR-0007), пять новых.** `Catalog.EncodingDetails`
+  (Table 8.32, 47 значений; таблица явно объявлена образцом — «Values that are
+  not present in this list MAY be valid in an XJDF workflow»),
+  `Catalog.PurposeDetails` (`ProductIdentification`),
+  `Catalog.BarcodeVersion` (Tables 8.36/8.37: 29 `DM_<rows>_by_<columns>` +
+  40 `QR_<n>`, плюс параметрические конструкторы `dataMatrix`/`qr` —
+  прецедент `pefcPercent` из M1.6-1), `Catalog.ErrorCorrectionLevel`
+  (9 `PDF417_EC_n` + 4 `QR_EC_*`), `Catalog.ExtraValuesUsage`
+  (`CompositeCode`, `Coupon`, `Supplemental`). Все значения сверены с
+  нормативными таблицами машинно (скрипт сверки при подготовке среза), включая
+  нормативную опечатку `CODABAR_Tradional`, сохранённую дословно и закреплённую
+  отдельным тестом — «исправление» опечатки изобрело бы токен, которого нет на
+  проводе (класс дефекта N-08).
+- **`ExtraValues`: оба атрибута `use="required"`** → обязательные поля
+  `usage: NmToken`, `value: XjdfString`. Неполный элемент непредставим типом,
+  поэтому runtime-проверки не заводятся — тот же принцип, что «`+` обеспечен
+  `NonEmptyChain`, проверка at-least-one не нужна».
+- **`BarcodeDetails`: локальных SHALL нет** (4 атрибута, все опциональны,
+  подэлементов нет) → `DomainRule` не заводится, негативных тестов на SHALL по
+  этой таблице нет — намеренно, по прецеденту Table 6.119. `@XCells`/`@YCells`
+  (`xs:int`) остаются `Option[Long]` без выдуманной положительности
+  (прецедент `GangSource/@Copies`).
+- **Wiring контейнера.** Table 8.31 перечисляет 12 контейнеров; из них в
+  модели существуют `Component` (Table 6.37), `Device` (Table 6.57) и `Media`
+  (Table 6.114). В этом срезе подключён **один** — `Component`
+  (`IdentificationField*`, XSD `minOccurs="0" maxOccurs="unbounded"`):
+  `Component.identificationFields: Chain[IdentificationField]` +
+  `IdentificationField.containerLaw` в `TicketValidator.checkResourceLocalLaws`
+  с XPath-индексацией (общая обёртка по образцу `Certification.containerLaw`,
+  чтобы правило не расходилось между контейнерами). `Device` и `Media`
+  подключаются вместе со своими обходами; `Content/BarcodeProductionParams` и
+  `EmbossingParams/Emboss` (единственные два контейнера с `maxOccurs="1"`),
+  `ExposedMedia`, `Ink`, `Layout/StripMark`, `MiscConsumable`, `Pallet`,
+  `Tool`, `Module` — M3/M4. Кардинальности всех трёх упомянутых случаев
+  закреплены тестом сверки XSD.
+- **ID/IDREF.** Ни Table 8.31, ни 8.33, ни 8.34 не объявляют `@ID` или IDREF
+  (сверено по XSD) → `references = Chain.empty` у обоих потомков, а
+  `IdentificationField.references` и `Component.references` обходят цепочку,
+  чтобы факт проверялся, а не предполагался (приём `Media.references`,
+  M1.6-1). Междокументных идентификаторов у таблицы нет.
+- **Отложено осознанно (реестр отклонений).** (1) `MetadataMap*` — второй
+  семантический выбор, запрещённый §9.1: элемент общий с `RunList`
+  (Table 6.148), тянет `Expr*` (Table 8.47), тип данных `XPath` и два
+  контекстно-зависимых SHALL → срез M1.6-6b. Заглушек в модели не заводится.
+  (2) Соответствие `@BarcodeVersion`/`@ErrorCorrectionLevel` значению
+  `@EncodingDetails` (Tables 8.33/8.36/8.37) — формулировки без SHALL, а
+  `@EncodingDetails` открыт, поэтому полного предиката не существует;
+  ужесточение — только с явной политикой severity (ADR-0006).
+  (3) Table 8.35 описывает атрибуты `BarcodeReproParams` — ресурса вне модели.
+- **N-53 (зарегистрирована, не исправлена).** При сверке контейнеров
+  обнаружено, что `RunList.fileSpecs` — `Chain[FileSpec]`, тогда как
+  Table 6.148 и XSD дают `FileSpec?`. Prose и XSD согласны ⇒ ADR не нужен, но,
+  в отличие от N-52, исправление ломает публичный API в чужой таблице и файле,
+  поэтому по решению владельца находка регистрируется (§5.2, сводка §2.4:
+  51 → 52, N-47…N-53) и чинится отдельным срезом.
+- **Тесты:** `laws/IdentificationFieldLaws.scala` (новый, 35 тестов:
+  маппинг атрибутов и опциональность, `@ValueTemplate` как NMTOKENS,
+  `@Position` = `Face`, три позитивных пути SHALL, пять негативных,
+  индексация `containerLaw`, оба потомка, пять каталогов, опечатка
+  `CODABAR_Tradional`, отсутствие IDREF, wiring `Component` через корневой
+  валидатор, равенство, четыре сверки с `schema.xsd`); `EnumLaws` +2 golden
+  и по записи в round-trip/duplicate-реестрах; `SpecExamplesSuite` +2
+  (конформанс и golden `Show`).
+- **Фикстура:** `SpecExamples.barcodeJob` — `Component` с двумя полями: EAN_13
+  из Example 8.4 (`@Value`) и QR-код с `BarcodeDetails` + `ExtraValues`
+  (пара `@ValueFormat`/`@ValueTemplate`). Example 8.4 помещает поле в
+  `Content/BarcodeProductionParams`, которого в модели нет, поэтому фикстура
+  использует смоделированный контейнер `Component`.
+- **Coverage:** три строки в разделе Resources (`IdentificationField`,
+  `BarcodeDetails`, `ExtraValues`), семь — в Enumerations, три — в реестре
+  отклонений; строка `Component` дополнена; `check-spec-coverage.sh` —
+  `RESULT: OK` (Resources 24, отклонений 19, Spec tables 121).
+- **Совместимость:** срез аддитивен. Единственное изменение существующего типа
+  — новое поле `Component.identificationFields` со значением по умолчанию
+  `Chain.empty`; позиционных конструкторов `Component` в кодовой базе нет
+  (проверено), breaking change отсутствует.
+
+**Файлы:** `prim/Enums.scala`, `prim/Common.scala`,
+`model/elements/CommonElements.scala`, `model/ValidationTypes.scala`,
+`model/TicketValidator.scala`, `resources/Component.scala`,
+`laws/IdentificationFieldLaws.scala` (новый), `laws/EnumLaws.scala`,
+`examples/SpecExamples.scala`, `laws/SpecExamplesSuite.scala`,
+`docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
+без предупреждений; 396 тестов зелёных (357 + 35 `IdentificationFieldLaws` +
+2 `EnumLaws` + 2 `SpecExamplesSuite`); `examples/run` exit 0 со строкой
+`Barcode job (Table 8.31): XJDF(job=barcodeJob, types=Cutting)`;
+`scripts/check-spec-coverage.sh` — `RESULT: OK`.
+
 #### M1.6-5. `HolePattern` (Table 8.30, Appendix F) — `[x]` выполнено (верифицировано владельцем; PR-17)
 
 Полный вертикальный срез по шаблону §8:
@@ -2618,7 +2760,8 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 23 | `GangSource` (Table 8.27, §8.22) + точная XSD-сверка + классификация междокументных NMTOKEN-ссылок | M1.6-4 | 22 | `[x]` верифицировано владельцем: 330 тестов, `examples/run` exit 0 |
 | 24 | `MISDetails` (Table 8.48, §8.30) + `CostType`/`WorkType` + открытый `Catalog.WorkTypeDetails` + prose-диапазон `@Complexity` через `UnitInterval` | M1.6-7 | 23 | `[x]` верифицировано владельцем: 343 теста, `examples/run` exit 0 |
 | 25 | `NodeInfo` += `GangSource*` + `MISDetails?` (Table 6.119, §6.59) + закрытие N-52 (`@DueLevel` → закрытый `DueLevel`) | M1.6-8 | 23, 24 | `[x]` верифицировано владельцем: 357 тестов, `examples/run` exit 0 |
-| 26+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6, M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`) | M1.6 | 25 | шаблон среза выполнен |
+| 26 | `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (8.33) + `ExtraValues` (8.34) + `FieldEncoding`/`FieldPurpose` + 5 открытых каталогов + SHALL `IDENTIFICATION-FIELD-VALUE-SOURCE` + wiring в `Component` (Table 6.37) + регистрация N-53 | M1.6-6 | 25 | `[~]` ожидает прогона владельца |
+| 27+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6b, M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`, N-53 `RunList/FileSpec?`) | M1.6 | 26 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -2991,6 +3134,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-50 | Glue-энумерации смешаны; `Glue/@GlueType` (5 значений) не смоделирован | ✅ ADR-0011: элемент `Glue` + два закрытых набора (Table A.24 — 3, Table 8.29 — 5); реализация — PR-16 (M1.6-3), регистрация — PR-15 (M1.6-2) | M1.6-3 | P1 |
 | N-51 | `FileSpec` неполон: нет SHALL-правила взаимного исключения `@URL`/`@UID` vs `@FileFormat`/`@FileTemplate`; `NetworkHeader*` (New in 2.1) не моделируется; нет строки в `SPEC-COVERAGE.md` | зарегистрировано при сверке Table 4.24 (PR-21, M1.6-11); `FileSpec.law` + подключение к FileSpec-несущим обходам — отдельный срез | M1.6/M3 follow-up | P1 |
 | N-52 | `NodeInfo/@DueLevel` типизирован `Option[Long]` вместо закрытой энумерации Table 6.119 (`JobCancelled`, `Penalty`, `Trivial`) | обнаружено при предстартовой сверке Table 6.119 (PR-25, M1.6-8); prose и XSD согласны, ADR не требуется — новый закрытый `prim.DueLevel`, call sites отсутствуют | M1.6-8 (PR-25) | P1 |
+| N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?` (Table 6.148 и XSD `maxOccurs="1"`) | обнаружено при предстартовой сверке Table 8.31 (PR-26, M1.6-6); prose и XSD согласны, ADR не требуется; исправление — breaking change, вынесено в отдельный срез (решение владельца 2026-08-16) | не назначен (кандидат — M1.6-6b) | P1 |
 | N-10 | `PartAmount.part` единственный | ✅ `Chain[Part]` | M1.2-3 | P1 |
 | N-11 | `Resource.specific` обязателен | ✅ `Option` | M1.2-4 | P1 |
 | N-12 | `DropItem` неполон | ✅ три поля Table 6.55 | M1.2-5 | P1 |
@@ -3473,18 +3617,20 @@ XJDF не выражает, какой уровень выполнен, и ка�
 | `laws/CertificationLaws.scala` (новый) | M1.6-1 (создан в PR-22) |
 | `laws/GangSourceLaws.scala` (новый) | M1.6-4 (создан в PR-23) |
 | `laws/MISDetailsLaws.scala` (новый) | M1.6-7 (создан в PR-24) |
+| `laws/IdentificationFieldLaws.scala` (новый) | M1.6-6 (создан в PR-26) |
+| `resources/Component.scala` | M1.6-6 (`Component.identificationFields`, `references` обходит цепочку, PR-26) |
 | `intents/ColorProduction.scala` | M1.6-1 (`SurfaceColor.certifications`, `ProductionIntent.certifications`, PR-22) |
 | `intents/MediaLayout.scala` | M1.6-1 (`MediaIntent.certifications`, PR-22) |
 | `resources/Media.scala` | M1.6-1 (`Media.certifications`, `references` обходит цепочку, PR-22) |
 | `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4, M1.6-2 (строки Crease/WorkingDirection, раздел Enumerations) |
 | `scripts/check-spec-coverage.sh` (новый) | M1.2-6 (создан в PR-13; в CI подключается вместе с возвратом CI); M1.6-2 (поддержка номеров таблиц Appendix A `Table A.NN`) |
 | `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги |
-| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`); M1.6-2 (`WorkingDirection`); M1.6-7 (`CostType`, `WorkType`, PR-24) |
+| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`); M1.6-2 (`WorkingDirection`); M1.6-7 (`CostType`, `WorkType`, PR-24); M1.6-6 (`FieldEncoding`, `FieldPurpose`, PR-26) |
 | `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountBounds`), M1.4-6 (алгебры) |
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
 | `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only, PR-13) |
 | `prim/Common.scala` | M1.4-8: элементы удалены, оставлены `Url` и открытые каталоги; M1.2-2 (`Catalog.NamedColor`) |
-| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`; M1.6-2: `Crease`; M1.6-1: `Certification`; M1.6-4: `GangSource` (PR-23); M1.6-7: `MISDetails` (PR-24) |
+| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`; M1.6-2: `Crease`; M1.6-1: `Certification`; M1.6-4: `GangSource` (PR-23); M1.6-7: `MISDetails` (PR-24); M1.6-6: `IdentificationField`, `BarcodeDetails`, `ExtraValues` (PR-26) |
 | `model/Partition.scala` | M1.2-1, M1.4-3, M1.0-5 (scaladoc-ссылка) |
 | `model/Amounts.scala` | M1.2-3, M1.3-3 (`PartWaste`) |
 | `model/Product.scala` | M1.1-1, M1.3-3, M1.3-4, M1.4-7 |
@@ -3545,6 +3691,10 @@ XJDF не выражает, какой уровень выполнен, и ка�
 | `GangSource/@JobID` и `@BinderySignatureID` не разрешаются корневым валидатором | Table 8.27: междокументные NMTOKEN-ссылки на source XJDF и его `BinderySignature`, не IDREF текущего документа; без внешнего реестра jobs проверяемого предиката нет | `references = Chain.empty`, scaladoc + тест точных XSD-типов + строка в `SPEC-COVERAGE`; разрешение во внешнем интеграционном слое M4 (ADR-0006, M1.6-4) |
 | `NodeInfo/@PersonalID` не разрешается корневым валидатором | Table 6.119 типизирует атрибут как NMTOKEN и определяет его как `Resource/@ExternalID` контакта; `@ExternalID` — не `@ID`, поэтому ссылка вне документного скоупа §2.2.3 | `NodeInfo.references` не собирает `@PersonalID` (но обходит обоих потомков), scaladoc + тест отсутствия IDREF + строка в `SPEC-COVERAGE`; разрешение вместе с обходом Contact в M3/M4 (ADR-0006, M1.6-8) |
 | `NodeInfo/@JobPriority` остаётся `Option[Long]`, диапазон 0..100 не обеспечивается типом | Table 6.119 описывает шкалу («100 is the highest and 0 is the lowest»), но не задаёт нормативный диапазон формулировкой «in a range from … to …», как Table 8.48 для `@Complexity`; XSD — голый `xs:int` | решение владельца (2026-08-16): прецедент `UnitInterval` не переносится; проверка wire-диапазона — граница кодека M2; зафиксировано строкой реестра покрытия (M1.6-8) |
+| `MetadataMap*` (Table 8.46) не моделируется вместе с `IdentificationField` | элемент общий с `RunList` (Table 6.148) и тянет `Expr*` (Table 8.47), тип данных `XPath` и два контекстно-зависимых SHALL — второй семантический выбор, запрещённый §9.1 | решение владельца (2026-08-16): выделено в срез M1.6-6b; заглушек в модели нет, кардинальность `MetadataMap*` закреплена тестом сверки XSD в `IdentificationFieldLaws` (M1.6-6) |
+| Применимость `BarcodeDetails/@BarcodeVersion` и `@ErrorCorrectionLevel` к значению `IdentificationField/@EncodingDetails` не проверяется | Tables 8.33/8.36/8.37 формулируют её как «Values include those from … for DATAMATRIX barcodes» и «Each value can be used only for certain values of `@EncodingDetails`» — без SHALL; сам `@EncodingDetails` открыт (Table 8.32 — образец), поэтому полного предиката не существует | scaladoc обоих каталогов разделяет семейства значений; состав семейств закреплён тестами; ужесточение — только с явной политикой severity (ADR-0006, M1.6-6) |
+| Table 8.35 (применимость `@Height`/`@Magnification`/`@Ratio` к типам штрихкодов) не моделируется | таблица описывает атрибуты `BarcodeReproParams` — ресурса вне модели; к Table 8.31 относится лишь через `@EncodingDetails` | ссылок на Table 8.35 в коде нет; строка ожидает моделирования `BarcodeReproParams` (M3, M1.6-6) |
+| Нормативная опечатка `CODABAR_Tradional` (Table 8.32) сохранена дословно | значение каталога — токен на проводе; «исправление» на `CODABAR_Traditional` изобрело бы значение, которого нет в спецификации (класс дефекта N-08) | явный тест в `IdentificationFieldLaws`, проверяющий и наличие опечатки, и отсутствие «исправленного» варианта (M1.6-6) |
 | `scalafmtCheckAll` не является частью обязательного гейта сборки | решение владельца (2026-08-16): форматирование выполняется владельцем вручную в IntelliJ IDE | `.scalafmt.conf` остаётся в репозитории для IDE; финальный гейт — `sbt -batch clean compile test examples/run` (без `scalafmtCheckAll`); sbt-scalafmt доступен для ручного вызова |
 
 ---

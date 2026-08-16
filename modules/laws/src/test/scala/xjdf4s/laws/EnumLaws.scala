@@ -159,6 +159,12 @@ class EnumLaws extends FunSuite:
   test("Table 8.48: MISDetails/@WorkType wire tokens"):
     assertEquals(tokensOf(WorkType.all), Set("Alteration", "Original", "Rework"))
 
+  test("Table 8.31: IdentificationField/@Encoding wire tokens"):
+    assertEquals(tokensOf(FieldEncoding.all), Set("ASCII", "Barcode", "Braille", "RFID"))
+
+  test("Table 8.31: IdentificationField/@Purpose wire tokens"):
+    assertEquals(tokensOf(FieldPurpose.all), Set("Label", "Separation", "Verification"))
+
   test("Table A.8 / A.11 / A.46: the '→ None' token family"):
     // Scala reserves `None`, so four enumerations rename the case and map the
     // token explicitly (ROADMAP Appendix C).
@@ -194,7 +200,9 @@ class EnumLaws extends FunSuite:
         ("ProofColorType", ProofColorType.all, ProofColorType.fromToken),
         ("CostType", CostType.all, CostType.fromToken),
         ("WorkType", WorkType.all, WorkType.fromToken),
-        ("DueLevel", DueLevel.all, DueLevel.fromToken)
+        ("DueLevel", DueLevel.all, DueLevel.fromToken),
+        ("FieldEncoding", FieldEncoding.all, FieldEncoding.fromToken),
+        ("FieldPurpose", FieldPurpose.all, FieldPurpose.fromToken)
       )
     companions.foreach: (name, all, fromToken) =>
       all.foreach: v =>
@@ -225,7 +233,9 @@ class EnumLaws extends FunSuite:
         "ProofColorType"      -> ProofColorType.all,
         "CostType"            -> CostType.all,
         "WorkType"            -> WorkType.all,
-        "DueLevel"            -> DueLevel.all
+        "DueLevel"            -> DueLevel.all,
+        "FieldEncoding"       -> FieldEncoding.all,
+        "FieldPurpose"        -> FieldPurpose.all
       )
     closed.foreach: (name, all) =>
       assertEquals(all.map(_.token.value).distinct.size, all.size, s"$name has duplicate tokens")

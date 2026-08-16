@@ -707,3 +707,26 @@ enum WorkType extends XjdfEnum:
 
 object WorkType extends XjdfEnumCompanion[WorkType]:
   val all: List[WorkType] = List(Alteration, Original, Rework)
+
+/** `IdentificationField/@Encoding` (§8.26 / Table 8.31): how the information
+ *  of the mark is encoded. The XSD declares the enumeration inline on
+ *  `IdentificationField`; prose and XSD agree on the four values.
+ */
+enum FieldEncoding extends XjdfEnum:
+  case ASCII, Barcode, Braille, RFID
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object FieldEncoding extends XjdfEnumCompanion[FieldEncoding]:
+  val all: List[FieldEncoding] = List(ASCII, Barcode, Braille, RFID)
+
+/** `IdentificationField/@Purpose` (§8.26 / Table 8.31): what the field is used
+ *  for — marking a product, separating documents or verifying them. The XSD
+ *  declares the enumeration inline on `IdentificationField`; prose and XSD
+ *  agree on the three values.
+ */
+enum FieldPurpose extends XjdfEnum:
+  case Label, Separation, Verification
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object FieldPurpose extends XjdfEnumCompanion[FieldPurpose]:
+  val all: List[FieldPurpose] = List(Label, Separation, Verification)

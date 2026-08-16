@@ -154,6 +154,10 @@ object IssueCode:
    *  Tables 4.21/4.32/4.33/6.114; ADR-0012). */
   val CertificationLevelMissing: IssueCode = unsafe("CERTIFICATION-LEVEL-MISSING")
 
+  /** An `IdentificationField` does not specify exactly one of `@Format`,
+   *  `@Value` or the pair `@ValueFormat` + `@ValueTemplate` (Table 8.31). */
+  val IdentificationFieldValueSource: IssueCode = unsafe("IDENTIFICATION-FIELD-VALUE-SOURCE")
+
 end IssueCode
 
 /** A validation finding: a stable machine-readable code, the severity class,

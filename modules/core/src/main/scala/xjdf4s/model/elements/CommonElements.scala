@@ -518,3 +518,239 @@ object Certification:
   given Eq[Certification] = Eq.fromUniversalEquals
 
 end Certification
+
+/** The `BarcodeDetails` element (§8.26.1 / Table 8.33): additional
+ *  specification for complex barcodes, i.e. the matrix geometry and error
+ *  correction that `IdentificationField/@EncodingDetails` alone cannot
+ *  express.
+ *
+ *  Table 8.33 and `schema.xsd` agree on four attributes, all optional, and no
+ *  child elements: an empty `<BarcodeDetails/>` is valid, so the element
+ *  carries no local SHALL rule. The single container is
+ *  `IdentificationField` with `BarcodeDetails?` (`minOccurs="0"`,
+ *  `maxOccurs="1"`).
+ *
+ *  Data types (Table 8.33):
+ *  - `@BarcodeVersion` → `NmToken` (open catalog `Catalog.BarcodeVersion`,
+ *    "Values include those from" Tables 8.36/8.37, ADR-0007)
+ *  - `@ErrorCorrectionLevel` → `NmToken` (open catalog
+ *    `Catalog.ErrorCorrectionLevel`, "Values include", ADR-0007)
+ *  - `@XCells`, `@YCells` → `Option[Long]` (`xs:int`; the spec states no
+ *    positivity restriction, so none is invented)
+ */
+final case class BarcodeDetails(
+    barcodeVersion: Option[NmToken] = None,
+    errorCorrectionLevel: Option[NmToken] = None,
+    xCells: Option[Long] = None,
+    yCells: Option[Long] = None
+):
+
+  /** Table 8.33 declares no ID or IDREF attributes (verified against
+   *  `schema.xsd`), so the element contributes no references.
+   */
+  def references: Chain[IdRef] = Chain.empty
+
+end BarcodeDetails
+
+object BarcodeDetails:
+
+  given Show[BarcodeDetails] = Show.show { details =>
+    val parts = List(
+      details.barcodeVersion.map(v => s"version=${v.value}"),
+      details.errorCorrectionLevel.map(l => s"ec=${l.value}"),
+      details.xCells.map(x => s"xCells=$x"),
+      details.yCells.map(y => s"yCells=$y")
+    ).flatten
+    s"BarcodeDetails(${parts.mkString(", ")})"
+  }
+
+  given Eq[BarcodeDetails] = Eq.fromUniversalEquals
+
+end BarcodeDetails
+
+/** The `ExtraValues` element (§8.26.2 / Table 8.34): an additional value
+ *  encoded in the containing `IdentificationField`, e.g. the composite code
+ *  part of an RSS-14 barcode or the supplemental digits of a UPC.
+ *
+ *  Both attributes are `use="required"` in `schema.xsd` and unmarked in
+ *  Table 8.34, so they are plain fields rather than `Option`s: the type makes
+ *  an incomplete `ExtraValues` unrepresentable and no runtime rule is needed.
+ *  The single container is `IdentificationField` with `ExtraValues?`
+ *  (`minOccurs="0"`, `maxOccurs="1"` — one element, not a list).
+ *
+ *  Data types (Table 8.34):
+ *  - `@Usage` → `NmToken` (open catalog `Catalog.ExtraValuesUsage`,
+ *    "Values include", ADR-0007)
+ *  - `@Value` → `XjdfString`
+ */
+final case class ExtraValues(
+    usage: NmToken,
+    value: XjdfString
+):
+
+  /** Table 8.34 declares no ID or IDREF attributes (verified against
+   *  `schema.xsd`), so the element contributes no references.
+   */
+  def references: Chain[IdRef] = Chain.empty
+
+end ExtraValues
+
+object ExtraValues:
+
+  given Show[ExtraValues] =
+    Show.show(e => s"ExtraValues(${e.usage.value}=${e.value.value})")
+
+  given Eq[ExtraValues] = Eq.fromUniversalEquals
+
+end ExtraValues
+
+/** The `IdentificationField` element (§8.26 / Table 8.31): a mark on a
+ *  document — a bar code, a plain-text field, Braille or an RFID tag. It is
+ *  read in both directions: a workflow generates the mark from the element,
+ *  or decodes a scanned mark and verifies it against the element.
+ *
+ *  Containers (Table 8.31, "Element referenced by"): `Component`,
+ *  `Content/BarcodeProductionParams`, `Device`, `EmbossingParams/Emboss`,
+ *  `ExposedMedia`, `Ink`, `Layout/StripMark`, `Media`, `MiscConsumable`,
+ *  `Pallet`, `Tool`, `Module`. `schema.xsd` gives `IdentificationField*`
+ *  (`minOccurs="0" maxOccurs="unbounded"`) everywhere except
+ *  `BarcodeProductionParams` and `Emboss`, which declare `maxOccurs="1"`.
+ *  `Component` (Table 6.37) is the container wired in M1.6-6; the remaining
+ *  modelled ones (`Device`, `Media`) follow with their own traversals.
+ *
+ *  All ten attributes are optional in Table 8.31 and in `schema.xsd`, but the
+ *  element is not free of obligations:
+ *
+ *  - SHALL (repeated in the rows of `@Format`, `@Value`, `@ValueFormat` and
+ *    `@ValueTemplate`): "Exactly one of `@Format`, `@Value` or the pair
+ *    `@ValueFormat` and `@ValueTemplate` SHALL be specified." The three
+ *    alternatives are mutually exclusive, the pair is indivisible, and an
+ *    element specifying none of them is a violation as well — see
+ *    `IdentificationField.law`.
+ *
+ *  Data types (Table 8.31):
+ *  - `@BoundingBox` → `Rectangle`
+ *  - `@Encoding` → closed enum `FieldEncoding` (ASCII, Barcode, Braille, RFID)
+ *  - `@EncodingDetails` → `NmToken` (open catalog `Catalog.EncodingDetails`,
+ *    Table 8.32 is explicitly a sample list, ADR-0007)
+ *  - `@Format` → `RegExp`
+ *  - `@Orientation` → `Matrix`
+ *  - `@Position` → `Face` (Table A.20, the `Face` enumeration)
+ *  - `@Purpose` → closed enum `FieldPurpose` (Label, Separation, Verification)
+ *  - `@PurposeDetails` → `NmToken` (open catalog `Catalog.PurposeDetails`,
+ *    "Values include", ADR-0007)
+ *  - `@Value` → `XjdfString`
+ *  - `@ValueFormat` → `XjdfString` (Appendix D String Generation)
+ *  - `@ValueTemplate` → `NmTokens` (NMTOKENS: a non-empty list by type)
+ *
+ *  `MetadataMap*` (Table 8.46) is the third child of Table 8.31 and is not
+ *  modelled yet: it carries `Expr*` (Table 8.47), the `XPath` data type and
+ *  two context-dependent SHALL rules, and it is shared with `RunList`
+ *  (Table 6.148). It is a slice of its own (M1.6-6b).
+ */
+final case class IdentificationField(
+    boundingBox: Option[Rectangle] = None,
+    encoding: Option[FieldEncoding] = None,
+    encodingDetails: Option[NmToken] = None,
+    format: Option[RegExp] = None,
+    orientation: Option[Matrix] = None,
+    position: Option[Face] = None,
+    purpose: Option[FieldPurpose] = None,
+    purposeDetails: Option[NmToken] = None,
+    value: Option[XjdfString] = None,
+    valueFormat: Option[XjdfString] = None,
+    valueTemplate: Option[NmTokens] = None,
+    barcodeDetails: Option[BarcodeDetails] = None,
+    extraValues: Option[ExtraValues] = None
+):
+
+  /** The alternatives of the Table 8.31 SHALL that this element specifies, as
+   *  the specification names them. An element is lawful exactly when this
+   *  list has one entry (see `IdentificationField.law`).
+   *
+   *  `@ValueFormat` and `@ValueTemplate` count as the single alternative
+   *  "the pair", and only when both are present: half a pair specifies no
+   *  complete alternative.
+   */
+  def valueSources: List[String] =
+    List(
+      Option.when(format.isDefined)("@Format"),
+      Option.when(value.isDefined)("@Value"),
+      Option.when(valueFormat.isDefined && valueTemplate.isDefined)("@ValueFormat + @ValueTemplate")
+    ).flatten
+
+  /** True when exactly one of `@ValueFormat` and `@ValueTemplate` is present,
+   *  i.e. the pair alternative is started but not completed.
+   */
+  def hasPartialPair: Boolean = valueFormat.isDefined != valueTemplate.isDefined
+
+  /** Table 8.31 declares no ID or IDREF attributes, and neither do the two
+   *  modelled children (Tables 8.33 and 8.34) — verified against
+   *  `schema.xsd`. The children are still walked so the fact stays checked
+   *  rather than assumed.
+   */
+  def references: Chain[IdRef] =
+    barcodeDetails.fold(Chain.empty[IdRef])(_.references) ++
+      extraValues.fold(Chain.empty[IdRef])(_.references)
+
+end IdentificationField
+
+object IdentificationField:
+
+  /** The local SHALL rule of Table 8.31 (ADR-0003): "Exactly one of
+   *  `@Format`, `@Value` or the pair `@ValueFormat` and `@ValueTemplate`
+   *  SHALL be specified."
+   *
+   *  `schema.xsd` types all four attributes `use="optional"` and cannot
+   *  express the exclusion, so the prose wins and the XSD stays a test
+   *  oracle (ROADMAP §1.2) — the same shape of divergence as ADR-0012, but
+   *  without an interpretation to decide: the sentence is explicit, so no ADR
+   *  is required.
+   *
+   *  Three ways to break it, one stable `IssueCode`:
+   *  none of the alternatives, more than one of them, or half of the pair.
+   */
+  def law(field: IdentificationField, at: XPath): Chain[Issue] =
+    val sources = field.valueSources
+    if sources.sizeIs == 1 && !field.hasPartialPair then Chain.empty
+    else
+      val detail =
+        if field.hasPartialPair && sources.isEmpty then
+          "@ValueFormat and @ValueTemplate SHALL be specified together"
+        else if sources.isEmpty then "none is specified"
+        else if sources.sizeIs > 1 then s"${sources.mkString(" and ")} are specified together"
+        else "@ValueFormat and @ValueTemplate SHALL be specified together"
+      Chain.one(Issue.errorC(
+        IssueCode.IdentificationFieldValueSource,
+        at,
+        "Exactly one of @Format, @Value or the pair @ValueFormat and @ValueTemplate SHALL be " +
+          s"specified (Table 8.31): $detail"
+      ))
+  end law
+
+  /** Applies `law` to every element of a container's `IdentificationField*`
+   *  chain, indexing the XPath by position — the shared traversal keeps the
+   *  rule from drifting between containers (same shape as
+   *  `Certification.containerLaw`).
+   */
+  def containerLaw(fields: Chain[IdentificationField], at: XPath): Chain[Issue] =
+    fields.zipWithIndex.flatMap { (f, i) =>
+      law(f, XPath(s"$at/IdentificationField[$i]"))
+    }
+
+  given Show[IdentificationField] = Show.show { field =>
+    val parts = List(
+      field.encoding.map(e => s"encoding=${e.token.value}"),
+      field.encodingDetails.map(d => s"details=${d.value}"),
+      field.purpose.map(p => s"purpose=${p.token.value}"),
+      field.format.map(f => s"format=${f.value}"),
+      field.value.map(v => s"value=${v.value}"),
+      field.valueFormat.map(v => s"valueFormat=${v.value}"),
+      field.valueTemplate.map(t => s"valueTemplate=${Show[NmTokens].show(t)}")
+    ).flatten
+    s"IdentificationField(${parts.mkString(", ")})"
+  }
+
+  given Eq[IdentificationField] = Eq.fromUniversalEquals
+
+end IdentificationField
