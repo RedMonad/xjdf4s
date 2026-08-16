@@ -15,7 +15,8 @@ import xjdf4s.model.elements.{
   Disposition,
   Glue => GlueElement,
   HolePattern => HolePatternElement,
-  IdentificationField
+  IdentificationField,
+  MetadataMap
 }
 import xjdf4s.prim.*
 import xjdf4s.resources.ResourcePayload
@@ -135,9 +136,15 @@ object TicketValidator:
     // same one-line traversal when they carry the chain.
     val identificationFieldIssues = resource.specific match
       case Some(ResourcePayload.ComponentResource(c)) =>
-        IdentificationField.containerLaw(c.identificationFields, XPath(s"$at/Component"))
+        val componentPath = XPath(s"$at/Component")
+        IdentificationField.containerLaw(c.identificationFields, componentPath) ++
+          checkIdentificationFieldMetadataMaps(c.identificationFields, componentPath)
       case _ => Chain.empty
-    amountIssues ++ certificationIssues ++ identificationFieldIssues
+    val runListMetadataIssues = resource.specific match
+      case Some(ResourcePayload.RunListResource(r)) =>
+        checkRunListMetadataMaps(r.metadataMaps, XPath(s"$at/RunList"))
+      case _ => Chain.empty
+    amountIssues ++ certificationIssues ++ identificationFieldIssues ++ runListMetadataIssues
     // Note: Disposition (Table 8.23) is a child of FileSpec inside chapter-6
     // resources; once resources carrying FileSpec are implemented (M3), the
     // traversal extends here with `TicketValidator.dispositionLaw.check(d, at)`.
@@ -146,6 +153,86 @@ object TicketValidator:
     // one-line addition. The intent-side FileSpec carrier (`ContentCheckIntent/
     // ProofItem/FileSpec`, Table 4.24) is wired in M1.6-11 through
     // `checkContentCheckLaws` below.
+
+  /** Contextual SHALLs for `IdentificationField/MetadataMap` (Tables 8.31
+   *  and 8.46). They live in the root traversal because a `MetadataMap` alone
+   *  cannot know which kind of parent contains it (ADR-0003).
+   */
+  private def checkIdentificationFieldMetadataMaps(
+      fields: Chain[IdentificationField],
+      at: XPath
+  ): Chain[Issue] =
+    fields.zipWithIndex.flatMap { (field, fieldIndex) =>
+      val fieldPath = XPath(s"$at/IdentificationField[$fieldIndex]")
+      field.metadataMaps.zipWithIndex.flatMap { (mapping, mapIndex) =>
+        val mapPath = XPath(s"${fieldPath.value}/MetadataMap[$mapIndex]")
+        val parentTemplate = field.valueTemplate.fold(Set.empty[String])(_.toList.map(_.value).toSet)
+        val nameIssue =
+          if parentTemplate.contains(mapping.name.value) then Chain.empty
+          else Chain.one(Issue.errorC(
+            IssueCode.MetadataMapNameNotInParentTemplate,
+            mapPath,
+            "MetadataMap/@Name SHALL be included in the parent IdentificationField/@ValueTemplate (Table 8.31)"
+          ))
+        val variableIssues = mapping.valueTemplate.toList
+          .filterNot(token => parentTemplate.contains(token.value))
+          .distinct
+          .map { token =>
+            Issue.errorC(
+              IssueCode.MetadataMapVariableNotInParentTemplate,
+              mapPath,
+              s"MetadataMap/@ValueTemplate variable '${token.value}' SHALL be defined in the parent " +
+                "IdentificationField/@ValueTemplate (Table 8.46)"
+            )
+          }
+        val expressionIssue =
+          if mapping.expressions.isEmpty then Chain.empty
+          else Chain.one(Issue.errorC(
+            IssueCode.MetadataMapExprForbiddenInIdentificationField,
+            mapPath,
+            "Expr SHALL NOT be specified in IdentificationField/MetadataMap (Table 8.46)"
+          ))
+        nameIssue ++ Chain.fromSeq(variableIssues) ++ expressionIssue
+      }
+    }
+
+  /** Contextual variable resolution for `RunList/MetadataMap` (Table 8.46).
+   *  Every variable not predefined by Table D.1 must have exactly one matching
+   *  `Expr`; duplicates are rejected as well as missing expressions.
+   */
+  private def checkRunListMetadataMaps(mappings: Chain[MetadataMap], at: XPath): Chain[Issue] =
+    mappings.zipWithIndex.flatMap { (mapping, mapIndex) =>
+      val mapPath = XPath(s"$at/MetadataMap[$mapIndex]")
+      Chain.fromSeq(
+        mapping.valueTemplate.toList.map(_.value).distinct
+          .filterNot(isPredefinedTemplateVariable)
+          .flatMap { variable =>
+            val count = mapping.expressions.toList.count(_.name.value == variable)
+            Option.when(count != 1)(Issue.errorC(
+              IssueCode.MetadataMapExprResolution,
+              mapPath,
+              s"RunList/MetadataMap variable '$variable' SHALL have exactly one matching Expr; found $count " +
+                "(Table 8.46 / Table D.1)"
+            ))
+          }
+      )
+    }
+
+  private val predefinedTemplateVariables: Set[String] =
+    Set(
+      "ActualAmount", "Amount", "CustomerID", "CustomerName", "Date",
+      "DeviceID", "DeviceName", "EndTime", "Error", "ErrorStats",
+      "ExposedMediaName", "Generated", "Input", "JobID", "JobName",
+      "JobPartID", "MediaBrand", "MoonPhase", "Operator", "OperatorText",
+      "PressProfileName", "PrintQuality", "ProoferProfileName", "Resolution",
+      "ResolutionX", "ResolutionY", "ScreeningFamily", "StartTime", "Time",
+      "TotalPagesInDoc", "Warning"
+    ) ++ PartitionKey.all.map(_.attributeName)
+
+  /** Table D.1 also defines the parameterized variable `GeneralID:XXX`. */
+  private def isPredefinedTemplateVariable(variable: String): Boolean =
+    predefinedTemplateVariables.contains(variable) ||
+      (variable.startsWith("GeneralID:") && variable.length > "GeneralID:".length)
 
   private def checkIntentLocalLaws(intent: Intent, parentPath: XPath): Chain[Issue] =
     val path = XPath(s"$parentPath/Intent[@Name='${intent.name.toNmToken.value}']")

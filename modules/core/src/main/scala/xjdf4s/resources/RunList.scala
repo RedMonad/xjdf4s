@@ -1,14 +1,15 @@
 package xjdf4s
 package resources
 
-import xjdf4s.model.elements.FileSpec
+import xjdf4s.model.elements.{FileSpec, MetadataMap}
 import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
 
 /** The `RunList` resource (§6.73 / Table 6.148): a PDL file (or a set of
  *  files) together with the description of how its pages are selected.
- *  `FileSpec?` is represented by one optional child.
+ *  `FileSpec?` is represented by one optional child; `MetadataMap*` by a
+ *  `Chain`, as required by Table 6.148 and `schema.xsd`.
  */
 final case class RunList(
     automation: Option[Automation] = None,
@@ -28,11 +29,13 @@ final case class RunList(
     sourceBleedBox: Option[Rectangle] = None,
     sourceClipBox: Option[Rectangle] = None,
     byteMap: Option[ByteMap] = None,
-    fileSpecs: Option[FileSpec] = None
+    fileSpecs: Option[FileSpec] = None,
+    metadataMaps: Chain[MetadataMap] = Chain.empty
 ):
 
   def references: Chain[IdRef] =
-    Chain.fromSeq(contentRefs.toList.flatMap(_.toList))
+    Chain.fromSeq(contentRefs.toList.flatMap(_.toList)) ++
+      metadataMaps.flatMap(_.references)
 end RunList
 
 object RunList:

@@ -13,7 +13,9 @@ import xjdf4s.model.elements.{
   Glue => GlueElement,
   HolePattern,
   IdentificationField,
-  MISDetails
+  MetadataMap,
+  MISDetails,
+  Expr
 }
 import xjdf4s.prim.*
 import xjdf4s.resources.*
@@ -247,6 +249,57 @@ object SpecExamples:
       chainV(dsl.resourceSet("Component", usage = Some(Usage.Output))(component)) { components =>
         chainV(dsl.TicketDraft.of("barcodeJob", ProcessType.Cutting)) { draft =>
           draft.withResources(components).build
+        }
+      }
+    }
+
+  /** Positive MetadataMap integration fixture based on Examples 8.6 and 8.7
+   *  (§8.29 / Table 8.46). The RunList mapping is literal Example 8.6. The
+   *  IdentificationField mapping follows Example 8.7, with the three mapping
+   *  names also present in the parent template as Table 8.31 explicitly
+   *  requires (ADR-0014 records the contradiction in the printed example).
+   */
+  val metadataMapJob: ValidatedNec[Issue, XJDF] =
+    val runListMap = MetadataMap(
+      name = NmToken.unsafe("Metadata"),
+      valueFormat = XjdfString.unsafe("%s_%s"),
+      valueTemplate = NmTokens.of(NmToken.unsafe("gender"), NmToken.unsafe("status")),
+      expressions = Chain(
+        Expr(NmToken.unsafe("gender"), XjdfXPath.unsafe("/doc/record/Geschlecht")),
+        Expr(NmToken.unsafe("status"), XjdfXPath.unsafe("/doc/record/Status"))
+      )
+    )
+    val identificationField = IdentificationField(
+      valueFormat = Some(XjdfString.unsafe("%6s%3i%2i%s%s%s")),
+      valueTemplate = Some(NmTokens.of(
+        NmToken.unsafe("job"), NmToken.unsafe("doc"), NmToken.unsafe("sheet"),
+        NmToken.unsafe("JobID"), NmToken.unsafe("DocIndex"), NmToken.unsafe("SheetIndex")
+      )),
+      metadataMaps = Chain(
+        MetadataMap(NmToken.unsafe("JobID"), XjdfString.unsafe("Job_%s"), NmTokens.of(NmToken.unsafe("job"))),
+        MetadataMap(
+          NmToken.unsafe("DocIndex"),
+          XjdfString.unsafe("%i%i"),
+          NmTokens.of(NmToken.unsafe("doc"), NmToken.unsafe("doc"))
+        ),
+        MetadataMap(
+          NmToken.unsafe("SheetIndex"),
+          XjdfString.unsafe("%i%i"),
+          NmTokens.of(NmToken.unsafe("sheet"), NmToken.unsafe("sheet"))
+        )
+      )
+    )
+    val runList = Resource.of(ResourcePayload.RunListResource(RunList(
+      fileSpecs = Some(FileSpec.ofUrl(Url.unsafe("file://host/file/data.pdf"))),
+      metadataMaps = Chain.one(runListMap)
+    )))
+    val component = Resource.of(ResourcePayload.ComponentResource(Component(
+      identificationFields = Chain.one(identificationField)
+    )))
+    chainV(dsl.resourceSet("RunList", usage = Some(Usage.Input))(runList)) { runListSet =>
+      chainV(dsl.resourceSet("Component", usage = Some(Usage.Input))(component)) { componentSet =>
+        chainV(dsl.TicketDraft.of("metadataMapJob", ProcessType.Cutting)) { draft =>
+          draft.withResources(runListSet, componentSet).build
         }
       }
     }
@@ -713,6 +766,7 @@ object SpecExamples:
       "MIS details (Table 8.48):" -> misDetails.map(Show[MISDetails].show),
       "Gang job (Table 6.119):" -> gangJob.map(Show[XJDF].show),
       "Barcode job (Table 8.31):" -> barcodeJob.map(Show[XJDF].show),
+      "Metadata map (Examples 8.6/8.7):" -> metadataMapJob.map(Show[XJDF].show),
       "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
       "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),

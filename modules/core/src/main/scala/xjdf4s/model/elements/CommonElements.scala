@@ -554,6 +554,38 @@ object Expr:
 
 end Expr
 
+/** The `MetadataMap` element (§8.29 / Table 8.46): maps values extracted from
+ *  a PDL (`RunList`) or barcode (`IdentificationField`) to a Partition Key.
+ *
+ *  Table 8.46 and `schema.xsd` agree that all three attributes are required:
+ *  `@Name` is an `NMTOKEN`, `@ValueFormat` is a string and
+ *  `@ValueTemplate` is `NMTOKENS`. `Expr*` has cardinality `0..*`, because
+ *  expressions are allowed for `RunList/MetadataMap` but forbidden by a
+ *  context-dependent SHALL for `IdentificationField/MetadataMap`. Those
+ *  parent-sensitive rules are enforced by `TicketValidator` (ADR-0003).
+ */
+final case class MetadataMap(
+    name: NmToken,
+    valueFormat: XjdfString,
+    valueTemplate: NmTokens,
+    expressions: Chain[Expr] = Chain.empty
+):
+
+  /** Tables 8.46 and 8.47 declare no ID or IDREF attributes. */
+  def references: Chain[IdRef] = expressions.flatMap(_.references)
+
+end MetadataMap
+
+object MetadataMap:
+
+  given Show[MetadataMap] = Show.show { mapping =>
+    s"MetadataMap(${mapping.name.value}=${Show[NmTokens].show(mapping.valueTemplate)})"
+  }
+
+  given Eq[MetadataMap] = Eq.fromUniversalEquals
+
+end MetadataMap
+
 /** The `BarcodeDetails` element (§8.26.1 / Table 8.33): additional
  *  specification for complex barcodes, i.e. the matrix geometry and error
  *  correction that `IdentificationField/@EncodingDetails` alone cannot
@@ -678,10 +710,10 @@ end ExtraValues
  *  - `@ValueFormat` → `XjdfString` (Appendix D String Generation)
  *  - `@ValueTemplate` → `NmTokens` (NMTOKENS: a non-empty list by type)
  *
- *  `MetadataMap*` (Table 8.46) is the third child of Table 8.31 and is not
- *  modelled yet: it carries `Expr*` (Table 8.47), the `XPath` data type and
- *  two context-dependent SHALL rules, and it is shared with `RunList`
- *  (Table 6.148). It is a slice of its own (M1.6-6b).
+ *  `MetadataMap*` (Table 8.46) is represented by `Chain[MetadataMap]`; its
+ *  parent-sensitive SHALL rules are enforced by `TicketValidator` because the
+ *  same element has different constraints under `IdentificationField` and
+ *  `RunList` (ADR-0003, M1.6-6b/B2).
  */
 final case class IdentificationField(
     boundingBox: Option[Rectangle] = None,
@@ -696,7 +728,8 @@ final case class IdentificationField(
     valueFormat: Option[XjdfString] = None,
     valueTemplate: Option[NmTokens] = None,
     barcodeDetails: Option[BarcodeDetails] = None,
-    extraValues: Option[ExtraValues] = None
+    extraValues: Option[ExtraValues] = None,
+    metadataMaps: Chain[MetadataMap] = Chain.empty
 ):
 
   /** The alternatives of the Table 8.31 SHALL that this element specifies, as
@@ -719,14 +752,15 @@ final case class IdentificationField(
    */
   def hasPartialPair: Boolean = valueFormat.isDefined != valueTemplate.isDefined
 
-  /** Table 8.31 declares no ID or IDREF attributes, and neither do the two
-   *  modelled children (Tables 8.33 and 8.34) — verified against
+  /** Table 8.31 declares no ID or IDREF attributes, and neither do its
+   *  modelled children (Tables 8.33, 8.34, 8.46 and 8.47) — verified against
    *  `schema.xsd`. The children are still walked so the fact stays checked
    *  rather than assumed.
    */
   def references: Chain[IdRef] =
     barcodeDetails.fold(Chain.empty[IdRef])(_.references) ++
-      extraValues.fold(Chain.empty[IdRef])(_.references)
+      extraValues.fold(Chain.empty[IdRef])(_.references) ++
+      metadataMaps.flatMap(_.references)
 
 end IdentificationField
 

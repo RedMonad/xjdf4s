@@ -158,6 +158,21 @@ object IssueCode:
    *  `@Value` or the pair `@ValueFormat` + `@ValueTemplate` (Table 8.31). */
   val IdentificationFieldValueSource: IssueCode = unsafe("IDENTIFICATION-FIELD-VALUE-SOURCE")
 
+  /** `MetadataMap/@Name` is absent from its parent `IdentificationField/@ValueTemplate` (Table 8.31). */
+  val MetadataMapNameNotInParentTemplate: IssueCode =
+    unsafe("METADATA-MAP-NAME-NOT-IN-PARENT-TEMPLATE")
+
+  /** An `IdentificationField/MetadataMap/@ValueTemplate` variable is absent from the parent template (Table 8.46). */
+  val MetadataMapVariableNotInParentTemplate: IssueCode =
+    unsafe("METADATA-MAP-VARIABLE-NOT-IN-PARENT-TEMPLATE")
+
+  /** An `Expr` occurs below `IdentificationField/MetadataMap`, where Table 8.46 forbids it. */
+  val MetadataMapExprForbiddenInIdentificationField: IssueCode =
+    unsafe("METADATA-MAP-EXPR-FORBIDDEN-IN-IDENTIFICATION-FIELD")
+
+  /** A non-predefined `RunList/MetadataMap` variable has other than exactly one matching `Expr` (Table 8.46). */
+  val MetadataMapExprResolution: IssueCode = unsafe("METADATA-MAP-EXPR-RESOLUTION")
+
 end IssueCode
 
 /** A validation finding: a stable machine-readable code, the severity class,

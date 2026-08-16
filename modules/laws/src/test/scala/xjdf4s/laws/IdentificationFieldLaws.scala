@@ -18,7 +18,7 @@ import scala.io.Source
  *
  *  The normative facts pinned here: the exact ten-attribute set and their XSD
  *  types, the child cardinalities (`BarcodeDetails?`, `ExtraValues?`,
- *  `MetadataMap*` — the last one not modelled yet), the two closed inline
+ *  `MetadataMap*`), the two closed inline
  *  enumerations, the open catalogs of Tables 8.32/8.33/8.34, the absence of
  *  IDREFs, and every way of breaking the single SHALL of Table 8.31.
  */
@@ -81,6 +81,7 @@ class IdentificationFieldLaws extends FunSuite:
     assertEquals(empty.valueTemplate, None)
     assertEquals(empty.barcodeDetails, None)
     assertEquals(empty.extraValues, None)
+    assertEquals(empty.metadataMaps, Chain.empty)
 
   test("Table 8.31: @ValueTemplate is NMTOKENS — a non-empty list by type"):
     val template = NmTokens.fromStrings("job", "doc").getOrElse(fail("valid NMTOKENS rejected"))

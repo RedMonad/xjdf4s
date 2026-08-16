@@ -73,6 +73,9 @@ class SpecExamplesSuite extends FunSuite:
   test("Fixture (§8.26 / Table 8.31): barcodeJob constructs and validates"):
     assertValidTicket("barcodeJob")(SpecExamples.barcodeJob)
 
+  test("Examples 8.6/8.7 (Table 8.46): metadataMapJob constructs and validates"):
+    assertValidTicket("metadataMapJob")(SpecExamples.metadataMapJob)
+
   test("Fixture (Table 8.29, Example 8.15): gluingJob constructs and validates"):
     assertValidTicket("gluingJob")(SpecExamples.gluingJob)
 
@@ -173,6 +176,12 @@ class SpecExamplesSuite extends FunSuite:
     assertEquals(
       showOf("barcodeJob")(SpecExamples.barcodeJob),
       "XJDF(job=barcodeJob, types=Cutting)"
+    )
+
+  test("golden: metadataMapJob Show render (Examples 8.6/8.7)"):
+    assertEquals(
+      showOf("metadataMapJob")(SpecExamples.metadataMapJob),
+      "XJDF(job=metadataMapJob, types=Cutting)"
     )
 
   test("golden: gluingJob Show render (Table 8.29 fixture)"):

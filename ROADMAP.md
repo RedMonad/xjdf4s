@@ -146,8 +146,8 @@ PR-3  общий conflict-predicate §3.4 + Patch.mergeResourceSets
 │ Категория                                    │ Кол-во │ Идентификаторы  │
 ├──────────────────────────────────────────────┼────────┼─────────────────┤
 │ Функциональные дефекты ядра (P0)             │   2    │ N-01 … N-02     │
-│ Расхождения со спецификацией XJDF 2.2 (P1)   │  21    │ N-03 … N-15,    │
-│                                              │        │ N-47 … N-54     │
+│ Расхождения со спецификацией XJDF 2.2 (P1)   │  22    │ N-03 … N-15,    │
+│                                              │        │ N-47 … N-55     │
 │ Неполнота корневого валидатора (P1)          │   7    │ N-16 … N-19,    │
 │                                              │        │ N-36 … N-38     │
 │ Архитектурные дефекты (P2)                   │  10    │ N-20 … N-25,    │
@@ -520,6 +520,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 
 | N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?`: модель допускает несколько `FileSpec` в одном `RunList`, тогда как Table 6.148 объявляет `FileSpec?`, а `schema.xsd` (`<xs:complexType name="RunList">`) — `<xs:element maxOccurs="1" minOccurs="0" ref="FileSpec"/>`. Prose и XSD согласны — расхождение только в модели, ADR не требуется | Table 6.148 (`reference/xjdf/6 – Resources.md`, строка 2056: `FileSpec?` \| element \| «URL plus metadata about the physical characteristics of a file»); `schema.xsd` `RunList` | было: `resources/RunList.scala` `fileSpecs: Chain[FileSpec] = Chain.empty`; стало: `fileSpecs: Option[FileSpec] = None` | Обнаружено при предстартовой сверке Table 8.31 (PR-26, M1.6-6). Исправление — **breaking change** публичного API в чужой таблице/файле. По подтверждённому владельцем порядку от 2026-08-16 выполнено отдельным микро-срезом PR-27 **до** M1.6-6b; объединение с M1.6-6b отклонено по §9.1. Migration note и полный список call sites — в §8, N-53 | M1.6/N-53 (PR-27) — `[x]` устранено, верифицировано владельцем (398/0) |
 | N-54 | Appendix A и `schema.xsd` задают разные базовые типы для XJDF `XPath`: Table A.1 — `xsd:token` (whitespace facet `collapse`), XSD — restriction от `xs:string` (whitespace `preserve`). Release notes 2.1/2.2 разъяснения не содержат; выбор нельзя делать молча | Table A.1: «`XPath` \| `xsd:token` \| None \| Values … represent an XPath expression»; `schema.xsd`: `<xs:simpleType name="XPath"><xs:restriction base="xs:string"/></xs:simpleType>` | До M1.6-6b тип отсутствовал; B1 вводит `prim.XjdfXPath` отдельно от validation locator `model.XPath`, конструктор выполняет XML whitespace collapse и требует непустое выражение | ADR-0013; M1.6-6b/B1 — `[x]` устранено, верифицировано владельцем (406/0) |
+| N-55 | Example 8.7 нарушает SHALL Table 8.31: родительский `IdentificationField/@ValueTemplate="job doc sheet"` не содержит имена дочерних mapping `JobID`, `DocIndex`, `SheetIndex` | Table 8.31: «If MetadataMap elements are present, `MetadataMap/@Name` SHALL be included in `@ValueTemplate`»; Example 8.7 содержит противоположную буквальную фикстуру; XSD отношение не выражает, release notes не разъясняют | По §1.2 выбран prose: root validator проверяет SHALL; буквальный фрагмент — негативная regression-фикстура, позитивная Example 8.7-based фикстура расширяет parent template именами mapping | ADR-0014; M1.6-6b/B2 — `[~]` реализовано статически, ожидает прогон владельца |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -642,6 +643,7 @@ def validate(ticket: XJDF): ValidatedNec[Issue, Unit] =
 | ADR-0011 | Две Glue-энумерации: элемент `Glue` (Table 8.29) vs «Allowed value is from: Glue» (Table A.24); N-50 | до M1.6-3 | M1.6-3 | `docs/adr/0011-glue-enumerations.md` (зафиксирован в PR-15 при регистрации N-50) |
 | ADR-0012 | Пустой `Certification` (Table 8.8): prose SHALL «Each Certification SHALL specify a … certification level» против трёх `use="optional"` в XSD; плюс отказ проверять контейнерное «at least one … SHALL be met» | до M1.6-1 | M1.6-1 | `docs/adr/0012-certification-level-required.md` (PR-22) |
 | ADR-0013 | XJDF-тип `XPath`: Table A.1 `xsd:token` против XSD `xs:string`; отделение от validation locator `model.XPath` (N-54) | до M1.6-6b/B1 | M1.6-6b/B1 | `docs/adr/0013-xpath-data-type.md` |
+| ADR-0014 | `MetadataMap`: SHALL Table 8.31 требует `@Name` в parent template, но Example 8.7 его не включает (N-55) | до M1.6-6b/B2 | M1.6-6b/B2 | `docs/adr/0014-metadata-map-example-8-7.md` |
 
 ### ADR-0001 — ChangeOrder как номинальный partial-документ
 
@@ -1928,6 +1930,41 @@ M1.6-6b разделяется на B1 и B2; B2 обязан закрыть п�
 Статический `scripts/check-spec-coverage.sh` — `RESULT: OK`. Статус `[x]` —
 закрыт полностью.
 
+#### M1.6-6b/B2. `MetadataMap` (Table 8.46) и полная интеграция — `[~]` реализовано статически, ожидает прогон владельца (PR-29)
+
+- **Предстартовая сверка.** §8.29 и Tables 8.31/8.46/8.47 подтверждают четыре
+  контекстных SHALL: три для `IdentificationField/MetadataMap` (имя mapping в
+  parent template; каждая переменная дочернего template в parent template;
+  запрет `Expr`) и одно для `RunList/MetadataMap` (каждая переменная вне Table
+  D.1 имеет ровно один совпадающий `Expr`). XSD подтверждает три обязательных
+  атрибута и `Expr*`/оба `MetadataMap*` как `0..*`; ID/IDREF нет.
+- **N-55 / ADR-0014.** Обнаружено расхождение: Example 8.7 буквально нарушает
+  SHALL Table 8.31. По §1.2 выбран prose; конфликт закреплён минимальной
+  негативной фикстурой, позитивная Example 8.7-based фикстура дополняет parent
+  template именами `JobID DocIndex SheetIndex`.
+- **Модель и wiring.** `MetadataMap(name: NmToken, valueFormat: XjdfString,
+  valueTemplate: NmTokens, expressions: Chain[Expr])`; `references` обходит
+  `Expr` и остаётся пустым. Добавлены `IdentificationField.metadataMaps` и
+  `RunList.metadataMaps`, оба `Chain[MetadataMap]`; обход references расширен.
+- **Валидация.** Все четыре parent-sensitive проверки живут в
+  `TicketValidator.check*MetadataMaps`, не в локальном законе элемента
+  (ADR-0003). Добавлены четыре стабильных `IssueCode`; Table D.1 включает все
+  Partition Keys, именованные значения и параметрическое `GeneralID:XXX`.
+- **Тесты/фикстура.** Новый `MetadataMapLaws` — 11 тестов: mapping/XSD oracle,
+  обе cardinality, негативный на каждый SHALL, duplicate Expr, Table D.1 и
+  позитивные структуры Examples 8.6/8.7. `SpecExamples.metadataMapJob` + два
+  conformance/golden-теста. Статический coverage checker: `RESULT: OK`.
+
+**Файлы:** `model/elements/CommonElements.scala`, `resources/RunList.scala`,
+`model/ValidationTypes.scala`, `model/TicketValidator.scala`,
+`laws/MetadataMapLaws.scala` (новый), `laws/SpecExamplesSuite.scala`,
+`examples/SpecExamples.scala`, `docs/SPEC-COVERAGE.md`,
+`docs/adr/0014-metadata-map-example-8-7.md` (новый), `ROADMAP.md`.
+
+**Ожидаемый гейт владельца:** `sbt -batch clean compile test examples/run`;
+419 тестов зелёных (406 + 11 + 2), `examples/run` exit 0; после подтверждения
+статус меняется на `[x]`.
+
 #### M1.6-1. `Certification` (Table 8.8, §8.7) — `[x]` выполнено (верифицировано владельцем; PR-22)
 
 Возврат к общим элементам главы 8 после серии интентов главы 4. Выбор
@@ -2893,7 +2930,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 26 | `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (8.33) + `ExtraValues` (8.34) + `FieldEncoding`/`FieldPurpose` + 5 открытых каталогов + SHALL `IDENTIFICATION-FIELD-VALUE-SOURCE` + wiring в `Component` (Table 6.37) + регистрация N-53 | M1.6-6 | 25 | `[x]` верифицировано владельцем: 396 тестов, `examples/run` exit 0 |
 | 27 | N-53: `RunList.fileSpecs` → `Option[FileSpec]` по Table 6.148/XSD `FileSpec?`; regression-first, migration note и полный список call sites; не объединяется с M1.6-6b (§9.1) | N-53 | 26 | `[x]` верифицировано владельцем: 398 тестов, `examples/run` exit 0 |
 | 28 | M1.6-6b/B1: ADR-0013/N-54 + XJDF `XPath` (`prim.XjdfXPath`, Table A.1) + `Expr` (Table 8.47), без container wiring | M1.6-6b/B1 | 27 | `[x]` верифицировано владельцем: 406/0, `XjdfXPathExprLaws` 8/0, `examples/run` exit 0 |
-| 29 | M1.6-6b/B2: `MetadataMap` (Table 8.46) + `MetadataMap*` в `RunList`/`IdentificationField` + полный набор контекстных SHALL Table 8.31/8.46/§8.29 | M1.6-6b/B2 | 28 | каждый SHALL имеет негативный тест; оба контейнера проходят root validator |
+| 29 | M1.6-6b/B2: `MetadataMap` (Table 8.46) + `MetadataMap*` в `RunList`/`IdentificationField` + полный набор контекстных SHALL Table 8.31/8.46/§8.29 + ADR-0014/N-55 | M1.6-6b/B2 | 28 | `[~]` реализовано статически: каждый SHALL имеет негативный тест; оба контейнера проходят root validator; ожидает прогон владельца |
 | 30+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`) | M1.6 | 29 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -3866,6 +3903,7 @@ B2 реализует весь набор с негативным тестом �
 | `MetadataMap*` (Table 8.46) не моделируется вместе с ядром `IdentificationField` PR-26 | элемент общий с `RunList` (Table 6.148), тянет `Expr*`, XJDF-тип `XPath` и контекстные SHALL; предстартовая сверка B1 обнаружила, что прежняя оценка «два правила» пропускала разрешение переменных через родителя/Table D.1/ровно один Expr | решение владельца (2026-08-16): M1.6-6b разделён на B1 (`XjdfXPath` + `Expr` + ADR-0013, `[x]`, 406/0) и B2 (`MetadataMap`, оба wiring, полный набор правил); заглушек полей до B2 нет |
 | `prim.XjdfXPath` вместо Scala-имени `XPath` для Table A.1 | `model.XPath` уже означает внутренний validation locator; одинаковое имя конфликтует при `model.*` + `prim.*` и маскирует различие законов | wire/spec-имя остаётся `XPath`; `Expr/@Path` принимает только `XjdfXPath`, существующий `model.XPath` не меняется (ADR-0013/N-54) |
 | XJDF `XPath`: Table A.1 `xsd:token` против XSD restriction от `xs:string` | прямое расхождение prose/XSD в whitespace facet; release notes не разъясняют | по §1.2 выбран prose: XML whitespace collapse + непустота; oracle-тест фиксирует обе стороны, полная XPath-грамматика — M2 (ADR-0013/N-54) |
+| Example 8.7 не включает `MetadataMap/@Name` в parent `IdentificationField/@ValueTemplate` | пример конфликтует с явным SHALL Table 8.31; XSD отношение не выражает | по §1.2 выбран prose; ADR-0014/N-55, негативная буквальная и позитивная адаптированная фикстуры |
 | Применимость `BarcodeDetails/@BarcodeVersion` и `@ErrorCorrectionLevel` к значению `IdentificationField/@EncodingDetails` не проверяется | Tables 8.33/8.36/8.37 формулируют её как «Values include those from … for DATAMATRIX barcodes» и «Each value can be used only for certain values of `@EncodingDetails`» — без SHALL; сам `@EncodingDetails` открыт (Table 8.32 — образец), поэтому полного предиката не существует | scaladoc обоих каталогов разделяет семейства значений; состав семейств закреплён тестами; ужесточение — только с явной политикой severity (ADR-0006, M1.6-6) |
 | Table 8.35 (применимость `@Height`/`@Magnification`/`@Ratio` к типам штрихкодов) не моделируется | таблица описывает атрибуты `BarcodeReproParams` — ресурса вне модели; к Table 8.31 относится лишь через `@EncodingDetails` | ссылок на Table 8.35 в коде нет; строка ожидает моделирования `BarcodeReproParams` (M3, M1.6-6) |
 | Нормативная опечатка `CODABAR_Tradional` (Table 8.32) сохранена дословно | значение каталога — токен на проводе; «исправление» на `CODABAR_Traditional` изобрело бы значение, которого нет в спецификации (класс дефекта N-08) | явный тест в `IdentificationFieldLaws`, проверяющий и наличие опечатки, и отсутствие «исправленного» варианта (M1.6-6) |
