@@ -3,15 +3,21 @@ package xjdf4s.model
 import xjdf4s.core.*
 
 /** Open XSD extension point with 100 schema-defined descendants plus foreign-namespace descendants. */
-trait SpecificResource extends XjdfNode:
+trait SpecificResource extends XjdfNode,
+      Extensible:
   def elementName: QualifiedName
 end SpecificResource
+
+/** Typed resources completed in the foundational resource slice. */
+type FoundationalSpecificResource =
+  resources.Component | resources.Contact | resources.CustomerInfo | resources.ExposedMedia | resources.Ink |
+    resources.MiscConsumable | resources.NodeInfo | resources.PrintCondition | resources.Shape | resources.Tool |
+    resources.UsageCounter
 
 /** Lossless schema-shaped fallback while dedicated resource records are added slice by slice. */
 final case class NamedSpecificResource(
     elementName: QualifiedName,
-    attributes: Map[QualifiedName, ExtensionValue] = Map.empty,
-    children: Vector[ExtensionElement] = Vector.empty,
+    extensions: Extensions = Extensions.empty,
 ) extends SpecificResource
 
 enum WasteOrigin:
