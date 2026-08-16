@@ -1221,7 +1221,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet])
 
 ### M1.2 — Типы, токены и кардинальности XJDF 2.2
 
-#### M1.2-1. Полная модель `Part` по Table 6.4 (P1) — закрывает N-03, N-04, N-05, N-29 — `[x]` выполнено (верифицировано владельцем)
+#### M1.2-1. Полная модель `Part` по Table 6.4 (P1) — закрывает N-03, N-04, N-05, N-29 — `[x]` выполнено (верифицировано владельцем; аудит M1.6-15 подтвердил все 27 ключей, M1.2-1 завершён полностью)
 
 **Файлы:** `prim/Tokens.scala` (новый тип), `model/Partition.scala`, `model/Validation.scala` (сообщение §6.1.2.1 через `attributeName`), `laws/Arbitraries.scala`, `laws/PartitionLaws.scala`, `laws/TicketLaws.scala` (регрессия N-05).
 
