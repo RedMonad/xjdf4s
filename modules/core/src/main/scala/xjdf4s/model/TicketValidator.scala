@@ -8,6 +8,8 @@ import xjdf4s.intents.{
   ContentCheckIntent,
   HoleMakingIntent,
   IntentPayload,
+  ShapeCut,
+  ShapeCuttingIntent,
   VariableIntent
 }
 import xjdf4s.model.elements.{
@@ -288,6 +290,7 @@ object TicketValidator:
       case IntentPayload.Assembly(a) => checkAssemblyGlueLaws(a, path)
       case IntentPayload.ContentCheck(c) => checkContentCheckLaws(c, path)
       case IntentPayload.HoleMaking(h) => checkHoleMakingLaws(h, path)
+      case IntentPayload.ShapeCutting(s) => checkShapeCuttingLaws(s, path)
       case IntentPayload.Color(c) => checkColorIntentCertifications(c, path)
       case IntentPayload.Media(m) =>
         Certification.containerLaw(m.certifications, path)
@@ -319,6 +322,14 @@ object TicketValidator:
   private def checkHoleMakingLaws(h: HoleMakingIntent, path: XPath): Chain[Issue] =
     h.holePatterns.toChain.zipWithIndex.flatMap { (hp, i) =>
       HolePatternElement.law(hp, XPath(s"$path/HolePattern[$i]"))
+    }
+
+  /** Validates `ShapeCut` elements nested inside `ShapeCuttingIntent`
+   *  (§4.13 / Tables 4.34–4.35).
+   */
+  private def checkShapeCuttingLaws(s: ShapeCuttingIntent, path: XPath): Chain[Issue] =
+    s.shapeCuts.toChain.zipWithIndex.flatMap { (shapeCut, i) =>
+      ShapeCut.law.check(shapeCut, XPath(s"$path/ShapeCut[$i]"))
     }
 
   /** Validates the `Certification` elements nested inside

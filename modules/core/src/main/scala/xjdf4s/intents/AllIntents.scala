@@ -22,6 +22,7 @@ enum IntentPayload:
   case Layout(value: LayoutIntent)
   case Media(value: MediaIntent)
   case Production(value: ProductionIntent)
+  case ShapeCutting(value: ShapeCuttingIntent)
   case Variable(value: VariableIntent)
   case Extension(namespace: NsPrefix, local: NmToken)
 
@@ -39,6 +40,7 @@ enum IntentPayload:
       case Layout(_) => NmToken.unsafe("LayoutIntent")
       case Media(_) => NmToken.unsafe("MediaIntent")
       case Production(_) => NmToken.unsafe("ProductionIntent")
+      case ShapeCutting(_) => NmToken.unsafe("ShapeCuttingIntent")
       case Variable(_) => NmToken.unsafe("VariableIntent")
       case Extension(_, local) => local
 
@@ -56,6 +58,7 @@ enum IntentPayload:
       case Layout(_) => Chain.empty
       case Media(_) => Chain.empty
       case Production(_) => Chain.empty
+      case ShapeCutting(s) => s.references
       case Variable(v) => v.references
       case Extension(_, _) => Chain.empty
 

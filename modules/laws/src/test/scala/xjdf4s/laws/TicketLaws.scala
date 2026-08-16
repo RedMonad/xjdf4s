@@ -659,6 +659,19 @@ class TicketLaws extends ScalaCheckSuite:
         averagePages = Some(4L))))
     assert(ticketWithProduct(productWithIntent(variableIntent)).validate.isValid)
 
+    val shapeCuttingIntent = Intent(
+      IntentName.unsafe("ShapeCuttingIntent"),
+      IntentPayload.ShapeCutting(
+        ShapeCuttingIntent(NonEmptyChain.one(
+          ShapeCut(
+            cutPath = Some(PDFPath.unsafe("0 0 m 10 10 l")),
+            shapeType = ShapeCutType.Path
+          )
+        ))
+      )
+    )
+    assert(ticketWithProduct(productWithIntent(shapeCuttingIntent)).validate.isValid)
+
     // FileSpec and Disposition laws are both reached through
     // ContentCheckIntent/ProofItem/FileSpec. A direct URL makes the FileSpec
     // locally lawful; a Disposition with only @MinDuration proves its nested

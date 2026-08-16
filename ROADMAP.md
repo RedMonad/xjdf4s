@@ -1790,20 +1790,22 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 
 **Статус (PR-13).** Все пункты выполнены и верифицированы владельцем (201 тест зелёный, `examples/run` exit 0, golden совпали дословно). Пункт «проверяются в CI»: `scripts/check-spec-coverage.sh` готов и прогнан вручную (`RESULT: OK`); подключение к CI происходит вместе с возвратом CI по решению владельца (M1.0-1).
 
-### M1.6 — Закрыть заявленные пробелы главы 4 и общих элементов главы 8
+### M1.6 — Закрыть заявленные пробелы главы 4 и общих элементов главы 8 — `[~]` код B2 готов, ожидает прогон владельца
 
 Выполняется после стабилизации общих абстракций, маленькими вертикальными срезами.
 Идентификаторы задач закреплены за срезами в порядке исполнения (см. §9, PR-15+).
+Глава 4 статически закрыта полностью после M1.6-13(B2); статус всего M1.6
+останется `[~]` до чистого обязательного гейта B2 по §1.3.
 
-**Интенты главы 4** (отсутствуют в модели):
+**Интенты главы 4** (вертикальные срезы M1.6):
 
 | Задача | Интент | Таблицы | Подэлементы |
 | --- | --- | --- | --- |
-| M1.6-9 | LaminatingIntent | Table 4.30 (§4.9) | — |
-| M1.6-10 | EmbossingIntent | Table 4.25 (§4.6) | `EmbossingItem` (Table 4.26) |
-| M1.6-11 | ContentCheckIntent | Table 4.22 (§4.5) | `PreflightItem` (Table 4.23), `ProofItem` (Table 4.24), переиспользование `FileSpec` |
-| M1.6-12 | HoleMakingIntent | Table 4.29 (§4.8) | `HolePattern` (Table 8.30), каталог `Appendix F – Hole Pattern Catalog` |
-| M1.6-13 | ShapeCuttingIntent | Table 4.34 (§4.13) | `ShapeCut` (Table 4.35), `CutBox`/`CutPath` (PDFPath) |
+| M1.6-9 `[x]` | LaminatingIntent | Table 4.30 (§4.9) | — |
+| M1.6-10 `[x]` | EmbossingIntent | Table 4.25 (§4.6) | `EmbossingItem` (Table 4.26) |
+| M1.6-11 `[x]` | ContentCheckIntent | Table 4.22 (§4.5) | `PreflightItem` (Table 4.23), `ProofItem` (Table 4.24), переиспользование `FileSpec` |
+| M1.6-12 `[x]` | HoleMakingIntent | Table 4.29 (§4.8) | `HolePattern` (Table 8.30), каталог `Appendix F – Hole Pattern Catalog` |
+| M1.6-13(B2) `[~]` | ShapeCuttingIntent | Table 4.34 (§4.13) | `ShapeCut` (Table 4.35); атрибуты `@CutBox: rectangle` / `@CutPath: PDFPath` |
 
 **Общие элементы главы 8** (отсутствуют в модели):
 
@@ -1820,7 +1822,8 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 **Дополнительно:**
 
 - M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[x]` выполнено (верифицировано владельцем; PR-25);
-- M1.6-13(B1): отдельный примитив `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация непустоты и полный parser в M2.3 — `[x]` выполнено и верифицировано владельцем: 489/0, `PDFPathLaws` 7/0, `examples/run` exit 0; B2 не начат;
+- M1.6-13(B1): отдельный примитив `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация непустоты и полный parser в M2.3 — `[x]` выполнено и верифицировано владельцем: 489/0, `PDFPathLaws` 7/0, `examples/run` exit 0;
+- M1.6-13(B2): `ShapeCuttingIntent` + `ShapeCut` (Tables 4.34/4.35), `@CutBox: Rectangle`, `@CutPath: PDFPath`, три закрытых inline-enum, dispatch 13 payload, reference/local-law wiring и фикстура — `[~]` статически выполнено; `ShapeCuttingIntentLaws` 16 тестов + 2 теста `SpecExamplesSuite`, ожидаемый итог 507/0; `check-spec-coverage.sh` — `RESULT: OK` (Intents 38, deviations 22, tables 127); ожидает прогон владельца;
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — `[x]` выполнено и верифицировано владельцем: модель, правило приоритета явных Traits, SHALL Table 8.28 и закрытый `DataType` (ADR-0016/N-59); 482/0, `NamedFeatureLaws` 26/0, `examples/run` exit 0;
 - N-51: `FileSpec.law`, parent-sensitive pipe-контекст, `NetworkHeader*` и обход всех уже смоделированных FileSpec-контейнеров — `[x]` выполнено и верифицировано владельцем (440/0, `examples/run` exit 0); ADR-0015/N-56 фиксирует `@NPage`, N-57/N-58 зарегистрированы как отдельные breaking follow-up и не расширяют срез;
 - N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` исправлен с `Chain[FileSpec]` на `Option[FileSpec]`; prose и XSD согласны, ADR не нужен; regression-first, migration note и полный список call sites — `[x]` выполнено и верифицировано владельцем (445/0, `examples/run` exit 0);
@@ -2194,7 +2197,7 @@ exit 0.
   закрепление отложенного grammar parsing и два prose/XSD oracle-теста
   (базовый тип и отсутствие lexical facets).
 - **Совместимость.** Срез аддитивен; call sites до изменения отсутствовали.
-  Первые потребители (`ShapeCut/@CutPath`, `CutPath`) добавляются только в B2.
+  Первый потребитель (`ShapeCut/@CutPath`) добавляется только в B2.
 
 **Файлы:** `prim/Tokens.scala`, `laws/PDFPathLaws.scala` (новый),
 `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
@@ -2209,6 +2212,71 @@ exit 0; `scripts/check-spec-coverage.sh` — `RESULT: OK`.
 `examples/run` — exit 0 за 1 s, прежний демонстрационный вывод сохранён.
 Ошибок и предупреждений в предоставленном выводе нет. Статус `[x]` — закрыт
 полностью; следующий отдельный срез — M1.6-13(B2).
+
+#### M1.6-13(B2). `ShapeCuttingIntent` + `ShapeCut` (§4.13 / Tables 4.34–4.35) — `[~]` статически выполнено, ожидает прогон владельца
+
+Последний вертикальный срез M1.6 и последний отсутствовавший интент главы 4.
+Старт подтверждён владельцем 2026-08-16.
+
+- **Нормативная сверка (§1.2).** Table 4.34 задаёт единственный подэлемент
+  `ShapeCut+`; XSD согласованно задаёт `minOccurs="1"
+  maxOccurs="unbounded"`. Table 4.35 и XSD согласованы по семи атрибутам:
+  `@CutBox?` — `rectangle`, `@CutDepth?` — закрытый `Full|Partial`,
+  `@CutOut?` — `boolean`, `@CutPath?` — `PDFPath`, `@CutType?` — закрытый
+  `Cut|Perforate`, обязательный `@ShapeType` — закрытый
+  `Line|Path|Rectangular|Round|RoundedRectangle`, `@ShapeTypeDetails?` —
+  `string`. Release notes 2.1/2.2 не содержат уточнений. Расхождений
+  prose/XSD нет; ADR и новая находка не требуются.
+- **Кардинальность и типы.** `ShapeCut+` представлен как
+  `NonEmptyChain[ShapeCut]`. `@CutBox` использует существующий
+  `prim.Rectangle`; только `@CutPath` использует номинально отдельный
+  `prim.PDFPath` из B1 (не `prim.XjdfXPath` и не `model.XPath`). Три inline-enum
+  представлены `CutDepth`, `CutType`, `ShapeCutType`; последнее имя отделяет
+  набор `ShapeCut/@ShapeType` из пяти значений от будущего
+  `Shape/@ShapeType` Table 8.65 из четырёх значений.
+- **Правила Table 4.35.** Обязательность `@ShapeType` обеспечена структурно.
+  Для `@ShapeType="Path"` дополнительные детали в `@CutPath` или
+  `@ShapeTypeDetails` сформулированы как SHOULD: `ShapeCut.law` возвращает
+  warning `SHAPECUT-PATH-DETAILS-RECOMMENDED`, не инвалидирующий
+  `ValidationReport` (ADR-0006), и подключён через
+  `TicketValidator.checkShapeCuttingLaws`. Два SHALL в описании `@CutOut`
+  задают семантику исполнения (`true` — удалить внутреннюю область, `false` —
+  внешнюю), а не запрещённую комбинацию данных; оба boolean-значения валидны,
+  поэтому негативного document-предиката не существует и выдуманное
+  ограничение не добавляется. Это закреплено отдельным тестом.
+- **ID/IDREF и dispatch.** Обе таблицы не содержат ID/IDREF.
+  `ShapeCut.references = Chain.empty`, но `ShapeCuttingIntent.references`
+  обходит всю `NonEmptyChain`; `IntentPayload.ShapeCutting` делегирует обход.
+  `elementName = "ShapeCuttingIntent"`; dispatch расширен с 12 до 13 payload.
+  Добавлен стандартный `ProcessType.ShapeCutting` (§5.6.27).
+- **Тесты и oracle.** Новый `ShapeCuttingIntentLaws` содержит 16 тестов:
+  dispatch, `ShapeCut+`, полный mapping семи атрибутов, номинальное различие
+  `Rectangle`/`PDFPath`, IDREF-обход, позитивный ticket, mismatch `Intent/@Name`,
+  семантику `@CutOut`, warning-кейсы SHOULD, точные golden-наборы трёх enum и
+  машинную сверку атрибутов/кардинальности/inline-enum с prose/XSD.
+  `TicketLaws` registry дополнен lawful-путём нового `DomainRule`.
+- **Фикстура.** `SpecExamples.shapeCuttingJob` содержит прямоугольное окно и
+  irregular perforated `PDFPath`; `SpecExamplesSuite` добавляет conformance и
+  временный Show-golden (2 теста), `examples/run` — новую строку демонстрации.
+- **Совместимость.** Срез аддитивен; прежних call sites нет, migration note не
+  требуется.
+
+**Файлы:** `intents/ShapeCutting.scala` (новый), `intents/AllIntents.scala`,
+`prim/Enums.scala`, `model/Resource.scala`, `model/ValidationTypes.scala`,
+`model/TicketValidator.scala`, `laws/ShapeCuttingIntentLaws.scala` (новый),
+`laws/TicketLaws.scala`, `examples/SpecExamples.scala`,
+`laws/SpecExamplesSuite.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Статическая проверка (2026-08-16).** `git diff --check` и
+`scripts/check-spec-coverage.sh` выполнены локально; coverage: Resources 24,
+Intents 38, deviations 22, tables 127, `RESULT: OK`. Компилятор в среде
+отсутствует, поэтому по §1.3 статус остаётся `[~]`.
+
+**Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
+без предупреждений; ожидается **507/0** (489 + 16 нового suite + 2
+conformance/golden), `examples/run` exit 0. После подтверждения владельцем
+M1.6-13(B2), глава 4 и весь M1.6 переводятся в `[x]`; M2 этим срезом не
+начинается.
 
 #### M1.6-14. NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) — `[x]` выполнено (верифицировано владельцем; PR-33)
 
@@ -3314,7 +3382,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 32 | N-57: `FileSpec/@CheckSum` → `Option[HexBinary]`; новый Appendix A primitive, regression-first, XSD oracle, round-trip, migration note и полный список call sites | N-57 | 31 | `[x]` верифицировано владельцем: 452/0, `HexBinaryLaws` 7/0, `examples/run` exit 0 |
 | 33 | M1.6-14: NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) + закрытый `DataType` (Table A.14) + ADR-0016/N-59; `TraitSet`/`TraitResolution`, SHALL Table 8.28 в четырёх контейнерах, breaking change с migration note и полным списком call sites | M1.6-14 | 32 | `[x]` верифицировано владельцем: 482/0, `NamedFeatureLaws` 26/0, `SpecExamplesSuite` 44/0, `examples/run` exit 0 |
 | 34 | M1.6-13(B1): `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация + XSD oracle; полный grammar parser остаётся M2.3 | M1.6-13(B1) | 33 | `[x]` верифицировано владельцем: 489/0, `PDFPathLaws` 7/0, `examples/run` exit 0 |
-| 35 | M1.6-13(B2): `ShapeCuttingIntent` + `ShapeCut` (Tables 4.34–4.35), `CutBox`/`CutPath` | M1.6-13(B2) | 34 | не начато; отдельный срез после верификации B1 |
+| 35 | M1.6-13(B2): `ShapeCuttingIntent` + `ShapeCut` (Tables 4.34–4.35), `@CutBox: Rectangle` / `@CutPath: PDFPath`, 3 inline-enum, SHOULD warning, dispatch/reference wiring, fixture | M1.6-13(B2) | 34 | `[~]` статически выполнено: 16 новых law-тестов + 2 conformance/golden, ожидается 507/0; coverage `RESULT: OK`; ожидает прогон владельца |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -3898,6 +3966,27 @@ M1: одна обязательная быстрая платформа — Temu
 
 > `Jacket?` | enumeration | Specifies whether a hardcover jacket is needed and how it is attached. … Allowed values are: None – No jacket is needed. Loose – The jacket is loosely wrapped. Glue – The jacket is glued to the spine.
 
+### Tables 4.34/4.35 (`ShapeCuttingIntent`, `ShapeCut`)
+
+> **Table 4.34:** `ShapeCut+` | element | Array of all ShapeCut elements. Used when each shape is exactly specified.
+>
+> **Table 4.35:** `CutBox?` | rectangle | Specification of a rectangular window. An orthogonal line MAY be defined by specifying a rectangle with identical dimensions.
+>
+> `CutDepth?` | enumeration | Allowed values are: **Full** – The form is completely cut out or perforated. **Partial** – The form is not completely cut out or perforated. The exact depth MAY be specified in ShapeCuttingParams.
+>
+> `CutOut?` | boolean | `@CutOut` specifies whether the inside or outside of the ShapeCut SHALL be removed. If `@CutOut="true"`, the inside of a specified shape SHALL be removed, otherwise the outside of a specified shape SHALL be removed. An example of an inside shape is a window, while an example of an outside shape is a shaped greeting card.
+>
+> `CutPath?` | PDFPath | Specification of a complex path. This MAY be an open path in the case of a single line.
+>
+> `CutType?` | enumeration | Type of cut or perforation used. Allowed values are: **Cut** – Full cut. **Perforate** – Interrupted perforation that does not span the entire sheet.
+>
+> `ShapeType` | enumeration | Describes any precision cutting other than hole making. Allowed values are: **Line** – The coordinates specified in `@CutBox` specify the end points of a straight line. **Path** – Any irregular shape. Additional details SHOULD be provided in `@CutPath` or `@ShapeTypeDetails`. **Rectangular** – The coordinates specified in `@CutBox` specify the lower left and upper right coordinates of a rectangle. **Round** – Circular or elliptical shape depending on the aspect ratio of `@CutBox`. **RoundedRectangle** – Rectangle with rounded corners. The coordinates specified in `@CutBox` specify the outer bounds of the rectangle.
+>
+> `ShapeTypeDetails?` | string | A more specific, specialized or site-defined name for the shape of the ShapeCut.
+
+`schema.xsd` согласованно задаёт `ShapeCut` с теми же семью атрибутами и
+`ShapeCuttingIntent/ShapeCut` как `minOccurs="1" maxOccurs="unbounded"`.
+
 ### Table 4.36, Sheet 1 (`VariableIntent`)
 
 > `MaxPages?` | integer | `@MaxPages` SHALL specify the maximum number of printed pages in each record. `@MaxPages` SHALL NOT be smaller than `@AveragePages`.
@@ -4237,7 +4326,9 @@ B2 реализует весь набор с негативным тестом �
 | `scripts/check-spec-coverage.sh` (новый) | M1.2-6 (создан в PR-13; в CI подключается вместе с возвратом CI); M1.6-2 (поддержка номеров таблиц Appendix A `Table A.NN`) |
 | `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги; M1.6-6b/B1 (`XjdfXPath`, ADR-0013/N-54); N-57 (`HexBinary`); M1.6-13(B1) (`PDFPath`) |
 | `laws/PDFPathLaws.scala` (новый) | M1.6-13(B1) (`PDFPath`: M1-границы, Show/Eq/round-trip, prose/XSD oracle) |
-| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`); M1.6-2 (`WorkingDirection`); M1.6-7 (`CostType`, `WorkType`, PR-24); M1.6-6 (`FieldEncoding`, `FieldPurpose`, PR-26) |
+| `intents/ShapeCutting.scala` (новый) | M1.6-13(B2) (`ShapeCuttingIntent`, `ShapeCut`, `references`, SHOULD-law Table 4.35) |
+| `laws/ShapeCuttingIntentLaws.scala` (новый) | M1.6-13(B2) (16 mapping/cardinality/rule/golden/prose-XSD-oracle тестов Tables 4.34/4.35) |
+| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`); M1.6-2 (`WorkingDirection`); M1.6-7 (`CostType`, `WorkType`, PR-24); M1.6-6 (`FieldEncoding`, `FieldPurpose`, PR-26); M1.6-13(B2) (`CutDepth`, `CutType`, `ShapeCutType`) |
 | `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountBounds`), M1.4-6 (алгебры) |
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
 | `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only, PR-13) |
@@ -4247,13 +4338,13 @@ B2 реализует весь набор с негативным тестом �
 | `model/Amounts.scala` | M1.2-3, M1.3-3 (`PartWaste`) |
 | `model/Product.scala` | M1.1-1, M1.3-3, M1.3-4, M1.4-7 |
 | `model/Patch.scala` | M1.1-2, M1.1-3, M1.4-2 |
-| `model/Resource.scala` | M1.2-3, M1.2-4, M1.3-1 |
+| `model/Resource.scala` | M1.2-3, M1.2-4, M1.3-1; M1.6-13(B2) (`ProcessType.ShapeCutting`) |
 | `model/Ticket.scala` | M1.2-5, M1.4-1, M1.4-2 (удаление `Partial`) |
 | `model/ChangeOrder.scala` (новый) | M1.4-2 |
 | `model/Header.scala` | M1.2-5 (`Notification`), M1.3-3 |
 | `model/Audit.scala` | M1.2-5 (references), M1.4-6 |
-| `model/Validation.scala` → `model/TicketValidator.scala` | M1.3-1 … M1.3-5, M1.4-1 (переименование выполнено в PR-9) |
-| `model/ValidationTypes.scala` (новый) | M1.4-1 (создан в PR-9) |
+| `model/Validation.scala` → `model/TicketValidator.scala` | M1.3-1 … M1.3-5, M1.4-1 (переименование выполнено в PR-9); M1.6-13(B2) (`checkShapeCuttingLaws`) |
+| `model/ValidationTypes.scala` (новый) | M1.4-1 (создан в PR-9); M1.6-13(B2) (`ShapeCutPathDetailsRecommended`) |
 | `model/IdSource.scala` | M1.4-4 |
 | `dsl/XjdfDsl.scala` | M1.2-4, M1.4-3, M1.4-4 |
 | `resources/{Color,Finishing,Layout,Media,NodeInfo,Preview}.scala` | M1.2-6; N-58 (`Finishing`, `Layout`, `Preview`: `FileSpec?` → `Option[FileSpec]`) |
@@ -4261,18 +4352,18 @@ B2 реализует весь набор с негативным тестом �
 | `resources/NodeInfo.scala` | M1.2-6, M1.6 (`GangSource`, `MISDetails`) |
 | `resources/RunList.scala` | N-53 (`fileSpecs: Chain[FileSpec]` → `Option[FileSpec]`, PR-27) |
 | `resources/AllResources.scala` | M1.2-4 (optional payload), подготовка ADR-0008 |
-| `intents/*` | M1.3-3, M1.6; M1.2-2 (`Binding.scala`, `MediaLayout.scala` — тип цветовых полей) |
+| `intents/*` | M1.3-3, M1.6; M1.2-2 (`Binding.scala`, `MediaLayout.scala` — тип цветовых полей); M1.6-13(B2) (`AllIntents.scala`: dispatch/reference wiring, 13 payload) |
 | `laws/Arbitraries.scala` | M1.2-1, M1.5-3 (lawful/`Invalid` разделены в PR-13) |
 | `laws/AlgebraLaws.scala` | M1.0-3, M1.1-4, M1.4-5, M1.4-6 |
 | `laws/PartitionLaws.scala` | M1.2-1, M1.5-1 (законы толерантности и merge-порядка, PR-13) |
-| `laws/TicketLaws.scala` | M1.0-2, M1.1-1, M1.1-3, M1.3-*, M1.5-3 (негативное property на `Invalid`, PR-13) |
-| `laws/SpecExamplesSuite.scala` (новый) | M1.5-3 (conformance + golden, создан в PR-13); M1.6-2 (creasingJob, PR-15); M1.6-4 (gangSource, PR-23) |
+| `laws/TicketLaws.scala` | M1.0-2, M1.1-1, M1.1-3, M1.3-*, M1.5-3 (негативное property на `Invalid`, PR-13); M1.6-13(B2) (registry-путь `ShapeCut.law`) |
+| `laws/SpecExamplesSuite.scala` (новый) | M1.5-3 (conformance + golden, создан в PR-13); M1.6-2 (creasingJob, PR-15); M1.6-4 (gangSource, PR-23); M1.6-13(B2) (`shapeCuttingJob`, 2 теста) |
 | `laws/CreaseLaws.scala` (новый) | M1.6-2 (создан в PR-15) |
 | `laws/FileSpecCardinalityLaws.scala` (новый) | N-58 (5 regression/XSD-oracle-тестов четырёх `FileSpec?`-контейнеров) |
 | `laws/ChangeOrderLaws.scala` (новый) | M1.4-2 |
 | `laws/AlignmentLaws.scala` | M1.4-6 |
 | `laws/EnumLaws.scala` (новый) | M1.2-2 (golden-токены, открытые каталоги, сверка с Appendix A), M1.5-2 (тест `XjdfVersion`, PR-13), M1.6-2 (`WorkingDirection`, PR-15) |
-| `examples/SpecExamples.scala` | M1.1-1, M1.2-3, M1.2-4, M1.4-2, M1.5-3, M1.6-2 (creasingJob, PR-15), M1.6-4 (gangSource, PR-23) |
+| `examples/SpecExamples.scala` | M1.1-1, M1.2-3, M1.2-4, M1.4-2, M1.5-3, M1.6-2 (creasingJob, PR-15), M1.6-4 (gangSource, PR-23), M1.6-13(B2) (`shapeCuttingJob`) |
 | `resources/Finishing.scala` | M1.6-2 (`FoldingParams.creases`, PR-15) |
 | `examples/Main.scala` | M1.1-1, M1.5-3 |
 | `examples/src/test/SpecExamplesSuite.scala` (удалён) | M1.5-3 (переехал в `laws/SpecExamplesSuite.scala`, PR-13) |
@@ -4528,7 +4619,11 @@ exit 0. N-57 (`FileSpec/@CheckSum` → `HexBinary`) — `[x]` закрыт и
 владельцем: **482/0**, новый `NamedFeatureLaws` **26/0**, `SpecExamplesSuite`
 **44/0**, `examples/run` exit 0. M1.6-13(B1) (`PDFPath`) — `[x]` закрыт и
 верифицирован владельцем: **489/0**, новый `PDFPathLaws` **7/0**,
-`examples/run` exit 0. Затем отдельным срезом выполняется B2
-(`ShapeCuttingIntent`).
+`examples/run` exit 0. M1.6-13(B2) (`ShapeCuttingIntent`/`ShapeCut`, Tables
+4.34/4.35) — `[~]` статически выполнен: 13 payload dispatch, полный
+references/local-law wiring, `ShapeCuttingIntentLaws` **16 тестов** и
+`SpecExamplesSuite` +2; coverage `RESULT: OK` (Resources 24, Intents 38,
+deviations 22, tables 127). Ожидаемый gate — **507/0** + `examples/run` exit 0;
+до подтверждения владельцем M1.6 остаётся `[~]`, M2 не начат.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат
 обязательного CI — открытая часть M1.0-1.

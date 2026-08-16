@@ -111,7 +111,7 @@ README ссылается на этот документ, числа — в вы
 | Section | Table | Element/Attribute | Scala type | Cardinality | Validation | Domain tests | XML | JSON | Status | Notes |
 |---------|-------|-------------------|------------|-------------|------------|--------------|-----|------|--------|-------|
 | §4.1 | Table 4.1 | Intent | `Intent` | `*` | ✅ | ✅ | ❌ | ❌ | Implemented | `@Name == payload.elementName` (`Intent.nameLaw`) |
-| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 12 payload + `Extension` escape hatch; `declaredIds` — документные ID внутри интентов (`ProofItem/@ID`, M1.6-11) |
+| §4.1 | Table 4.2 | Intent payload dispatch | `IntentPayload` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | закрытый enum: 13 payload + `Extension` escape hatch; `declaredIds` — документные ID внутри интентов (`ProofItem/@ID`, M1.6-11) |
 | §4.2 | Table 4.3 | AssemblingIntent | `AssemblingIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.2 | Table 4.4 | AssemblyItem | `AssemblyItem` | `*` | ❌ | ❌ | ❌ | ❌ | Implemented | structural; container-level validation |
 | §4.2 | Table 4.5 | BindIn | `BindIn` | `*` | ✅ | ❌ | ❌ | ❌ | Implemented | `Glue?` → `Option[Glue]` (элемент, M1.6-3/ADR-0011); `Glue/@GlueRef` собирается; SHALL-правила Glue подключены через валидатор |
@@ -144,6 +144,8 @@ README ссылается на этот документ, числа — в вы
 | §4.10 | Table 4.31 | LayoutIntent | `LayoutIntent` | `?` | ✅ | ❌ | ❌ | ❌ | Implemented | |
 | §4.11 | Table 4.32 | MediaIntent | `MediaIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `Certification*` → `Chain[Certification]` (Table 8.8, paper certification level) — SHALL подключён через `checkIntentLocalLaws` (M1.6-1) |
 | §4.12 | Table 4.33 | ProductionIntent | `ProductionIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | New in XJDF 2.1: `Certification*` → `Chain[Certification]` (Table 8.8) — моделируется, SHALL подключён через `checkIntentLocalLaws` (M1.6-1) |
+| §4.13 | Table 4.34 | ShapeCuttingIntent | `ShapeCuttingIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | `ShapeCut+` → `NonEmptyChain[ShapeCut]` (кардинальность `+`, структурно); полный обход `references`, ID/IDREF отсутствуют; dispatch — 13-й payload; `ProcessType.ShapeCutting` (§5.6.27) (M1.6-13/B2) |
+| §4.13.1 | Table 4.35 | ShapeCut | `ShapeCut` | `+` | ✅ | ✅ | ❌ | ❌ | Implemented | 7 атрибутов: `@CutBox?` → `Rectangle`, `@CutPath?` → отдельный `PDFPath`, `@CutDepth?`/`@CutType?`/required `@ShapeType` → закрытые inline-enum `CutDepth`/`CutType`/`ShapeCutType`; `@CutOut` SHALL задаёт производственную семантику обоих boolean-значений, не запрет состояния; `ShapeType=Path` без `@CutPath`/`@ShapeTypeDetails` → warning `SHAPECUT-PATH-DETAILS-RECOMMENDED` по SHOULD/ADR-0006; golden + machine XSD oracle (M1.6-13/B2) |
 | §4.14 | Table 4.36 | VariableIntent | `VariableIntent` | `?` | ✅ | ✅ | ❌ | ❌ | Implemented | law: `@MinPages ≤ @AveragePages ≤ @MaxPages` |
 
 ## Deliberate Deviations

@@ -185,6 +185,10 @@ object IssueCode:
   /** `GeneralID/@IDValue` does not correspond to `@DataType` (Table 8.28). */
   val GeneralIdValueDataTypeMismatch: IssueCode = unsafe("GENERALID-VALUE-DATATYPE-MISMATCH")
 
+  /** `ShapeCut/@ShapeType="Path"` provides neither `@CutPath` nor
+   *  `@ShapeTypeDetails` (Table 4.35 SHOULD). */
+  val ShapeCutPathDetailsRecommended: IssueCode = unsafe("SHAPECUT-PATH-DETAILS-RECOMMENDED")
+
   /** Informational: an explicit Trait overrode a Trait implied by a
    *  NamedFeature (§3.1.3.1) — expected behaviour, reported for traceability. */
   val NamedFeatureTraitOverridden: IssueCode = unsafe("NAMEDFEATURE-TRAIT-OVERRIDDEN")

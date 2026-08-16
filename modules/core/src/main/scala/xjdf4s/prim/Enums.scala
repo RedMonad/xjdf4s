@@ -630,6 +630,40 @@ enum LaminatingTemperature extends XjdfEnum:
 object LaminatingTemperature extends XjdfEnumCompanion[LaminatingTemperature]:
   val all: List[LaminatingTemperature] = List(Hot, Cold)
 
+/** `ShapeCut/@CutDepth` (§4.13.1 / Table 4.35): whether the form is
+ *  completely or partially cut out or perforated.
+ */
+enum CutDepth extends XjdfEnum:
+  case Full, Partial
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object CutDepth extends XjdfEnumCompanion[CutDepth]:
+  val all: List[CutDepth] = List(Full, Partial)
+
+/** `ShapeCut/@CutType` (§4.13.1 / Table 4.35): the kind of cut or
+ *  perforation.
+ */
+enum CutType extends XjdfEnum:
+  case Cut, Perforate
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object CutType extends XjdfEnumCompanion[CutType]:
+  val all: List[CutType] = List(Cut, Perforate)
+
+/** `ShapeCut/@ShapeType` (§4.13.1 / Table 4.35): the geometry of a precision
+ *  cut other than hole making.
+ *
+ *  The Scala name is deliberately `ShapeCutType`: `Shape/@ShapeType`
+ *  (Table 8.65) is a distinct inline enumeration that does not contain
+ *  `Line`, so sharing one nominal type would admit a non-conforming resource.
+ */
+enum ShapeCutType extends XjdfEnum:
+  case Line, Path, Rectangular, Round, RoundedRectangle
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object ShapeCutType extends XjdfEnumCompanion[ShapeCutType]:
+  val all: List[ShapeCutType] = List(Line, Path, Rectangular, Round, RoundedRectangle)
+
 /** `WorkingDirection` (Table A.50): the direction from which a tool works.
  *  Used by the `Crease` and `Cut` elements (Tables 8.17 / 8.18); the XSD type
  *  is `EnumTopBottom` (schema.xsd) — the attribute and table name win.

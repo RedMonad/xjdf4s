@@ -633,6 +633,42 @@ object SpecExamples:
         .build
     }
 
+  /** Fixture (§4.13 / Tables 4.34–4.35): a shape-cutting ticket with a
+   *  rectangular envelope window and an irregular perforated path. It
+   *  exercises both geometry attributes without conflating their nominal
+   *  types: `@CutBox` is a `Rectangle`, while `@CutPath` is a `PDFPath`.
+   */
+  val shapeCuttingJob: ValidatedNec[Issue, XJDF] =
+    chainV(dsl.TicketDraft.of("shapeCuttingJob", ProcessType.ShapeCutting)) { draft =>
+      val cuts = NonEmptyChain(
+        ShapeCut(
+          cutBox = Some(Rectangle.unsafe(0.0, 0.0, 144.0, 72.0)),
+          cutDepth = Some(CutDepth.Full),
+          cutOut = Some(true),
+          cutType = Some(CutType.Cut),
+          shapeType = ShapeCutType.Rectangular
+        ),
+        ShapeCut(
+          cutDepth = Some(CutDepth.Partial),
+          cutOut = Some(false),
+          cutPath = Some(PDFPath.unsafe("0 0 m 72 0 l 72 36 l 0 36 l h")),
+          cutType = Some(CutType.Perforate),
+          shapeType = ShapeCutType.Path
+        )
+      )
+      val payload = IntentPayload.ShapeCutting(ShapeCuttingIntent(cuts))
+      val intent = Intent(name = IntentName.of(payload.elementName), specific = payload)
+      val product = Product(
+        id = Some(Id.unsafe("P1")),
+        isRoot = true,
+        amount = Some(100L),
+        intents = Chain.one(intent)
+      )
+      draft
+        .withProductList(ProductList(products = NonEmptyChain.one(product)))
+        .build
+    }
+
   /** Example 5.2: Split delivery — thirty books, ten to Drop1, twenty to Drop2. */
   val splitDelivery: ValidatedNec[Issue, XJDF] =
     val drop1 = PartBuilder.empty
@@ -830,6 +866,7 @@ object SpecExamples:
       "Embossing intent (Table 4.25):" -> embossingJob.map(Show[XJDF].show),
       "Certification (Table 8.8):" -> certificationJob.map(Show[XJDF].show),
       "Content check intent (Table 4.22):" -> contentCheckJob.map(Show[XJDF].show),
+      "Shape cutting intent (Table 4.34):" -> shapeCuttingJob.map(Show[XJDF].show),
       "Example 5.2 (split delivery):" -> splitDelivery.map(Show[XJDF].show),
       "Brochure job:" -> brochureJob.map(Show[XJDF].show),
       "Brochure job after change:" -> updatedBrochureJob.map(Show[XJDF].show)

@@ -47,6 +47,7 @@ object ProcessType:
   val Preflight: ProcessType = NmToken.unsafe("Preflight")
   val QualityControl: ProcessType = NmToken.unsafe("QualityControl")
   val Rendering: ProcessType = NmToken.unsafe("Rendering")
+  val ShapeCutting: ProcessType = NmToken.unsafe("ShapeCutting")
   val Stitching: ProcessType = NmToken.unsafe("Stitching")
   val Stripping: ProcessType = NmToken.unsafe("Stripping")
 
