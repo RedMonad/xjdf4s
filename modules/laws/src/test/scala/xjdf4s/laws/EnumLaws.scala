@@ -150,6 +150,9 @@ class EnumLaws extends FunSuite:
   test("Table 4.24: ProofColorType wire tokens"):
     assertEquals(tokensOf(ProofColorType.all), Set("Monochrome", "BasicColor", "MatchedColor"))
 
+  test("Table 6.119: NodeInfo/@DueLevel wire tokens"):
+    assertEquals(tokensOf(DueLevel.all), Set("JobCancelled", "Penalty", "Trivial"))
+
   test("Table 8.48: MISDetails/@CostType wire tokens"):
     assertEquals(tokensOf(CostType.all), Set("Chargeable", "NonChargeable"))
 
@@ -190,7 +193,8 @@ class EnumLaws extends FunSuite:
         ("PreflightLevel", PreflightLevel.all, PreflightLevel.fromToken),
         ("ProofColorType", ProofColorType.all, ProofColorType.fromToken),
         ("CostType", CostType.all, CostType.fromToken),
-        ("WorkType", WorkType.all, WorkType.fromToken)
+        ("WorkType", WorkType.all, WorkType.fromToken),
+        ("DueLevel", DueLevel.all, DueLevel.fromToken)
       )
     companions.foreach: (name, all, fromToken) =>
       all.foreach: v =>
@@ -220,7 +224,8 @@ class EnumLaws extends FunSuite:
         "PreflightLevel"      -> PreflightLevel.all,
         "ProofColorType"      -> ProofColorType.all,
         "CostType"            -> CostType.all,
-        "WorkType"            -> WorkType.all
+        "WorkType"            -> WorkType.all,
+        "DueLevel"            -> DueLevel.all
       )
     closed.foreach: (name, all) =>
       assertEquals(all.map(_.token.value).distinct.size, all.size, s"$name has duplicate tokens")

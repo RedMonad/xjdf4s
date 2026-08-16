@@ -222,8 +222,8 @@ end Crease
  *  `@Copies` and `@JobID` are required, while `@BinderySignatureID` is
  *  optional. The four normative containers (`JobPhase`, `QueueFilter`,
  *  `QueueEntry`, `NodeInfo`) all declare `GangSource*` (`minOccurs="0"`,
- *  `maxOccurs="unbounded"`). They are wired by their respective slices;
- *  `NodeInfo` is completed in M1.6-8 after `MISDetails` is modelled.
+ *  `maxOccurs="unbounded"`). `NodeInfo.gangSources` is wired in M1.6-8; the
+ *  other three belong to messaging (M4).
  *
  *  `@JobID` names another XJDF and `@BinderySignatureID` names a signature in
  *  that source job. Both are NMTOKEN-valued cross-document identifiers, not
@@ -265,7 +265,8 @@ end GangSource
  *  no local SHALL rule. The four normative containers (`ResourceInfo`,
  *  `PipeParams`, `JobPhase`, `NodeInfo`) all declare `MISDetails?`
  *  (`minOccurs="0"`, `maxOccurs="1"`). The first three belong to messaging
- *  (M4); `NodeInfo` is completed in M1.6-8 together with `GangSource*`.
+ *  (M4); `NodeInfo.misDetails` is wired in M1.6-8 together with
+ *  `GangSource*`.
  *
  *  Data types (Table 8.48):
  *  - `@Complexity` → `UnitInterval`: the prose constrains the value to the

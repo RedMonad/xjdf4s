@@ -48,7 +48,7 @@ enum ResourcePayload:
       case MediaResource(m) => m.references
       case ComponentResource(c) => c.references
       case RunListResource(r) => r.references
-      case NodeInfoResource(_) => Chain.empty
+      case NodeInfoResource(n) => n.references
       case ContactResource(_) => Chain.empty
       case DeliveryParamsResource(d) => d.references
       case CuttingParamsResource(_) => Chain.empty

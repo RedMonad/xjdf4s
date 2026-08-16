@@ -670,6 +670,21 @@ enum HoleShape extends XjdfEnum:
 object HoleShape extends XjdfEnumCompanion[HoleShape]:
   val all: List[HoleShape] = List(Elliptic, Rectangular, Round)
 
+/** `NodeInfo/@DueLevel` (§6.59 / Table 6.119): the severity of a missed
+ *  deadline. The XSD declares the enumeration inline on `NodeInfo`; prose and
+ *  XSD agree on the three values, so the attribute is a closed enumeration
+ *  rather than the plain integer it used to be modelled as (N-52, M1.6-8).
+ *
+ *  Members follow the prose order of Table 6.119; the XSD happens to list them
+ *  by ascending severity (`Trivial`, `Penalty`, `JobCancelled`).
+ */
+enum DueLevel extends XjdfEnum:
+  case JobCancelled, Penalty, Trivial
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object DueLevel extends XjdfEnumCompanion[DueLevel]:
+  val all: List[DueLevel] = List(JobCancelled, Penalty, Trivial)
+
 /** `MISDetails/@CostType` (§8.30 / Table 8.48): whether this MISDetails is
  *  chargeable to the customer or not. The XSD declares the enumeration inline
  *  on `MISDetails`; prose and XSD agree on the two values.

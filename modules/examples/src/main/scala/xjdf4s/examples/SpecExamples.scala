@@ -117,8 +117,8 @@ object SpecExamples:
     }
 
   /** Fixture (§8.22 / Table 8.27): source-job information for one
-   *  `BinderySignature` placed on a gang form. The element remains standalone
-   *  until `MISDetails` is modelled and `NodeInfo` is completed in M1.6-8.
+   *  `BinderySignature` placed on a gang form. Kept standalone on purpose —
+   *  the element in its container is exercised by `gangJob` (M1.6-8).
    */
   val gangSource: ValidatedNec[Issue, GangSource] =
     GangSource(
@@ -128,8 +128,8 @@ object SpecExamples:
     ).validNec
 
   /** Fixture (§8.30 / Table 8.48): MIS accounting details for a rework caused
-   *  by a damaged resource. The element remains standalone until `NodeInfo`
-   *  is completed with `MISDetails?` and `GangSource*` in M1.6-8.
+   *  by a damaged resource. Kept standalone on purpose — the element in its
+   *  container is exercised by `gangJob` (M1.6-8).
    */
   val misDetails: ValidatedNec[Issue, MISDetails] =
     MISDetails(
@@ -138,6 +138,48 @@ object SpecExamples:
       workType = Some(WorkType.Rework),
       workTypeDetails = Some(Catalog.WorkTypeDetails.ResourceDamaged)
     ).validNec
+
+  /** Fixture (§6.59 / Table 6.119): a gang job whose `NodeInfo` carries both
+   *  child elements at once — two `GangSource` entries (`GangSource*`,
+   *  Table 8.27) for the two source jobs imposed on the form, and the single
+   *  `MISDetails` (`MISDetails?`, Table 8.48) that says how the work is
+   *  charged. `@DueLevel` exercises the closed enumeration recovered in
+   *  N-52; `@PersonalID` names a `Resource/@ExternalID`, not an `@ID`, so the
+   *  ticket collects no references (M1.6-8).
+   */
+  val gangJob: ValidatedNec[Issue, XJDF] =
+    chainV(
+      dsl.resourceSet("NodeInfo", usage = Some(Usage.Input))(
+        dsl.nodeInfo(
+          NodeInfo(
+            dueLevel = Some(DueLevel.Penalty),
+            jobPriority = Some(80L),
+            personalId = Some(NmToken.unsafe("Operator-7")),
+            start = Some(Timestamp.ofEpochSecond(1700)),
+            status = Some(Status.Waiting),
+            gangSources = Chain(
+              GangSource(
+                copies = 500L,
+                jobId = JobId.unsafe("SourceJob-42"),
+                binderySignatureId = Some(NmToken.unsafe("Signature-A"))
+              ),
+              GangSource(copies = 250L, jobId = JobId.unsafe("SourceJob-43"))
+            ),
+            misDetails = Some(
+              MISDetails(
+                complexity = Some(UnitInterval.unsafe(0.5)),
+                costType = Some(CostType.Chargeable),
+                workType = Some(WorkType.Original)
+              )
+            )
+          )
+        )
+      )
+    ) { nodeInfoSet =>
+      chainV(dsl.TicketDraft.of("gangJob", ProcessType.Cutting)) { draft =>
+        draft.withResources(nodeInfoSet).build
+      }
+    }
 
   /** Example 8.15 (Table 8.29): a binding ticket demonstrating the `Glue`
    *  element with `@GlueType="Removable"` inside `AdhesiveNote`.
@@ -599,6 +641,7 @@ object SpecExamples:
       "Creasing job (Table 8.17):" -> creasingJob.map(Show[XJDF].show),
       "Gang source (Table 8.27):" -> gangSource.map(Show[GangSource].show),
       "MIS details (Table 8.48):" -> misDetails.map(Show[MISDetails].show),
+      "Gang job (Table 6.119):" -> gangJob.map(Show[XJDF].show),
       "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
       "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),
