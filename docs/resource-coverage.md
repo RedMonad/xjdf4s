@@ -63,7 +63,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 57 | `ExposedMedia` | typed |
 | 58 | `FeedingParams` | typed |
 | 59 | `FontPolicy` | typed |
-| 60 | `ImageCompressionParams` | pending |
+| 60 | `ImageCompressionParams` | typed |
 | 61 | `ImageEnhancementParams` | typed |
 | 62 | `ImageSetterParams` | typed |
 | 63 | `Layout` | pending |
@@ -94,15 +94,15 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 88 | `TrimmingParams` | typed |
 | 89 | `WebInlineFinishingParams` | typed |
 | 90 | `ColorCorrectionParams` | typed |
-| 91 | `ColorSpaceConversionParams` | pending |
+| 91 | `ColorSpaceConversionParams` | typed |
 | 92 | `Ink` | typed |
 | 93 | `InkZoneCalculationParams` | typed |
 | 94 | `InkZoneProfile` | typed |
 | 95 | `PreviewGenerationParams` | typed |
-| 96 | `RenderingParams` | pending |
+| 96 | `RenderingParams` | typed |
 | 97 | `ScreeningParams` | typed |
 | 98 | `TrappingParams` | typed |
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **86/100** schema-defined descendants.
+Current coverage: **89/100** schema-defined descendants.

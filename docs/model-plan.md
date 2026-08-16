@@ -26,6 +26,7 @@ python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSche
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}Media' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}LooseBindingParams' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}WebInlineFinishingParams' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}ImageCompressionParams' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 ```
 
 The index reports 365 elements, 366 complex types and 228 simple types. `SpecificResource` alone has 100 derived
@@ -37,6 +38,8 @@ mismatches are resolved in favor of normative tables: `Part/@BlockName` is model
 the indexed `boolean`, `PreflightTest/@Action` as the normative action enumeration rather than indexed `duration`, and
 `ColorantAlias/@RawName` as normative `hexBinary` rather than indexed `dateTime`. XJDF 2.2 additions absent from the
 checked-in schema, including `Device/@RestApiBaseURL` and `ShapeDef/RuleLength`, are retained from the normative tables.
+Image compression follows chapter 8 where schema index types are corrupted (`CCITTFaxParams/@EndOfBlock` and
+`JPEG2000Params/@LayerRates`).
 
 ## Scala 3 modelling rules
 
@@ -60,7 +63,7 @@ checked-in schema, including `Device/@RestApiBaseURL` and `ShapeDef/RuleLength`,
   `ProductIntent` remains open only because section 3.5.4 explicitly permits extension intents; `StandardProductIntent`
   exposes the complete closed union supplied by XJDF 2.2.
 - **Slice 4 (in progress):** all 100 `SpecificResource` descendants grouped by general/prepress/press/postpress process
-  domains. Eighty-six foundational, general, press, postpress, and prepress resources plus reusable recursive child
+  domains. Eighty-nine foundational, general, press, postpress, and prepress resources plus reusable recursive child
   graphs are typed. See [resource-coverage.md](resource-coverage.md).
 - **Slice 5:** every concrete XJMF query/command/signal/response and audit payload.
 - **Slice 6:** schema-derived XML and JSON codecs, validation laws, round-trip fixtures and compatibility tests.
