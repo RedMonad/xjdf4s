@@ -23,8 +23,13 @@ type PostpressSpecificResource =
     resources.ThreadSealingParams | resources.TrimmingParams | resources.VarnishingParams |
     resources.WindingParams | resources.WrappingParams
 
+type PrepressSpecificResource =
+  resources.BendingParams | resources.ColorCorrectionParams | resources.DevelopingParams |
+    resources.ImageEnhancementParams | resources.ImageSetterParams | resources.LayoutShift |
+    resources.ManualLaborParams | resources.PreviewGenerationParams | resources.TrappingParams
+
 /** Union of all schema-defined SpecificResource descendants implemented so far. */
-type TypedSpecificResource = FoundationalSpecificResource | PostpressSpecificResource
+type TypedSpecificResource = FoundationalSpecificResource | PostpressSpecificResource | PrepressSpecificResource
 
 /** Lossless schema-shaped fallback while dedicated resource records are added slice by slice. */
 final case class NamedSpecificResource(

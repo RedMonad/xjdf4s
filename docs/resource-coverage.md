@@ -15,7 +15,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 9 | `CoverApplicationParams` | typed |
 | 10 | `CreasingParams` | pending |
 | 11 | `CuttingParams` | pending |
-| 12 | `DevelopingParams` | pending |
+| 12 | `DevelopingParams` | typed |
 | 13 | `Device` | pending |
 | 14 | `EmbossingParams` | pending |
 | 15 | `EndSheetGluingParams` | typed |
@@ -47,7 +47,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 41 | `Assembly` | pending |
 | 42 | `BarcodeCompParams` | pending |
 | 43 | `BarcodeReproParams` | pending |
-| 44 | `BendingParams` | pending |
+| 44 | `BendingParams` | typed |
 | 45 | `BinderySignature` | pending |
 | 46 | `BoxFoldingParams` | pending |
 | 47 | `Color` | pending |
@@ -64,12 +64,12 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 58 | `FeedingParams` | pending |
 | 59 | `FontPolicy` | pending |
 | 60 | `ImageCompressionParams` | pending |
-| 61 | `ImageEnhancementParams` | pending |
-| 62 | `ImageSetterParams` | pending |
+| 61 | `ImageEnhancementParams` | typed |
+| 62 | `ImageSetterParams` | typed |
 | 63 | `Layout` | pending |
 | 64 | `LayoutElementProductionParams` | pending |
-| 65 | `LayoutShift` | pending |
-| 66 | `ManualLaborParams` | pending |
+| 65 | `LayoutShift` | typed |
+| 66 | `ManualLaborParams` | typed |
 | 67 | `Media` | pending |
 | 68 | `MiscConsumable` | typed |
 | 69 | `PDLCreationParams` | pending |
@@ -93,16 +93,16 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 87 | `ThreadSewingParams` | pending |
 | 88 | `TrimmingParams` | typed |
 | 89 | `WebInlineFinishingParams` | pending |
-| 90 | `ColorCorrectionParams` | pending |
+| 90 | `ColorCorrectionParams` | typed |
 | 91 | `ColorSpaceConversionParams` | pending |
 | 92 | `Ink` | typed |
 | 93 | `InkZoneCalculationParams` | pending |
 | 94 | `InkZoneProfile` | pending |
-| 95 | `PreviewGenerationParams` | pending |
+| 95 | `PreviewGenerationParams` | typed |
 | 96 | `RenderingParams` | pending |
 | 97 | `ScreeningParams` | pending |
-| 98 | `TrappingParams` | pending |
+| 98 | `TrappingParams` | typed |
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **31/100** schema-defined descendants.
+Current coverage: **40/100** schema-defined descendants.
