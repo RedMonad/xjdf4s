@@ -659,13 +659,20 @@ class TicketLaws extends ScalaCheckSuite:
         averagePages = Some(4L))))
     assert(ticketWithProduct(productWithIntent(variableIntent)).validate.isValid)
 
-    // Disposition law reached through the first FileSpec-bearing intent
-    // (ContentCheckIntent/ProofItem/FileSpec, M1.6-11). A lawful Disposition
-    // (only @MinDuration) proves the traversal is wired.
-    val contentCheckIntent = Intent(IntentName.unsafe("ContentCheckIntent"),
-      IntentPayload.ContentCheck(ContentCheckIntent(proofItems = Chain.one(ProofItem(
-        fileSpec = Some(FileSpec(disposition = Some(Disposition(
-          minDuration = Some(TimeSpan.ofHours(24)))))))))))
+    // FileSpec and Disposition laws are both reached through
+    // ContentCheckIntent/ProofItem/FileSpec. A direct URL makes the FileSpec
+    // locally lawful; a Disposition with only @MinDuration proves its nested
+    // traversal is wired.
+    val contentCheckFileSpec =
+      FileSpec.ofUrl(Url.unsafe("file:///proofs/registry.pdf")).copy(
+        disposition = Some(Disposition(minDuration = Some(TimeSpan.ofHours(24))))
+      )
+    val contentCheckIntent = Intent(
+      IntentName.unsafe("ContentCheckIntent"),
+      IntentPayload.ContentCheck(
+        ContentCheckIntent(proofItems = Chain.one(ProofItem(fileSpec = Some(contentCheckFileSpec))))
+      )
+    )
     assert(ticketWithProduct(productWithIntent(contentCheckIntent)).validate.isValid)
 
     // Certification law reached through all four modelled containers

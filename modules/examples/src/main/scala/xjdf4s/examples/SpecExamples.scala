@@ -15,6 +15,7 @@ import xjdf4s.model.elements.{
   IdentificationField,
   MetadataMap,
   MISDetails,
+  NetworkHeader,
   Expr
 }
 import xjdf4s.prim.*
@@ -537,7 +538,8 @@ object SpecExamples:
    *  processes — Chapter 5 defines no `ContentCheck` process of its own. A
    *  Premium preflight combines with a matched-color contract proof whose
    *  `@ID` is referenced by `DeliveryParams/DropItem/@ItemRef` (Table 6.55),
-   *  exercising the intent-level `declaredIds` wiring.
+   *  exercising the intent-level `declaredIds` wiring. Its FileSpec also
+   *  carries an HTTP `NetworkHeader*` child (§8.19.2 / Table 8.24, N-51).
    */
   val contentCheckJob: ValidatedNec[Issue, XJDF] =
     chainV(dsl.TicketDraft.of("contentCheckJob", ProcessType.Approval, ProcessType.Preflight)) { draft =>
@@ -550,7 +552,14 @@ object SpecExamples:
             contract = Some(true),
             id = Some(Id.unsafe("Proof1")),
             pageIndex = Some(IntegerRange(0, 3)),
-            fileSpec = Some(FileSpec.ofUrl(Url.unsafe("file:///proofs/customer-record.pdf")))
+            fileSpec = Some(
+              FileSpec.ofUrl(Url.unsafe("https://proofs.example.test/customer-record.pdf")).copy(
+                networkHeaders = Chain.one(NetworkHeader(
+                  name = XjdfString.unsafe("Authorization"),
+                  value = XjdfString.unsafe("Bearer example-token")
+                ))
+              )
+            )
           )
         )
       )

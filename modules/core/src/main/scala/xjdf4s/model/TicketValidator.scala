@@ -13,6 +13,7 @@ import xjdf4s.intents.{
 import xjdf4s.model.elements.{
   Certification,
   Disposition,
+  FileSpec,
   Glue => GlueElement,
   HolePattern => HolePatternElement,
   IdentificationField,
@@ -93,9 +94,10 @@ object TicketValidator:
         val rsPath = XPath(s"/XJDF/ResourceSet[@Name='${rs.name.toNmToken.value}']")
         val rsRuleIssues = ResourceSetLaw.children.check(rs, rsPath) ++
           ResourceSetLaw.statuses.check(rs, rsPath)
+        val isPipe = rs.dependents.exists(_.pipeId.isDefined)
         val perResource = rs.resources.flatMap { r =>
           val path = XPath(s"${rsPath.value}/Resource")
-          checkResourceLocalLaws(r, path)
+          checkResourceLocalLaws(r, path, isPipe)
         }
         rsRuleIssues ++ perResource
       }
@@ -121,7 +123,7 @@ object TicketValidator:
 
     resourceIssues ++ productIssues ++ notificationIssues
 
-  private def checkResourceLocalLaws(resource: Resource, at: XPath): Chain[Issue] =
+  private def checkResourceLocalLaws(resource: Resource, at: XPath, parentIsPipe: Boolean): Chain[Issue] =
     val amountIssues = resource.amountPool.fold(Chain.empty[Issue]) { pool =>
       pool.toList.foldLeft(Chain.empty[Issue]) { (acc, pa) =>
         acc ++ pa.partWaste.foldLeft(Chain.empty[Issue])((w, pw) => w ++ PartWaste.law.check(pw, at))
@@ -144,15 +146,49 @@ object TicketValidator:
       case Some(ResourcePayload.RunListResource(r)) =>
         checkRunListMetadataMaps(r.metadataMaps, XPath(s"$at/RunList"))
       case _ => Chain.empty
-    amountIssues ++ certificationIssues ++ identificationFieldIssues ++ runListMetadataIssues
-    // Note: Disposition (Table 8.23) is a child of FileSpec inside chapter-6
-    // resources; once resources carrying FileSpec are implemented (M3), the
-    // traversal extends here with `TicketValidator.dispositionLaw.check(d, at)`.
-    // The rule is defined as `TicketValidator.dispositionLaw` to keep `prim`
-    // free of validation dependencies (ADR-0002, M1.4-1); the hook stays a
-    // one-line addition. The intent-side FileSpec carrier (`ContentCheckIntent/
-    // ProofItem/FileSpec`, Table 4.24) is wired in M1.6-11 through
-    // `checkContentCheckLaws` below.
+    val fileSpecIssues = checkResourceFileSpecs(resource, at, parentIsPipe)
+    amountIssues ++ certificationIssues ++ identificationFieldIssues ++ runListMetadataIssues ++ fileSpecIssues
+
+  /** Applies the local FileSpec law, the parent-sensitive pipe implication and
+   *  the nested Disposition law to every currently modelled FileSpec-bearing
+   *  chapter-6 resource (Tables 8.22/8.23 and 3.13).
+   */
+  private def checkResourceFileSpecs(resource: Resource, at: XPath, parentIsPipe: Boolean): Chain[Issue] =
+    resource.specific match
+      case Some(ResourcePayload.CuttingParamsResource(c)) =>
+        checkFileSpecs(c.fileSpecs, XPath(s"$at/CuttingParams"), parentIsPipe)
+      case Some(ResourcePayload.FoldingParamsResource(f)) =>
+        checkFileSpecs(f.fileSpecs, XPath(s"$at/FoldingParams"), parentIsPipe)
+      case Some(ResourcePayload.LayoutResource(l)) =>
+        checkFileSpecs(l.fileSpecs, XPath(s"$at/Layout"), parentIsPipe)
+      case Some(ResourcePayload.PreviewResource(p)) =>
+        checkFileSpecs(p.fileSpecs, XPath(s"$at/Preview"), parentIsPipe)
+      case Some(ResourcePayload.RunListResource(r)) =>
+        r.fileSpecs.fold(Chain.empty[Issue]) { fileSpec =>
+          checkFileSpec(fileSpec, XPath(s"$at/RunList/FileSpec"), parentIsPipe)
+        }
+      case _ => Chain.empty
+
+  private def checkFileSpecs(fileSpecs: Chain[FileSpec], at: XPath, parentIsPipe: Boolean): Chain[Issue] =
+    fileSpecs.zipWithIndex.flatMap { (fileSpec, index) =>
+      checkFileSpec(fileSpec, XPath(s"$at/FileSpec[$index]"), parentIsPipe)
+    }
+
+  private def checkFileSpec(fileSpec: FileSpec, at: XPath, parentIsPipe: Boolean): Chain[Issue] =
+    val localIssues = FileSpec.law.check(fileSpec, at)
+    val pipeIssues =
+      if fileSpec.locationAttributesAbsent && !parentIsPipe then
+        Chain.one(Issue.errorC(
+          IssueCode.FileSpecLocationMissing,
+          at,
+          "A locationless FileSpec SHALL be referenced only by a ResourceSet pipe " +
+            "(FileSpec Table 8.22; Dependent/@PipeID Table 3.13)"
+        ))
+      else Chain.empty
+    val dispositionIssues = fileSpec.disposition.fold(Chain.empty[Issue]) { disposition =>
+      dispositionLaw.check(disposition, XPath(s"$at/Disposition"))
+    }
+    localIssues ++ pipeIssues ++ dispositionIssues
 
   /** Contextual SHALLs for `IdentificationField/MetadataMap` (Tables 8.31
    *  and 8.46). They live in the root traversal because a `MetadataMap` alone
@@ -291,17 +327,14 @@ object TicketValidator:
       )
     }
 
-  /** Validates the `Disposition` elements nested inside
-   *  `ContentCheckIntent/ProofItem/FileSpec` (Table 8.23). This is the first
-   *  FileSpec-bearing traversal wired into the local-law bus — the hook
-   *  anticipated in `checkResourceLocalLaws` (M1.6-11).
+  /** Validates FileSpec and its nested Disposition below
+   *  `ContentCheckIntent/ProofItem` (Tables 8.22/8.23). ProofItem has no pipe
+   *  context, so a locationless FileSpec is invalid here.
    */
   private def checkContentCheckLaws(c: ContentCheckIntent, path: XPath): Chain[Issue] =
     c.proofItems.zipWithIndex.flatMap { (pi, i) =>
-      pi.fileSpec.fold(Chain.empty[Issue]) { fs =>
-        fs.disposition.fold(Chain.empty[Issue]) { d =>
-          dispositionLaw.check(d, XPath(s"$path/ProofItem[$i]/FileSpec/Disposition"))
-        }
+      pi.fileSpec.fold(Chain.empty[Issue]) { fileSpec =>
+        checkFileSpec(fileSpec, XPath(s"$path/ProofItem[$i]/FileSpec"), parentIsPipe = false)
       }
     }
 

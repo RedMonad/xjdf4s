@@ -173,6 +173,15 @@ object IssueCode:
   /** A non-predefined `RunList/MetadataMap` variable has other than exactly one matching `Expr` (Table 8.46). */
   val MetadataMapExprResolution: IssueCode = unsafe("METADATA-MAP-EXPR-RESOLUTION")
 
+  /** `FileSpec/@URL` or `@UID` is combined with the template-location group (Table 8.22). */
+  val FileSpecLocationGroupsConflict: IssueCode = unsafe("FILESPEC-LOCATION-GROUPS-CONFLICT")
+
+  /** Exactly one of `FileSpec/@FileFormat` and `@FileTemplate` is present (Table 8.22). */
+  val FileSpecTemplateIncomplete: IssueCode = unsafe("FILESPEC-TEMPLATE-INCOMPLETE")
+
+  /** A locationless FileSpec is not contained by a ResourceSet pipe (Tables 8.22/3.13). */
+  val FileSpecLocationMissing: IssueCode = unsafe("FILESPEC-LOCATION-MISSING")
+
 end IssueCode
 
 /** A validation finding: a stable machine-readable code, the severity class,

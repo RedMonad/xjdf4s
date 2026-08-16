@@ -104,10 +104,17 @@ object Dependent:
 
 end Dependent
 
-/** The `FileSpec` element (Table 8.22): a URL or a set of URLs. Exactly one of
- *  `@URL`, `@UID` and the `@FileFormat`+`@FileTemplate` pair SHALL be present,
- *  unless the referenced resource is a pipe — modelled as a closed `FileLocation`
- *  enum (a coproduct: every alternative carries its own data).
+/** The `FileSpec` element (§8.19 / Table 8.22): a URL or a set of URLs.
+ *
+ *  `@URL` and `@UID` MAY coexist; Table 8.22 excludes that direct-location
+ *  group from `@FileFormat`/`@FileTemplate`, which in turn SHALL occur as a
+ *  complete pair. A FileSpec with no location attributes is lawful only when
+ *  its referencing ResourceSet is a pipe (`Dependent/@PipeID`, Table 3.13);
+ *  that parent-sensitive check lives in `TicketValidator` (ADR-0003).
+ *
+ *  `@NPage` is retained from the normative Table 8.22 and the XJDF 2.2 release
+ *  notes although the `schema.xsd` FileSpec declaration omits it
+ *  (ADR-0015/N-56).
  */
 final case class FileSpec(
     url: Option[Url] = None,
@@ -124,23 +131,39 @@ final case class FileSpec(
     resourceUsage: Option[NmToken] = None,
     searchDepth: Option[Long] = None,
     userFileName: Option[XjdfString] = None,
-    disposition: Option[Disposition] = None
+    disposition: Option[Disposition] = None,
+    networkHeaders: Chain[NetworkHeader] = Chain.empty
 ):
 
-  /** The resolved location: URL, UID, a template or an (empty) pipe. */
+  /** A lossless projection of the location attributes when their local SHALL
+   *  constraints hold. `Pipe` means only that all four location attributes
+   *  are absent; the root validator still has to prove the parent pipe
+   *  context. Invalid mixed or partial groups return `None`.
+   */
   def location: Option[FileLocation] =
-    url.map(FileLocation.UrlLocation.apply)
-      .orElse(uid.map(FileLocation.UidLocation.apply))
-      .orElse {
-        for
-          format   <- fileFormat
-          template <- fileTemplate
-        yield FileLocation.Template(format, template)
-      }
-      .orElse(Option.when(allLocationAttributesAbsent)(FileLocation.Pipe))
+    if hasDirectLocation && hasTemplateAttributes then None
+    else
+      (url, uid, fileFormat, fileTemplate) match
+        case (Some(u), Some(id), None, None) => Some(FileLocation.UrlAndUid(u, id))
+        case (Some(u), None, None, None) => Some(FileLocation.UrlLocation(u))
+        case (None, Some(id), None, None) => Some(FileLocation.UidLocation(id))
+        case (None, None, Some(format), Some(template)) => Some(FileLocation.Template(format, template))
+        case (None, None, None, None) => Some(FileLocation.Pipe)
+        case _ => None
 
-  private def allLocationAttributesAbsent: Boolean =
-    url.isEmpty && uid.isEmpty && fileFormat.isEmpty && fileTemplate.isEmpty
+  /** True when at least one direct-location attribute is present. */
+  def hasDirectLocation: Boolean = url.isDefined || uid.isDefined
+
+  /** True when at least one template-location attribute is present. */
+  def hasTemplateAttributes: Boolean = fileFormat.isDefined || fileTemplate.isDefined
+
+  /** True when no location attribute is present. The root validator uses this
+   *  predicate with the parent ResourceSet's `Dependent/@PipeID` context.
+   */
+  def locationAttributesAbsent: Boolean = !hasDirectLocation && !hasTemplateAttributes
+
+  /** FileSpec and NetworkHeader declare no document-scoped IDREF attributes. */
+  def references: Chain[IdRef] = networkHeaders.flatMap(_.references)
 end FileSpec
 
 object FileSpec:
@@ -149,22 +172,59 @@ object FileSpec:
 
   def ofUid(uid: NmToken): FileSpec = FileSpec(uid = Some(uid))
 
-  /** A pipe reference: no location attributes (Table 8.22). */
+  /** A locationless FileSpec candidate. It is lawful only below a ResourceSet
+   *  whose `Dependent/@PipeID` marks the resource as a pipe (Tables 8.22/3.13).
+   */
   val pipe: FileSpec = FileSpec()
 
+  /** Local location SHALLs of Table 8.22 (ADR-0003). The parent-sensitive
+   *  locationless/pipe implication is intentionally checked by
+   *  `TicketValidator`, not by this rule.
+   */
+  val law: DomainRule[FileSpec] =
+    (fileSpec: FileSpec, at: XPath) =>
+      if fileSpec.hasDirectLocation && fileSpec.hasTemplateAttributes then
+        Chain.one(Issue.errorC(
+          IssueCode.FileSpecLocationGroupsConflict,
+          at,
+          "FileSpec/@URL or @UID SHALL NOT be combined with @FileFormat or @FileTemplate (Table 8.22)"
+        ))
+      else if !fileSpec.hasDirectLocation && (fileSpec.fileFormat.isDefined != fileSpec.fileTemplate.isDefined) then
+        Chain.one(Issue.errorC(
+          IssueCode.FileSpecTemplateIncomplete,
+          at,
+          "FileSpec/@FileFormat and @FileTemplate SHALL be specified together (Table 8.22)"
+        ))
+      else Chain.empty
+
   given Show[FileSpec] =
-    Show.show(f => s"FileSpec(${f.location.fold("pipe")(_.toString)})")
+    Show.show(f => s"FileSpec(${f.location.fold("invalid")(_.toString)})")
 
   given Eq[FileSpec] = Eq.fromUniversalEquals
 
 end FileSpec
 
-/** The closed location alternatives of a FileSpec (Table 8.22). The case names
- *  carry a suffix so they do not clash with the opaque type `Url`.
+/** Protocol header information for a FileSpec (§8.19.2 / Table 8.24).
+ *  Both string attributes are required structurally; NetworkHeader has no
+ *  subelements and no ID/IDREF attributes. New in XJDF 2.1.
+ */
+final case class NetworkHeader(name: XjdfString, value: XjdfString):
+  def references: Chain[IdRef] = Chain.empty
+end NetworkHeader
+
+object NetworkHeader:
+  given Show[NetworkHeader] = Show.show(h => s"NetworkHeader(${h.name.value})")
+  given Eq[NetworkHeader] = Eq.fromUniversalEquals
+end NetworkHeader
+
+/** A lawful projection of FileSpec location attributes (§8.19 / Table 8.22).
+ *  The case names carry a suffix so they do not clash with the opaque type
+ *  `Url`. Table 8.22 does not forbid `@URL` and `@UID` from coexisting.
  */
 enum FileLocation:
   case UrlLocation(value: Url)
   case UidLocation(value: NmToken)
+  case UrlAndUid(url: Url, uid: NmToken)
   case Template(fileFormat: XjdfString, fileTemplate: NmTokens)
   case Pipe
 
