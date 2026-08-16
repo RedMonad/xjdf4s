@@ -1820,7 +1820,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 **Дополнительно:**
 
 - M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[x]` выполнено (верифицировано владельцем; PR-25);
-- M1.6-13(B1): отдельный примитив `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация непустоты и полный parser в M2.3 — `[~]` реализовано статически, ожидает прогона владельца; B2 не начат;
+- M1.6-13(B1): отдельный примитив `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация непустоты и полный parser в M2.3 — `[x]` выполнено и верифицировано владельцем: 489/0, `PDFPathLaws` 7/0, `examples/run` exit 0; B2 не начат;
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — `[x]` выполнено и верифицировано владельцем: модель, правило приоритета явных Traits, SHALL Table 8.28 и закрытый `DataType` (ADR-0016/N-59); 482/0, `NamedFeatureLaws` 26/0, `examples/run` exit 0;
 - N-51: `FileSpec.law`, parent-sensitive pipe-контекст, `NetworkHeader*` и обход всех уже смоделированных FileSpec-контейнеров — `[x]` выполнено и верифицировано владельцем (440/0, `examples/run` exit 0); ADR-0015/N-56 фиксирует `@NPage`, N-57/N-58 зарегистрированы как отдельные breaking follow-up и не расширяют срез;
 - N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` исправлен с `Chain[FileSpec]` на `Option[FileSpec]`; prose и XSD согласны, ADR не нужен; regression-first, migration note и полный список call sites — `[x]` выполнено и верифицировано владельцем (445/0, `examples/run` exit 0);
@@ -2159,7 +2159,7 @@ exit 0.
 примеров выполнен успешно. Предупреждений в предоставленном выводе нет.
 Статус `[x]` — закрыт полностью.
 
-#### M1.6-13(B1). Примитив `PDFPath` (§A.1 / Table A.1) — `[~]` реализовано статически, ожидает прогона владельца
+#### M1.6-13(B1). Примитив `PDFPath` (§A.1 / Table A.1) — `[x]` выполнено (верифицировано владельцем)
 
 Первый из двух последовательных срезов M1.6-13; B2 (`ShapeCuttingIntent`,
 `ShapeCut`, `CutBox`/`CutPath`) зависит от этого примитива и в B1 не входит.
@@ -2201,8 +2201,14 @@ exit 0.
 
 **Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
 без предупреждений; минимум 489 тестов зелёных (482 + 7), `examples/run`
-exit 0; `scripts/check-spec-coverage.sh` — `RESULT: OK`. До подтверждения
-владельцем статус остаётся `[~]` по §1.3.
+exit 0; `scripts/check-spec-coverage.sh` — `RESULT: OK`.
+
+**Прогон владельца (2026-08-16).** `clean` — success (8 disk cache hits);
+`compile` — success (67 disk cache hits); `testFull` — **489/0** за 5 s,
+включая новый `PDFPathLaws` **7/0**, все 28 прежних сьютов без регрессий;
+`examples/run` — exit 0 за 1 s, прежний демонстрационный вывод сохранён.
+Ошибок и предупреждений в предоставленном выводе нет. Статус `[x]` — закрыт
+полностью; следующий отдельный срез — M1.6-13(B2).
 
 #### M1.6-14. NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) — `[x]` выполнено (верифицировано владельцем; PR-33)
 
@@ -3307,7 +3313,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 31 | N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` → `Option[FileSpec]`; regression-first, общий optional-wiring, migration note и полный список call sites | N-58 | 30 | `[x]` верифицировано владельцем: 445/0, `FileSpecCardinalityLaws` 5/0, `examples/run` exit 0 |
 | 32 | N-57: `FileSpec/@CheckSum` → `Option[HexBinary]`; новый Appendix A primitive, regression-first, XSD oracle, round-trip, migration note и полный список call sites | N-57 | 31 | `[x]` верифицировано владельцем: 452/0, `HexBinaryLaws` 7/0, `examples/run` exit 0 |
 | 33 | M1.6-14: NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) + закрытый `DataType` (Table A.14) + ADR-0016/N-59; `TraitSet`/`TraitResolution`, SHALL Table 8.28 в четырёх контейнерах, breaking change с migration note и полным списком call sites | M1.6-14 | 32 | `[x]` верифицировано владельцем: 482/0, `NamedFeatureLaws` 26/0, `SpecExamplesSuite` 44/0, `examples/run` exit 0 |
-| 34 | M1.6-13(B1): `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация + XSD oracle; полный grammar parser остаётся M2.3 | M1.6-13(B1) | 33 | `[~]` реализовано статически: `PDFPathLaws` 7 тестов; ожидается прогон владельца |
+| 34 | M1.6-13(B1): `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация + XSD oracle; полный grammar parser остаётся M2.3 | M1.6-13(B1) | 33 | `[x]` верифицировано владельцем: 489/0, `PDFPathLaws` 7/0, `examples/run` exit 0 |
 | 35 | M1.6-13(B2): `ShapeCuttingIntent` + `ShapeCut` (Tables 4.34–4.35), `CutBox`/`CutPath` | M1.6-13(B2) | 34 | не начато; отдельный срез после верификации B1 |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -4520,8 +4526,9 @@ exit 0. N-57 (`FileSpec/@CheckSum` → `HexBinary`) — `[x]` закрыт и
 `examples/run` exit 0. M1.6-14 (NamedFeatures §3.1.3.1 + `GeneralID` Table 8.28
 + закрытый `DataType` Table A.14, ADR-0016/N-59) — `[x]` закрыт и верифицирован
 владельцем: **482/0**, новый `NamedFeatureLaws` **26/0**, `SpecExamplesSuite`
-**44/0**, `examples/run` exit 0. M1.6-13(B1) (`PDFPath`) реализован
-статически и остаётся `[~]` до прогона владельца; затем отдельным срезом
-выполняется B2 (`ShapeCuttingIntent`).
+**44/0**, `examples/run` exit 0. M1.6-13(B1) (`PDFPath`) — `[x]` закрыт и
+верифицирован владельцем: **489/0**, новый `PDFPathLaws` **7/0**,
+`examples/run` exit 0. Затем отдельным срезом выполняется B2
+(`ShapeCuttingIntent`).
 LICENSE остаётся `BLOCKED` до решения владельца; возврат
 обязательного CI — открытая часть M1.0-1.
