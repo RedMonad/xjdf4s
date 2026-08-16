@@ -14,6 +14,18 @@ type FoundationalSpecificResource =
     resources.MiscConsumable | resources.NodeInfo | resources.PrintCondition | resources.Shape | resources.Tool |
     resources.UsageCounter
 
+type PostpressSpecificResource =
+  resources.BlockPreparationParams | resources.CaseMakingParams | resources.CasingInParams |
+    resources.CoverApplicationParams | resources.EndSheetGluingParams | resources.GluingParams |
+    resources.HeadBandApplicationParams | resources.JacketingParams | resources.LaminatingParams |
+    resources.PerforatingParams | resources.ShrinkingParams | resources.SpinePreparationParams |
+    resources.SpineTapingParams | resources.StitchingParams | resources.StrappingParams |
+    resources.ThreadSealingParams | resources.TrimmingParams | resources.VarnishingParams |
+    resources.WindingParams | resources.WrappingParams
+
+/** Union of all schema-defined SpecificResource descendants implemented so far. */
+type TypedSpecificResource = FoundationalSpecificResource | PostpressSpecificResource
+
 /** Lossless schema-shaped fallback while dedicated resource records are added slice by slice. */
 final case class NamedSpecificResource(
     elementName: QualifiedName,
