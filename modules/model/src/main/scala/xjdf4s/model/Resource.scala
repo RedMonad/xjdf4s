@@ -14,10 +14,16 @@ final case class NamedSpecificResource(
     children: Vector[ExtensionElement] = Vector.empty,
 ) extends SpecificResource
 
+enum WasteOrigin:
+  case Modules(moduleIds: NonEmptyVector[Nmtoken])
+  case Details(wasteDetails: Nmtoken)
+  case ModulesAndDetails(moduleIds: NonEmptyVector[Nmtoken], wasteDetails: Nmtoken)
+end WasteOrigin
+
+/** `WasteOrigin` makes the table 6.5 at-least-one-of constraint unrepresentable as an invalid state. */
 final case class PartWaste(
     waste: Float,
-    moduleIds: Vector[Nmtoken] = Vector.empty,
-    wasteDetails: Option[Nmtoken] = None,
+    origin: WasteOrigin,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -46,7 +52,7 @@ final case class Resource(
     parts: Vector[Part] = Vector.empty,
     specificResource: Option[SpecificResource] = None,
     foreignElements: Vector[ExtensionElement] = Vector.empty,
-    brand: Option[Boolean] = None,
+    brand: Option[String] = None,
     commentUrl: Option[UriRef] = None,
     descriptiveName: Option[String] = None,
     duration: Option[XsdDuration] = None,

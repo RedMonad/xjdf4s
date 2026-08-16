@@ -21,3 +21,25 @@ object NonEmptyVector:
     def append[B >: A](value: B): NonEmptyVector[B] = values :+ value
     def concat[B >: A](other: IterableOnce[B]): NonEmptyVector[B] = values ++ other
 end NonEmptyVector
+
+/** An immutable sequence whose XSD cardinality is `0..2`. */
+opaque type AtMostTwo[+A] = Vector[A]
+
+object AtMostTwo:
+  def empty[A]: AtMostTwo[A] = Vector.empty
+  def one[A](value: A): AtMostTwo[A] = Vector(value)
+  def two[A](first: A, second: A): AtMostTwo[A] = Vector(first, second)
+
+  def from[A](values: IterableOnce[A]): Either[ValidationError, AtMostTwo[A]] =
+    val vector = Vector.from(values)
+    Either.cond(
+      vector.size <= 2,
+      vector,
+      ValidationError.InvalidValue("AtMostTwo", vector.size.toString, "between zero and two values"),
+    )
+
+  extension [A](values: AtMostTwo[A])
+    def toVector: Vector[A] = values
+    def size: Int = values.size
+    def map[B](f: A => B): AtMostTwo[B] = values.map(f)
+end AtMostTwo

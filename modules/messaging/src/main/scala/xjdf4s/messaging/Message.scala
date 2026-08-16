@@ -1,6 +1,7 @@
 package xjdf4s.messaging
 
 import xjdf4s.core.*
+import xjdf4s.model.{HasHeader, Header, Notification}
 
 enum ChannelMode derives CanEqual:
   case Reliable, Simulate, Transactional, Unreliable
@@ -35,7 +36,7 @@ end Signal
 
 trait Response extends Message:
   def returnCode: Option[Int]
-  def notification: Option[ExtensionElement]
+  def notification: Option[Notification]
 end Response
 
 /** Generic but family-safe records used before each chapter-7 message gets a dedicated payload. */
@@ -68,6 +69,6 @@ final case class ResponseMessage(
     header: Header,
     content: Vector[ExtensionElement] = Vector.empty,
     returnCode: Option[Int] = None,
-    notification: Option[ExtensionElement] = None,
+    notification: Option[Notification] = None,
     extensions: Extensions = Extensions.empty,
 ) extends Response

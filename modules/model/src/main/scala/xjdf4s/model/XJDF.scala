@@ -2,19 +2,6 @@ package xjdf4s.model
 
 import xjdf4s.core.*
 
-/** Audit is an XSD choice; concrete audit variants are delivered in the audit slice. */
-trait Audit extends XjdfNode:
-  def elementName: Nmtoken
-end Audit
-
-final case class NamedAudit(elementName: Nmtoken, content: ExtensionElement) extends Audit
-
-final case class AuditPool(
-    audits: NonEmptyVector[Audit],
-    extensions: Extensions = Extensions.empty,
-) extends XjdfNode,
-      Extensible
-
 /** Root XJDF job/process document (chapter 3.1). */
 final case class XJDF(
     jobId: Nmtoken,

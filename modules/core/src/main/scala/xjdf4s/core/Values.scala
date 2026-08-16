@@ -23,6 +23,30 @@ enum Side derives CanEqual:
   case Front, Back
 end Side
 
+enum Severity derives CanEqual:
+  case Event, Information, Warning, Error, Fatal
+end Severity
+
+enum Scope derives CanEqual:
+  case Allowed, Estimate, Job, Present
+end Scope
+
+enum NodeStatus derives CanEqual:
+  case Aborted, Cleanup, Completed, InProgress, Setup, Stopped, Suspended, Waiting
+end NodeStatus
+
+enum DeviceStatus derives CanEqual:
+  case Cleanup, Idle, NonProductive, Offline, Production, Setup, Stopped
+end DeviceStatus
+
+enum SheetLay derives CanEqual:
+  case Center, Left, Right
+end SheetLay
+
+enum Face derives CanEqual:
+  case Back, Bottom, Front, Left, Right, Top
+end Face
+
 /** The six values `a b c d e f` of an XJDF affine transformation matrix. */
 final case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f: Double) derives CanEqual
 

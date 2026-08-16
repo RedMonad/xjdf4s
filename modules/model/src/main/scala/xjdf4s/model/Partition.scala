@@ -2,7 +2,8 @@ package xjdf4s.model
 
 import xjdf4s.core.*
 
-final case class XYPair(x: Int, y: Int) derives CanEqual
+final case class XYPair(x: Double, y: Double) derives CanEqual
+final case class TileCoordinate(x: Int, y: Int) derives CanEqual
 
 enum PreviewType derives CanEqual:
   case Animation, Identification, SeparatedThumbNail, Separation, SeparationRaw, Static3D, ThumbNail, Viewable
@@ -15,7 +16,7 @@ end TransferCurveName
 /** Resource partition selector from XJDF 2.2 table 6.4. */
 final case class Part(
     binderySignatureId: Option[Nmtoken] = None,
-    blockName: Option[XYPair] = None,
+    blockName: Option[Nmtoken] = None,
     contactType: Option[Nmtoken] = None,
     docIndex: Option[RangeExpression] = None,
     dropId: Option[Nmtoken] = None,
@@ -38,7 +39,7 @@ final case class Part(
     sheetName: Option[Nmtoken] = None,
     side: Option[Side] = None,
     stationName: Option[Nmtoken] = None,
-    tileId: Option[XYPair] = None,
+    tileId: Option[TileCoordinate] = None,
     transferCurveName: Option[TransferCurveName] = None,
     webName: Option[Nmtoken] = None,
     extensions: Extensions = Extensions.empty,

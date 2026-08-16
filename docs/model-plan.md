@@ -11,12 +11,17 @@ python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSche
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}Resource' --depth 1 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py hierarchy 'complexType:{http://www.CIP4.org/JDFSchema_2_0}SpecificResource' --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}XJMF' --depth 1 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}AuditStatus' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}AssemblingIntent' --depth 1 --scala --compact --index reference/xjdf/tool/xsd-index.json
 ```
 
 The index reports 365 elements, 366 complex types and 228 simple types. `SpecificResource` alone has 100 derived
 complex types, so implementation is staged while keeping the public algebra extensible. The checked-in schema's `Version`
 facet lists `2.0` and `2.1`, while the normative 2.2 prose requires `2.2`; the domain enum deliberately accepts all three
-and records this source discrepancy rather than silently dropping the current specification value.
+and records this source discrepancy rather than silently dropping the current specification value. Two further index/schema
+mismatches are resolved in favor of normative tables: `Part/@BlockName` is modelled as `NMTOKEN` rather than the indexed
+`XYPair`, `PartWaste/@ModuleIDs` as `NMTOKENS` rather than the indexed `float`, and `Resource/@Brand` as `string` rather
+than the indexed `boolean`.
 
 ## Scala 3 modelling rules
 
@@ -34,8 +39,9 @@ and records this source discrepancy rather than silently dropping the current sp
 
 - **Slice 1 (implemented):** common scalar vocabulary, extensions, XJDF/XJMF roots, Product/ProductList, Intent envelope,
   ResourceSet/Resource, partition keys, headers and abstract message families.
-- **Slice 2:** common subelements and audits; complete amount/partition structures.
-- **Slice 3:** all product-intent ADTs from chapter 4.
+- **Slice 2 (implemented):** the five closed audit variants, status/resource/notification subelements, process-run data and
+  amount/partition constraints. Remaining generic `FileSpec` children belong to the broader subelement slice.
+- **Slice 3 (in progress):** chapter-4 product-intent ADTs; `AssemblingIntent` and its child/glue algebra are implemented.
 - **Slice 4:** all 100 `SpecificResource` descendants grouped by general/prepress/press/postpress process domains.
 - **Slice 5:** every concrete XJMF query/command/signal/response and audit payload.
 - **Slice 6:** schema-derived XML and JSON codecs, validation laws, round-trip fixtures and compatibility tests.

@@ -24,7 +24,7 @@ lazy val model = project
 
 lazy val messaging = project
   .in(file("modules/messaging"))
-  .dependsOn(core)
+  .dependsOn(model)
   .settings(name := "xjdf4s-messaging")
 
 lazy val protocol = project

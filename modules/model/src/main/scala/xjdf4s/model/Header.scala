@@ -1,4 +1,4 @@
-package xjdf4s.messaging
+package xjdf4s.model
 
 import xjdf4s.core.*
 

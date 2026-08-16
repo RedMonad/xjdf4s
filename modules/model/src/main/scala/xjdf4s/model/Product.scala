@@ -2,16 +2,16 @@ package xjdf4s.model
 
 import xjdf4s.core.*
 
-/** Open substitution point corresponding to abstract `ProductIntent`. */
-trait ProductIntent extends XjdfNode:
-  def elementName: Nmtoken
+/** Open substitution point corresponding to abstract `ProductIntent` and extension intents from section 3.5.4. */
+trait ProductIntent extends XjdfNode,
+      Extensible:
+  def elementName: QualifiedName
 end ProductIntent
 
-/** Schema-shaped fallback used until a concrete chapter-4 intent receives its dedicated ADT. */
+/** Lossless fallback for a product intent defined by an ICS or a foreign namespace. */
 final case class NamedProductIntent(
-    elementName: Nmtoken,
-    attributes: Map[QualifiedName, ExtensionValue] = Map.empty,
-    children: Vector[ExtensionElement] = Vector.empty,
+    elementName: QualifiedName,
+    extensions: Extensions = Extensions.empty,
 ) extends ProductIntent
 
 final case class Intent(
