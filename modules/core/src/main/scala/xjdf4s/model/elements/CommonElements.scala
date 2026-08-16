@@ -519,6 +519,41 @@ object Certification:
 
 end Certification
 
+/** The `Expr` element (§8.29.1 / Table 8.47): a named XPath expression used by
+ *  a parent `RunList/MetadataMap` to extract one template variable.
+ *
+ *  Both attributes are required in Table 8.47 and in `schema.xsd`, so they are
+ *  plain fields rather than `Option`s:
+ *
+ *  - `@Name` → `NmToken`;
+ *  - `@Path` → `XjdfXPath`, the Appendix A XJDF data type `XPath`.
+ *
+ *  `XjdfXPath` is intentionally distinct from `model.XPath`, which locates
+ *  validation issues. Table 8.47 adds evaluation semantics (an implied
+ *  `text()` when the path selects an element), but no node-local structural
+ *  SHALL that can be checked without the parent `MetadataMap`; those
+ *  context-dependent rules belong to M1.6-6b/B2.
+ */
+final case class Expr(
+    name: NmToken,
+    path: XjdfXPath
+):
+
+  /** Table 8.47 declares no ID or IDREF attributes (verified against
+   *  `schema.xsd`), so the element contributes no document references.
+   */
+  def references: Chain[IdRef] = Chain.empty
+
+end Expr
+
+object Expr:
+
+  given Show[Expr] = Show.show(e => s"Expr(${e.name.value}=${e.path.value})")
+
+  given Eq[Expr] = Eq.fromUniversalEquals
+
+end Expr
+
 /** The `BarcodeDetails` element (§8.26.1 / Table 8.33): additional
  *  specification for complex barcodes, i.e. the matrix geometry and error
  *  correction that `IdentificationField/@EncodingDetails` alone cannot

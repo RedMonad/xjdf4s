@@ -9,10 +9,11 @@
 Каждый XJDF-тип данных (Appendix A, Table A.1) — отдельный номинальный тип:
 
 - `NmToken`, `NmTokens`, `Id`, `IdRef`, `IdRefs`, `JobId`, `JobPartId`,
-  `ProjectId`, `Url`, `XjdfString`, `LanguageTag`, `CommentText`,
-  `IcsVersion`, `XjdfVersion` — строковые лексемы с валидацией
-  (`XPath` — исключение: это тип слоя валидации, `model/ValidationTypes.scala`,
-  PR-9);
+  `ProjectId`, `Url`, `XjdfString`, `XjdfXPath`, `LanguageTag`, `CommentText`,
+  `IcsVersion`, `XjdfVersion` — строковые лексемы с валидацией. Спецификационный
+  тип `XPath` представлен как `prim.XjdfXPath` (Table A.1, ADR-0013), а
+  одноимённый `model.XPath` из `ValidationTypes.scala` — отдельный внутренний
+  тип локатора ошибок валидации (ADR-0002);
 - `XYPair`, `Shape`, `Rectangle`, `Matrix`, `TimeRange`,
   `WorkstepKey` — **opaque поверх named tuple** (см. ниже);
 - `Amount`, `Points`, `Microns`, `Grammage`, `Coverage`, `UnitInterval`,

@@ -168,6 +168,57 @@ object RegExp:
 
 end RegExp
 
+/** XJDF data type `XPath` (Table A.1): an XPath expression encoded as an
+ *  `xsd:token`.
+ *
+ *  The Scala name is deliberately `XjdfXPath`: `xjdf4s.model.XPath` is an
+ *  unrelated validation-issue locator (ADR-0002), not a value carried by an
+ *  XJDF attribute. Keeping distinct nominal names prevents wildcard imports
+ *  from silently mixing the two concepts (ADR-0013, N-54).
+ *
+ *  Table A.1 specifies `xsd:token`, whose white-space facet is `collapse`.
+ *  `schema.xsd` instead restricts `XPath` from `xs:string`; ADR-0013 follows
+ *  the higher-priority prose and records that discrepancy. Full XPath grammar
+ *  validation is deferred to the codec boundary; the domain constructor
+ *  enforces the lexical `xsd:token` boundary and non-emptiness.
+ */
+opaque type XjdfXPath = String
+
+object XjdfXPath:
+
+  /** Constructs a canonical non-empty XPath value, applying the `xsd:token`
+   *  white-space collapse (`#x9`, `#xA`, `#xD`, `#x20` → one space).
+   */
+  def from(raw: String): Option[XjdfXPath] =
+    Option(raw).map(collapseXmlWhitespace).filter(_.nonEmpty)
+
+  /** Raises `IllegalArgumentException` when `raw` does not contain an XPath expression. */
+  def unsafe(raw: String): XjdfXPath =
+    from(raw).getOrElse(throw new IllegalArgumentException(s"Not a valid XPath expression: '$raw'"))
+
+  extension (path: XjdfXPath) def value: String = path
+
+  given Show[XjdfXPath] = Show.show(identity)
+
+  given Eq[XjdfXPath] = Eq.fromUniversalEquals
+
+  private def collapseXmlWhitespace(raw: String): String =
+    val out = new StringBuilder(raw.length)
+    var pendingSpace = false
+    raw.foreach: char =>
+      if isXmlWhitespace(char) then
+        if out.nonEmpty then pendingSpace = true
+      else
+        if pendingSpace then out.append(' ')
+        out.append(char)
+        pendingSpace = false
+    out.result()
+
+  private def isXmlWhitespace(char: Char): Boolean =
+    char == ' ' || char == '\t' || char == '\n' || char == '\r'
+
+end XjdfXPath
+
 /** XJDF data type `text` (Table A.1): free text content of an element. */
 opaque type CommentText = String
 
