@@ -168,7 +168,8 @@ N-57 уже входил в прежние 58 подтверждённых на�
 exit 0). Диапазон расширен до `N-59`: находка N-59
 (`GeneralID/@DataType` — открытый `NmToken` вместо закрытой энумерации Table A.14
 плюс расхождение prose/XSD в семи из восьми значений) зарегистрирована при
-предстартовой сверке M1.6-14 и закрыта в том же срезе (ADR-0016).
+предстартовой сверке M1.6-14 и закрыта в том же срезе (ADR-0016),
+верифицировано владельцем (482/0, `examples/run` exit 0).
 
 ---
 
@@ -531,7 +532,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 | N-56 | `FileSpec/@NPage` есть в нормативной Table 8.22 и помечен *New in XJDF 2.2*, но отсутствует в XSD-объявлении `FileSpec`; release notes отдельно подтверждают добавление. Модель уже содержит поле, однако prose/XSD-расхождение ранее не было оформлено | Table 8.22: «`@NPage` SHALL specify the total number of reader Pages…»; Appendix H: «Added `@NPage` to FileSpec»; `schema.xsd` не содержит `NPage` внутри `<xs:element name="FileSpec">` | `FileSpec.nPage: Option[Long]` сохранён по приоритету prose/release notes; oracle-тест фиксирует наличие в prose и отсутствие в XSD; M2 обязан кодировать атрибут с известным schema-exception | ADR-0015; N-51 — `[x]` устранено и верифицировано владельцем (440/0) |
 | N-57 | `FileSpec/@CheckSum` типизирован как `Option[NmToken]`, хотя prose и XSD согласованно требуют `hexBinary`; модель допускает не-hex значение и теряет точный wire-контракт | Table 8.22: `@CheckSum? | hexBinary`; Appendix A / Table A.1: `hexBinary` → `xsd:hexBinary`; `schema.xsd`: `<xs:attribute name="CheckSum" type="xs:hexBinary" use="optional"/>` | новый `prim.HexBinary`, `FileSpec.checkSum: Option[HexBinary]`, 7 regression/conformance/XSD-oracle-тестов; prose/XSD согласны, ADR не нужен | N-57 — `[x]` устранено и верифицировано владельцем: migration note и полный список call sites — в §8; 452/0, `examples/run` exit 0 |
 | N-58 | Четыре уже смоделированных контейнера хранят `FileSpec?` как `Chain[FileSpec]`, разрешая неконформное множество: `CuttingParams`, `FoldingParams`, `Layout`, `Preview` | Tables 6.53, 6.74, 6.95, 6.134 объявляют соответственно `FileSpec(CIP3)?`, `FileSpec(CIP3)?`, `FileSpec(ExternalImpositionTemplate)?`, `FileSpec?`; XSD у всех четырёх задаёт `minOccurs="0" maxOccurs="1"` | `resources/Finishing.scala`, `Layout.scala`, `Preview.scala`; N-51 обходит текущую структуру без расширения scope, а точные четыре расхождения зарегистрированы по предстартовой сверке Table/XSD/модели | N-58 — `[x]` устранено и верифицировано владельцем: четыре поля → `Option[FileSpec]`, общий optional-wiring валидатора, migration note, полный список call sites и 5 regression/XSD-oracle-тестов; 445/0, `examples/run` exit 0 |
-| N-59 | `GeneralID/@DataType` (Table 8.28, «enumeration … Allowed value is from: DataType») типизирован как `Option[NmToken]`: неконформное значение представимо. Дополнительно обнаружено прямое расхождение prose/XSD в перечислении значений | Table A.14 (§A.2.13): `boolean`, `dateTime`, `duration`, `float`, `integer`, `NamedFeature`, `NMTOKEN`, `string`; `schema.xsd` (`<xs:element name="GeneralID">`) объявляет inline-restriction по `xs:NMTOKEN` со значениями `xs:boolean`, `xs:dateTime`, `xs:duration`, `xs:float`, `xs:int`, `NamedFeature`, `xs:NMTOKEN`, `xs:string` — расходятся семь из восьми, а `integer`/`xs:int` расходятся ещё и по базовому типу; release notes разъяснений не содержат | новый закрытый `prim.DataType` по prose (§1.2), `GeneralID.dataType: Option[DataType]` (breaking change, migration note и полный список call sites — в §8 и ADR-0016), SHALL Table 8.28 `@IDValue ↔ @DataType` как `GeneralID.law`/`containerLaw`, oracle-тест фиксирует обе стороны | ADR-0016; M1.6-14 — `[~]` реализовано, ожидает прогона владельца |
+| N-59 | `GeneralID/@DataType` (Table 8.28, «enumeration … Allowed value is from: DataType») типизирован как `Option[NmToken]`: неконформное значение представимо. Дополнительно обнаружено прямое расхождение prose/XSD в перечислении значений | Table A.14 (§A.2.13): `boolean`, `dateTime`, `duration`, `float`, `integer`, `NamedFeature`, `NMTOKEN`, `string`; `schema.xsd` (`<xs:element name="GeneralID">`) объявляет inline-restriction по `xs:NMTOKEN` со значениями `xs:boolean`, `xs:dateTime`, `xs:duration`, `xs:float`, `xs:int`, `NamedFeature`, `xs:NMTOKEN`, `xs:string` — расходятся семь из восьми, а `integer`/`xs:int` расходятся ещё и по базовому типу; release notes разъяснений не содержат | новый закрытый `prim.DataType` по prose (§1.2), `GeneralID.dataType: Option[DataType]` (breaking change, migration note и полный список call sites — в §8 и ADR-0016), SHALL Table 8.28 `@IDValue ↔ @DataType` как `GeneralID.law`/`containerLaw`, oracle-тест фиксирует обе стороны | ADR-0016; M1.6-14 — `[x]` устранено и верифицировано владельцем (482/0, `examples/run` exit 0) |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -1819,7 +1820,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 **Дополнительно:**
 
 - M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[x]` выполнено (верифицировано владельцем; PR-25);
-- M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — `[~]` модель, правило приоритета явных Traits, SHALL Table 8.28 и закрытый `DataType` (ADR-0016/N-59) реализованы, ожидают прогона владельца;
+- M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — `[x]` выполнено и верифицировано владельцем: модель, правило приоритета явных Traits, SHALL Table 8.28 и закрытый `DataType` (ADR-0016/N-59); 482/0, `NamedFeatureLaws` 26/0, `examples/run` exit 0;
 - N-51: `FileSpec.law`, parent-sensitive pipe-контекст, `NetworkHeader*` и обход всех уже смоделированных FileSpec-контейнеров — `[x]` выполнено и верифицировано владельцем (440/0, `examples/run` exit 0); ADR-0015/N-56 фиксирует `@NPage`, N-57/N-58 зарегистрированы как отдельные breaking follow-up и не расширяют срез;
 - N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` исправлен с `Chain[FileSpec]` на `Option[FileSpec]`; prose и XSD согласны, ADR не нужен; regression-first, migration note и полный список call sites — `[x]` выполнено и верифицировано владельцем (445/0, `examples/run` exit 0);
 - N-57: `FileSpec/@CheckSum` исправлен с `Option[NmToken]` на `Option[HexBinary]`; Appendix A, Table 8.22 и XSD согласны, ADR не нужен; 7 regression/conformance/XSD-oracle-тестов, migration note и полный список call sites — `[x]` выполнено и верифицировано владельцем (452/0, `examples/run` exit 0);
@@ -2157,7 +2158,7 @@ exit 0.
 примеров выполнен успешно. Предупреждений в предоставленном выводе нет.
 Статус `[x]` — закрыт полностью.
 
-#### M1.6-14. NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) — `[~]` реализовано, ожидает прогона владельца (PR-33)
+#### M1.6-14. NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) — `[x]` выполнено (верифицировано владельцем; PR-33)
 
 Выбор среза подтверждён владельцем 2026-08-16 вместе с двумя решениями по
 трактовке (закрытый `DataType` по prose — ADR-0016; правило приоритета Traits
@@ -2268,6 +2269,27 @@ exit 0.
 **Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
 без предупреждений; минимум 452 теста зелёных плюс новые, `examples/run`
 exit 0.
+
+**Прогон владельца (2026-08-16).** `clean` — success (8 disk cache hits);
+`compile` — success (67 disk cache hits); `testFull` — **482/0** за 3 s
+(452 + 30: новый `NamedFeatureLaws` **26/0**, `SpecExamplesSuite` 40 → **44/0**
+за счёт двух conformance- и двух golden-тестов фикстур), сохранены
+`EnumLaws` **33/0** (с `DataType` в трёх реестрах, включая машинную сверку с
+Table A.14), `TicketLaws` **59/0** (реестр достижимости `DomainRule` дополнен
+`GeneralID`), `HexBinaryLaws` **7/0**, `FileSpecLaws` **21/0**,
+`FileSpecCardinalityLaws` **5/0**; `examples/run` — exit 0, обе новые строки
+вывода корректны:
+
+```
+Named features (§3.1.3.1 / Table 8.28):
+  XJDF(job=namedFeatureJob, types=DigitalPrinting Cutting)
+Named feature traits (§3.1.3.1):
+  TraitResolution(TraitSet(…/Media/@Gloss=Matte, …/Media/@Weight=150), overridden=1)
+```
+
+Предупреждений в предоставленном выводе нет; golden-литералы совпали с
+фактическим рендером с первого прогона. Статус `[x]` — закрыт полностью.
+Находка N-59 закрыта в этом же срезе (ADR-0016).
 
 #### M1.6-1. `Certification` (Table 8.8, §8.7) — `[x]` выполнено (верифицировано владельцем; PR-22)
 
@@ -3238,7 +3260,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 30 | N-51: `FileSpec.law` + parent-sensitive pipe-check + `NetworkHeader*` (Tables 8.22–8.24) + ADR-0015/N-56; регистрация N-57/N-58 без их breaking-исправлений | N-51 | 29 | `[x]` верифицировано владельцем: 440/0, `FileSpecLaws` 21/0, `examples/run` exit 0 |
 | 31 | N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` → `Option[FileSpec]`; regression-first, общий optional-wiring, migration note и полный список call sites | N-58 | 30 | `[x]` верифицировано владельцем: 445/0, `FileSpecCardinalityLaws` 5/0, `examples/run` exit 0 |
 | 32 | N-57: `FileSpec/@CheckSum` → `Option[HexBinary]`; новый Appendix A primitive, regression-first, XSD oracle, round-trip, migration note и полный список call sites | N-57 | 31 | `[x]` верифицировано владельцем: 452/0, `HexBinaryLaws` 7/0, `examples/run` exit 0 |
-| 33 | M1.6-14: NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) + закрытый `DataType` (Table A.14) + ADR-0016/N-59; `TraitSet`/`TraitResolution`, SHALL Table 8.28 в четырёх контейнерах, breaking change с migration note и полным списком call sites | M1.6-14 | 32 | `[~]` реализовано, ожидает прогона владельца |
+| 33 | M1.6-14: NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) + закрытый `DataType` (Table A.14) + ADR-0016/N-59; `TraitSet`/`TraitResolution`, SHALL Table 8.28 в четырёх контейнерах, breaking change с migration note и полным списком call sites | M1.6-14 | 32 | `[x]` верифицировано владельцем: 482/0, `NamedFeatureLaws` 26/0, `SpecExamplesSuite` 44/0, `examples/run` exit 0 |
 | 34+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-13(B1) `PDFPath`, затем M1.6-13(B2) `ShapeCuttingIntent`). M1.6-15 (аудит `Part`/Table 6.4) — `[x]` закрыт: все 27 ключей корректны, P1/P2-дефектов нет | M1.6 | 33 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -3618,7 +3640,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-56 | `FileSpec/@NPage` есть в Table 8.22/release notes 2.2, но отсутствует в XSD | ADR-0015: выбран prose; `nPage` сохранён, oracle фиксирует schema-gap | N-51 — `[x]` верифицировано владельцем (440/0) | P1 |
 | N-57 | `FileSpec/@CheckSum` смоделирован `NmToken`, а prose/XSD требуют `hexBinary` | ✅ `prim.HexBinary`, `Option[HexBinary]`, 7 regression/conformance/XSD-oracle-тестов, migration note и полный список call sites; prose/XSD согласны, ADR не нужен | M1.6 follow-up / PR-32 — `[x]` верифицировано владельцем (452/0) | P1 |
 | N-58 | `FileSpec?` в CuttingParams/FoldingParams/Layout/Preview смоделирован как `Chain` | ✅ четыре поля → `Option[FileSpec]`; общий optional-wiring, migration note, полный список call sites и 5 regression/XSD-oracle-тестов; верифицировано владельцем (445/0) | M1.6 follow-up / PR-31 — `[x]` | P1 |
-| N-59 | `GeneralID/@DataType` смоделирован открытым `NmToken`; prose Table A.14 и inline-энумерация XSD расходятся в семи значениях из восьми | ADR-0016: выбран prose; закрытый `prim.DataType`, `Option[DataType]` (breaking change с migration note и полным списком call sites), SHALL Table 8.28 `@IDValue ↔ @DataType`, oracle-тест обеих сторон | M1.6-14 (PR-33) — `[~]` реализовано, ожидает прогона владельца | P1 |
+| N-59 | `GeneralID/@DataType` смоделирован открытым `NmToken`; prose Table A.14 и inline-энумерация XSD расходятся в семи значениях из восьми | ADR-0016: выбран prose; закрытый `prim.DataType`, `Option[DataType]` (breaking change с migration note и полным списком call sites), SHALL Table 8.28 `@IDValue ↔ @DataType`, oracle-тест обеих сторон | M1.6-14 (PR-33) — `[x]` верифицировано владельцем (482/0) | P1 |
 | N-10 | `PartAmount.part` единственный | ✅ `Chain[Part]` | M1.2-3 | P1 |
 | N-11 | `Resource.specific` обязателен | ✅ `Option` | M1.2-4 | P1 |
 | N-12 | `DropItem` неполон | ✅ три поля Table 6.55 | M1.2-5 | P1 |
@@ -4439,8 +4461,9 @@ N-51 (`FileSpec.law` + `NetworkHeader*` + parent-sensitive pipe-check) —
 exit 0. N-57 (`FileSpec/@CheckSum` → `HexBinary`) — `[x]` закрыт и
 верифицирован владельцем: **452/0**, новый `HexBinaryLaws` **7/0**,
 `examples/run` exit 0. M1.6-14 (NamedFeatures §3.1.3.1 + `GeneralID` Table 8.28
-+ закрытый `DataType` Table A.14, ADR-0016/N-59) — `[~]` реализован, ожидает
-прогона владельца. Затем остаётся M1.6-13: B1 — примитив `PDFPath`,
-B2 — `ShapeCuttingIntent`.
++ закрытый `DataType` Table A.14, ADR-0016/N-59) — `[x]` закрыт и верифицирован
+владельцем: **482/0**, новый `NamedFeatureLaws` **26/0**, `SpecExamplesSuite`
+**44/0**, `examples/run` exit 0. Затем остаётся M1.6-13: B1 — примитив
+`PDFPath`, B2 — `ShapeCuttingIntent`.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат
 обязательного CI — открытая часть M1.0-1.
