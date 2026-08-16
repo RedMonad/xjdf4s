@@ -1791,7 +1791,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 | M1.6-1 | Certification `[x]` PR-22 | §8.7 | Table 8.8 |
 | M1.6-2 | Crease `[x]` PR-15 | §8.14 | Table 8.17 |
 | M1.6-3 | Glue `[x]` PR-16 | §8.24 | Table 8.29 |
-| M1.6-4 | GangSource `[~]` PR-23 | §8.22 | Table 8.27 |
+| M1.6-4 | GangSource `[x]` PR-23 | §8.22 | Table 8.27 |
 | M1.6-5 | HolePattern `[x]` PR-17 | §8.25 | Table 8.30 |
 | M1.6-6 | IdentificationField | §8.26 | Table 8.31 |
 | M1.6-7 | MISDetails | §8.30 | Table 8.48 |
@@ -1976,7 +1976,7 @@ TicketLaws 59, BomLaws 8, PartitionLaws 27, AlgebraLaws 50);
 `examples/run` — exit 0, вывод содержит `Gluing job (Table 8.29): XJDF(job=glueJob,
 types=Binding, ProductList(Product(?×100, root)))`. Статус `[x]` — закрыт полностью.
 
-#### M1.6-4. `GangSource` (Table 8.27, §8.22) — `[~]` реализовано статически, ожидает прогона владельца (PR-23)
+#### M1.6-4. `GangSource` (Table 8.27, §8.22) — `[x]` выполнено (верифицировано владельцем; PR-23)
 
 Вертикальный срез продолжает общие элементы главы 8 и подготавливает
 `NodeInfo` (Table 6.119): после отдельного среза `MISDetails` ресурс будет
@@ -2027,11 +2027,22 @@ types=Binding, ProductList(Product(?×100, root)))`. Статус `[x]` — за
 `laws/SpecExamplesSuite.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
 
 **Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
-без предупреждений; ожидается 330 тестов зелёных (320 + 8
-`GangSourceLaws` + 2 `SpecExamplesSuite`); `examples/run` exit 0 со строкой
-`Gang source (Table 8.27): GangSource(job=SourceJob-42, copies=500,
+без предупреждений; 330 тестов зелёных (320 + 8 `GangSourceLaws` + 2
+`SpecExamplesSuite`); `examples/run` exit 0 со строкой `Gang source (Table
+8.27): GangSource(job=SourceJob-42, copies=500,
 binderySignature=Signature-A)`; `scripts/check-spec-coverage.sh` — `RESULT: OK`.
-До подтверждения владельцем статус остаётся `[~]`.
+
+**Прогон владельца (2026-08-16).** `compile` — success (11 s, cache 83%,
+78 disk cache hits); `testFull` — **330/0** (`HolePatternLaws` 14,
+`GangSourceLaws` 8, `CreaseLaws` 5, `HoleMakingIntentLaws` 8,
+`EmbossingIntentLaws` 12, `CertificationLaws` 18, `EnumLaws` 28,
+`GlueLaws` 15, `PatchLaws` 13, `LaminatingIntentLaws` 7,
+`ContentCheckIntentLaws` 12, `AlignmentLaws` 6, `ChangeOrderLaws` 8,
+`SpecExamplesSuite` 32, `BomLaws` 8, `TicketLaws` 59,
+`PartitionLaws` 27, `AlgebraLaws` 50); `examples/run` — exit 0 (1 s), вывод
+содержит ожидаемую строку `Gang source (Table 8.27)` и не содержит регрессий;
+`check-spec-coverage.sh` — `RESULT: OK` (статический прогон агента). Статус
+`[x]` — закрыт полностью.
 
 #### M1.6-5. `HolePattern` (Table 8.30, Appendix F) — `[x]` выполнено (верифицировано владельцем; PR-17)
 
@@ -2417,7 +2428,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 20 | `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) + `EmbossDirection`/`EmbossType` + SHALL `@Separation`↔`Color/@ColorType="DieLine"` | M1.6-10 | 19 | `[x]` верифицировано владельцем: 284 теста, `examples/run` exit 0 |
 | 21 | `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (4.23) + `ProofItem` (4.24) + `ProofColorType` + `ProcessType.Preflight` + `IntentPayload.declaredIds`-wiring + подключение `dispositionLaw` (Table 8.23) | M1.6-11 | 20 | `[x]` верифицировано владельцем: 300 тестов, `examples/run` exit 0 |
 | 22 | `Certification` (Table 8.8, §8.7) + `Catalog.CertificationClaim`/`CertificationOrganization` + SHALL `CERTIFICATION-LEVEL-MISSING` (ADR-0012) + wiring в 4 контейнера | M1.6-1 | 21 | `[x]` верифицировано владельцем: 320 тестов, `examples/run` exit 0 |
-| 23 | `GangSource` (Table 8.27, §8.22) + точная XSD-сверка + классификация междокументных NMTOKEN-ссылок | M1.6-4 | 22 | `[~]` реализовано статически; ожидается 330 тестов и `examples/run` exit 0 после прогона владельца |
+| 23 | `GangSource` (Table 8.27, §8.22) + точная XSD-сверка + классификация междокументных NMTOKEN-ссылок | M1.6-4 | 22 | `[x]` верифицировано владельцем: 330 тестов, `examples/run` exit 0 |
 | 24+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6 … M1.6-15, кроме M1.6-9/11/12; плюс N-51 `FileSpec.law`) | M1.6 | 23 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
@@ -3462,8 +3473,8 @@ PR-23 (M1.6-4) статически реализовал `GangSource` (§8.22 / 
 reference-like атрибута — междокументные NMTOKEN, не IDREF §2.2.3), 8 тестов
 `GangSourceLaws`, standalone-фикстуру + conformance/golden и coverage. Все
 четыре контейнера имеют `GangSource*`; wiring `NodeInfo` остаётся M1.6-8 после
-`MISDetails`. Статус `[~]` до прогона владельца; ожидается **330 тестов** и
-`examples/run` exit 0.
+`MISDetails`. Верифицировано владельцем: **330 тестов зелёных (330/0)**,
+`examples/run` exit 0; статус `[x]`.
 
 Следующий срез PR-24+ выбирается из M1.6-7/8 (`MISDetails` → `NodeInfo`),
 M1.6-6 IdentificationField, M1.6-13 ShapeCuttingIntent (требует примитива
