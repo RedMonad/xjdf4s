@@ -1794,7 +1794,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 | M1.6-4 | GangSource `[x]` PR-23 | §8.22 | Table 8.27 |
 | M1.6-5 | HolePattern `[x]` PR-17 | §8.25 | Table 8.30 |
 | M1.6-6 | IdentificationField | §8.26 | Table 8.31 |
-| M1.6-7 | MISDetails | §8.30 | Table 8.48 |
+| M1.6-7 | MISDetails `[~]` PR-24 | §8.30 | Table 8.48 |
 
 **Дополнительно:**
 
@@ -2043,6 +2043,74 @@ binderySignature=Signature-A)`; `scripts/check-spec-coverage.sh` — `RESULT: OK
 содержит ожидаемую строку `Gang source (Table 8.27)` и не содержит регрессий;
 `check-spec-coverage.sh` — `RESULT: OK` (статический прогон агента). Статус
 `[x]` — закрыт полностью.
+
+#### M1.6-7. `MISDetails` (Table 8.48, §8.30) — `[~]` реализовано статически (PR-24, ожидает прогона владельца)
+
+Вертикальный срез закрывает второй и последний элемент главы 8, нужный для
+дополнения `NodeInfo` (Table 6.119): после него срез M1.6-8 добавляет ресурсу
+`GangSource*` и `MISDetails?`. Выбор подтверждён владельцем 2026-08-16.
+
+- **Сверка Table/XSD (§1.2).** Table 8.48 объявляет четыре атрибута, все
+  опциональные, подэлементов нет: `@Complexity?` (float, prose ограничивает
+  диапазон «in a range from 0.0 to 1.0» с тремя опорными интерпретациями
+  0.0/0.5/1.0), `@CostType?` (enumeration: `Chargeable`, `NonChargeable`),
+  `@WorkType?` (enumeration: `Alteration`, `Original`, `Rework`),
+  `@WorkTypeDetails?` (NMTOKEN, «Values include:» — 5 значений). `schema.xsd`
+  (`<xs:element name="MISDetails">`, строки 4930–4953) совпадает с prose по
+  набору и опциональности: `Complexity` — `xs:float`, `WorkTypeDetails` —
+  `xs:NMTOKEN`, обе энумерации объявлены inline. Version notes отсутствуют.
+- **Единственное расхождение prose/XSD** — диапазон `@Complexity`: XSD даёт
+  голый `xs:float`, prose — 0.0..1.0. ADR не требуется: это штатный случай
+  «XSD слабее текста» (§1.2, приоритет prose; повторяет прецедент
+  ADR-0012/Certification в миниатюре, но без конфликта SHALL) — диапазон
+  обеспечивается существующим типом `UnitInterval` на границе конструирования
+  (parse at the boundary), XSD остаётся тест-оракулом.
+- **Модель.** `MISDetails(complexity: Option[UnitInterval], costType:
+  Option[CostType], workType: Option[WorkType], workTypeDetails:
+  Option[NmToken])` в `model/elements/CommonElements.scala`. Пустой
+  `<MISDetails/>` валиден — локальных SHALL-правил нет, негативные тесты —
+  только границы типов (`UnitInterval.from` отвергает −0.1/1.1/NaN).
+- **Новые закрытые enum** в `prim/Enums.scala`: `CostType` (2 значения),
+  `WorkType` (3 значения) — golden-токены, round-trip и отсутствие дублей в
+  `EnumLaws`; таблицы inline в Table 8.48 (не Appendix A), поэтому машинная
+  сверка `appendixAEnums` не расширяется, вместо неё `MISDetailsLaws` сверяет
+  оба набора с inline-энумерациями XSD.
+- **Открытый каталог** `Catalog.WorkTypeDetails` (5 рекомендованных значений:
+  `CustomerRequest`, `EquipmentMalfunction`, `InternalChange`,
+  `ResourceDamaged`, `UserError`) — «Values include» ⇒ ADR-0007, тест
+  расширяемости.
+- **Кардинальности контейнеров.** XSD содержит четыре вхождения
+  `minOccurs="0" maxOccurs="1"` → `MISDetails?`: `ResourceInfo`, `PipeParams`,
+  `JobPhase` (messaging M4) и `NodeInfo` (M1.6-8). Prose «Element referenced
+  by» перечисляет те же четыре контейнера. Машинная XSD-проверка — в
+  `MISDetailsLaws`. `NodeInfo` в этом срезе не меняется.
+- **ID/IDREF.** Ни ID, ни IDREF, ни междокументных NMTOKEN-ссылок у элемента
+  нет (сверено по Table 8.48 и XSD) → `references = Chain.empty`; строка
+  отклонения не нужна.
+- **Тесты:** `MISDetailsLaws.scala` (9): полное и минимальное (пустое)
+  отображение, prose-диапазон `@Complexity` с негативами, расширяемость
+  открытого каталога, отсутствие ID/IDREF, `Eq`, точный набор/опциональность
+  XSD-атрибутов, совпадение inline-энумераций XSD с моделью, четыре
+  кардинальности контейнеров; `EnumLaws` +2 golden + round-trip/duplicates.
+- **Фикстура:** `SpecExamples.misDetails` — standalone-значение (rework из-за
+  повреждённого ресурса, non-chargeable, complexity 0.5); conformance +
+  временный `Show`-golden в `SpecExamplesSuite`, строка в `examples/run`.
+- **Coverage:** строки `MISDetails`, `CostType`, `WorkType`,
+  `WorkTypeDetails catalog`; `check-spec-coverage.sh` — `RESULT: OK`
+  (Spec tables 112).
+- **Совместимость:** срез аддитивен; существующие типы не меняются.
+
+**Файлы:** `prim/Enums.scala`, `prim/Common.scala`,
+`model/elements/CommonElements.scala`, `laws/MISDetailsLaws.scala` (новый),
+`laws/EnumLaws.scala`, `examples/SpecExamples.scala`,
+`laws/SpecExamplesSuite.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
+без предупреждений; 343 теста зелёных (330 + 9 `MISDetailsLaws` + 2 `EnumLaws`
++ 2 `SpecExamplesSuite`); `examples/run` exit 0 со строкой `MIS details
+(Table 8.48): MISDetails(complexity=0.5, costType=NonChargeable,
+workType=Rework, workTypeDetails=ResourceDamaged)`;
+`scripts/check-spec-coverage.sh` — `RESULT: OK`.
 
 #### M1.6-5. `HolePattern` (Table 8.30, Appendix F) — `[x]` выполнено (верифицировано владельцем; PR-17)
 
@@ -2429,7 +2497,8 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 21 | `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (4.23) + `ProofItem` (4.24) + `ProofColorType` + `ProcessType.Preflight` + `IntentPayload.declaredIds`-wiring + подключение `dispositionLaw` (Table 8.23) | M1.6-11 | 20 | `[x]` верифицировано владельцем: 300 тестов, `examples/run` exit 0 |
 | 22 | `Certification` (Table 8.8, §8.7) + `Catalog.CertificationClaim`/`CertificationOrganization` + SHALL `CERTIFICATION-LEVEL-MISSING` (ADR-0012) + wiring в 4 контейнера | M1.6-1 | 21 | `[x]` верифицировано владельцем: 320 тестов, `examples/run` exit 0 |
 | 23 | `GangSource` (Table 8.27, §8.22) + точная XSD-сверка + классификация междокументных NMTOKEN-ссылок | M1.6-4 | 22 | `[x]` верифицировано владельцем: 330 тестов, `examples/run` exit 0 |
-| 24+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6 … M1.6-15, кроме M1.6-9/11/12; плюс N-51 `FileSpec.law`) | M1.6 | 23 | шаблон среза выполнен |
+| 24 | `MISDetails` (Table 8.48, §8.30) + `CostType`/`WorkType` + открытый `Catalog.WorkTypeDetails` + prose-диапазон `@Complexity` через `UnitInterval` | M1.6-7 | 23 | `[~]` статически: 343 теста ожидаются, гейт — прогон владельца |
+| 25+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6, M1.6-8, M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`) | M1.6 | 24 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -3182,6 +3251,24 @@ M1: одна обязательная быстрая платформа — Temu
 текущего XJDF; разрешение требует внешнего реестра jobs (M4), поэтому
 `GangSource.references = Chain.empty` (M1.6-4, PR-23; ADR-0006).
 
+### Table 8.48 (`MISDetails`)
+
+> `@Complexity?` | float | Complexity of the task specified by this XJDF in a range from 0.0 to 1.0. **Note:** The interpretation of values is implementation dependent. Values include: `0.0` – The job is simple and therefore reduced setup and waste or higher speeds are possible. `0.5` – The job is of standard complexity and therefore standard setup and waste or normal speeds are possible. `1.0` – The job is complex and therefore more setup and waste or lower speeds are possible.
+>
+> `@CostType?` | enumeration | Specifies whether or not this MISDetails is chargeable to the customer or not. Allowed values are: `Chargeable`, `NonChargeable`.
+>
+> `@WorkType?` | enumeration | Definition of the work type for this MISDetails (i.e., whether or not this MISDetails relates to originally planned work, an alteration or rework). Allowed values are: `Alteration` – Work done to accommodate a change made to the job. `Original` – Standard work that was originally planned for the job. `Rework` – Work done due to unforeseen problems with the original work (bad plate, resource damaged, etc.).
+>
+> `@WorkTypeDetails?` | NMTOKEN | Machine readable definition of the details of the work type for this MISDetails (i.e., why the work was done). Values include: `CustomerRequest` … `EquipmentMalfunction` … `InternalChange` … `ResourceDamaged` … `UserError` …
+
+`schema.xsd` подтверждает четыре опциональных атрибута (`Complexity: xs:float`,
+`WorkTypeDetails: xs:NMTOKEN`, обе энумерации inline) и отсутствие
+подэлементов; все четыре контейнера (`ResourceInfo`, `PipeParams`, `JobPhase`,
+`NodeInfo`) объявляют `MISDetails?` (`minOccurs="0" maxOccurs="1"`).
+Единственное расхождение — prose-диапазон `@Complexity` 0.0..1.0 против голого
+`xs:float` в XSD; по §1.2 приоритет prose, диапазон обеспечивается типом
+`UnitInterval` (M1.6-7, PR-24).
+
 ### Table A.24 (§A.2.23 Glue) и Table 8.29 (`Glue/@GlueType`) — внутренний конфликт спецификации (N-50)
 
 Table A.24:
@@ -3264,18 +3351,19 @@ XJDF не выражает, какой уровень выполнен, и ка�
 | `docs/adr/0012-certification-level-required.md` (новый) | M1.6-1 (PR-22) |
 | `laws/CertificationLaws.scala` (новый) | M1.6-1 (создан в PR-22) |
 | `laws/GangSourceLaws.scala` (новый) | M1.6-4 (создан в PR-23) |
+| `laws/MISDetailsLaws.scala` (новый) | M1.6-7 (создан в PR-24) |
 | `intents/ColorProduction.scala` | M1.6-1 (`SurfaceColor.certifications`, `ProductionIntent.certifications`, PR-22) |
 | `intents/MediaLayout.scala` | M1.6-1 (`MediaIntent.certifications`, PR-22) |
 | `resources/Media.scala` | M1.6-1 (`Media.certifications`, `references` обходит цепочку, PR-22) |
 | `docs/SPEC-COVERAGE.md` (новый) | M1.2-6, M1.5-4, M1.6-2 (строки Crease/WorkingDirection, раздел Enumerations) |
 | `scripts/check-spec-coverage.sh` (новый) | M1.2-6 (создан в PR-13; в CI подключается вместе с возвратом CI); M1.6-2 (поддержка номеров таблиц Appendix A `Table A.NN`) |
 | `prim/Tokens.scala` | M1.2-1 (`RegExp`), открытые каталоги |
-| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`); M1.6-2 (`WorkingDirection`) |
+| `prim/Enums.scala` | M1.2-2 (`Sides`, `DeviceStatus`, `HardCoverJacket`, `NamedColor`, `ISOPaperSubstrate`, `MediaType`, `Scope`); M1.6-2 (`WorkingDirection`); M1.6-7 (`CostType`, `WorkType`, PR-24) |
 | `prim/Quantity.scala` | M1.1-4 (`IntegerRange`), M1.4-5 (`AmountBounds`), M1.4-6 (алгебры) |
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
 | `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only, PR-13) |
 | `prim/Common.scala` | M1.4-8: элементы удалены, оставлены `Url` и открытые каталоги; M1.2-2 (`Catalog.NamedColor`) |
-| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`; M1.6-2: `Crease`; M1.6-1: `Certification`; M1.6-4: `GangSource` (PR-23) |
+| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`; M1.6-2: `Crease`; M1.6-1: `Certification`; M1.6-4: `GangSource` (PR-23); M1.6-7: `MISDetails` (PR-24) |
 | `model/Partition.scala` | M1.2-1, M1.4-3, M1.0-5 (scaladoc-ссылка) |
 | `model/Amounts.scala` | M1.2-3, M1.3-3 (`PartWaste`) |
 | `model/Product.scala` | M1.1-1, M1.3-3, M1.3-4, M1.4-7 |
@@ -3476,9 +3564,25 @@ reference-like атрибута — междокументные NMTOKEN, не I
 `MISDetails`. Верифицировано владельцем: **330 тестов зелёных (330/0)**,
 `examples/run` exit 0; статус `[x]`.
 
-Следующий срез PR-24+ выбирается из M1.6-7/8 (`MISDetails` → `NodeInfo`),
-M1.6-6 IdentificationField, M1.6-13 ShapeCuttingIntent (требует примитива
-`PDFPath`), M1.6-14 NamedFeatures, M1.6-15 Part audit или N-51
-`FileSpec.law`.
+PR-24 (M1.6-7) статически реализовал `MISDetails` (§8.30 / Table 8.48):
+четыре опциональных атрибута (`@Complexity?` → `UnitInterval` с prose-диапазоном
+0.0..1.0 против голого `xs:float` XSD — приоритет prose по §1.2; `@CostType?` →
+закрытый `CostType`; `@WorkType?` → закрытый `WorkType`; `@WorkTypeDetails?` →
+`NmToken` + открытый `Catalog.WorkTypeDetails`, ADR-0007), подэлементов и
+ID/IDREF нет (`references = Chain.empty`), локальных SHALL нет (пустой
+`<MISDetails/>` валиден), 9 тестов `MISDetailsLaws` (включая машинную сверку
+XSD-атрибутов, inline-энумераций и четырёх контейнеров `MISDetails?`:
+`ResourceInfo`, `PipeParams`, `JobPhase`, `NodeInfo`), +2 golden `EnumLaws`,
+standalone-фикстура `misDetails` + conformance/golden, coverage
+(`RESULT: OK`, Spec tables 112). Wiring `NodeInfo` (`GangSource*` +
+`MISDetails?`) — следующий срез M1.6-8. Ожидаемый прогон владельца: **343
+теста** (330 + 9 + 2 + 2), `examples/run` exit 0 со строкой
+`MIS details (Table 8.48): MISDetails(complexity=0.5, costType=NonChargeable,
+workType=Rework, workTypeDetails=ResourceDamaged)`.
+
+Следующий срез PR-25+ выбирается из M1.6-8 (`NodeInfo` += `GangSource*` +
+`MISDetails?` — разблокирован этим срезом), M1.6-6 IdentificationField,
+M1.6-13 ShapeCuttingIntent (требует примитива `PDFPath`), M1.6-14
+NamedFeatures, M1.6-15 Part audit или N-51 `FileSpec.law`.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
 открытая часть M1.0-1.

@@ -257,6 +257,58 @@ object GangSource:
 
 end GangSource
 
+/** The `MISDetails` element (§8.30 / Table 8.48): a container for MIS-related
+ *  information — task complexity, chargeability and work type.
+ *
+ *  Table 8.48 and `schema.xsd` agree on four attributes, all optional, and no
+ *  child elements: an empty `<MISDetails/>` is valid, so the element carries
+ *  no local SHALL rule. The four normative containers (`ResourceInfo`,
+ *  `PipeParams`, `JobPhase`, `NodeInfo`) all declare `MISDetails?`
+ *  (`minOccurs="0"`, `maxOccurs="1"`). The first three belong to messaging
+ *  (M4); `NodeInfo` is completed in M1.6-8 together with `GangSource*`.
+ *
+ *  Data types (Table 8.48):
+ *  - `@Complexity` → `UnitInterval`: the prose constrains the value to the
+ *    range 0.0..1.0 ("in a range from 0.0 to 1.0"), which the factory of
+ *    `UnitInterval` enforces at the boundary; the XSD type is a plain
+ *    `xs:float` — per ROADMAP §1.2 the prose wins and the XSD stays a test
+ *    oracle. The interpretation of values is implementation dependent
+ *    (0.0 simple, 0.5 standard, 1.0 complex).
+ *  - `@CostType` → closed enum `CostType` (`Chargeable`, `NonChargeable`)
+ *  - `@WorkType` → closed enum `WorkType` (`Alteration`, `Original`, `Rework`)
+ *  - `@WorkTypeDetails` → `NmToken` (open catalog `Catalog.WorkTypeDetails`,
+ *    "Values include", ADR-0007)
+ */
+final case class MISDetails(
+    complexity: Option[UnitInterval] = None,
+    costType: Option[CostType] = None,
+    workType: Option[WorkType] = None,
+    workTypeDetails: Option[NmToken] = None
+):
+
+  /** Table 8.48 declares no ID or IDREF attributes (verified against
+   *  `schema.xsd`), so the element contributes no references.
+   */
+  def references: Chain[IdRef] = Chain.empty
+
+end MISDetails
+
+object MISDetails:
+
+  given Show[MISDetails] = Show.show { details =>
+    val parts = List(
+      details.complexity.map(c => s"complexity=${Show[UnitInterval].show(c)}"),
+      details.costType.map(c => s"costType=${c.token.value}"),
+      details.workType.map(w => s"workType=${w.token.value}"),
+      details.workTypeDetails.map(d => s"workTypeDetails=${d.value}")
+    ).flatten
+    s"MISDetails(${parts.mkString(", ")})"
+  }
+
+  given Eq[MISDetails] = Eq.fromUniversalEquals
+
+end MISDetails
+
 /** The `Glue` element (Table 8.29): details of glue application on a
  *  component. Used by `BindIn` (Table 4.5), `StickOn` (Table 4.7),
  *  `AdhesiveNote` (Table 4.9) and finishing resources

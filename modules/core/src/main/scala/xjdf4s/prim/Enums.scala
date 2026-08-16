@@ -669,3 +669,26 @@ enum HoleShape extends XjdfEnum:
 
 object HoleShape extends XjdfEnumCompanion[HoleShape]:
   val all: List[HoleShape] = List(Elliptic, Rectangular, Round)
+
+/** `MISDetails/@CostType` (§8.30 / Table 8.48): whether this MISDetails is
+ *  chargeable to the customer or not. The XSD declares the enumeration inline
+ *  on `MISDetails`; prose and XSD agree on the two values.
+ */
+enum CostType extends XjdfEnum:
+  case Chargeable, NonChargeable
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object CostType extends XjdfEnumCompanion[CostType]:
+  val all: List[CostType] = List(Chargeable, NonChargeable)
+
+/** `MISDetails/@WorkType` (§8.30 / Table 8.48): whether this MISDetails
+ *  relates to originally planned work, an alteration or rework. The XSD
+ *  declares the enumeration inline on `MISDetails`; prose and XSD agree on
+ *  the three values.
+ */
+enum WorkType extends XjdfEnum:
+  case Alteration, Original, Rework
+  def token: NmToken = NmToken.unsafe(this.toString)
+
+object WorkType extends XjdfEnumCompanion[WorkType]:
+  val all: List[WorkType] = List(Alteration, Original, Rework)

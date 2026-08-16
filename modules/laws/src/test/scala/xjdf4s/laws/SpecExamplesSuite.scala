@@ -64,6 +64,9 @@ class SpecExamplesSuite extends FunSuite:
   test("Fixture (§8.22 / Table 8.27): gangSource constructs"):
     assertConstructs("gangSource")(SpecExamples.gangSource)
 
+  test("Fixture (§8.30 / Table 8.48): misDetails constructs"):
+    assertConstructs("misDetails")(SpecExamples.misDetails)
+
   test("Fixture (Table 8.29, Example 8.15): gluingJob constructs and validates"):
     assertValidTicket("gluingJob")(SpecExamples.gluingJob)
 
@@ -146,6 +149,12 @@ class SpecExamplesSuite extends FunSuite:
     assertEquals(
       showOf("gangSource")(SpecExamples.gangSource),
       "GangSource(job=SourceJob-42, copies=500, binderySignature=Signature-A)"
+    )
+
+  test("golden: misDetails Show render (Table 8.48 fixture)"):
+    assertEquals(
+      showOf("misDetails")(SpecExamples.misDetails),
+      "MISDetails(complexity=0.5, costType=NonChargeable, workType=Rework, workTypeDetails=ResourceDamaged)"
     )
 
   test("golden: gluingJob Show render (Table 8.29 fixture)"):

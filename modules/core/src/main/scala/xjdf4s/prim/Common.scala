@@ -623,4 +623,31 @@ object Catalog:
     val XJMFPush: NmToken = NmToken.unsafe("XJMFPush")
     val XJMFPull: NmToken = NmToken.unsafe("XJMFPull")
     val None: NmToken = NmToken.unsafe("None")
+
+  /** Work type details of `MISDetails/@WorkTypeDetails` (§8.30 / Table 8.48):
+   *  machine-readable reason why the work was done. `NMTOKEN` with "Values
+   *  include" — an open catalog (ADR-0007): any other valid NMTOKEN remains
+   *  legal as a vendor or customer extension.
+   */
+  object WorkTypeDetails:
+    /** The customer requested change(s) requiring the work. */
+    val CustomerRequest: NmToken = NmToken.unsafe("CustomerRequest")
+    /** Equipment used to produce the resource malfunctioned; the resource
+     *  needs to be created again.
+     */
+    val EquipmentMalfunction: NmToken = NmToken.unsafe("EquipmentMalfunction")
+    /** Change was made for production efficiency or another internal reason. */
+    val InternalChange: NmToken = NmToken.unsafe("InternalChange")
+    /** A resource needs to be created again to account for a damaged resource
+     *  (damaged plate, etc.).
+     */
+    val ResourceDamaged: NmToken = NmToken.unsafe("ResourceDamaged")
+    /** Incorrect operation of equipment or incorrect creation of a resource
+     *  requires creating the resource again.
+     */
+    val UserError: NmToken = NmToken.unsafe("UserError")
+
+    val recommended: List[NmToken] =
+      List(CustomerRequest, EquipmentMalfunction, InternalChange, ResourceDamaged, UserError)
+  end WorkTypeDetails
 end Catalog

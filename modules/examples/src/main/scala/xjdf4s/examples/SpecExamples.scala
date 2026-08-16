@@ -3,7 +3,7 @@ package xjdf4s.examples
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.{Certification, Crease, FileSpec, GangSource, Glue => GlueElement, HolePattern}
+import xjdf4s.model.elements.{Certification, Crease, FileSpec, GangSource, Glue => GlueElement, HolePattern, MISDetails}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show
@@ -125,6 +125,18 @@ object SpecExamples:
       copies = 500L,
       jobId = JobId.unsafe("SourceJob-42"),
       binderySignatureId = Some(NmToken.unsafe("Signature-A"))
+    ).validNec
+
+  /** Fixture (§8.30 / Table 8.48): MIS accounting details for a rework caused
+   *  by a damaged resource. The element remains standalone until `NodeInfo`
+   *  is completed with `MISDetails?` and `GangSource*` in M1.6-8.
+   */
+  val misDetails: ValidatedNec[Issue, MISDetails] =
+    MISDetails(
+      complexity = Some(UnitInterval.unsafe(0.5)),
+      costType = Some(CostType.NonChargeable),
+      workType = Some(WorkType.Rework),
+      workTypeDetails = Some(Catalog.WorkTypeDetails.ResourceDamaged)
     ).validNec
 
   /** Example 8.15 (Table 8.29): a binding ticket demonstrating the `Glue`
@@ -586,6 +598,7 @@ object SpecExamples:
       "Example 3.6 (combined):" -> combinedProcesses.map(Show[XJDF].show),
       "Creasing job (Table 8.17):" -> creasingJob.map(Show[XJDF].show),
       "Gang source (Table 8.27):" -> gangSource.map(Show[GangSource].show),
+      "MIS details (Table 8.48):" -> misDetails.map(Show[MISDetails].show),
       "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
       "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),
