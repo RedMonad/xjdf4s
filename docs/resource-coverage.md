@@ -67,7 +67,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 61 | `ImageEnhancementParams` | typed |
 | 62 | `ImageSetterParams` | typed |
 | 63 | `Layout` | pending |
-| 64 | `LayoutElementProductionParams` | pending |
+| 64 | `LayoutElementProductionParams` | typed |
 | 65 | `LayoutShift` | typed |
 | 66 | `ManualLaborParams` | typed |
 | 67 | `Media` | typed |
@@ -92,11 +92,11 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 86 | `StitchingParams` | typed |
 | 87 | `ThreadSewingParams` | typed |
 | 88 | `TrimmingParams` | typed |
-| 89 | `WebInlineFinishingParams` | pending |
+| 89 | `WebInlineFinishingParams` | typed |
 | 90 | `ColorCorrectionParams` | typed |
 | 91 | `ColorSpaceConversionParams` | pending |
 | 92 | `Ink` | typed |
-| 93 | `InkZoneCalculationParams` | pending |
+| 93 | `InkZoneCalculationParams` | typed |
 | 94 | `InkZoneProfile` | typed |
 | 95 | `PreviewGenerationParams` | typed |
 | 96 | `RenderingParams` | pending |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **83/100** schema-defined descendants.
+Current coverage: **86/100** schema-defined descendants.

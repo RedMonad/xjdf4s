@@ -30,13 +30,15 @@ type PostpressSpecificResource =
     resources.SpinePreparationParams |
     resources.SpineTapingParams | resources.StitchingParams | resources.StrappingParams |
     resources.ThreadSealingParams | resources.ThreadSewingParams | resources.TrimmingParams |
-    resources.VarnishingParams | resources.WindingParams | resources.WrappingParams
+    resources.VarnishingParams | resources.WebInlineFinishingParams | resources.WindingParams |
+    resources.WrappingParams
 
 type PrepressSpecificResource =
   resources.BarcodeCompParams | resources.BarcodeReproParams | resources.BendingParams |
     resources.ColorCorrectionParams | resources.DevelopingParams | resources.FontPolicy |
-    resources.ImageEnhancementParams | resources.ImageSetterParams | resources.InkZoneProfile |
-    resources.LayoutShift | resources.ManualLaborParams | resources.PreflightParams |
+    resources.ImageEnhancementParams | resources.ImageSetterParams | resources.InkZoneCalculationParams |
+    resources.InkZoneProfile | resources.LayoutElementProductionParams | resources.LayoutShift |
+    resources.ManualLaborParams | resources.PreflightParams |
     resources.PreflightReport | resources.PreviewGenerationParams | resources.RegisterMark |
     resources.ScreeningParams | resources.SeparationControlParams | resources.ShapeDefProductionParams |
     resources.TrappingParams
