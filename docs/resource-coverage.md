@@ -48,7 +48,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 42 | `BarcodeCompParams` | typed |
 | 43 | `BarcodeReproParams` | typed |
 | 44 | `BendingParams` | typed |
-| 45 | `BinderySignature` | pending |
+| 45 | `BinderySignature` | typed |
 | 46 | `BoxFoldingParams` | typed |
 | 47 | `Color` | typed |
 | 48 | `ColorantControl` | typed |
@@ -83,7 +83,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 77 | `SeparationControlParams` | typed |
 | 78 | `ShapeDef` | typed |
 | 79 | `ShapeDefProductionParams` | typed |
-| 80 | `SheetOptimizingParams` | pending |
+| 80 | `SheetOptimizingParams` | typed |
 | 81 | `TransferCurve` | typed |
 | 82 | `UsageCounter` | typed |
 | 83 | `BundlingParams` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **91/100** schema-defined descendants.
+Current coverage: **93/100** schema-defined descendants.

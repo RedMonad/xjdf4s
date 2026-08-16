@@ -10,7 +10,8 @@ end SpecificResource
 
 /** Typed resources completed in the foundational resource slice. */
 type FoundationalSpecificResource =
-  resources.Assembly | resources.Bundle | resources.Color | resources.ColorantControl | resources.Component |
+  resources.Assembly | resources.BinderySignature | resources.Bundle | resources.Color | resources.ColorantControl |
+    resources.Component |
     resources.Contact | resources.CustomerInfo | resources.Device | resources.ExposedMedia | resources.Ink | resources.Media |
     resources.MiscConsumable |
     resources.NodeInfo | resources.Pallet | resources.PrintCondition | resources.RunList | resources.Shape |
@@ -43,8 +44,7 @@ type PrepressSpecificResource =
     resources.ManualLaborParams | resources.PreflightParams |
     resources.PreflightReport | resources.PreviewGenerationParams | resources.RegisterMark |
     resources.RenderingParams | resources.ScreeningParams | resources.SeparationControlParams |
-    resources.ShapeDefProductionParams |
-    resources.TrappingParams
+    resources.ShapeDefProductionParams | resources.SheetOptimizingParams | resources.TrappingParams
 
 type GeneralSpecificResource =
   resources.ApprovalDetails | resources.ApprovalParams | resources.DeliveryParams | resources.Preview |
