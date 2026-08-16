@@ -215,6 +215,48 @@ object Crease:
 
 end Crease
 
+/** The `GangSource` element (§8.22 / Table 8.27): source-job information for
+ *  a `BinderySignature` placed on a gang form.
+ *
+ *  Table 8.27 and `schema.xsd` agree on three attributes and no children:
+ *  `@Copies` and `@JobID` are required, while `@BinderySignatureID` is
+ *  optional. The four normative containers (`JobPhase`, `QueueFilter`,
+ *  `QueueEntry`, `NodeInfo`) all declare `GangSource*` (`minOccurs="0"`,
+ *  `maxOccurs="unbounded"`). They are wired by their respective slices;
+ *  `NodeInfo` is completed in M1.6-8 after `MISDetails` is modelled.
+ *
+ *  `@JobID` names another XJDF and `@BinderySignatureID` names a signature in
+ *  that source job. Both are NMTOKEN-valued cross-document identifiers, not
+ *  document-scoped `IDREF`s (§2.2.3), so they do not contribute to
+ *  `XJDF.references`. Resolving them requires an external job registry and is
+ *  deliberately outside the pure single-ticket validator (ADR-0006;
+ *  SPEC-COVERAGE, Deliberate Deviations).
+ */
+final case class GangSource(
+    copies: Long,
+    jobId: JobId,
+    binderySignatureId: Option[NmToken] = None
+):
+
+  /** Table 8.27 declares no `IDREF` attributes. Its two reference-like
+   *  attributes are cross-document NMTOKEN values, not references in the
+   *  current XJDF ID scope.
+   */
+  def references: Chain[IdRef] = Chain.empty
+
+end GangSource
+
+object GangSource:
+
+  given Show[GangSource] = Show.show { source =>
+    val signature = source.binderySignatureId.fold("")(id => s", binderySignature=${id.value}")
+    s"GangSource(job=${source.jobId.value}, copies=${source.copies}$signature)"
+  }
+
+  given Eq[GangSource] = Eq.fromUniversalEquals
+
+end GangSource
+
 /** The `Glue` element (Table 8.29): details of glue application on a
  *  component. Used by `BindIn` (Table 4.5), `StickOn` (Table 4.7),
  *  `AdhesiveNote` (Table 4.9) and finishing resources

@@ -3,7 +3,7 @@ package xjdf4s.examples
 import xjdf4s.dsl.dsl
 import xjdf4s.intents.*
 import xjdf4s.model.*
-import xjdf4s.model.elements.{Certification, Crease, FileSpec, Glue => GlueElement, HolePattern}
+import xjdf4s.model.elements.{Certification, Crease, FileSpec, GangSource, Glue => GlueElement, HolePattern}
 import xjdf4s.prim.*
 import xjdf4s.resources.*
 import cats.Show
@@ -115,6 +115,17 @@ object SpecExamples:
         draft.withResources(foldingParams).build
       }
     }
+
+  /** Fixture (§8.22 / Table 8.27): source-job information for one
+   *  `BinderySignature` placed on a gang form. The element remains standalone
+   *  until `MISDetails` is modelled and `NodeInfo` is completed in M1.6-8.
+   */
+  val gangSource: ValidatedNec[Issue, GangSource] =
+    GangSource(
+      copies = 500L,
+      jobId = JobId.unsafe("SourceJob-42"),
+      binderySignatureId = Some(NmToken.unsafe("Signature-A"))
+    ).validNec
 
   /** Example 8.15 (Table 8.29): a binding ticket demonstrating the `Glue`
    *  element with `@GlueType="Removable"` inside `AdhesiveNote`.
@@ -574,6 +585,7 @@ object SpecExamples:
       "Example 3.4 (notebook BOM):" -> notebook.map(Show[ProductList].show),
       "Example 3.6 (combined):" -> combinedProcesses.map(Show[XJDF].show),
       "Creasing job (Table 8.17):" -> creasingJob.map(Show[XJDF].show),
+      "Gang source (Table 8.27):" -> gangSource.map(Show[GangSource].show),
       "Gluing job (Table 8.29):" -> gluingJob.map(Show[XJDF].show),
       "Hole punching job (Table 8.30 / Appendix F):" -> holePunchingJob.map(Show[XJDF].show),
       "Hole making intent (Table 4.29):" -> holeMakingJob.map(Show[XJDF].show),

@@ -61,6 +61,9 @@ class SpecExamplesSuite extends FunSuite:
   test("Fixture (Tables 8.17/6.74): creasingJob constructs and validates"):
     assertValidTicket("creasingJob")(SpecExamples.creasingJob)
 
+  test("Fixture (§8.22 / Table 8.27): gangSource constructs"):
+    assertConstructs("gangSource")(SpecExamples.gangSource)
+
   test("Fixture (Table 8.29, Example 8.15): gluingJob constructs and validates"):
     assertValidTicket("gluingJob")(SpecExamples.gluingJob)
 
@@ -137,6 +140,12 @@ class SpecExamplesSuite extends FunSuite:
     assertEquals(
       showOf("creasingJob")(SpecExamples.creasingJob),
       "XJDF(job=creaseJob, types=Folding)"
+    )
+
+  test("golden: gangSource Show render (Table 8.27 fixture)"):
+    assertEquals(
+      showOf("gangSource")(SpecExamples.gangSource),
+      "GangSource(job=SourceJob-42, copies=500, binderySignature=Signature-A)"
     )
 
   test("golden: gluingJob Show render (Table 8.29 fixture)"):

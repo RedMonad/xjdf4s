@@ -1791,7 +1791,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 | M1.6-1 | Certification `[x]` PR-22 | §8.7 | Table 8.8 |
 | M1.6-2 | Crease `[x]` PR-15 | §8.14 | Table 8.17 |
 | M1.6-3 | Glue `[x]` PR-16 | §8.24 | Table 8.29 |
-| M1.6-4 | GangSource | §8.22 | Table 8.27 |
+| M1.6-4 | GangSource `[~]` PR-23 | §8.22 | Table 8.27 |
 | M1.6-5 | HolePattern `[x]` PR-17 | §8.25 | Table 8.30 |
 | M1.6-6 | IdentificationField | §8.26 | Table 8.31 |
 | M1.6-7 | MISDetails | §8.30 | Table 8.48 |
@@ -1975,6 +1975,63 @@ GlueLaws 15, ChangeOrderLaws 8, SpecExamplesSuite 17, EnumLaws 20,
 TicketLaws 59, BomLaws 8, PartitionLaws 27, AlgebraLaws 50);
 `examples/run` — exit 0, вывод содержит `Gluing job (Table 8.29): XJDF(job=glueJob,
 types=Binding, ProductList(Product(?×100, root)))`. Статус `[x]` — закрыт полностью.
+
+#### M1.6-4. `GangSource` (Table 8.27, §8.22) — `[~]` реализовано статически, ожидает прогона владельца (PR-23)
+
+Вертикальный срез продолжает общие элементы главы 8 и подготавливает
+`NodeInfo` (Table 6.119): после отдельного среза `MISDetails` ресурс будет
+дополнен обоими подэлементами в M1.6-8.
+
+- **Сверка Table/XSD (§1.2).** Table 8.27 содержит ровно три атрибута и не
+  содержит подэлементов: `@BinderySignatureID?` (`NMTOKEN`), обязательный
+  `@Copies` (`integer`) и обязательный `@JobID` (`NMTOKEN`). `schema.xsd`
+  (`<xs:element name="GangSource">`) совпадает с prose: соответственно
+  `use="optional"`, `use="required"`, `use="required"`; `@Copies` — `xs:int`,
+  остальные два — `xs:NMTOKEN`. Version notes отсутствуют.
+- **Модель.** `GangSource(copies: Long, jobId: JobId,
+  binderySignatureId: Option[NmToken] = None)` в
+  `model/elements/CommonElements.scala`. `@Copies` и `@JobID` обязательны
+  структурно не-`Option` полями; отдельная runtime-проверка присутствия не
+  нужна. Для `xs:int` не выдумывается отсутствующее в prose/XSD ограничение
+  положительности; проверка wire-диапазона остаётся границей кодека M2.
+- **Кардинальности контейнеров.** XSD содержит четыре вхождения
+  `minOccurs="0" maxOccurs="unbounded"` → `GangSource*`: `JobPhase`,
+  `QueueFilter`, `QueueEntry`, `NodeInfo`. Первые три относятся к messaging M4;
+  `NodeInfo.gangSources: Chain[GangSource]` добавляется не сейчас, а в M1.6-8
+  вместе с `MISDetails?`, как предписывает зависимость срезов. Машинная
+  XSD-проверка четырёх вхождений находится в `GangSourceLaws`.
+- **ID/IDREF и SHALL-ссылки.** `@JobID` указывает на отдельный исходный XJDF,
+  `@BinderySignatureID` — на `BinderySignature` в этом source job. Оба атрибута
+  типизированы `NMTOKEN`, а не `IDREF`, и не относятся к документному скоупу
+  §2.2.3 → `references = Chain.empty`. Проверить существование внешнего job и
+  signature без реестра jobs невозможно; по ADR-0006 ложный warning/error не
+  вводится. Граница явно зафиксирована в scaladoc и отдельной строкой реестра
+  отклонений `docs/SPEC-COVERAGE.md`; разрешение — интеграционный слой M4.
+- **Тесты:** `GangSourceLaws.scala` (8 тестов): полное и минимальное отображение,
+  отсутствие выдуманного positivity-ограничения, лексические границы NMTOKEN,
+  отсутствие IDREF, `Eq`/`Show`, точные типы/requiredness трёх XSD-атрибутов и
+  четыре кардинальности контейнеров. Runtime-негатив на отсутствие
+  `@Copies`/`@JobID` не нужен — состояния невыразимы типом; негатив на внешнюю
+  ссылку невозможен без внешнего агрегата и потому документирован, а не
+  симулируется.
+- **Фикстура:** `SpecExamples.gangSource` — standalone-значение source job
+  `SourceJob-42` / `Signature-A`, 500 copies; conformance + временный
+  `Show`-golden в `SpecExamplesSuite`, строка в `examples/run`.
+- **Coverage:** строка `GangSource` и строка сознательного отклонения;
+  `check-spec-coverage.sh` должен давать `RESULT: OK`.
+- **Совместимость:** срез аддитивен; существующие типы и конструкторы не
+  меняются. Wiring контейнеров сознательно не смешивается с моделью элемента.
+
+**Файлы:** `model/elements/CommonElements.scala`,
+`laws/GangSourceLaws.scala` (новый), `examples/SpecExamples.scala`,
+`laws/SpecExamplesSuite.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
+без предупреждений; ожидается 330 тестов зелёных (320 + 8
+`GangSourceLaws` + 2 `SpecExamplesSuite`); `examples/run` exit 0 со строкой
+`Gang source (Table 8.27): GangSource(job=SourceJob-42, copies=500,
+binderySignature=Signature-A)`; `scripts/check-spec-coverage.sh` — `RESULT: OK`.
+До подтверждения владельцем статус остаётся `[~]`.
 
 #### M1.6-5. `HolePattern` (Table 8.30, Appendix F) — `[x]` выполнено (верифицировано владельцем; PR-17)
 
@@ -2360,7 +2417,8 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 20 | `EmbossingIntent` (Table 4.25, §4.6) + `EmbossingItem` (Table 4.26) + `EmbossDirection`/`EmbossType` + SHALL `@Separation`↔`Color/@ColorType="DieLine"` | M1.6-10 | 19 | `[x]` верифицировано владельцем: 284 теста, `examples/run` exit 0 |
 | 21 | `ContentCheckIntent` (Table 4.22, §4.5) + `PreflightItem` (4.23) + `ProofItem` (4.24) + `ProofColorType` + `ProcessType.Preflight` + `IntentPayload.declaredIds`-wiring + подключение `dispositionLaw` (Table 8.23) | M1.6-11 | 20 | `[x]` верифицировано владельцем: 300 тестов, `examples/run` exit 0 |
 | 22 | `Certification` (Table 8.8, §8.7) + `Catalog.CertificationClaim`/`CertificationOrganization` + SHALL `CERTIFICATION-LEVEL-MISSING` (ADR-0012) + wiring в 4 контейнера | M1.6-1 | 21 | `[x]` верифицировано владельцем: 320 тестов, `examples/run` exit 0 |
-| 23+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-4, M1.6-6 … M1.6-15, кроме M1.6-9/11/12; плюс N-51 `FileSpec.law`) | M1.6 | 22 | шаблон среза выполнен |
+| 23 | `GangSource` (Table 8.27, §8.22) + точная XSD-сверка + классификация междокументных NMTOKEN-ссылок | M1.6-4 | 22 | `[~]` реализовано статически; ожидается 330 тестов и `examples/run` exit 0 после прогона владельца |
+| 24+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6 … M1.6-15, кроме M1.6-9/11/12; плюс N-51 `FileSpec.law`) | M1.6 | 23 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -3098,6 +3156,21 @@ M1: одна обязательная быстрая платформа — Temu
 >
 > `WorkingPath?` | XYPair | Working path of the tool beginning at `@StartPosition`.
 
+### Table 8.27 (`GangSource`)
+
+> `@BinderySignatureID?` | NMTOKEN | If present, `@BinderySignatureID` SHALL reference the BinderySignature that this GangSource represents.
+>
+> `@Copies` | integer | `@Copies` SHALL specify the number of copies of the BinderySignature that are required.
+>
+> `@JobID` | NMTOKEN | `@JobID` SHALL reference `XJDF/@JobID` of the individual job that describes the processing prior to and after printing and cutting the Gang sheet.
+
+`schema.xsd` подтверждает два обязательных атрибута (`Copies: xs:int`,
+`JobID: xs:NMTOKEN`), опциональный `BinderySignatureID: xs:NMTOKEN`, отсутствие
+подэлементов и четыре контейнера `GangSource*`. `@JobID` и
+`@BinderySignatureID` — междокументные NMTOKEN-идентификаторы, а не IDREF
+текущего XJDF; разрешение требует внешнего реестра jobs (M4), поэтому
+`GangSource.references = Chain.empty` (M1.6-4, PR-23; ADR-0006).
+
 ### Table A.24 (§A.2.23 Glue) и Table 8.29 (`Glue/@GlueType`) — внутренний конфликт спецификации (N-50)
 
 Table A.24:
@@ -3179,6 +3252,7 @@ XJDF не выражает, какой уровень выполнен, и ка�
 | `docs/adr/0011-glue-enumerations.md` (новый) | M1.6-3 (ADR зафиксирован в PR-15 при регистрации N-50) |
 | `docs/adr/0012-certification-level-required.md` (новый) | M1.6-1 (PR-22) |
 | `laws/CertificationLaws.scala` (новый) | M1.6-1 (создан в PR-22) |
+| `laws/GangSourceLaws.scala` (новый) | M1.6-4 (создан в PR-23) |
 | `intents/ColorProduction.scala` | M1.6-1 (`SurfaceColor.certifications`, `ProductionIntent.certifications`, PR-22) |
 | `intents/MediaLayout.scala` | M1.6-1 (`MediaIntent.certifications`, PR-22) |
 | `resources/Media.scala` | M1.6-1 (`Media.certifications`, `references` обходит цепочку, PR-22) |
@@ -3190,7 +3264,7 @@ XJDF не выражает, какой уровень выполнен, и ка�
 | `prim/Time.scala` | M1.4-6 (`CommutativeMonoid[TimeSpan]` при подтверждении) |
 | `prim/Versions.scala` | M1.5-2 (scaladoc 2.2-only, PR-13) |
 | `prim/Common.scala` | M1.4-8: элементы удалены, оставлены `Url` и открытые каталоги; M1.2-2 (`Catalog.NamedColor`) |
-| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`; M1.6-2: `Crease`; M1.6-1: `Certification` |
+| `model/elements/CommonElements.scala` (новый пакет) | M1.4-8: `Comment`, `GeneralID`, `Event`, `Milestone`, `Dependent`, `FileSpec`, `FileLocation`, `Disposition`; M1.6-2: `Crease`; M1.6-1: `Certification`; M1.6-4: `GangSource` (PR-23) |
 | `model/Partition.scala` | M1.2-1, M1.4-3, M1.0-5 (scaladoc-ссылка) |
 | `model/Amounts.scala` | M1.2-3, M1.3-3 (`PartWaste`) |
 | `model/Product.scala` | M1.1-1, M1.3-3, M1.3-4, M1.4-7 |
@@ -3213,12 +3287,12 @@ XJDF не выражает, какой уровень выполнен, и ка�
 | `laws/AlgebraLaws.scala` | M1.0-3, M1.1-4, M1.4-5, M1.4-6 |
 | `laws/PartitionLaws.scala` | M1.2-1, M1.5-1 (законы толерантности и merge-порядка, PR-13) |
 | `laws/TicketLaws.scala` | M1.0-2, M1.1-1, M1.1-3, M1.3-*, M1.5-3 (негативное property на `Invalid`, PR-13) |
-| `laws/SpecExamplesSuite.scala` (новый) | M1.5-3 (conformance + golden, создан в PR-13); M1.6-2 (creasingJob, PR-15) |
+| `laws/SpecExamplesSuite.scala` (новый) | M1.5-3 (conformance + golden, создан в PR-13); M1.6-2 (creasingJob, PR-15); M1.6-4 (gangSource, PR-23) |
 | `laws/CreaseLaws.scala` (новый) | M1.6-2 (создан в PR-15) |
 | `laws/ChangeOrderLaws.scala` (новый) | M1.4-2 |
 | `laws/AlignmentLaws.scala` | M1.4-6 |
 | `laws/EnumLaws.scala` (новый) | M1.2-2 (golden-токены, открытые каталоги, сверка с Appendix A), M1.5-2 (тест `XjdfVersion`, PR-13), M1.6-2 (`WorkingDirection`, PR-15) |
-| `examples/SpecExamples.scala` | M1.1-1, M1.2-3, M1.2-4, M1.4-2, M1.5-3, M1.6-2 (creasingJob, PR-15) |
+| `examples/SpecExamples.scala` | M1.1-1, M1.2-3, M1.2-4, M1.4-2, M1.5-3, M1.6-2 (creasingJob, PR-15), M1.6-4 (gangSource, PR-23) |
 | `resources/Finishing.scala` | M1.6-2 (`FoldingParams.creases`, PR-15) |
 | `examples/Main.scala` | M1.1-1, M1.5-3 |
 | `examples/src/test/SpecExamplesSuite.scala` (удалён) | M1.5-3 (переехал в `laws/SpecExamplesSuite.scala`, PR-13) |
@@ -3248,6 +3322,7 @@ XJDF не выражает, какой уровень выполнен, и ка�
 | `Monoid[Matrix]` вместо `Group` | вырожденная матрица необратима | `inverse: Option[Matrix]` + задокументированная причина; опциональный `InvertibleMatrix` вне M1 |
 | `Semigroup` (не `Monoid`) для `AuditPool`, `AmountPool`, `NmTokens`, `ProcessPath` | носитель `NonEmptyChain`, кардинальность `T+` запрещает пустое значение | явная запись в scaladoc и в `docs/01` |
 | Дубликат `"Product"` в `@Types` считается нарушением | §3.1.3 говорит «additional process type tokens»; трактовка «любой второй токен» | зафиксировано как интерпретация + тест (M1.3-4, N-36) |
+| `GangSource/@JobID` и `@BinderySignatureID` не разрешаются корневым валидатором | Table 8.27: междокументные NMTOKEN-ссылки на source XJDF и его `BinderySignature`, не IDREF текущего документа; без внешнего реестра jobs проверяемого предиката нет | `references = Chain.empty`, scaladoc + тест точных XSD-типов + строка в `SPEC-COVERAGE`; разрешение во внешнем интеграционном слое M4 (ADR-0006, M1.6-4) |
 | `scalafmtCheckAll` не является частью обязательного гейта сборки | решение владельца (2026-08-16): форматирование выполняется владельцем вручную в IntelliJ IDE | `.scalafmt.conf` остаётся в репозитории для IDE; финальный гейт — `sbt -batch clean compile test examples/run` (без `scalafmtCheckAll`); sbt-scalafmt доступен для ручного вызова |
 
 ---
@@ -3381,9 +3456,18 @@ levels SHALL be met» сознательно не проверяется (тре
 Верифицировано владельцем: **320 тестов зелёных (320/0)**, `examples/run`
 exit 0, `check-spec-coverage.sh` — `RESULT: OK`; статус `[x]`.
 
-Следующий срез PR-23+ выбирается из M1.6-4/7/8
-GangSource+MISDetails+NodeInfo, M1.6-6 IdentificationField, M1.6-13
-ShapeCuttingIntent (требует примитива `PDFPath`), M1.6-14 NamedFeatures,
-M1.6-15 Part audit или N-51 `FileSpec.law`.
+PR-23 (M1.6-4) статически реализовал `GangSource` (§8.22 / Table 8.27):
+три атрибута с обязательностью по XSD, `@JobID` → `JobId`,
+`@BinderySignatureID?` → `Option[NmToken]`, `references = Chain.empty` (оба
+reference-like атрибута — междокументные NMTOKEN, не IDREF §2.2.3), 8 тестов
+`GangSourceLaws`, standalone-фикстуру + conformance/golden и coverage. Все
+четыре контейнера имеют `GangSource*`; wiring `NodeInfo` остаётся M1.6-8 после
+`MISDetails`. Статус `[~]` до прогона владельца; ожидается **330 тестов** и
+`examples/run` exit 0.
+
+Следующий срез PR-24+ выбирается из M1.6-7/8 (`MISDetails` → `NodeInfo`),
+M1.6-6 IdentificationField, M1.6-13 ShapeCuttingIntent (требует примитива
+`PDFPath`), M1.6-14 NamedFeatures, M1.6-15 Part audit или N-51
+`FileSpec.law`.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
 открытая часть M1.0-1.
