@@ -72,7 +72,7 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 66 | `ManualLaborParams` | typed |
 | 67 | `Media` | typed |
 | 68 | `MiscConsumable` | typed |
-| 69 | `PDLCreationParams` | pending |
+| 69 | `PDLCreationParams` | typed |
 | 70 | `PreflightParams` | typed |
 | 71 | `PreflightReport` | typed |
 | 72 | `Preview` | typed |
@@ -105,4 +105,4 @@ Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex t
 | 99 | `PrintCondition` | typed |
 | 100 | `WindingParams` | typed |
 
-Current coverage: **96/100** schema-defined descendants.
+Current coverage: **97/100** schema-defined descendants.

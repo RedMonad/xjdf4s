@@ -42,7 +42,7 @@ type PrepressSpecificResource =
     resources.ImageCompressionParams | resources.ImageEnhancementParams | resources.ImageSetterParams |
     resources.InkZoneCalculationParams | resources.InterpretingParams |
     resources.InkZoneProfile | resources.LayoutElementProductionParams | resources.LayoutShift |
-    resources.ManualLaborParams | resources.PreflightParams |
+    resources.ManualLaborParams | resources.PDLCreationParams | resources.PreflightParams |
     resources.PreflightReport | resources.PreviewGenerationParams | resources.RegisterMark |
     resources.RenderingParams | resources.ScreeningParams | resources.SeparationControlParams |
     resources.ShapeDefProductionParams | resources.SheetOptimizingParams | resources.TrappingParams
