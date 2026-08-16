@@ -518,7 +518,7 @@ def mergeResourceSets(ticket: XJDF, update: Chain[ResourceSet]): Ior[NonEmptyCha
 | N-51 | `FileSpec` (Table 8.22, `model/elements/CommonElements.scala`) неполон: (1) SHALL-правило взаимного исключения локаций — «If neither `@URL` nor `@UID` is present, both `@FileFormat` and `@FileTemplate` SHALL be present, unless the resource is a pipe. If either `@URL` or `@UID` is specified, then `@FileFormat` and `@FileTemplate` SHALL NOT be specified» — не проверяется: case class допускает одновременное задание `url` и `fileFormat`/`fileTemplate`, а `location` молча выбирает по приоритету; (2) `NetworkHeader*` *(New in XJDF 2.1)* не моделируется; (3) строки в `SPEC-COVERAGE.md` нет (тип вне `resources/*`/`intents/*`, чекер не требует) | Table 8.22 (`reference/xjdf/8 – Subelements.md`, строки 519+); `schema.xsd` `FileSpec` | `model/elements/CommonElements.scala` (`FileSpec`, `FileLocation`) | M1.6/M3 follow-up: `FileSpec.law` (`DomainRule`) + подключение к обходам всех FileSpec-несущих контейнеров (первый подключён в M1.6-11 — `ContentCheckIntent/ProofItem/FileSpec`); `NetworkHeader` — по решению о его моделировании. Зарегистрировано в PR-21 (M1.6-11) при сверке Table 4.24 |
 | N-52 | `NodeInfo/@DueLevel` типизирован как `Option[Long]` вместо закрытой энумерации | Table 6.119: `DueLevel?` \| **enumeration** \| «Description of the severity of a missed deadline (JobCancelled, Penalty, Trivial)»; `schema.xsd` (`<xs:complexType name="NodeInfo">`) объявляет inline-restriction по `xs:NMTOKEN` ровно с этими тремя значениями. Prose и XSD **согласны** — расхождение только в модели, ADR не требуется | `resources/NodeInfo.scala:14` `dueLevel: Option[Long]` — делает представимым `DueLevel = 7`. Класс дефекта тот же, что у N-06/N-07 (потеря enum при переносе таблицы); call sites отсутствуют | M1.6-8 (PR-25) — `[x]` устранено, верифицировано владельцем |
 
-| N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?`: модель допускает несколько `FileSpec` в одном `RunList`, тогда как Table 6.148 объявляет `FileSpec?`, а `schema.xsd` (`<xs:complexType name="RunList">`) — `<xs:element maxOccurs="1" minOccurs="0" ref="FileSpec"/>`. Prose и XSD согласны — расхождение только в модели, ADR не требуется | Table 6.148 (`reference/xjdf/6 – Resources.md`, строка 2056: `FileSpec?` \| element \| «URL plus metadata about the physical characteristics of a file»); `schema.xsd` `RunList` | `resources/RunList.scala:30` `fileSpecs: Chain[FileSpec] = Chain.empty` | Обнаружено при предстартовой сверке Table 8.31 (PR-26, M1.6-6). Класс дефекта тот же, что N-08/N-09 (кардинальность). В отличие от N-52, исправление — **breaking change** публичного API в чужой таблице/файле, поэтому по решению владельца от 2026-08-16 находка регистрируется здесь, а исправляется отдельным микро-срезом вместе с migration note и полным списком call sites (естественный кандидат — объединить с M1.6-6b, который и так трогает `RunList`) | зарегистрировано, срез не назначен |
+| N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?`: модель допускает несколько `FileSpec` в одном `RunList`, тогда как Table 6.148 объявляет `FileSpec?`, а `schema.xsd` (`<xs:complexType name="RunList">`) — `<xs:element maxOccurs="1" minOccurs="0" ref="FileSpec"/>`. Prose и XSD согласны — расхождение только в модели, ADR не требуется | Table 6.148 (`reference/xjdf/6 – Resources.md`, строка 2056: `FileSpec?` \| element \| «URL plus metadata about the physical characteristics of a file»); `schema.xsd` `RunList` | было: `resources/RunList.scala` `fileSpecs: Chain[FileSpec] = Chain.empty`; стало: `fileSpecs: Option[FileSpec] = None` | Обнаружено при предстартовой сверке Table 8.31 (PR-26, M1.6-6). Исправление — **breaking change** публичного API в чужой таблице/файле. По подтверждённому владельцем порядку от 2026-08-16 выполнено отдельным микро-срезом PR-27 **до** M1.6-6b; объединение с M1.6-6b отклонено по §9.1. Migration note и полный список call sites — в §8, N-53 | M1.6/N-53 (PR-27) — `[~]` статически реализовано, ожидает прогона владельца |
 
 **Происхождение N-47…N-49.** Находки получены машинной сверкой всех закрытых enum
 `prim/Enums.scala` с таблицами раздела A.2 (процедура закреплена в ADR-0007 и
@@ -1803,6 +1803,11 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 
 - M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[x]` выполнено (верифицировано владельцем; PR-25);
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — реализовать модель и правило приоритета явных Traits;
+- N-53 (микро-срез PR-27): `RunList.fileSpecs: Chain[FileSpec]` →
+  `Option[FileSpec]` по Table 6.148 / XSD `FileSpec?`; breaking change с
+  migration note и полным списком call sites. Порядок подтверждён владельцем
+  2026-08-16: N-53 выполняется **до** M1.6-6b отдельным PR; объединение
+  отклонено по §9.1;
 - M1.6-6b: `MetadataMap` (§8.29 / Table 8.46) + `Expr` (Table 8.47) + примитив `XPath`
   (тип данных спецификации, не путать с `model.XPath` локатора валидатора) —
   подключение к обоим контейнерам: `IdentificationField` (Table 8.31,
@@ -1810,8 +1815,52 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
   смоделирован); два контекстно-зависимых SHALL: «`Expr` SHALL NOT be
   specified in an `IdentificationField/MetadataMap`» и «`MetadataMap/@Name`
   SHALL be included in `@ValueTemplate`»; выделено из M1.6-6 решением
-  владельца 2026-08-16 по §9.1 («один семантический выбор на PR»);
+  владельца 2026-08-16 по §9.1 («один семантический выбор на PR») и выполняется
+  отдельным PR после N-53;
 - M1.6-15: полная сверка `Part` с Table 6.4 против `schema.xsd` (завершение M1.2-1).
+
+#### N-53. `RunList/FileSpec?` (Table 6.148) — `[~]` статически реализовано (PR-27; ожидает прогона владельца)
+
+Изолированный микро-срез исправляет только неверную кардинальность уже
+существующего потомка `RunList`; `MetadataMap`/`Expr`/XJDF-тип данных `XPath`
+остаются отдельным M1.6-6b. Порядок и отказ от объединения подтверждены
+владельцем 2026-08-16.
+
+- **Сверка Table/XSD (§1.2).** Table 6.148 объявляет `FileSpec?`; `schema.xsd`
+  (`<xs:complexType name="RunList">`) подтверждает `<xs:element
+  maxOccurs="1" minOccurs="0" ref="FileSpec"/>`. Prose и XSD согласны,
+  поэтому ADR не требуется: это дефект модели.
+- **Регрессия сначала.** `RunListLaws` сначала потребовал на уровне типов
+  `Option[FileSpec]` для отсутствующего и присутствующего потомка; при прежнем
+  `Chain[FileSpec]` тест не компилировался. Второй тест машинно закрепляет
+  `0..1` по XSD-oracle.
+- **Модель.** `RunList.fileSpecs: Chain[FileSpec] = Chain.empty` заменён на
+  `fileSpecs: Option[FileSpec] = None`. Кардинальность обеспечена типом:
+  runtime-правило «не более одного» и негативный `DomainRule` не нужны.
+  `RunList.references` не меняется; `FileSpec` не объявляет IDREF.
+- **Migration note (breaking API).** `Chain.empty` мигрирует в `None`,
+  `Chain.one(fileSpec)` — в `Some(fileSpec)`. Значение с двумя и более
+  `FileSpec` было неконформным Table 6.148 и не имеет lossless-представления в
+  одном `RunList`; вызывающая сторона должна нормализовать или разделить его
+  на несколько доменных сущностей до конструирования.
+- **Полный список call sites.** (1) объявление поля в
+  `resources/RunList.scala`; (2) единственный вызов в
+  `SpecExamples.brochureJob`, мигрированный с `Chain.one(FileSpec(...))` на
+  `Some(FileSpec(...))`. Чтений `.fileSpecs`, `copy(fileSpecs = ...)` и
+  позиционных вызовов `RunList` нет. Одноимённые поля `fileSpecs` в
+  `Finishing.scala`, `Layout.scala` и `Preview.scala` принадлежат другим типам
+  и не изменяются.
+- **Coverage.** Строка `RunList` в `docs/SPEC-COVERAGE.md` фиксирует
+  `FileSpec?` → `Option[FileSpec]`, regression/XSD-oracle-тесты и отдельно
+  оставляет `MetadataMap*` за M1.6-6b.
+
+**Файлы:** `resources/RunList.scala`, `laws/RunListLaws.scala` (новый),
+`examples/SpecExamples.scala`, `docs/SPEC-COVERAGE.md`, `ROADMAP.md`.
+
+**Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
+без предупреждений; 398 тестов зелёных (396 + 2 `RunListLaws`),
+`examples/run` exit 0; `scripts/check-spec-coverage.sh` — `RESULT: OK`.
+До прогона владельца статус остаётся `[~]`.
 
 #### M1.6-1. `Certification` (Table 8.8, §8.7) — `[x]` выполнено (верифицировано владельцем; PR-22)
 
@@ -2776,7 +2825,8 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 24 | `MISDetails` (Table 8.48, §8.30) + `CostType`/`WorkType` + открытый `Catalog.WorkTypeDetails` + prose-диапазон `@Complexity` через `UnitInterval` | M1.6-7 | 23 | `[x]` верифицировано владельцем: 343 теста, `examples/run` exit 0 |
 | 25 | `NodeInfo` += `GangSource*` + `MISDetails?` (Table 6.119, §6.59) + закрытие N-52 (`@DueLevel` → закрытый `DueLevel`) | M1.6-8 | 23, 24 | `[x]` верифицировано владельцем: 357 тестов, `examples/run` exit 0 |
 | 26 | `IdentificationField` (Table 8.31, §8.26) + `BarcodeDetails` (8.33) + `ExtraValues` (8.34) + `FieldEncoding`/`FieldPurpose` + 5 открытых каталогов + SHALL `IDENTIFICATION-FIELD-VALUE-SOURCE` + wiring в `Component` (Table 6.37) + регистрация N-53 | M1.6-6 | 25 | `[x]` верифицировано владельцем: 396 тестов, `examples/run` exit 0 |
-| 27+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6b, M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`, N-53 `RunList/FileSpec?`) | M1.6 | 26 | шаблон среза выполнен |
+| 27 | N-53: `RunList.fileSpecs` → `Option[FileSpec]` по Table 6.148/XSD `FileSpec?`; regression-first, migration note и полный список call sites; не объединяется с M1.6-6b (§9.1) | N-53 | 26 | `[~]` статически реализовано; ожидает `sbt -batch clean compile test examples/run` владельца (398 тестов) |
+| 28+ | Оставшиеся пробелы глав 4/8 — один вертикальный срез на PR (M1.6-6b, M1.6-13 … M1.6-15; плюс N-51 `FileSpec.law`) | M1.6 | 27 | шаблон среза выполнен |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -3149,7 +3199,7 @@ M1: одна обязательная быстрая платформа — Temu
 | N-50 | Glue-энумерации смешаны; `Glue/@GlueType` (5 значений) не смоделирован | ✅ ADR-0011: элемент `Glue` + два закрытых набора (Table A.24 — 3, Table 8.29 — 5); реализация — PR-16 (M1.6-3), регистрация — PR-15 (M1.6-2) | M1.6-3 | P1 |
 | N-51 | `FileSpec` неполон: нет SHALL-правила взаимного исключения `@URL`/`@UID` vs `@FileFormat`/`@FileTemplate`; `NetworkHeader*` (New in 2.1) не моделируется; нет строки в `SPEC-COVERAGE.md` | зарегистрировано при сверке Table 4.24 (PR-21, M1.6-11); `FileSpec.law` + подключение к FileSpec-несущим обходам — отдельный срез | M1.6/M3 follow-up | P1 |
 | N-52 | `NodeInfo/@DueLevel` типизирован `Option[Long]` вместо закрытой энумерации Table 6.119 (`JobCancelled`, `Penalty`, `Trivial`) | обнаружено при предстартовой сверке Table 6.119 (PR-25, M1.6-8); prose и XSD согласны, ADR не требуется — новый закрытый `prim.DueLevel`, call sites отсутствуют | M1.6-8 (PR-25) | P1 |
-| N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?` (Table 6.148 и XSD `maxOccurs="1"`) | обнаружено при предстартовой сверке Table 8.31 (PR-26, M1.6-6); prose и XSD согласны, ADR не требуется; исправление — breaking change, вынесено в отдельный срез (решение владельца 2026-08-16) | не назначен (кандидат — M1.6-6b) | P1 |
+| N-53 | `RunList.fileSpecs: Chain[FileSpec]` вместо `FileSpec?` (Table 6.148 и XSD `maxOccurs="1"`) | ✅ `Option[FileSpec]`; regression-first, migration note и полный список call sites; отдельный PR-27 до M1.6-6b, объединение отклонено по §9.1 (решение владельца 2026-08-16) | M1.6/N-53 (PR-27) — `[~]`, ожидает прогона владельца | P1 |
 | N-10 | `PartAmount.part` единственный | ✅ `Chain[Part]` | M1.2-3 | P1 |
 | N-11 | `Resource.specific` обязателен | ✅ `Option` | M1.2-4 | P1 |
 | N-12 | `DropItem` неполон | ✅ три поля Table 6.55 | M1.2-5 | P1 |
@@ -3633,6 +3683,7 @@ XJDF не выражает, какой уровень выполнен, и ка�
 | `laws/GangSourceLaws.scala` (новый) | M1.6-4 (создан в PR-23) |
 | `laws/MISDetailsLaws.scala` (новый) | M1.6-7 (создан в PR-24) |
 | `laws/IdentificationFieldLaws.scala` (новый) | M1.6-6 (создан в PR-26) |
+| `laws/RunListLaws.scala` (новый) | N-53 (regression + XSD-oracle кардинальности `FileSpec?`, PR-27) |
 | `resources/Component.scala` | M1.6-6 (`Component.identificationFields`, `references` обходит цепочку, PR-26) |
 | `intents/ColorProduction.scala` | M1.6-1 (`SurfaceColor.certifications`, `ProductionIntent.certifications`, PR-22) |
 | `intents/MediaLayout.scala` | M1.6-1 (`MediaIntent.certifications`, PR-22) |
@@ -3662,6 +3713,7 @@ XJDF не выражает, какой уровень выполнен, и ка�
 | `resources/{Color,Finishing,Layout,Media,NodeInfo,Preview}.scala` | M1.2-6 |
 | `resources/Delivery.scala` | M1.2-5 (`DropItem`) |
 | `resources/NodeInfo.scala` | M1.2-6, M1.6 (`GangSource`, `MISDetails`) |
+| `resources/RunList.scala` | N-53 (`fileSpecs: Chain[FileSpec]` → `Option[FileSpec]`, PR-27) |
 | `resources/AllResources.scala` | M1.2-4 (optional payload), подготовка ADR-0008 |
 | `intents/*` | M1.3-3, M1.6; M1.2-2 (`Binding.scala`, `MediaLayout.scala` — тип цветовых полей) |
 | `laws/Arbitraries.scala` | M1.2-1, M1.5-3 (lawful/`Invalid` разделены в PR-13) |
@@ -3896,9 +3948,15 @@ ID/IDREF в трёх таблицах отсутствуют (сверено п�
 `RESULT: OK` (Resources 24, отклонений 19, Spec tables 121); статус `[x]` —
 закрыт полностью.
 
-Следующий срез PR-27+ выбирается из M1.6-6b (`MetadataMap` + `Expr` + примитив
-`XPath`; естественно объединяется с исправлением N-53, так как оба трогают
-`RunList`), M1.6-13 ShapeCuttingIntent (требует примитива `PDFPath`),
-M1.6-14 NamedFeatures, M1.6-15 Part audit или N-51 `FileSpec.law`.
-LICENSE остаётся `BLOCKED` до решения владельца; возврат обязательного CI —
-открытая часть M1.0-1.
+PR-27 — отдельный микро-срез N-53: `RunList.fileSpecs` исправлен с
+`Chain[FileSpec]` на `Option[FileSpec]` по согласованным Table 6.148 и XSD;
+добавлены regression/XSD-oracle-тесты, migration note и полный список call
+sites. Порядок подтверждён владельцем 2026-08-16: N-53 выполняется до
+M1.6-6b, объединение отклонено по §9.1. До прогона владельца статус `[~]`;
+ожидается 398/0 и `examples/run` exit 0.
+
+После верификации PR-27 следующий отдельный срез — M1.6-6b (`MetadataMap` +
+`Expr` + примитив `XPath`). Затем остаются M1.6-13 ShapeCuttingIntent
+(требует примитива `PDFPath`), M1.6-14 NamedFeatures, M1.6-15 Part audit и
+N-51 `FileSpec.law`. LICENSE остаётся `BLOCKED` до решения владельца; возврат
+обязательного CI — открытая часть M1.0-1.

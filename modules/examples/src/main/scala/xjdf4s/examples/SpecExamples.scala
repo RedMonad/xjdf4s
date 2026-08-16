@@ -627,7 +627,7 @@ object SpecExamples:
           chainV(dsl.product(amount = Some(500), productType = Some("Brochure"))(intents.toList*)) { brochure =>
             chainV(
               dsl.runList(
-                RunList(fileSpecs = Chain.one(FileSpec(url = Some(Url.unsafe("file:///artwork/brochure.pdf"))))),
+                RunList(fileSpecs = Some(FileSpec(url = Some(Url.unsafe("file:///artwork/brochure.pdf"))))),
                 id = Some("runlist_1")
               )
             ) { runList =>

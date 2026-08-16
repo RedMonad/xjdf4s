@@ -6,8 +6,9 @@ import xjdf4s.prim.*
 import cats.data.Chain
 import cats.kernel.Eq
 
-/** The `RunList` resource (Table 6.148): a PDL file (or a set of files) together
- *  with the description of how its pages are selected.
+/** The `RunList` resource (§6.73 / Table 6.148): a PDL file (or a set of
+ *  files) together with the description of how its pages are selected.
+ *  `FileSpec?` is represented by one optional child.
  */
 final case class RunList(
     automation: Option[Automation] = None,
@@ -27,7 +28,7 @@ final case class RunList(
     sourceBleedBox: Option[Rectangle] = None,
     sourceClipBox: Option[Rectangle] = None,
     byteMap: Option[ByteMap] = None,
-    fileSpecs: Chain[FileSpec] = Chain.empty
+    fileSpecs: Option[FileSpec] = None
 ):
 
   def references: Chain[IdRef] =
