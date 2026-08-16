@@ -1790,12 +1790,13 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 
 **Статус (PR-13).** Все пункты выполнены и верифицированы владельцем (201 тест зелёный, `examples/run` exit 0, golden совпали дословно). Пункт «проверяются в CI»: `scripts/check-spec-coverage.sh` готов и прогнан вручную (`RESULT: OK`); подключение к CI происходит вместе с возвратом CI по решению владельца (M1.0-1).
 
-### M1.6 — Закрыть заявленные пробелы главы 4 и общих элементов главы 8 — `[~]` код B2 готов, ожидает прогон владельца
+### M1.6 — Закрыть заявленные пробелы главы 4 и общих элементов главы 8 — `[x]` выполнено (верифицировано владельцем)
 
-Выполняется после стабилизации общих абстракций, маленькими вертикальными срезами.
+Выполнено после стабилизации общих абстракций маленькими вертикальными срезами.
 Идентификаторы задач закреплены за срезами в порядке исполнения (см. §9, PR-15+).
-Глава 4 статически закрыта полностью после M1.6-13(B2); статус всего M1.6
-останется `[~]` до чистого обязательного гейта B2 по §1.3.
+M1.6-13(B2) закрыл последний отсутствовавший интент главы 4; чистый гейт
+владельца 2026-08-16 подтвердил **507/0** и `examples/run` exit 0. Глава 4 и
+весь M1.6 закрыты полностью; M2 в этом срезе не начинался.
 
 **Интенты главы 4** (вертикальные срезы M1.6):
 
@@ -1805,7 +1806,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 | M1.6-10 `[x]` | EmbossingIntent | Table 4.25 (§4.6) | `EmbossingItem` (Table 4.26) |
 | M1.6-11 `[x]` | ContentCheckIntent | Table 4.22 (§4.5) | `PreflightItem` (Table 4.23), `ProofItem` (Table 4.24), переиспользование `FileSpec` |
 | M1.6-12 `[x]` | HoleMakingIntent | Table 4.29 (§4.8) | `HolePattern` (Table 8.30), каталог `Appendix F – Hole Pattern Catalog` |
-| M1.6-13(B2) `[~]` | ShapeCuttingIntent | Table 4.34 (§4.13) | `ShapeCut` (Table 4.35); атрибуты `@CutBox: rectangle` / `@CutPath: PDFPath` |
+| M1.6-13(B2) `[x]` | ShapeCuttingIntent | Table 4.34 (§4.13) | `ShapeCut` (Table 4.35); атрибуты `@CutBox: rectangle` / `@CutPath: PDFPath` |
 
 **Общие элементы главы 8** (отсутствуют в модели):
 
@@ -1823,7 +1824,7 @@ Fan-In `prim/Common.scala` снизился с baseline 14 до 8 во всём 
 
 - M1.6-8: `NodeInfo` (Table 6.119) дополняется `GangSource*` и `MISDetails?` — `[x]` выполнено (верифицировано владельцем; PR-25);
 - M1.6-13(B1): отдельный примитив `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация непустоты и полный parser в M2.3 — `[x]` выполнено и верифицировано владельцем: 489/0, `PDFPathLaws` 7/0, `examples/run` exit 0;
-- M1.6-13(B2): `ShapeCuttingIntent` + `ShapeCut` (Tables 4.34/4.35), `@CutBox: Rectangle`, `@CutPath: PDFPath`, три закрытых inline-enum, dispatch 13 payload, reference/local-law wiring и фикстура — `[~]` статически выполнено; `ShapeCuttingIntentLaws` 16 тестов + 2 теста `SpecExamplesSuite`, ожидаемый итог 507/0; `check-spec-coverage.sh` — `RESULT: OK` (Intents 38, deviations 22, tables 127); ожидает прогон владельца;
+- M1.6-13(B2): `ShapeCuttingIntent` + `ShapeCut` (Tables 4.34/4.35), `@CutBox: Rectangle`, `@CutPath: PDFPath`, три закрытых inline-enum, dispatch 13 payload, reference/local-law wiring и фикстура — `[x]` выполнено и верифицировано владельцем: 507/0, `ShapeCuttingIntentLaws` 16/0, `SpecExamplesSuite` 46/0, `examples/run` exit 0; `check-spec-coverage.sh` — `RESULT: OK` (Intents 38, deviations 22, tables 127);
 - M1.6-14: NamedFeatures §3.1.3.1: «XJDF MAY contain zero or more `GeneralID[@Datatype="NamedFeature"]` elements to specify global setup definitions. … Explicitly specified Traits SHALL override any implied Traits defined by `GeneralID[@Datatype="NamedFeature"]`» — `[x]` выполнено и верифицировано владельцем: модель, правило приоритета явных Traits, SHALL Table 8.28 и закрытый `DataType` (ADR-0016/N-59); 482/0, `NamedFeatureLaws` 26/0, `examples/run` exit 0;
 - N-51: `FileSpec.law`, parent-sensitive pipe-контекст, `NetworkHeader*` и обход всех уже смоделированных FileSpec-контейнеров — `[x]` выполнено и верифицировано владельцем (440/0, `examples/run` exit 0); ADR-0015/N-56 фиксирует `@NPage`, N-57/N-58 зарегистрированы как отдельные breaking follow-up и не расширяют срез;
 - N-58: `FileSpec?` в `CuttingParams`, `FoldingParams`, `Layout`, `Preview` исправлен с `Chain[FileSpec]` на `Option[FileSpec]`; prose и XSD согласны, ADR не нужен; regression-first, migration note и полный список call sites — `[x]` выполнено и верифицировано владельцем (445/0, `examples/run` exit 0);
@@ -2213,7 +2214,7 @@ exit 0; `scripts/check-spec-coverage.sh` — `RESULT: OK`.
 Ошибок и предупреждений в предоставленном выводе нет. Статус `[x]` — закрыт
 полностью; следующий отдельный срез — M1.6-13(B2).
 
-#### M1.6-13(B2). `ShapeCuttingIntent` + `ShapeCut` (§4.13 / Tables 4.34–4.35) — `[~]` статически выполнено, ожидает прогон владельца
+#### M1.6-13(B2). `ShapeCuttingIntent` + `ShapeCut` (§4.13 / Tables 4.34–4.35) — `[x]` выполнено (верифицировано владельцем)
 
 Последний вертикальный срез M1.6 и последний отсутствовавший интент главы 4.
 Старт подтверждён владельцем 2026-08-16.
@@ -2269,14 +2270,18 @@ exit 0; `scripts/check-spec-coverage.sh` — `RESULT: OK`.
 
 **Статическая проверка (2026-08-16).** `git diff --check` и
 `scripts/check-spec-coverage.sh` выполнены локально; coverage: Resources 24,
-Intents 38, deviations 22, tables 127, `RESULT: OK`. Компилятор в среде
-отсутствует, поэтому по §1.3 статус остаётся `[~]`.
+Intents 38, deviations 22, tables 127, `RESULT: OK`.
 
-**Критерии приёмки:** `sbt -batch clean compile test examples/run` — чисто,
-без предупреждений; ожидается **507/0** (489 + 16 нового suite + 2
-conformance/golden), `examples/run` exit 0. После подтверждения владельцем
-M1.6-13(B2), глава 4 и весь M1.6 переводятся в `[x]`; M2 этим срезом не
-начинается.
+**Прогон владельца (2026-08-16).** `sbt -batch clean compile test
+examples/run`: `clean` — success (8 disk cache hits); `compile` — success
+(67 disk cache hits); `testFull` — **507/0** за 5 s, включая новый
+`ShapeCuttingIntentLaws` **16/0** и расширенный `SpecExamplesSuite` **46/0**;
+`examples/run` — exit 0 с ожидаемой строкой
+`Shape cutting intent (Table 4.34): XJDF(job=shapeCuttingJob,
+types=ShapeCutting, ProductList(Product(?×100, root)))`. Ошибок и
+предупреждений в предоставленном выводе нет. Критерии приёмки выполнены,
+статус `[x]`; глава 4 и весь M1.6 закрыты полностью. M2 этим срезом не
+начинался.
 
 #### M1.6-14. NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) — `[x]` выполнено (верифицировано владельцем; PR-33)
 
@@ -3382,7 +3387,7 @@ XJDF(job=holeMakingJob, types=HoleMaking, ProductList(Product(?×20, root)))`;
 | 32 | N-57: `FileSpec/@CheckSum` → `Option[HexBinary]`; новый Appendix A primitive, regression-first, XSD oracle, round-trip, migration note и полный список call sites | N-57 | 31 | `[x]` верифицировано владельцем: 452/0, `HexBinaryLaws` 7/0, `examples/run` exit 0 |
 | 33 | M1.6-14: NamedFeatures (§3.1.3.1) + `GeneralID` (Table 8.28) + закрытый `DataType` (Table A.14) + ADR-0016/N-59; `TraitSet`/`TraitResolution`, SHALL Table 8.28 в четырёх контейнерах, breaking change с migration note и полным списком call sites | M1.6-14 | 32 | `[x]` верифицировано владельцем: 482/0, `NamedFeatureLaws` 26/0, `SpecExamplesSuite` 44/0, `examples/run` exit 0 |
 | 34 | M1.6-13(B1): `prim.PDFPath` (§A.1 / Table A.1), согласованный prose/XSD `xsd:string`, минимальная M1-валидация + XSD oracle; полный grammar parser остаётся M2.3 | M1.6-13(B1) | 33 | `[x]` верифицировано владельцем: 489/0, `PDFPathLaws` 7/0, `examples/run` exit 0 |
-| 35 | M1.6-13(B2): `ShapeCuttingIntent` + `ShapeCut` (Tables 4.34–4.35), `@CutBox: Rectangle` / `@CutPath: PDFPath`, 3 inline-enum, SHOULD warning, dispatch/reference wiring, fixture | M1.6-13(B2) | 34 | `[~]` статически выполнено: 16 новых law-тестов + 2 conformance/golden, ожидается 507/0; coverage `RESULT: OK`; ожидает прогон владельца |
+| 35 | M1.6-13(B2): `ShapeCuttingIntent` + `ShapeCut` (Tables 4.34–4.35), `@CutBox: Rectangle` / `@CutPath: PDFPath`, 3 inline-enum, SHOULD warning, dispatch/reference wiring, fixture | M1.6-13(B2) | 34 | `[x]` верифицировано владельцем: 507/0, `ShapeCuttingIntentLaws` 16/0, `SpecExamplesSuite` 46/0, `examples/run` exit 0; coverage `RESULT: OK` |
 | final | Аудит покрытия, регенерация отчёта о зависимостях, приёмка M1 | DoD §10 | все | весь DoD M1 |
 
 ```mermaid
@@ -4620,10 +4625,10 @@ exit 0. N-57 (`FileSpec/@CheckSum` → `HexBinary`) — `[x]` закрыт и
 **44/0**, `examples/run` exit 0. M1.6-13(B1) (`PDFPath`) — `[x]` закрыт и
 верифицирован владельцем: **489/0**, новый `PDFPathLaws` **7/0**,
 `examples/run` exit 0. M1.6-13(B2) (`ShapeCuttingIntent`/`ShapeCut`, Tables
-4.34/4.35) — `[~]` статически выполнен: 13 payload dispatch, полный
-references/local-law wiring, `ShapeCuttingIntentLaws` **16 тестов** и
-`SpecExamplesSuite` +2; coverage `RESULT: OK` (Resources 24, Intents 38,
-deviations 22, tables 127). Ожидаемый gate — **507/0** + `examples/run` exit 0;
-до подтверждения владельцем M1.6 остаётся `[~]`, M2 не начат.
+4.34/4.35) — `[x]` закрыт и верифицирован владельцем: dispatch 13 payload,
+полный references/local-law wiring, `ShapeCuttingIntentLaws` **16/0**,
+`SpecExamplesSuite` **46/0**, весь gate **507/0**, `examples/run` exit 0;
+coverage `RESULT: OK` (Resources 24, Intents 38, deviations 22, tables 127).
+Глава 4 и M1.6 закрыты полностью; M2 не начат.
 LICENSE остаётся `BLOCKED` до решения владельца; возврат
 обязательного CI — открытая часть M1.0-1.
