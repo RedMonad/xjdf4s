@@ -34,6 +34,7 @@ python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSche
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}PDLCreationParams' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}QualityControlResult' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}Layout' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}SignalStatus' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 ```
 
 The index reports 365 elements, 366 complex types and 228 simple types. `SpecificResource` alone has 100 derived
@@ -72,7 +73,8 @@ Image compression follows chapter 8 where schema index types are corrupted (`CCI
   exposes the complete closed union supplied by XJDF 2.2.
 - **Slice 4 (implemented):** all 100 `SpecificResource` descendants grouped by general/prepress/press/postpress process
   domains, including their reusable and recursive child graphs. See [resource-coverage.md](resource-coverage.md).
-- **Slice 5:** every concrete XJMF query/command/signal/response and audit payload.
+- **Slice 5 (in progress):** every concrete XJMF query/command/signal/response. Status, notification, and resource
+  families are typed; see [message-coverage.md](message-coverage.md). Audit payloads are complete in Slice 2.
 - **Slice 6:** schema-derived XML and JSON codecs, validation laws, round-trip fixtures and compatibility tests.
 
 Each slice must record the exact `xsdq bundle`, `attrs`, and `hierarchy` queries used for traceability.
