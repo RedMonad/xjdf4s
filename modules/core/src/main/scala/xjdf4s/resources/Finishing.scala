@@ -13,7 +13,7 @@ import cats.kernel.Eq
 final case class CuttingParams(
     sheetLay: Option[SheetLay] = None,
     cutBlocks: Chain[CutBlock] = Chain.empty,
-    fileSpecs: Chain[FileSpec] = Chain.empty
+    fileSpecs: Option[FileSpec] = None
 )
 
 object CuttingParams:
@@ -51,7 +51,7 @@ final case class FoldingParams(
     foldCatalog: Option[NmToken] = None,
     foldingDetails: Option[NmToken] = None,
     sheetLay: Option[SheetLay] = None,
-    fileSpecs: Chain[FileSpec] = Chain.empty,
+    fileSpecs: Option[FileSpec] = None,
     creases: Chain[Crease] = Chain.empty,
     folds: Chain[Fold] = Chain.empty,
     perforates: Chain[Perforate] = Chain.empty

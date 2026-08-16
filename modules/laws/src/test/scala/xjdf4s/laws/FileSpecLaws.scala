@@ -143,16 +143,16 @@ class FileSpecLaws extends FunSuite:
   test("Tables 8.22/8.23: the root traversal reaches every modelled FileSpec-bearing resource"):
     val carriers = List(
       "CuttingParams" -> ResourcePayload.CuttingParamsResource(
-        CuttingParams(fileSpecs = Chain.one(conflictingLocationAndDisposition))
+        CuttingParams(fileSpecs = Some(conflictingLocationAndDisposition))
       ),
       "FoldingParams" -> ResourcePayload.FoldingParamsResource(
-        FoldingParams(fileSpecs = Chain.one(conflictingLocationAndDisposition))
+        FoldingParams(fileSpecs = Some(conflictingLocationAndDisposition))
       ),
       "Layout" -> ResourcePayload.LayoutResource(
-        Layout(fileSpecs = Chain.one(conflictingLocationAndDisposition))
+        Layout(fileSpecs = Some(conflictingLocationAndDisposition))
       ),
       "Preview" -> ResourcePayload.PreviewResource(
-        Preview(fileSpecs = Chain.one(conflictingLocationAndDisposition))
+        Preview(fileSpecs = Some(conflictingLocationAndDisposition))
       ),
       "RunList" -> ResourcePayload.RunListResource(
         RunList(fileSpecs = Some(conflictingLocationAndDisposition))

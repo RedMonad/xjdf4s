@@ -156,23 +156,19 @@ object TicketValidator:
   private def checkResourceFileSpecs(resource: Resource, at: XPath, parentIsPipe: Boolean): Chain[Issue] =
     resource.specific match
       case Some(ResourcePayload.CuttingParamsResource(c)) =>
-        checkFileSpecs(c.fileSpecs, XPath(s"$at/CuttingParams"), parentIsPipe)
+        checkOptionalFileSpec(c.fileSpecs, XPath(s"$at/CuttingParams/FileSpec"), parentIsPipe)
       case Some(ResourcePayload.FoldingParamsResource(f)) =>
-        checkFileSpecs(f.fileSpecs, XPath(s"$at/FoldingParams"), parentIsPipe)
+        checkOptionalFileSpec(f.fileSpecs, XPath(s"$at/FoldingParams/FileSpec"), parentIsPipe)
       case Some(ResourcePayload.LayoutResource(l)) =>
-        checkFileSpecs(l.fileSpecs, XPath(s"$at/Layout"), parentIsPipe)
+        checkOptionalFileSpec(l.fileSpecs, XPath(s"$at/Layout/FileSpec"), parentIsPipe)
       case Some(ResourcePayload.PreviewResource(p)) =>
-        checkFileSpecs(p.fileSpecs, XPath(s"$at/Preview"), parentIsPipe)
+        checkOptionalFileSpec(p.fileSpecs, XPath(s"$at/Preview/FileSpec"), parentIsPipe)
       case Some(ResourcePayload.RunListResource(r)) =>
-        r.fileSpecs.fold(Chain.empty[Issue]) { fileSpec =>
-          checkFileSpec(fileSpec, XPath(s"$at/RunList/FileSpec"), parentIsPipe)
-        }
+        checkOptionalFileSpec(r.fileSpecs, XPath(s"$at/RunList/FileSpec"), parentIsPipe)
       case _ => Chain.empty
 
-  private def checkFileSpecs(fileSpecs: Chain[FileSpec], at: XPath, parentIsPipe: Boolean): Chain[Issue] =
-    fileSpecs.zipWithIndex.flatMap { (fileSpec, index) =>
-      checkFileSpec(fileSpec, XPath(s"$at/FileSpec[$index]"), parentIsPipe)
-    }
+  private def checkOptionalFileSpec(fileSpec: Option[FileSpec], at: XPath, parentIsPipe: Boolean): Chain[Issue] =
+    fileSpec.fold(Chain.empty[Issue])(checkFileSpec(_, at, parentIsPipe))
 
   private def checkFileSpec(fileSpec: FileSpec, at: XPath, parentIsPipe: Boolean): Chain[Issue] =
     val localIssues = FileSpec.law.check(fileSpec, at)

@@ -25,7 +25,7 @@ final case class Layout(
     surfaceContentsBox: Option[Rectangle] = None,
     workStyle: Option[NmToken] = None,
     fitPolicy: Option[FitPolicy] = None,
-    fileSpecs: Chain[FileSpec] = Chain.empty
+    fileSpecs: Option[FileSpec] = None
 ):
 
   def references: Chain[IdRef] =
