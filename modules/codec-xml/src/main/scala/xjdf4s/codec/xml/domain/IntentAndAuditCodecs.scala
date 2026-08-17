@@ -179,7 +179,10 @@ object BindingIntentCodec:
           ) ++
           CodecHelpers.attributeOf("CoverColor", intent.coverColor, (v: NamedColor) => v.lexical) ++
           CodecHelpers.attributeOf("CoverColorDetails", intent.coverColorDetails, (v: XjdfString) => v.value) ++
-          CodecHelpers.attribute("BindingType", Some(intent.binding.toString)) ++
+          CodecHelpers.attribute(
+            "BindingType",
+            Some(bindingTypes.find(_._1.productPrefix == intent.binding.productPrefix).map(_._2).getOrElse(intent.binding.productPrefix)),
+          ) ++
           CodecHelpers.extensionAttributes(intent.extensions)
       val children =
         detailChild ++ intent.tabs.toVector.map(summon[XmlElementCodec[Tabs]].encode)
@@ -390,7 +393,10 @@ object LooseBindingParamsCodec:
           details.toVector.map(summon[XmlElementCodec[StripBindingProductionDetails]].encode)
       val attributes =
         CodecHelpers.attributeOf("CoverMaterial", params.coverMaterial, (v: Nmtoken) => v.value) ++
-          CodecHelpers.attribute("BindingType", Some(params.binding.toString)) ++
+          CodecHelpers.attribute(
+            "BindingType",
+            Some(bindingTypes.find(_._1.productPrefix == params.binding.productPrefix).map(_._2).getOrElse(params.binding.productPrefix)),
+          ) ++
           CodecHelpers.extensionAttributes(params.extensions)
       val children =
         detailChild ++ params.holePatterns.map(summon[XmlElementCodec[HolePattern]].encode)
@@ -667,7 +673,10 @@ object ModifyQueueEntryParamsCodec:
         case _ => Vector.empty
       val attributes =
         targetAttributes ++
-          CodecHelpers.attribute("Operation", Some(params.operation.toString)) ++
+          CodecHelpers.attribute(
+            "Operation",
+            Some(operations.find(_._1.productPrefix == params.operation.productPrefix).map(_._2).getOrElse(params.operation.productPrefix)),
+          ) ++
           CodecHelpers.extensionAttributes(params.extensions)
       Xml.Element(
         CodecHelpers.qname("ModifyQueueEntryParams"),
