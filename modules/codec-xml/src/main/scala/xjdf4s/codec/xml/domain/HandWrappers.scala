@@ -113,3 +113,11 @@ given responseResourceCodec: XmlElementCodec[ResponseResource] =
 
 given signalResourceCodec: XmlElementCodec[SignalResource] =
   handBoth("SignalResource")(SignalResourceCodec.decoder, SignalResourceCodec.encoder)
+
+given extensionElementCodec: XmlElementCodec[ExtensionElement] =
+  XmlElementCodec.instance("ExtensionElement")(
+    element => ForeignCodec.decodeForeignElement(element),
+    element => ForeignCodec.encodeForeignElement(element),
+  )
+given extensionElementField: FieldCodec[ExtensionElement] =
+  FieldCodec.element(summon[XmlElementCodec[ExtensionElement]])

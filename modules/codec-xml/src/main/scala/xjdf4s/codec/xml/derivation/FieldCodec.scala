@@ -178,6 +178,23 @@ object FieldCodec extends LowPriorityFieldCodecs:
   given messageUrlSchemeCodec: FieldCodec[MessageUrlScheme] =
     attribute(Lexical.messageUrlScheme, v => Some(v.lexical))
 
+  // -- special markers handled by the DerivedCodec runtime by field name -----------------
+
+  /**
+   * The `extensions` field of every node is handled specially by the derived codec (foreign attributes and
+   * children), so this instance exists only to satisfy the per-field materialization of `summonAll`; the runtime
+   * never calls it.
+   */
+  given extensionsCodec: FieldCodec[Extensions] =
+    new FieldCodec[Extensions]:
+      def isElement: Boolean = false
+      def elementName: String = ""
+      def decodeAttribute(raw: Option[String]): Either[String, Extensions] = Right(Extensions.empty)
+      def renderAttribute(value: Extensions): Option[String] = None
+      def decodeElements(children: Vector[Xml.Element]): Either[XmlError, Extensions] = Right(Extensions.empty)
+      def encodeElements(value: Extensions): Vector[Xml.Element] = Vector.empty
+  end extensionsCodec
+
   // -- containers ----------------------------------------------------------------
 
   given optionCodec[A](using inner: FieldCodec[A]): FieldCodec[Option[A]] =
