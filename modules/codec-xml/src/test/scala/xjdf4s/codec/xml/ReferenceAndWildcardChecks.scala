@@ -71,7 +71,14 @@ object ReferenceAndWildcardChecks:
     assert(reencoded.attribute("size").contains("3"))
 
   val unsupportedStandardElement: Unit =
-    val xml = """<Resource xmlns="http://www.CIP4.org/JDFSchema_2_0"><RunList/></Resource>"""
+    // RunList is now covered by the registry, so this test uses a standard-namespace name that is NOT one of
+    // the 102 resources: the loud-failure policy applies to names outside the covered union.
+    val xml = """<Resource xmlns="http://www.CIP4.org/JDFSchema_2_0"><NoSuchResource/></Resource>"""
     val result = XmlParser.parse(xml).flatMap(ResourceCodec.decoder.decode)
     assert(result.left.toOption.exists(_.isInstanceOf[XmlError.UnsupportedElement]))
+
+  val coveredStandardResourceNowDecodes: Unit =
+    val xml = """<Resource xmlns="http://www.CIP4.org/JDFSchema_2_0"><RunList/></Resource>"""
+    val result = XmlParser.parse(xml).flatMap(ResourceCodec.decoder.decode)
+    assert(result.toOption.flatMap(_.specificResource).exists(_.isInstanceOf[RunList]))
 end ReferenceAndWildcardChecks

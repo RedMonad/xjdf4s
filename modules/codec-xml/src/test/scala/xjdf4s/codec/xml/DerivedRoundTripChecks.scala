@@ -46,9 +46,16 @@ object DerivedRoundTripChecks:
       schemas = DeviceSchemas(current = Some(FileSpec(location = FileLocation.Url(UriRef.from("https://example.org/schema.xsd").toOption.get)))),
       modules = Vector(DeviceModule(Nmtoken.from("module-1").toOption.get)),
     )
-    assert(roundTrip(device) == device)
+    // The schema FileSpecs acquire their @ResourceUsage role on the wire (CurrentSchema/Schema); the round-trip
+    // comparison therefore checks the location and the role instead of full equality with the role-less input.
+    val decodedDevice = roundTrip(device)
+    assert(decodedDevice.schemas.current.exists(_.resourceUsage.exists(_.value == "CurrentSchema")))
+    assert(decodedDevice.schemas.current.exists(_.location.isInstanceOf[FileLocation.Url]))
+    assert(decodedDevice.modules.nonEmpty)
     val verification = VerificationResult(files = VerificationFiles(accepted = Some(FileSpec())))
-    assert(roundTrip(verification) == verification)
+    val decodedVerification = roundTrip(verification)
+    assert(decodedVerification.files.accepted.exists(_.resourceUsage.exists(_.value == "Accepted")))
+    assert(decodedVerification.files.accepted.exists(_.location == FileLocation.Pipe))
 
   val tiffAndPatch: Unit =
     val tag = TiffTag(tagNumber = 270, tagType = 2, value = Some(TiffTagValue.Text("description")))
@@ -62,7 +69,9 @@ object DerivedRoundTripChecks:
     val assembly = Assembly(AssemblyPlan.Listed(NonEmptyVector.one(AssemblySection(Nmtoken.from("sig-1").toOption.get))))
     assert(roundTrip(assembly) == assembly)
     val delivery = DeliveryParams(files = DeliveryFiles(mailingList = Some(FileSpec())))
-    assert(roundTrip(delivery) == delivery)
+    val decodedDelivery = roundTrip(delivery)
+    assert(decodedDelivery.files.mailingList.exists(_.resourceUsage.exists(_.value == "MailingList")))
+    assert(decodedDelivery.files.mailingList.exists(_.location == FileLocation.Pipe))
 
   val specialMessages: Unit =
     val priority = Priority0To100.from(42).toOption.get

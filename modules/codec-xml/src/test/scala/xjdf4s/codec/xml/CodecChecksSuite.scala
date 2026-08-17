@@ -39,6 +39,7 @@ class CodecChecksSuite extends munit.FunSuite:
       ReferenceAndWildcardChecks.foreignElementRoundTrip,
       ReferenceAndWildcardChecks.foreignSpecificResource,
       ReferenceAndWildcardChecks.unsupportedStandardElement,
+      ReferenceAndWildcardChecks.coveredStandardResourceNowDecodes,
       RegistryCoverageChecks.resourceCoverage,
       RegistryCoverageChecks.intentCoverage,
       RegistryCoverageChecks.messageCoverage,
@@ -52,6 +53,6 @@ class CodecChecksSuite extends munit.FunSuite:
       DerivedRoundTripChecks.fullDocument,
       DerivedRoundTripChecks.fullXjmf,
     )
-    assert(results.size == 47)
+    assert(results.size == 48)
   }
 end CodecChecksSuite
