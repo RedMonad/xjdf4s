@@ -4,7 +4,7 @@ import xjdf4s.codec.xml.*
 import xjdf4s.core.*
 import xjdf4s.model.*
 
-private[domain] object CodecHelpers:
+object CodecHelpers:
   def qname(localName: String): QualifiedName = QualifiedName(XjdfNamespace.uri, localName)
 
   def attribute(name: String, value: Option[String]): Vector[(QualifiedName, String)] =

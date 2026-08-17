@@ -2,6 +2,8 @@ package xjdf4s.codec.xml.domain
 
 import xjdf4s.codec.xml.*
 import xjdf4s.codec.xml.derivation.{Derived, FieldCodec}
+import xjdf4s.codec.xml.derivation.Derived.given
+import xjdf4s.codec.xml.derivation.FieldCodec.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
@@ -39,10 +41,30 @@ given stripBindingProductionDetailsCodec: XmlElementCodec[StripBindingProduction
 // -- BindingIntent: @BindingType + compatible detail child -------------------------------------
 
 object BindingIntentCodec:
+  private val bindingTypes: Vector[(BindingSpecification, String)] = Vector(
+    BindingSpecification.AdhesiveNote() -> "AdhesiveNote",
+    BindingSpecification.ChannelBinding() -> "ChannelBinding",
+    BindingSpecification.CoilBinding() -> "CoilBinding",
+    BindingSpecification.CombBinding() -> "CombBinding",
+    BindingSpecification.CornerStitch -> "CornerStitch",
+    BindingSpecification.EdgeGluing() -> "EdgeGluing",
+    BindingSpecification.HardCover() -> "HardCover",
+    BindingSpecification.LooseBinding() -> "LooseBinding",
+    BindingSpecification.None -> "None",
+    BindingSpecification.RingBinding() -> "RingBinding",
+    BindingSpecification.SaddleStitch() -> "SaddleStitch",
+    BindingSpecification.SideStitch() -> "SideStitch",
+    BindingSpecification.SoftCover() -> "SoftCover",
+    BindingSpecification.StripBinding() -> "StripBinding",
+    BindingSpecification.Tape -> "Tape",
+    BindingSpecification.WireComb() -> "WireComb",
+  )
+
   private val bindingType: Lexical.Lex[BindingSpecification] =
     value =>
-      BindingSpecification.values
-        .find(_.toString.equalsIgnoreCase(value.trim))
+      bindingTypes
+        .find(_._2.equalsIgnoreCase(value.trim))
+        .map(_._1)
         .toRight(s"'$value' is not a BindingType")
 
   private def plainDetails(name: String): XmlDecoder[Option[LooseBindingDetails]] =
@@ -315,10 +337,19 @@ end CollatingItemCodec
 // -- LooseBindingParams ----------------------------------------------------------------------------
 
 object LooseBindingParamsCodec:
+  private val bindingTypes: Vector[(ProductionLooseBinding, String)] = Vector(
+    ProductionLooseBinding.Channel() -> "ChannelBinding",
+    ProductionLooseBinding.Coil() -> "CoilBinding",
+    ProductionLooseBinding.Comb() -> "CombBinding",
+    ProductionLooseBinding.Ring() -> "RingBinding",
+    ProductionLooseBinding.Strip() -> "StripBinding",
+  )
+
   private val bindingType: Lexical.Lex[ProductionLooseBinding] =
     value =>
-      ProductionLooseBinding.values
-        .find(_.toString.equalsIgnoreCase(value.trim))
+      bindingTypes
+        .find(_._2.equalsIgnoreCase(value.trim))
+        .map(_._1)
         .toRight(s"'$value' is not a LooseBindingParams BindingType")
 
   val decoder: XmlDecoder[LooseBindingParams] =
@@ -486,10 +517,22 @@ end ContentObjectCodec
 // -- ModifyQueueEntryParams: the Move/SetGang payload maps to attributes ------------------------------
 
 object ModifyQueueEntryParamsCodec:
+  private val operations: Vector[(QueueModification, String)] = Vector(
+    QueueModification.Abort -> "Abort",
+    QueueModification.Complete -> "Complete",
+    QueueModification.Hold -> "Hold",
+    QueueModification.Remove -> "Remove",
+    QueueModification.Resume -> "Resume",
+    QueueModification.Suspend -> "Suspend",
+    QueueModification.Move() -> "Move",
+    QueueModification.SetGang() -> "SetGang",
+  )
+
   private val operation: Lexical.Lex[QueueModification] =
     value =>
-      QueueModification.values
-        .find(_.toString.equalsIgnoreCase(value.trim))
+      operations
+        .find(_._2.equalsIgnoreCase(value.trim))
+        .map(_._1)
         .toRight(s"'$value' is not a QueueModification operation")
 
   val decoder: XmlDecoder[ModifyQueueEntryParams] =
@@ -623,34 +666,57 @@ end SignalStatusCodec
 
 object AuditCodec:
   private[domain] def decodeOne(element: Xml.Element): Either[XmlError, Audit] =
+    def header: Either[XmlError, Header] =
+      XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
+
     element.name.localName match
       case "AuditCreated" =>
-        XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element).map(AuditCreated(_))
+        for
+          h <- header
+          _ <- XmlDecoders.expectChildrenOnly(Set("Header")).decode(element)
+        yield AuditCreated(h, CodecHelpers.decodeExtensionAttributes(element))
       case "AuditNotification" =>
-        XmlDecoders.singleChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
-          .map(AuditNotification(_))
+        for
+          h <- header
+          notification <- XmlDecoders.singleChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
+          _ <- XmlDecoders.expectChildrenOnly(Set("Header", "Notification")).decode(element)
+        yield AuditNotification(h, notification, CodecHelpers.decodeExtensionAttributes(element))
       case "AuditProcessRun" =>
-        XmlDecoders.singleChild("ProcessRun")(summon[XmlElementCodec[ProcessRun]]).decode(element)
-          .map(AuditProcessRun(_))
+        for
+          h <- header
+          processRun <- XmlDecoders.singleChild("ProcessRun")(summon[XmlElementCodec[ProcessRun]]).decode(element)
+          _ <- XmlDecoders.expectChildrenOnly(Set("Header", "ProcessRun")).decode(element)
+        yield AuditProcessRun(h, processRun, CodecHelpers.decodeExtensionAttributes(element))
       case "AuditResource" =>
-        XmlDecoders.singleChild("ResourceInfo")(ResourceInfoCodec.decoder).decode(element).map(AuditResource(_))
+        for
+          h <- header
+          resourceInfo <- XmlDecoders.singleChild("ResourceInfo")(ResourceInfoCodec.decoder).decode(element)
+          _ <- XmlDecoders.expectChildrenOnly(Set("Header", "ResourceInfo")).decode(element)
+        yield AuditResource(h, resourceInfo, CodecHelpers.decodeExtensionAttributes(element))
       case "AuditStatus" =>
-        XmlDecoders.singleChild("DeviceInfo")(summon[XmlElementCodec[DeviceInfo]]).decode(element)
-          .map(AuditStatus(_))
+        for
+          h <- header
+          deviceInfo <- XmlDecoders.singleChild("DeviceInfo")(summon[XmlElementCodec[DeviceInfo]]).decode(element)
+          _ <- XmlDecoders.expectChildrenOnly(Set("Header", "DeviceInfo")).decode(element)
+        yield AuditStatus(h, deviceInfo, CodecHelpers.decodeExtensionAttributes(element))
       case other => Left(XmlError.UnexpectedElement("AuditPool", other))
 
   private[domain] def encodeOne(audit: Audit): Xml.Element =
-    val (name, children) = audit match
-      case AuditCreated(header, _) => ("AuditCreated", Vector(HeaderCodec.encoder.encode(header)))
-      case AuditNotification(notification, _) =>
-        ("AuditNotification", Vector(summon[XmlElementCodec[Notification]].encode(notification)))
-      case AuditProcessRun(processRun, _) =>
-        ("AuditProcessRun", Vector(summon[XmlElementCodec[ProcessRun]].encode(processRun)))
-      case AuditResource(resourceInfo, _) =>
-        ("AuditResource", Vector(ResourceInfoCodec.encoder.encode(resourceInfo)))
-      case AuditStatus(deviceInfo, _) =>
-        ("AuditStatus", Vector(summon[XmlElementCodec[DeviceInfo]].encode(deviceInfo)))
-    Xml.Element(CodecHelpers.qname(name), Vector.empty, children)
+    val (name, header, payload, extensions) = audit match
+      case AuditCreated(h, extensions) => ("AuditCreated", h, Vector.empty[Xml.Element], extensions)
+      case AuditNotification(h, notification, extensions) =>
+        ("AuditNotification", h, Vector(summon[XmlElementCodec[Notification]].encode(notification)), extensions)
+      case AuditProcessRun(h, processRun, extensions) =>
+        ("AuditProcessRun", h, Vector(summon[XmlElementCodec[ProcessRun]].encode(processRun)), extensions)
+      case AuditResource(h, resourceInfo, extensions) =>
+        ("AuditResource", h, Vector(ResourceInfoCodec.encoder.encode(resourceInfo)), extensions)
+      case AuditStatus(h, deviceInfo, extensions) =>
+        ("AuditStatus", h, Vector(summon[XmlElementCodec[DeviceInfo]].encode(deviceInfo)), extensions)
+    Xml.Element(
+      CodecHelpers.qname(name),
+      CodecHelpers.extensionAttributes(extensions),
+      HeaderCodec.encoder.encode(header) +: payload,
+    )
 
   /** FieldCodec with a wildcard element name: consumes all standard children of the parent. */
   val field: FieldCodec[Audit] =

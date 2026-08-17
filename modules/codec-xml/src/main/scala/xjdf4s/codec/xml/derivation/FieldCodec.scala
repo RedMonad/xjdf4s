@@ -124,9 +124,12 @@ object FieldCodec extends LowPriorityFieldCodecs:
 
   // -- model opaque/value types --------------------------------------------------
 
-  given countryCodeCodec: FieldCodec[CountryCode] = attribute(CountryCode.from.map(_.left.map(_.toString)), v => Some(v.value))
-  given xPathCodec: FieldCodec[XPath] = attribute(XPath.from.map(_.left.map(_.toString)), v => Some(v.value))
-  given pdfPathCodec: FieldCodec[PdfPath] = attribute(PdfPath.from.map(_.left.map(_.toString)), v => Some(v.value))
+  given countryCodeCodec: FieldCodec[CountryCode] =
+    attribute(value => CountryCode.from(value).left.map(_.toString), v => Some(v.value))
+  given xPathCodec: FieldCodec[XPath] =
+    attribute(value => XPath.from(value).left.map(_.toString), v => Some(v.value))
+  given pdfPathCodec: FieldCodec[PdfPath] =
+    attribute(value => PdfPath.from(value).left.map(_.toString), v => Some(v.value))
   given evenPageCountCodec: FieldCodec[EvenPageCount] =
     attribute(
       raw => Lexical.int(raw).flatMap(v => EvenPageCount.from(v).left.map(_.toString)),
@@ -224,7 +227,7 @@ object FieldCodec extends LowPriorityFieldCodecs:
 
   given nonEmptyVectorCodec[A](using inner: FieldCodec[A]): FieldCodec[NonEmptyVector[A]] =
     new FieldCodec[NonEmptyVector[A]]:
-      private val vectorCodec = vectorCodecFor(inner)
+      private val vectorCodec = summon[FieldCodec[Vector[A]]]
       def isElement: Boolean = inner.isElement
       def elementName: String = inner.elementName
       def decodeAttribute(raw: Option[String]): Either[String, NonEmptyVector[A]] =
@@ -240,12 +243,9 @@ object FieldCodec extends LowPriorityFieldCodecs:
       def encodeElements(value: NonEmptyVector[A]): Vector[Xml.Element] = vectorCodec.encodeElements(value.toVector)
   end nonEmptyVectorCodec
 
-  private def vectorCodecFor[A](inner: FieldCodec[A]): FieldCodec[Vector[A]] =
-    summon[FieldCodec[Vector[A]]](using inner)
-
   given twoOrMoreCodec[A](using inner: FieldCodec[A]): FieldCodec[TwoOrMore[A]] =
     new FieldCodec[TwoOrMore[A]]:
-      private val vectorCodec = vectorCodecFor(inner)
+      private val vectorCodec = summon[FieldCodec[Vector[A]]]
       def isElement: Boolean = inner.isElement
       def elementName: String = inner.elementName
       def decodeAttribute(raw: Option[String]): Either[String, TwoOrMore[A]] =
@@ -260,7 +260,7 @@ object FieldCodec extends LowPriorityFieldCodecs:
 
   given atMostTwoCodec[A](using inner: FieldCodec[A]): FieldCodec[AtMostTwo[A]] =
     new FieldCodec[AtMostTwo[A]]:
-      private val vectorCodec = vectorCodecFor(inner)
+      private val vectorCodec = summon[FieldCodec[Vector[A]]]
       def isElement: Boolean = inner.isElement
       def elementName: String = inner.elementName
       def decodeAttribute(raw: Option[String]): Either[String, AtMostTwo[A]] =

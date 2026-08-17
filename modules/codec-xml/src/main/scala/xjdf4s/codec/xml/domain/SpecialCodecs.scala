@@ -128,9 +128,11 @@ object NetworkHeaderCodec:
     XmlDecoder.instance: element =>
       for
         name <- XmlDecoders.requiredAttribute("Name")(Lexical.xjdfString).decode(element)
+        value <- XjdfString
+          .from(element.text)
+          .left
+          .map(error => XmlError.InvalidAttribute("NetworkHeader", "text", element.text, error.toString))
         _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
-      value <- XjdfString.from(element.text).left.map(error =>
-        XmlError.InvalidAttribute("NetworkHeader", "text", element.text, error.toString))
       yield NetworkHeader(name, value, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[NetworkHeader] =
@@ -299,7 +301,7 @@ object FileSpecRoles:
       val withRole = spec.copy(resourceUsage = Some(Nmtoken.from(role).toOption.get))
       FileSpecCodec.encoder.encode(withRole)
 
-  private def wrapper[W](
+  def wrapper[W](
       names: Vector[(String, W => Option[FileSpec])],
       build: Vector[(String, FileSpec)] => W,
   ): FieldCodec[W] =
@@ -321,7 +323,7 @@ given deviceSchemasField: FieldCodec[DeviceSchemas] = FileSpecRoles.wrapper(
     pairs => DeviceSchemas(pairs.find(_._1 == "CurrentSchema").map(_._2), pairs.find(_._1 == "Schema").map(_._2)),
   )
 
-given deviceInfoSchemasField: FieldCodec[DeviceInfoSchemas] = wrapper(
+given deviceInfoSchemasField: FieldCodec[DeviceInfoSchemas] = FileSpecRoles.wrapper(
     Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)),
     pairs => DeviceInfoSchemas(pairs.find(_._1 == "CurrentSchema").map(_._2), pairs.find(_._1 == "Schema").map(_._2)),
   )
@@ -348,10 +350,9 @@ given verificationFilesField: FieldCodec[VerificationFiles] = FileSpecRoles.wrap
   )
 
 given qualityControlFilesField: FieldCodec[QualityControlFiles] = FileSpecRoles.wrapper(
-    Vector("Image" -> (_.image), "Setup" -> (_.setup)),
-    pairs => QualityControlFiles(pairs.find(_._1 == "Image").map(_._2), pairs.find(_._1 == "Setup").map(_._2)),
-  )
-end FileSpecRoles
+  Vector("Image" -> (_.image), "Setup" -> (_.setup)),
+  pairs => QualityControlFiles(pairs.find(_._1 == "Image").map(_._2), pairs.find(_._1 == "Setup").map(_._2)),
+)
 
 // -- givens --------------------------------------------------------------------
 

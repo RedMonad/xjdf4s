@@ -53,6 +53,7 @@ object Lexical:
     value => float(value).flatMap(parsed => NeutralDensity.from(parsed).left.map(renderValidation))
 
   val pdfPath: Lex[PdfPath] = via(PdfPath.from)
+  val foldCatalog: Lex[FoldCatalog] = via(FoldCatalog.from)
 
   // -- XSD built-ins ----------------------------------------------------------------
 
