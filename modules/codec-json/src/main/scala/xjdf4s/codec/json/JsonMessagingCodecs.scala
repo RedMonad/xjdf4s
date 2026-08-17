@@ -422,7 +422,7 @@ object JsonMessagingCodecs:
       messageMembers <- messageNames.foldLeft[Decoder.Result[Vector[Message]]](Right(Vector.empty)) { (acc, name) =>
         for
           accumulated <- acc
-          next <- cursor.downField(name).success match
+          next <- cursor.downField(name).focus match
             case Some(json) => decodeMessage(name, json).map(accumulated :+ _)
             case None       => Right(accumulated)
         yield next

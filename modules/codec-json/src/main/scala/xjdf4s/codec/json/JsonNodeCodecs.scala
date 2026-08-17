@@ -19,10 +19,12 @@ object JsonNodeCodecs:
   given Decoder[Comment] = Decoder.decodeString.map(Comment(_))
 
   given Encoder[GeneralId] = Encoder.instance(generalId =>
-    Json.obj(
-      JsonCodec.member("IDUsage", Json.fromString(generalId.usage.value)),
-      JsonCodec.member("IDValue", Json.fromString(generalId.value.value)),
-      JsonCodec.optMember("DataType", generalId.dataType),
+    JsonCodec.obj(
+      JsonCodec.memberList(
+        Vector(JsonCodec.member("IDUsage", Json.fromString(generalId.usage.value))),
+        Vector(JsonCodec.member("IDValue", Json.fromString(generalId.value.value))),
+        JsonCodec.optMember("DataType", generalId.dataType),
+      ),
     ),
   )
   given Decoder[GeneralId] = Decoder.instance(cursor =>

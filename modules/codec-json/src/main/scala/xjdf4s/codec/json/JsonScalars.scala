@@ -74,6 +74,10 @@ object JsonScalars:
     },
   )
 
+  given Encoder[NeutralDensity] = Encoder.encodeFloat.contramap(_.value)
+  given Decoder[NeutralDensity] =
+    Decoder.decodeFloat.emap(value => NeutralDensity.from(value).left.map(_.toString))
+
   given Encoder[Vector[Float]] =
     Encoder.instance(values => Json.arr(values.map(value => Json.fromFloat(value).getOrElse(Json.Null))*))
   given Decoder[Vector[Float]] = Decoder.instance(cursor => cursor.as[List[Float]].map(_.toVector))

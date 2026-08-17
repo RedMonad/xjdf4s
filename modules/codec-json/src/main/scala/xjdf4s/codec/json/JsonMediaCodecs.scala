@@ -42,7 +42,7 @@ object JsonMediaCodecs:
       workingDirection <- JsonCodec.opt[Face](cursor, "WorkingDirection")
       workingPath <- JsonCodec.opt[XYPair](cursor, "WorkingPath")
       pattern <- gluingPattern match
-        case Some(values) => GluingPattern.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
+        case Some(values) => GluingPattern.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case None         => Right(None)
     yield Glue(
       areaGlue,
@@ -215,10 +215,10 @@ object JsonMediaCodecs:
       thickness <- JsonCodec.opt[Float](cursor, "Thickness")
       weight <- JsonCodec.opt[Float](cursor, "Weight")
       backSpectrumValue <- backSpectrum match
-        case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
+        case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case None         => Right(None)
       spectrumValue <- spectrum match
-        case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
+        case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case None         => Right(None)
       conditions <- JsonCodec.opt[ColorMeasurementConditions](cursor, "ColorMeasurementConditions")
       mediaLayers <- JsonCodec.opt[MediaLayers](cursor, "MediaLayers")
@@ -348,18 +348,18 @@ object JsonMediaCodecs:
       srgb <- JsonCodec.opt[Vector[Float]](cursor, "sRGB")
       conditions <- JsonCodec.opt[ColorMeasurementConditions](cursor, "ColorMeasurementConditions")
       cmykValue <- cmyk match
-        case Some(Vector(c, m, y, k)) => CmykColor.from(c, m, y, k).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
+        case Some(Vector(c, m, y, k)) => CmykColor.from(c, m, y, k).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case Some(_)                  => JsonCodec.fail(cursor, "CMYK requires exactly four numbers")
         case None                     => Right(None)
       spectrumValue <- spectrum match
-        case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
+        case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case None         => Right(None)
       srgbValue <- srgb match
-        case Some(Vector(r, g, b)) => SrgbColor.from(r, g, b).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
+        case Some(Vector(r, g, b)) => SrgbColor.from(r, g, b).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case Some(_)               => JsonCodec.fail(cursor, "sRGB requires exactly three numbers")
         case None                  => Right(None)
       neutralDensityValue <- neutralDensity match
-        case Some(value) => NeutralDensity.from(value).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
+        case Some(value) => NeutralDensity.from(value).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case None        => Right(None)
     yield Color(
       actualColorName,

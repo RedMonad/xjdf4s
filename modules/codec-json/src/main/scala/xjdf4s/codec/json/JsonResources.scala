@@ -39,7 +39,7 @@ object JsonResources:
       acc match
         case found @ Right(Some(_)) => found
         case Right(None) =>
-          cursor.downField(name).success match
+          cursor.downField(name).focus match
             case Some(json) => decodeOne(name, json).map(value => Some(value))
             case None       => Right(None)
         case failure => failure

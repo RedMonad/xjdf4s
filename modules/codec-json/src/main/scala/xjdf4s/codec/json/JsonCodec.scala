@@ -28,13 +28,13 @@ object JsonCodec:
 
   /** Optional member: absent member decodes to None; present member is decoded with the element decoder. */
   def opt[A: Decoder](cursor: HCursor, name: String): Decoder.Result[Option[A]] =
-    cursor.downField(name).success match
+    cursor.downField(name).focus match
       case Some(json) => json.as[A].map(Some(_))
       case None       => Right(None)
 
   /** Optional vector member: absent member decodes to the empty vector. */
   def vec[A: Decoder](cursor: HCursor, name: String): Decoder.Result[Vector[A]] =
-    cursor.downField(name).success match
+    cursor.downField(name).focus match
       case Some(json) => json.as[List[A]].map(_.toVector)
       case None       => Right(Vector.empty)
 
