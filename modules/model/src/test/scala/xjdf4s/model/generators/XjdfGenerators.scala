@@ -96,11 +96,11 @@ final class XjdfGenerators(seed: Long):
       lab = maybeValue(0.4)(LabColor.from(float(0f, 100f), float(-100f, 100f), float(-100f, 100f)).toOption),
     )
 
-  def component(): Component =
+  def component(mediaRefTarget: XsdId): Component =
     Component(
       surfaceCount = maybe(0.5)(int(1, 8)),
       windingResult = maybe(0.4)(int(0, 1)),
-      mediaRef = maybe(0.5)(xsdIdRef("media")),
+      mediaRef = maybe(0.5)(XsdIdRef.from(mediaRefTarget.value).toOption),
     )
 
   def tool(): Tool =
@@ -116,23 +116,27 @@ final class XjdfGenerators(seed: Long):
   def registerMark(): RegisterMark =
     RegisterMark(markName = maybe(0.5)(nmtoken("mark")), rotation = maybe(0.4)(float(0f, 360f)))
 
-  def specificResource(): SpecificResource =
-    pick[SpecificResource](media(), color(), component(), tool(), runList(), registerMark())
+  def specificResource(mediaRefTarget: XsdId): SpecificResource =
+    pick[SpecificResource](media(), color(), component(mediaRefTarget), tool(), runList(), registerMark())
 
-  def resource(): Resource =
+  def resource(mediaRefTarget: XsdId): Resource =
     Resource(
       id = maybe(0.5)(xsdId("res")),
       externalId = maybe(0.5)(nmtoken("ext")),
       parts = vector(2)(part()),
       comments = maybeVector(0.3, 1)(comment()),
-      specificResource = Some(specificResource()),
+      specificResource = Some(specificResource(mediaRefTarget)),
     )
 
   def resourceSet(): ResourceSet =
+    // The anchor Resource owns an @ID; every Component/@MediaRef references it, so ID/IDREF stays bound
+    // inside the document (XSD constraint cvc-id.1).
+    val targetId = xsdId("target")
+    val anchor = Resource(id = Some(targetId))
     ResourceSet(
       nmtoken("set"),
       usage = maybe(0.6)(pick(ResourceUsage.Input, ResourceUsage.Output)),
-      resources = Vector.fill(1 + rng.nextInt(2))(resource()),
+      resources = anchor +: Vector.fill(1 + rng.nextInt(2))(resource(targetId)),
     )
 
   def xjdf(): XJDF =
