@@ -115,15 +115,18 @@ val program: DocDsl[Unit] =
 
 ### 3. Интерпретатор 1 — сборка в `XJDF` через `State`
 
-Сборка документа — это накопление: каждый `Add*` обновляет состояние. Тип интерпретатора —
-`State[XJDF, *]`:
+Сборка документа — это накопление: каждый `Add*` обновляет состояние. Целевые эффекты
+объявляются type-алиасами (kind-projector-синтаксис `F[*]` требует флага `-Ykind-projector`,
+которого в проекте нет):
 
 ```scala
 import cats.data.State
 import cats.~>
 
-val build: DocOp ~> State[XJDF, *] = new (DocOp ~> State[XJDF, *]):
-  def apply[A](op: DocOp[A]): State[XJDF, A] = op match
+type BuildState[A] = State[XJDF, A]
+
+val build: DocOp ~> BuildState = new (DocOp ~> BuildState):
+  def apply[A](op: DocOp[A]): BuildState[A] = op match
     case DocOp.SetVersion(v)   => State.modify[XJDF](_.copy(version = Some(v)))
     case DocOp.AddComment(c)   => State.modify[XJDF](d => d.copy(comments = d.comments :+ c))
     case DocOp.AddGeneralId(g) => State.modify[XJDF](d => d.copy(generalIds = d.generalIds :+ g))
@@ -140,7 +143,7 @@ def run(program: DocDsl[Unit], seed: XJDF): XJDF =
 ```
 
 `seed` — минимальный документ (`XJDF(jobId, types)`); программа «дозаполняет» его.
-`foldMap` требует `Monad[State[XJDF, *]]` — cats даёт его сам.
+`foldMap` требует `Monad[BuildState]` — cats даёт его сам (через `cats.implicits.*`).
 
 ### 4. Интерпретатор 2 — план-отчёт (журнал через `Writer`)
 
@@ -153,8 +156,10 @@ def run(program: DocDsl[Unit], seed: XJDF): XJDF =
 import cats.data.Writer
 import cats.data.Chain
 
-val log: DocOp ~> Writer[Chain[String], *] = new (DocOp ~> Writer[Chain[String], *]):
-  def apply[A](op: DocOp[A]): Writer[Chain[String], A] = op match
+type TraceWriter[A] = Writer[Chain[String], A]
+
+val log: DocOp ~> TraceWriter = new (DocOp ~> TraceWriter):
+  def apply[A](op: DocOp[A]): TraceWriter[A] = op match
     case DocOp.SetVersion(v)     => Writer.tell(Chain.one(s"set version $v"))
     case DocOp.AddComment(c)     => Writer.tell(Chain.one(s"add comment: ${c.value.take(40)}"))
     case DocOp.AddGeneralId(g)   => Writer.tell(Chain.one(s"add general id ${g.usage.value}"))

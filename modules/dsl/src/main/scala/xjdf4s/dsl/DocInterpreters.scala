@@ -15,12 +15,19 @@ import xjdf4s.model.*
  *  3. `validateSteps` — fail-fast dry-run that rejects the first step adding an invalid node.
  *
  * One program, several interpreters: the program itself never changes when a new execution is added.
+ *
+ * The target effects are declared as type aliases (Scala 3 type lambdas are not expressible with the
+ * kind-projector `*` placeholder unless `-Ykind-projector` is enabled).
  */
 object DocInterpreters:
 
+  type BuildState[A] = State[XJDF, A]
+  type TraceWriter[A] = Writer[Chain[String], A]
+  type StepValidation[A] = Either[Vector[ValidationError], A]
+
   /** Assembles a document from program steps, starting from a seed `XJDF`. */
-  val buildDocument: DocOp ~> State[XJDF, *] = new (DocOp ~> State[XJDF, *]):
-    def apply[A](op: DocOp[A]): State[XJDF, A] =
+  val buildDocument: DocOp ~> BuildState = new (DocOp ~> BuildState):
+    def apply[A](op: DocOp[A]): BuildState[A] =
       op match
         case DocOp.SetVersion(value) => State.modify[XJDF](_.copy(version = Some(value)))
         case DocOp.AddComment(value) =>
@@ -43,8 +50,8 @@ object DocInterpreters:
     program.foldMap(buildDocument).runS(seed).value
 
   /** Write-only interpreter: produces a human-readable trace of the steps. */
-  val traceProgram: DocOp ~> Writer[Chain[String], *] = new (DocOp ~> Writer[Chain[String], *]):
-    def apply[A](op: DocOp[A]): Writer[Chain[String], A] =
+  val traceProgram: DocOp ~> TraceWriter = new (DocOp ~> TraceWriter):
+    def apply[A](op: DocOp[A]): TraceWriter[A] =
       op match
         case DocOp.SetVersion(value)     => Writer.tell(Chain.one(s"set version ${value.lexical}"))
         case DocOp.AddComment(value)     => Writer.tell(Chain.one(s"add comment: ${value.value.take(40)}"))
@@ -58,14 +65,17 @@ object DocInterpreters:
     program.foldMap(traceProgram).written
 
   /** Fail-fast validation interpreter: rejects the first step that adds an invalid resource. */
-  val validateSteps: DocOp ~> Either[Vector[ValidationError], *] =
-    new (DocOp ~> Either[Vector[ValidationError], *]):
-      def apply[A](op: DocOp[A]): Either[Vector[ValidationError], A] =
-        op match
-          case DocOp.AddResourceSet(value) =>
-            val errors = value.resources.flatMap(_.validate)
-            Either.cond(errors.isEmpty, (), errors)
-          case _ => Right(())
+  val validateSteps: DocOp ~> StepValidation = new (DocOp ~> StepValidation):
+    def apply[A](op: DocOp[A]): StepValidation[A] =
+      op match
+        case DocOp.AddResourceSet(value) =>
+          val errors = value.resources.flatMap(_.validate)
+          Either.cond(errors.isEmpty, (), errors)
+        case DocOp.SetVersion(_)     => Right(())
+        case DocOp.AddComment(_)     => Right(())
+        case DocOp.AddGeneralId(_)   => Right(())
+        case DocOp.AddAudit(_)       => Right(())
+        case DocOp.AddProduct(_)     => Right(())
 
   /** Dry-run: validates the program without building a document. */
   def dryRun(program: DocDsl[Unit]): Either[Vector[ValidationError], Unit] =
