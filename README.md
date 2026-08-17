@@ -17,6 +17,8 @@ The project is intentionally split along protocol boundaries:
 - `xjdf4s-codec-xml` — XML codec over the domain: parser, writer, decoders/encoders, ID/IDREF pass,
   full 102/14/44 coverage via typeclass derivation, and a property-based round-trip proof against the
   XJDF schema (`xjdf.xsd`);
+- `xjdf4s-codec-json` — JSON codec (circe): normative slice with the JSON exceptions (`$schema`/`Name`,
+  XJMF exactly-one-message, MediaLayers in-lining) and an XML↔JSON cross-codec law;
 
 The domain stays free of transport-specific members (the JSON `$schema`/`@Name` properties, XML escaping, MIME
 types live in the codec/HTTP layers planned in the roadmap).

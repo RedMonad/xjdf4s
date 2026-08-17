@@ -1,5 +1,6 @@
 val scala3Version = "3.8.4"
 val catsVersion = "2.12.0"
+val circeVersion = "0.14.10"
 
 scalaVersion := scala3Version
 organization := "io.github.redmonad"
@@ -55,8 +56,24 @@ lazy val codecXml = project
   .dependsOn(model % "compile->compile;test->test", messaging % "compile->compile;test->test")
   .settings(name := "xjdf4s-codec-xml")
 
+lazy val codecJson = project
+  .in(file("modules/codec-json"))
+  .dependsOn(
+    model % "compile->compile;test->test",
+    messaging % "compile->compile;test->test",
+    // test-only reuse of the XML codecs for the XML<->JSON cross-codec law
+    codecXml % "test->compile"
+  )
+  .settings(
+    name := "xjdf4s-codec-json",
+    libraryDependencies ++= Seq(
+      "io.circe" %% "circe-core" % circeVersion,
+      "io.circe" %% "circe-parser" % circeVersion % Test
+    )
+  )
+
 lazy val root = rootProject
-  .aggregate(core, model, messaging, protocol, dsl, codecXml)
+  .aggregate(core, model, messaging, protocol, dsl, codecXml, codecJson)
   .settings(
     name := "xjdf4s",
     publish / skip := true,

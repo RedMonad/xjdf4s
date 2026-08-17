@@ -135,3 +135,28 @@ def xmlJsonAgree[A: XmlDecoder: JsonCodec: Eq](value: A): Boolean =
   тестовые фикстуры (один файл fixtures, используемый обоими кодек-модулями).
 - **Числовая точность в кросс-законе.** Используйте `Eq` с допуском; сравнивайте не
   сериализованные строки, а доменные значения.
+
+---
+
+## Состояние исполнения (первый заход)
+
+Реализовано в модуле `codec-json` (circe-core; parser — только в тестах):
+
+- **Нормативный срез ручными кодеками** (по предостережениям из этапа 04 — деривация отложена до батча полного
+  покрытия): скаляры (все opaque-типы через smart-конструкторы, списки-в-массивы `XYPair`/`IntegerRange`/цвета/
+  матрицы, plain-энамы generic-given + lexical-энамы `Version`/`JdfVersion`/`MessageUrlScheme`/`NamedColor`),
+  дерево XJDF (`ResourceSet`/`Resource`/`Part`/`AmountPool`/`Comment`/`GeneralID`), ресурсы `Media` (с рекурсией
+  `MediaLayers`), `Color`, `Component`, `Tool`, `Device`, `RunList`, `RegisterMark`, и messaging-набор
+  (`Header`, `Subscription`, `ResourceQuParams`, `ResourceInfo`, `DeviceInfo`, `Notification`,
+  `QueryKnownMessages`, `QueryResource`, `ResponseKnownMessages`, `ResponseResource`, `SignalNotification`,
+  `SignalResource`, `SignalStatus`, `XJMF`).
+- **JSON-исключения реализованы:** `"Name"`-член корней (имена атрибутов в JSON — без `@`; `$schema` опционален
+  через `JsonCodec.withSchema`); XJMF ровно-одно-сообщение (энкодер бросает на `size != 1`, декодер требует
+  ровно один message-член); `MediaLayers` инлайнинг — массив слоёв с `"Name": "Media" | "Glue"`.
+- **Кросс-закон** (аналог XSD-proof для JSON): по 100 детерминированных XJDF и XJMF документов обе ветки —
+  XML-кодек и JSON-кодек — декодируются в одно и то же доменное значение; генераторы переиспользованы из
+  тестовых scope'ов `model`/`messaging` через `test->test`, XML-кодеки — через `codecXml % "test->compile"`.
+- **Нормативные JSON-фикстуры:** Example 3.1 (корень), Example 8.5 (MediaLayers JSON = XML-декод того же ADT),
+  Example 7.1 (XJMF + SignalNotification).
+- **Осталось:** расширение покрытия на остальные ресурсы/интенции/сообщения (батч с деривацией по правилам
+  этапа 04); JSON-представление `extensions`/foreign-членов; аудиты.
