@@ -72,6 +72,18 @@ enum UpdateGranularity derives CanEqual:
   case All, ChangesOnly
 end UpdateGranularity
 
+opaque type QueuePriority = Int
+object QueuePriority:
+  def from(value: Int): Either[ValidationError, QueuePriority] =
+    Either.cond(
+      value >= 0 && value <= 100,
+      value,
+      ValidationError.InvalidValue("Priority", value.toString, "an integer from zero through one hundred"),
+    )
+
+  extension (value: QueuePriority) def value: Int = value
+end QueuePriority
+
 enum QueueActivation derives CanEqual:
   case Informative, Held, Active, PendingReturn, Removed
 end QueueActivation
@@ -87,8 +99,8 @@ final case class QueueFilter(
     jobPartId: Option[Nmtoken] = None,
     lastEntry: Option[Nmtoken] = None,
     maxEntries: Option[Int] = None,
-    maxPriority: Option[Int] = None,
-    minPriority: Option[Int] = None,
+    maxPriority: Option[QueuePriority] = None,
+    minPriority: Option[QueuePriority] = None,
     newerThan: Option[XsdDateTime] = None,
     olderThan: Option[XsdDateTime] = None,
     queueEntryIds: Vector[Nmtoken] = Vector.empty,
@@ -115,7 +127,7 @@ final case class QueueEntry(
     gangPolicy: Option[QueueGangPolicy] = None,
     jobId: Option[Nmtoken] = None,
     jobPartId: Option[Nmtoken] = None,
-    priority: Option[Int] = None,
+    priority: Option[QueuePriority] = None,
     relatedJobId: Option[Nmtoken] = None,
     relatedJobPartId: Option[Nmtoken] = None,
     startTime: Option[XsdDateTime] = None,

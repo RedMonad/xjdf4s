@@ -38,6 +38,7 @@ python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSche
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}CommandPipeControl' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}ResponseKnownMessages' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}SignalQueueStatus' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}CommandSubmitQueueEntry' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 ```
 
 The index reports 365 elements, 366 complex types and 228 simple types. `SpecificResource` alone has 100 derived
@@ -52,7 +53,8 @@ checked-in schema, including `Device/@RestApiBaseURL` and `ShapeDef/RuleLength`,
 Image compression follows chapter 8 where schema index types are corrupted (`CCITTFaxParams/@EndOfBlock` and
 `JPEG2000Params/@LayerRates`). `ContentMetadata/@ISBN`, `RefAnchor/@AnchorType`, and
 `StopPersChParams/@MessageType` likewise follow their normative token/enumeration definitions instead of corrupt index
-types. `CommandShutDown/ShutDownCmdParams` follows the normative optional cardinality.
+types. `CommandShutDown/ShutDownCmdParams` follows the normative optional cardinality. Queue-entry resubmission uses
+normative `NMTOKEN` and closed update-method types instead of indexed `float` and unconstrained `string`.
 
 ## Scala 3 modelling rules
 
@@ -77,9 +79,10 @@ types. `CommandShutDown/ShutDownCmdParams` follows the normative optional cardin
   exposes the complete closed union supplied by XJDF 2.2.
 - **Slice 4 (implemented):** all 100 `SpecificResource` descendants grouped by general/prepress/press/postpress process
   domains, including their reusable and recursive child graphs. See [resource-coverage.md](resource-coverage.md).
-- **Slice 5 (in progress):** every concrete XJMF query/command/signal/response. Status, notification, resource, pipe,
-  shutdown, wake-up, persistent-channel control, discovery, Gang, and QueueStatus families are typed; see
-  [message-coverage.md](message-coverage.md). Audit payloads are complete in Slice 2.
+- **Slice 5 (implemented):** all 44 concrete XJMF query/command/signal/response elements and their payload graphs.
+  Complete closed unions are exposed as `StandardCommand`, `StandardQuery`, `StandardResponse`, `StandardSignal`, and
+  `StandardMessage`; protocol traits remain open for foreign extensions. See [message-coverage.md](message-coverage.md).
+  Audit payloads are complete in Slice 2.
 - **Slice 6:** schema-derived XML and JSON codecs, validation laws, round-trip fixtures and compatibility tests.
 
 Each slice must record the exact `xsdq bundle`, `attrs`, and `hierarchy` queries used for traceability.
