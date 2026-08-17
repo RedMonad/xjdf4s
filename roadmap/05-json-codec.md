@@ -197,7 +197,9 @@ def xmlJsonAgree[A: XmlDecoder: JsonCodec: Eq](value: A): Boolean =
   **Урок (и подтверждение правила 04f):** самодостаточно-рекурсивные типы нельзя деривировать даже через
   per-type givens — given невидим в собственном инициализаторе, и inline-fallback пере-деривирует тип
   бесконечно (компилятор: «Infinite loop in function body», под `-Werror` — ошибка). `BundleItem`/
-  `AssemblySection` — только ручные кодеки (рекурсия в рантайме), как в XML.
+  `AssemblySection` — только ручные кодеки, и рекурсия в них идёт ЯВНО через helper-объект
+  (`BundleItemJson`/`AssemblySectionJson`), как в XML, а не через implicit-поиск (самоссылка given'а в
+  собственном теле не находится).
 - **Ручные кодеки спец-форм** (`JsonSpecialCodecs.scala`, зеркалят XML-маппинг): `FileSpec` (плоские члены
   `URL`/`UID`/`FileFormat`+`FileTemplate`), `Disposition` (`MinDuration`/`Until`), `NetworkHeader` (`"Text"`),
   `TiffTag` (`BinaryValue`/`IntegerValue`/`NumberValue`/`StringValue`), `PlacedObject` (`MarkObject`/

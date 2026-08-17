@@ -11,6 +11,11 @@ package xjdf4s.codec.json
  * val <import>"). The export set is therefore frozen to the five base objects proven cycle-free by the green
  * builds; the audit, root, special and resource codecs are consumed through explicit `import X.given` clauses
  * at their use sites instead.
+ *
+ * NOTE 2: JsonMediaCodecs relies on these facade forwarders for its own internal forward references
+ * (Media's codec references the later-defined MediaLayers codecs - the package-level forwarder makes the
+ * reference visible). Do not remove it from this export set, and keep the same mechanism in mind before
+ * reordering that file.
  */
 export JsonHelpers.*
 export JsonNodeCodecs.given
