@@ -167,9 +167,11 @@ object QueryResourceCodec:
           "Languages",
         Option.when(query.languages.nonEmpty)(CodecHelpers.renderLanguages(query.languages)),
       ) ++ CodecHelpers.extensionAttributes(query.extensions)
+      // XSD Query base sequence: Header, Subscription?; ResourceQuParams is the extension content after them.
       val children =
-        Vector(HeaderCodec.encoder.encode(query.header), ResourceQuParamsCodec.encoder.encode(query.params)) ++
-          query.subscription.toVector.map(SubscriptionCodec.encoder.encode)
+        Vector(HeaderCodec.encoder.encode(query.header)) ++
+          query.subscription.toVector.map(SubscriptionCodec.encoder.encode) ++
+          Vector(ResourceQuParamsCodec.encoder.encode(query.params))
       Xml.Element(CodecHelpers.qname("QueryResource"), attributes, children)
 end QueryResourceCodec
 
