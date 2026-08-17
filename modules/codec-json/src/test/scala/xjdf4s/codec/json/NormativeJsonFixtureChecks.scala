@@ -1,6 +1,7 @@
 package xjdf4s.codec.json
 
 import io.circe.parser.*
+import io.circe.syntax.*
 
 import xjdf4s.codec.json.given
 import xjdf4s.codec.json.JsonAuditCodecs.given
@@ -124,7 +125,7 @@ object NormativeJsonFixtureChecks:
     assert(decoded.jobId.value == "Job1")
     assert(decoded.auditPool.exists(_.audits.size == 1))
     decoded.auditPool.get.audits.head match
-      case AuditCreated(header) => assert(header.deviceId.value == "CIP4_JDF_Writer_Java")
+      case AuditCreated(header, _) => assert(header.deviceId.value == "CIP4_JDF_Writer_Java")
       case other => assert(false, s"expected AuditCreated, got $other")
     // the audit round-trips through our codec with the same Name-discriminator shape
     val reencoded = decoded.asJson
