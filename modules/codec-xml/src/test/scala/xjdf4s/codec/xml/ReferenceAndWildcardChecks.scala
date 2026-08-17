@@ -57,9 +57,16 @@ object ReferenceAndWildcardChecks:
         |  <foo:Wobble foo:size="3"/>
         |</Resource>""".stripMargin
     val decoded = XmlParser.parse(xml).flatMap(ResourceCodec.decoder.decode).toOption.get
-    val named = decoded.specificResource.get.asInstanceOf[NamedSpecificResource]
-    assert(named.foreignName.localName == "Wobble")
-    val reencoded = Registry.encodeSpecificResource(named)
+    assert(decoded.specificResource.isEmpty)
+    assert(decoded.foreignElements.head.name.localName == "Wobble")
+    assert(decoded.foreignElements.head.attributes.exists { case (name, _) => name.localName == "size" })
+    val fallback = Registry
+      .decodeSpecificResource(XmlParser.parse("""<foo:Wobble xmlns:foo="urn:vendor" foo:size="3"/>""").toOption.get)
+      .toOption
+      .get
+      .asInstanceOf[NamedSpecificResource]
+    assert(fallback.foreignName.localName == "Wobble")
+    val reencoded = Registry.encodeSpecificResource(fallback)
     assert(reencoded.name.localName == "Wobble")
     assert(reencoded.attribute("size").contains("3"))
 
