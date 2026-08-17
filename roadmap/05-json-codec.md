@@ -175,6 +175,11 @@ def xmlJsonAgree[A: XmlDecoder: JsonCodec: Eq](value: A): Boolean =
   XML-кодек и JSON-кодек — декодируются в одно и то же доменное значение; генераторы переиспользованы из
   тестовых scope'ов `model`/`messaging` через `test->test`, XML-кодеки — через `codecXml % "test->compile"`.
 - **Нормативные JSON-фикстуры:** Example 3.1 (корень), Example 8.5 (MediaLayers JSON = XML-декод того же ADT),
-  Example 7.1 (XJMF + SignalNotification).
+  Example 7.1 (XJMF + SignalNotification), Example 9.11 (AuditPool — JSON-декод + XML/JSON-кросс-проверка).
+- **Аудиты (Example 9.11):** `AuditPool` — массив `{Header, payload, "Name"}`; все пять аудитов + `ProcessRun`;
+  член `AuditPool` в кодеке корня XJDF. XJDF-кодеки корня вынесены в `JsonRootCodecs.scala`: компилятор
+  поймал цикл givens (`E046` через export-форвардеры фасада: корень требует `Encoder[AuditPool]`, аудиты —
+  `Encoder[Part]`/`Header`) — граф givens, как и граф файлов, должен оставаться ацикличным.
 - **Осталось:** расширение покрытия на остальные ресурсы/интенции/сообщения (батч с деривацией по правилам
-  этапа 04); JSON-представление `extensions`/foreign-членов; аудиты.
+  этапа 04); JSON-представление `extensions`/foreign-членов (`"Prefix:Name"` + `"@context"`, Example 9.12);
+  `Dependent`/`ProductList` и JSON-мapping `AddressLine` (9.10.2.1).

@@ -88,9 +88,10 @@ object JsonScalars:
   given Decoder[TransferFunction] = Decoder.instance(cursor =>
     for
       points <- cursor.as[List[List[Float]]]
-      flat <- points.foldLeft[Either[String, Vector[Float]]](Right(Vector.empty)) {
+      flat <- points.foldLeft[Decoder.Result[Vector[Float]]](Right(Vector.empty)) {
         case (acc, List(x, y)) => acc.map(_ ++ Vector(x, y))
-        case (_, other)        => Left(s"each TransferFunction point requires exactly two floats, got ${other.size}")
+        case (_, other) =>
+          Left(io.circe.DecodingFailure(s"each TransferFunction point requires exactly two floats, got ${other.size}", cursor.history))
       }
       function <- TransferFunction.from(flat).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
     yield function,
