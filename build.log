@@ -1,0 +1,860 @@
+[error] -- Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/HandWrappers.scala:21:2
+[error] 21 |  given commentCodec: XmlElementCodec[Comment] = handBoth("Comment")(CommentCodec.decoder, CommentCodec.encoder)._1
+[error]    |  ^
+[error]    |The start of this line does not match any of the previous indentation widths.
+[error]    |Indentation width of current line : 2 spaces
+[error]    |This falls between previous widths: 0 spaces and 4 spaces
+[error] -- [E020] Syntax Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/SpecialCodecs.scala:132:6
+[error] 132 |      value <- XjdfString.from(element.text).left.map(error =>
+[error]     |      ^^^^^
+[error]     |      yield or do expected
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/SpecialCodecs.scala:354:0
+[error] 354 |end FileSpecRoles
+[error]     |^^^^^^^^^^^^^^^^^
+[error]     |misaligned end marker
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:127:79
+[error] 127 |  given countryCodeCodec: FieldCodec[CountryCode] = attribute(CountryCode.from.map(_.left.map(_.toString)), v => Some(v.value))
+[error]     |                                                              ^^^^^^^^^^^^^^^^^^^^
+[error]     |value map is not a member of String =>
+[error]     |  Either[xjdf4s.core.ValidationError, xjdf4s.model.resources.CountryCode], but could be made available as an extension method.
+[error]     |
+[error]     |One of the following imports might fix the problem:
+[error]     |
+[error]     |  import cats.Applicative.ops.toAllApplicativeOps
+[error]     |  import cats.Apply.ops.toAllApplyOps
+[error]     |  import cats.Distributive.ops.toAllDistributiveOps
+[error]     |  import cats.FlatMap.ops.toAllFlatMapOps
+[error]     |  import cats.implicits.toFunctorOps
+[error]     |  import cats.Functor.ops.toAllFunctorOps
+[error]     |  import cats.Monad.ops.toAllMonadOps
+[error]     |  import cats.syntax.all.toFunctorOps
+[error]     |  import cats.syntax.functor.toFunctorOps
+[error]     |  import cats.Functor.nonInheritedOps.toFunctorOps
+[error]     |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:128:61
+[error] 128 |  given xPathCodec: FieldCodec[XPath] = attribute(XPath.from.map(_.left.map(_.toString)), v => Some(v.value))
+[error]     |                                                  ^^^^^^^^^^^^^^
+[error]     |value map is not a member of String => Either[xjdf4s.core.ValidationError, xjdf4s.model.resources.XPath], but could be made available as an extension method.
+[error]     |
+[error]     |One of the following imports might fix the problem:
+[error]     |
+[error]     |  import cats.Applicative.ops.toAllApplicativeOps
+[error]     |  import cats.Apply.ops.toAllApplyOps
+[error]     |  import cats.Distributive.ops.toAllDistributiveOps
+[error]     |  import cats.FlatMap.ops.toAllFlatMapOps
+[error]     |  import cats.implicits.toFunctorOps
+[error]     |  import cats.Functor.ops.toAllFunctorOps
+[error]     |  import cats.Monad.ops.toAllMonadOps
+[error]     |  import cats.syntax.all.toFunctorOps
+[error]     |  import cats.syntax.functor.toFunctorOps
+[error]     |  import cats.Functor.nonInheritedOps.toFunctorOps
+[error]     |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:129:67
+[error] 129 |  given pdfPathCodec: FieldCodec[PdfPath] = attribute(PdfPath.from.map(_.left.map(_.toString)), v => Some(v.value))
+[error]     |                                                      ^^^^^^^^^^^^^^^^
+[error]     |value map is not a member of String => Either[xjdf4s.core.ValidationError, xjdf4s.model.PdfPath], but could be made available as an extension method.
+[error]     |
+[error]     |One of the following imports might fix the problem:
+[error]     |
+[error]     |  import cats.Applicative.ops.toAllApplicativeOps
+[error]     |  import cats.Apply.ops.toAllApplyOps
+[error]     |  import cats.Distributive.ops.toAllDistributiveOps
+[error]     |  import cats.FlatMap.ops.toAllFlatMapOps
+[error]     |  import cats.implicits.toFunctorOps
+[error]     |  import cats.Functor.ops.toAllFunctorOps
+[error]     |  import cats.Monad.ops.toAllMonadOps
+[error]     |  import cats.syntax.all.toFunctorOps
+[error]     |  import cats.syntax.functor.toFunctorOps
+[error]     |  import cats.Functor.nonInheritedOps.toFunctorOps
+[error]     |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:146:70
+[error] 146 |  given foldCatalogCodec: FieldCodec[FoldCatalog] = attribute(Lexical.foldCatalog, v => Some(v.value))
+[error]     |                                                              ^^^^^^^^^^^^^^^^^^^
+[error]     |  value foldCatalog is not a member of object xjdf4s.codec.xml.Lexical
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:150:50
+[error] 150 |    attribute(Lexical.transferFunction, v => Some(CodecHelpers.renderFloats(v.toVector)))
+[error]     |                                                  ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:152:47
+[error] 152 |    attribute(Lexical.gluingPattern, v => Some(CodecHelpers.renderFloats(v.toVector)))
+[error]     |                                               ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:153:84
+[error] 153 |  given labColorCodec: FieldCodec[LabColor] = attribute(Lexical.labColor, v => Some(CodecHelpers.renderLabColor(v)))
+[error]     |                                                                                    ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:155:43
+[error] 155 |    attribute(Lexical.cmykColor, v => Some(CodecHelpers.renderCmykColor(v)))
+[error]     |                                           ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:157:43
+[error] 157 |    attribute(Lexical.srgbColor, v => Some(CodecHelpers.renderSrgbColor(v)))
+[error]     |                                           ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:159:46
+[error] 159 |    attribute(Lexical.integerRange, v => Some(CodecHelpers.renderRange(v)))
+[error]     |                                              ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:160:78
+[error] 160 |  given xypairCodec: FieldCodec[XYPair] = attribute(Lexical.xypair, v => Some(CodecHelpers.renderXypair(v)))
+[error]     |                                                                              ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:162:48
+[error] 162 |    attribute(Lexical.tileCoordinate, v => Some(CodecHelpers.renderTile(v)))
+[error]     |                                                ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:163:81
+[error] 163 |  given shape3dCodec: FieldCodec[Shape3D] = attribute(Lexical.shape3d, v => Some(CodecHelpers.renderShape3d(v)))
+[error]     |                                                                                 ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:164:84
+[error] 164 |  given gridSizeCodec: FieldCodec[GridSize] = attribute(Lexical.gridSize, v => Some(CodecHelpers.renderGridSize(v)))
+[error]     |                                                                                    ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:165:78
+[error] 165 |  given matrixCodec: FieldCodec[Matrix] = attribute(Lexical.matrix, v => Some(CodecHelpers.renderMatrix(v)))
+[error]     |                                                                              ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:166:87
+[error] 166 |  given rectangleCodec: FieldCodec[Rectangle] = attribute(Lexical.rectangle, v => Some(CodecHelpers.renderRectangle(v)))
+[error]     |                                                                                       ^^^^^^^^^^^^
+[error]     |                       Expected a term, but found a type: CodecHelpers
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/derivation/FieldCodec.scala:244:40
+[error] 244 |    summon[FieldCodec[Vector[A]]](using inner)
+[error]     |                                        ^^^^^
+[error]     |  Found:    (inner : xjdf4s.codec.xml.derivation.FieldCodec[A])
+[error]     |  Required: xjdf4s.codec.xml.derivation.FieldCodec[Vector[A]]
+[error]     |
+[error]     |  The following import might make progress towards fixing the problem:
+[error]     |
+[error]     |    import xjdf4s.codec.xml.derivation.FieldCodec.vectorCodec
+[error]     |
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:44:27
+[error] 44 |      BindingSpecification.values
+[error]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value values is not a member of object xjdf4s.model.BindingSpecification.
+[error]    |Although class BindingSpecification is an enum, it has non-singleton cases,
+[error]    |meaning a values array is not defined
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:66:79
+[error] 66 |        tabs <- XmlDecoders.optionalChild("Tabs")(summon[XmlElementCodec[Tabs]]).decode(element)
+[error]    |                                                                               ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Tabs] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:164:77
+[error] 164 |        detailChild ++ intent.tabs.toVector.map(summon[XmlElementCodec[Tabs]].encode)
+[error]     |                                                                             ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Tabs] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:211:60
+[error] 211 |              color <- summon[XmlElementCodec[SurfaceColor]].decode(child)
+[error]     |                                                            ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.SurfaceColor] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:225:59
+[error] 225 |        val encoded = summon[XmlElementCodec[SurfaceColor]].encode(value)
+[error]     |                                                           ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.SurfaceColor] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:320:29
+[error] 320 |      ProductionLooseBinding.values
+[error]     |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |value values is not a member of object xjdf4s.model.resources.ProductionLooseBinding.
+[error]     |Although class ProductionLooseBinding is an enum, it has non-singleton cases,
+[error]     |meaning a values array is not defined
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:329:101
+[error] 329 |        holePatterns <- XmlDecoders.repeatedChild("HolePattern")(summon[XmlElementCodec[HolePattern]]).decode(element)
+[error]     |                                                                                                     ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.HolePattern] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:366:83
+[error] 366 |        detailChild ++ params.holePatterns.map(summon[XmlElementCodec[HolePattern]].encode)
+[error]     |                                                                                   ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.HolePattern] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:377:105
+[error] 377 |        sections <- XmlDecoders.repeatedChild("AssemblySection")(summon[XmlElementCodec[AssemblySection]]).decode(element)
+[error]     |                                                                                                         ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.AssemblySection] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:400:87
+[error] 400 |          (Vector.empty, sections.toVector.map(summon[XmlElementCodec[AssemblySection]].encode))
+[error]     |                                                                                       ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.AssemblySection] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:426:97
+[error] 426 |        markObject <- XmlDecoders.optionalChild("MarkObject")(summon[XmlElementCodec[MarkObject]]).decode(element)
+[error]     |                                                                                                 ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.MarkObject] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:459:87
+[error] 459 |        case PlacedObjectKind.Mark(mark)  => Vector(summon[XmlElementCodec[MarkObject]].encode(mark))
+[error]     |                                                                                       ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.MarkObject] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:475:84
+[error] 475 |          placed.pageActivation.toVector.map(summon[XmlElementCodec[PageActivation]].encode) ++
+[error]     |                                                                                    ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.PageActivation] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:476:82
+[error] 476 |          placed.pageCondition.toVector.map(summon[XmlElementCodec[PageCondition]].encode)
+[error]     |                                                                                  ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.PageCondition] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:491:24
+[error] 491 |      QueueModification.values
+[error]     |      ^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |value values is not a member of object xjdf4s.messaging.QueueModification.
+[error]     |Although class QueueModification is an enum, it has non-singleton cases,
+[error]     |meaning a values array is not defined
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:499:88
+[error] 499 |        filter <- XmlDecoders.singleChild("Filter")(summon[XmlElementCodec[QueueFilter]]).decode(element)
+[error]     |                                                                                        ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.messaging.QueueFilter] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:539:51
+[error] 539 |        Vector(summon[XmlElementCodec[QueueFilter]].encode(params.filter)),
+[error]     |                                                   ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.messaging.QueueFilter] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:592:95
+[error] 592 |        deviceInfo <- XmlDecoders.singleChild("DeviceInfo")(summon[XmlElementCodec[DeviceInfo]]).decode(element)
+[error]     |                                                                                               ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.DeviceInfo] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:618:93
+[error] 618 |        Vector(HeaderCodec.encoder.encode(signal.header), summon[XmlElementCodec[DeviceInfo]].encode(signal.deviceInfo)),
+[error]     |                                                                                             ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.DeviceInfo] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:630:85
+[error] 630 |        XmlDecoders.singleChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
+[error]     |                                                                                     ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Notification] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:633:81
+[error] 633 |        XmlDecoders.singleChild("ProcessRun")(summon[XmlElementCodec[ProcessRun]]).decode(element)
+[error]     |                                                                                 ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.ProcessRun] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:636:109
+[error] 636 |        XmlDecoders.singleChild("ResourceInfo")(ResourceInfoCodec.decoder).decode(element).map(AuditResource(_))
+[error]     |                                                                                                             ^
+[error]     |                          Found:    (_$47 : xjdf4s.model.ResourceInfo)
+[error]     |                          Required: xjdf4s.model.Header
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:638:81
+[error] 638 |        XmlDecoders.singleChild("DeviceInfo")(summon[XmlElementCodec[DeviceInfo]]).decode(element)
+[error]     |                                                                                 ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.DeviceInfo] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E107] Syntax Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:645:28
+[error] 645 |      case AuditNotification(notification, _) =>
+[error]     |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |Wrong number of argument patterns for xjdf4s.model.AuditNotification; expected: (xjdf4s.model.Header, xjdf4s.model.Notification, xjdf4s.core.Extensions)
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:646:74
+[error] 646 |        ("AuditNotification", Vector(summon[XmlElementCodec[Notification]].encode(notification)))
+[error]     |                                                                          ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Notification] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E107] Syntax Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:647:26
+[error] 647 |      case AuditProcessRun(processRun, _) =>
+[error]     |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |Wrong number of argument patterns for xjdf4s.model.AuditProcessRun; expected: (xjdf4s.model.Header, xjdf4s.model.ProcessRun, xjdf4s.core.Extensions)
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:648:70
+[error] 648 |        ("AuditProcessRun", Vector(summon[XmlElementCodec[ProcessRun]].encode(processRun)))
+[error]     |                                                                      ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.ProcessRun] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E107] Syntax Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:649:24
+[error] 649 |      case AuditResource(resourceInfo, _) =>
+[error]     |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |Wrong number of argument patterns for xjdf4s.model.AuditResource; expected: (xjdf4s.model.Header, xjdf4s.model.ResourceInfo, xjdf4s.core.Extensions)
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:650:66
+[error] 650 |        ("AuditResource", Vector(ResourceInfoCodec.encoder.encode(resourceInfo)))
+[error]     |                                                                  ^^^^^^^^^^^^
+[error]     |                        Found:    (resourceInfo : xjdf4s.model.Header)
+[error]     |                        Required: xjdf4s.model.ResourceInfo
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E107] Syntax Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:651:22
+[error] 651 |      case AuditStatus(deviceInfo, _) =>
+[error]     |           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |Wrong number of argument patterns for xjdf4s.model.AuditStatus; expected: (xjdf4s.model.Header, xjdf4s.model.DeviceInfo, xjdf4s.core.Extensions)
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/IntentAndAuditCodecs.scala:652:66
+[error] 652 |        ("AuditStatus", Vector(summon[XmlElementCodec[DeviceInfo]].encode(deviceInfo)))
+[error]     |                                                                  ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.DeviceInfo] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/MediaCodec.scala:199:107
+[error] 199 |        certifications <- XmlDecoders.repeatedChild("Certification")(summon[XmlElementCodec[Certification]])
+[error]     |                                                                                                           ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Certification] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/MediaCodec.scala:330:73
+[error] 330 |          media.certifications.map(summon[XmlElementCodec[Certification]].encode) ++
+[error]     |                                                                         ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Certification] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/MediaCodec.scala:331:69
+[error] 331 |          media.holePatterns.map(summon[XmlElementCodec[HolePattern]].encode) ++
+[error]     |                                                                     ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.HolePattern] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/MediaCodec.scala:332:85
+[error] 332 |          media.identificationFields.map(summon[XmlElementCodec[IdentificationField]].encode) ++
+[error]     |                                                                                     ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.IdentificationField] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/MediaCodec.scala:333:81
+[error] 333 |          media.tabDimensions.toVector.map(summon[XmlElementCodec[TabDimensions]].encode)
+[error]     |                                                                                 ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.TabDimensions] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/MessagingCodecs.scala:245:103
+[error] 245 |        notification <- XmlDecoders.optionalChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
+[error]     |                                                                                                       ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Notification] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/MessagingCodecs.scala:257:82
+[error] 257 |          response.notification.toVector.map(summon[XmlElementCodec[Notification]].encode) ++
+[error]     |                                                                                  ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Notification] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/MessagingCodecs.scala:356:103
+[error] 356 |        notification <- XmlDecoders.optionalChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
+[error]     |                                                                                                       ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Notification] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/MessagingCodecs.scala:368:82
+[error] 368 |          response.notification.toVector.map(summon[XmlElementCodec[Notification]].encode) ++
+[error]     |                                                                                  ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.Notification] was found for parameter x of method summon in object Predef
+[error]     |
+[error]     |The following import might fix the problem:
+[error]     |
+[error]     |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]     |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:22:88
+[error] 22 |    name("ApprovalDetails") -> XmlDecoder.widen(summon[XmlElementCodec[ApprovalDetails]]),
+[error]    |                                                                                        ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.ApprovalDetails] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:23:86
+[error] 23 |    name("ApprovalParams") -> XmlDecoder.widen(summon[XmlElementCodec[ApprovalParams]]),
+[error]    |                                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.ApprovalParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:25:92
+[error] 25 |    name("BarcodeCompParams") -> XmlDecoder.widen(summon[XmlElementCodec[BarcodeCompParams]]),
+[error]    |                                                                                            ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.BarcodeCompParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:26:94
+[error] 26 |    name("BarcodeReproParams") -> XmlDecoder.widen(summon[XmlElementCodec[BarcodeReproParams]]),
+[error]    |                                                                                              ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.BarcodeReproParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:27:84
+[error] 27 |    name("BendingParams") -> XmlDecoder.widen(summon[XmlElementCodec[BendingParams]]),
+[error]    |                                                                                    ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.BendingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:28:90
+[error] 28 |    name("BinderySignature") -> XmlDecoder.widen(summon[XmlElementCodec[BinderySignature]]),
+[error]    |                                                                                          ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.BinderySignature] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:29:102
+[error] 29 |    name("BlockPreparationParams") -> XmlDecoder.widen(summon[XmlElementCodec[BlockPreparationParams]]),
+[error]    |                                                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.BlockPreparationParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:30:90
+[error] 30 |    name("BoxFoldingParams") -> XmlDecoder.widen(summon[XmlElementCodec[BoxFoldingParams]]),
+[error]    |                                                                                          ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.BoxFoldingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:31:90
+[error] 31 |    name("BoxPackingParams") -> XmlDecoder.widen(summon[XmlElementCodec[BoxPackingParams]]),
+[error]    |                                                                                          ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.BoxPackingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:32:70
+[error] 32 |    name("Bundle") -> XmlDecoder.widen(summon[XmlElementCodec[Bundle]]),
+[error]    |                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.Bundle] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:33:86
+[error] 33 |    name("BundlingParams") -> XmlDecoder.widen(summon[XmlElementCodec[BundlingParams]]),
+[error]    |                                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.BundlingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:34:90
+[error] 34 |    name("CaseMakingParams") -> XmlDecoder.widen(summon[XmlElementCodec[CaseMakingParams]]),
+[error]    |                                                                                          ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.CaseMakingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:35:86
+[error] 35 |    name("CasingInParams") -> XmlDecoder.widen(summon[XmlElementCodec[CasingInParams]]),
+[error]    |                                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.CasingInParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:37:100
+[error] 37 |    name("ColorCorrectionParams") -> XmlDecoder.widen(summon[XmlElementCodec[ColorCorrectionParams]]),
+[error]    |                                                                                                    ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.ColorCorrectionParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:38:110
+[error] 38 |    name("ColorSpaceConversionParams") -> XmlDecoder.widen(summon[XmlElementCodec[ColorSpaceConversionParams]]),
+[error]    |                                                                                                              ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[
+[error]    |  xjdf4s.model.resources.ColorSpaceConversionParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:39:88
+[error] 39 |    name("ColorantControl") -> XmlDecoder.widen(summon[XmlElementCodec[ColorantControl]]),
+[error]    |                                                                                        ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.ColorantControl] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:41:72
+[error] 41 |    name("Contact") -> XmlDecoder.widen(summon[XmlElementCodec[Contact]]),
+[error]    |                                                                        ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.Contact] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:42:72
+[error] 42 |    name("Content") -> XmlDecoder.widen(summon[XmlElementCodec[Content]]),
+[error]    |                                                                        ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.Content] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:43:110
+[error] 43 |    name("ConventionalPrintingParams") -> XmlDecoder.widen(summon[XmlElementCodec[ConventionalPrintingParams]]),
+[error]    |                                                                                                              ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[
+[error]    |  xjdf4s.model.resources.ConventionalPrintingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:44:102
+[error] 44 |    name("CoverApplicationParams") -> XmlDecoder.widen(summon[XmlElementCodec[CoverApplicationParams]]),
+[error]    |                                                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.CoverApplicationParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:45:86
+[error] 45 |    name("CreasingParams") -> XmlDecoder.widen(summon[XmlElementCodec[CreasingParams]]),
+[error]    |                                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.CreasingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:46:82
+[error] 46 |    name("CustomerInfo") -> XmlDecoder.widen(summon[XmlElementCodec[CustomerInfo]]),
+[error]    |                                                                                  ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.CustomerInfo] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:47:84
+[error] 47 |    name("CuttingParams") -> XmlDecoder.widen(summon[XmlElementCodec[CuttingParams]]),
+[error]    |                                                                                    ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.CuttingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:48:86
+[error] 48 |    name("DeliveryParams") -> XmlDecoder.widen(summon[XmlElementCodec[DeliveryParams]]),
+[error]    |                                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.DeliveryParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:49:90
+[error] 49 |    name("DevelopingParams") -> XmlDecoder.widen(summon[XmlElementCodec[DevelopingParams]]),
+[error]    |                                                                                          ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.DevelopingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:51:76
+[error] 51 |    name("DieLayout") -> XmlDecoder.widen(summon[XmlElementCodec[DieLayout]]),
+[error]    |                                                                            ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.DieLayout] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:52:108
+[error] 52 |    name("DieLayoutProductionParams") -> XmlDecoder.widen(summon[XmlElementCodec[DieLayoutProductionParams]]),
+[error]    |                                                                                                            ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[
+[error]    |  xjdf4s.model.resources.DieLayoutProductionParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:53:100
+[error] 53 |    name("DigitalPrintingParams") -> XmlDecoder.widen(summon[XmlElementCodec[DigitalPrintingParams]]),
+[error]    |                                                                                                    ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.DigitalPrintingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:54:88
+[error] 54 |    name("EmbossingParams") -> XmlDecoder.widen(summon[XmlElementCodec[EmbossingParams]]),
+[error]    |                                                                                        ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.EmbossingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:55:98
+[error] 55 |    name("EndSheetGluingParams") -> XmlDecoder.widen(summon[XmlElementCodec[EndSheetGluingParams]]),
+[error]    |                                                                                                  ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.EndSheetGluingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:56:82
+[error] 56 |    name("ExposedMedia") -> XmlDecoder.widen(summon[XmlElementCodec[ExposedMedia]]),
+[error]    |                                                                                  ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.ExposedMedia] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:57:84
+[error] 57 |    name("FeedingParams") -> XmlDecoder.widen(summon[XmlElementCodec[FeedingParams]]),
+[error]    |                                                                                    ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.FeedingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:58:84
+[error] 58 |    name("FoldingParams") -> XmlDecoder.widen(summon[XmlElementCodec[FoldingParams]]),
+[error]    |                                                                                    ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.FoldingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:59:78
+[error] 59 |    name("FontPolicy") -> XmlDecoder.widen(summon[XmlElementCodec[FontPolicy]]),
+[error]    |                                                                              ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.FontPolicy] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:60:82
+[error] 60 |    name("GluingParams") -> XmlDecoder.widen(summon[XmlElementCodec[GluingParams]]),
+[error]    |                                                                                  ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.GluingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:61:108
+[error] 61 |    name("HeadBandApplicationParams") -> XmlDecoder.widen(summon[XmlElementCodec[HeadBandApplicationParams]]),
+[error]    |                                                                                                            ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[
+[error]    |  xjdf4s.model.resources.HeadBandApplicationParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:62:90
+[error] 62 |    name("HoleMakingParams") -> XmlDecoder.widen(summon[XmlElementCodec[HoleMakingParams]]),
+[error]    |                                                                                          ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.HoleMakingParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:63:102
+[error] 63 |    name("ImageCompressionParams") -> XmlDecoder.widen(summon[XmlElementCodec[ImageCompressionParams]]),
+[error]    |                                                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.ImageCompressionParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:64:102
+[error] 64 |    name("ImageEnhancementParams") -> XmlDecoder.widen(summon[XmlElementCodec[ImageEnhancementParams]]),
+[error]    |                                                                                                      ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.ImageEnhancementParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/Registry.scala:65:92
+[error] 65 |    name("ImageSetterParams") -> XmlDecoder.widen(summon[XmlElementCodec[ImageSetterParams]]),
+[error]    |                                                                                            ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.ImageSetterParams] was found for parameter x of method summon in object Predef
+[error]    |
+[error]    |The following import might fix the problem:
+[error]    |
+[error]    |  import xjdf4s.codec.xml.derivation.Derived.derived
+[error]    |
+[error] 381 errors found
+[error] (codecXml / Compile / compileIncremental) Compilation failed
