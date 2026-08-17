@@ -15,6 +15,11 @@ import xjdf4s.model.resources.*
 /** Normative JSON fixtures (Examples 3.1, 8.5, 7.1) decoded into the same ADT values as their XML counterparts. */
 object NormativeJsonFixtureChecks:
 
+  private def decodeOrFail[A: io.circe.Decoder](json: String): A =
+    parse(json).flatMap(_.as[A]) match
+      case Right(value) => value
+      case Left(error)  => throw new AssertionError(s"fixture decode failed: $error")
+
   val example31Root: Unit =
     val json = """{
       |  "JobID": "J1",
@@ -22,7 +27,7 @@ object NormativeJsonFixtureChecks:
       |  "Types": [ "Product" ],
       |  "Version": "2.2"
       |}""".stripMargin
-    val decoded = parse(json).flatMap(_.as[XJDF]).toOption.get
+    val decoded = decodeOrFail[XJDF](json)
     assert(decoded.jobId.value == "J1")
     assert(decoded.types.toVector.map(_.value) == Vector("Product"))
     assert(decoded.version.contains(Version.V2_2))
@@ -120,7 +125,7 @@ object NormativeJsonFixtureChecks:
       |  ],
       |  "Version": "2.2"
       |}""".stripMargin
-    val decoded = parse(json).flatMap(_.as[XJDF]).toOption.get
+    val decoded = decodeOrFail[XJDF](json)
     assert(decoded.jobId.value == "Job1")
     assert(decoded.auditPool.exists(_.audits.size == 1))
     decoded.auditPool.get.audits.head match
@@ -151,7 +156,7 @@ object NormativeJsonFixtureChecks:
       |  },
       |  "Version": "2.2"
       |}""".stripMargin
-    val decoded = parse(json).flatMap(_.as[XJMF]).toOption.get
+    val decoded = decodeOrFail[XJMF](json)
     assert(decoded.version.contains(Version.V2_2))
     assert(decoded.header.deviceId.value == "CIP4_JDF_Writer_Java")
     decoded.messages.toVector.head match
