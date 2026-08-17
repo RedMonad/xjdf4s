@@ -179,7 +179,7 @@ object TiffTagCodec:
           case (Some(bytes), _, _, _)   => Right(Some(TiffTagValue.Binary(bytes)))
           case (_, Some(ints), _, _)    => Right(Some(TiffTagValue.Integers(ints)))
           case (_, _, Some(numbers), _) => Right(Some(TiffTagValue.Numbers(numbers)))
-          case (_, _, _, Some(text))    => Right(Some(TiffTagValue.Text(text)))
+          case (_, _, _, Some(text))    => Right(Some(TiffTagValue.Text(text.value)))
           case _                        => Right(None)
       yield TiffTag(tagNumber, tagType, value, CodecHelpers.decodeExtensionAttributes(element))
 
@@ -245,7 +245,7 @@ object PatchCodec:
           CodecHelpers.attributeOf("NeutralDensity", patch.neutralDensity, (v: NeutralDensity) => v.value.toString) ++
           CodecHelpers.attributeOf("RGB", patch.rgb, CodecHelpers.renderSrgbColor) ++
           CodecHelpers.attributeOf("Size", patch.size, CodecHelpers.renderXypair) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "Spectrum",
             patch.spectrum.map(spectrum => CodecHelpers.renderFloats(spectrum.toVector)),
           ) ++

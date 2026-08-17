@@ -455,7 +455,7 @@ object PlacedObjectCodec:
         trimCtm <- XmlDecoders.attributeOf("TrimCTM")(Lexical.matrix).decode(element)
         trimSize <- XmlDecoders.attributeOf("TrimSize")(Lexical.xypair).decode(element)
         markObject <- XmlDecoders.optionalChild("MarkObject")(summon[XmlElementCodec[MarkObject]]).decode(element)
-        hasContentObject <- XmlDecoders.optionalChild("ContentObject")(ContentObjectCodec).decode(element)
+        hasContentObject <- XmlDecoders.optionalChild("ContentObject")(ContentObjectCodec.decoder).decode(element)
         pageActivation <- XmlDecoders.optionalChild("PageActivation")(summon[XmlElementCodec[PageActivation]]).decode(element)
         pageCondition <- XmlDecoders.optionalChild("PageCondition")(summon[XmlElementCodec[PageCondition]]).decode(element)
         _ <- XmlDecoders.expectChildrenOnly(Set("MarkObject", "ContentObject", "PageActivation", "PageCondition"))
