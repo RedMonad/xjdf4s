@@ -4,7 +4,7 @@ import xjdf4s.core.*
 
 object FileSpecChecks:
   private val url = UriRef.from("https://example.org/input.pdf").toOption.get
-  private val template = Nmtoken.from("1~10").toOption.get
+  private val template = Nmtoken.from("1-10").toOption.get
 
   val exclusiveLocations: Unit =
     val remote = FileSpec(location = FileLocation.Url(url))
