@@ -201,20 +201,43 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
         Left(DecodingFailure("foreign elements are collected by the derived codec", Nil))
   end extensionElementFieldCodec
 
+  // -- value types: case classes with hand scalar codecs, but attributes in the naming -------------------
+
+  /**
+   * `XYPair`, `Matrix`, `Rectangle`, ... are case classes (hence `scala.Product`), so the generic
+   * `productFieldCodec` would classify them as nodes. The exact-type givens below beat the generic bound and
+   * keep them scalar attributes, mirroring the explicit FieldCodec givens of the XML side.
+   */
+  given xypairFieldCodec: JsonFieldCodec[XYPair] = JsonFieldCodec.from(summon[Encoder[XYPair]], summon[Decoder[XYPair]])
+  given matrixFieldCodec: JsonFieldCodec[Matrix] = JsonFieldCodec.from(summon[Encoder[Matrix]], summon[Decoder[Matrix]])
+  given rectangleFieldCodec: JsonFieldCodec[Rectangle] = JsonFieldCodec.from(summon[Encoder[Rectangle]], summon[Decoder[Rectangle]])
+  given integerRangeFieldCodec: JsonFieldCodec[IntegerRange] =
+    JsonFieldCodec.from(summon[Encoder[IntegerRange]], summon[Decoder[IntegerRange]])
+  given shape3dFieldCodec: JsonFieldCodec[Shape3D] = JsonFieldCodec.from(summon[Encoder[Shape3D]], summon[Decoder[Shape3D]])
+  given gridSizeFieldCodec: JsonFieldCodec[GridSize] = JsonFieldCodec.from(summon[Encoder[GridSize]], summon[Decoder[GridSize]])
+  given tileCoordinateFieldCodec: JsonFieldCodec[TileCoordinate] =
+    JsonFieldCodec.from(summon[Encoder[TileCoordinate]], summon[Decoder[TileCoordinate]])
+
   // -- nodes ---------------------------------------------------------------------
 
   /**
    * Canonical `deriveOrSummon` pattern from the reference documentation: an inline given selected through
    * `summonInline`, which at its expansion site first looks for an existing Encoder/Decoder pair (hand codecs,
-   * generated per-type givens) and otherwise derives both inline, right there. Self-recursive types such as
-   * BundleItem resolve through their per-type givens, keeping the recursion at runtime.
+   * generated per-type givens) and otherwise derives both inline, right there.
+   *
+   * `scala.reflect.Enum` extends `scala.Product` (reference/enums.md), so this given also matches plain enums.
+   * The `Mirror.ProductOf` check tells case classes (node, element-name member) from enums (scalar attribute,
+   * attribute-name member): enums only have a `Mirror.SumOf`.
    */
   inline given productFieldCodec[A <: scala.Product]: JsonFieldCodec[A] =
     val classTag = summonInline[ClassTag[A]]
     summonFrom {
       case encoder: Encoder[A] =>
         val decoder = summonFrom { case decoder: Decoder[A] => decoder }
-        JsonFieldCodec.fromProduct(encoder, decoder, classTag)
+        summonFrom {
+          case _: Mirror.ProductOf[A] => JsonFieldCodec.fromProduct(encoder, decoder, classTag)
+          case _                      => JsonFieldCodec.from(encoder, decoder)
+        }
       case _ =>
         val node = JsonDerived.derived[A](using summonInline[Mirror.ProductOf[A]], classTag)
         JsonFieldCodec.fromProduct(node._1, node._2, classTag)

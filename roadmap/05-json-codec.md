@@ -200,6 +200,12 @@ def xmlJsonAgree[A: XmlDecoder: JsonCodec: Eq](value: A): Boolean =
   `AssemblySection` — только ручные кодеки, и рекурсия в них идёт ЯВНО через helper-объект
   (`BundleItemJson`/`AssemblySectionJson`), как в XML, а не через implicit-поиск (самоссылка given'а в
   собственном теле не находится).
+  **Урок 2 (энамы — Product'ы):** `scala.reflect.Enum extends Any, Product, Serializable`
+  (reference/enums.md), поэтому generic `productFieldCodec[A <: scala.Product]` перехватывает и plain-энамы,
+  назначая им element-name вместо attribute-name (`status: NodeStatus` → член «NodeStatus» вместо «Status» —
+  поймано нормативной фикстурой 9.11). Различение — по наличию `Mirror.ProductOf` (у энамов только
+  `Mirror.SumOf`); value-типы-кейсклассы (`XYPair`, `Matrix`, `Rectangle`, `IntegerRange`, `Shape3D`,
+  `GridSize`, `TileCoordinate`) защищены точными given'ами `JsonFieldCodec`, как в XML-`FieldCodec`.
 - **Ручные кодеки спец-форм** (`JsonSpecialCodecs.scala`, зеркалят XML-маппинг): `FileSpec` (плоские члены
   `URL`/`UID`/`FileFormat`+`FileTemplate`), `Disposition` (`MinDuration`/`Until`), `NetworkHeader` (`"Text"`),
   `TiffTag` (`BinaryValue`/`IntegerValue`/`NumberValue`/`StringValue`), `PlacedObject` (`MarkObject`/

@@ -82,6 +82,27 @@ object JsonDerivedChecks:
     val product = Product(intents = Vector(Intent(Nmtoken.from("media-intent").toOption.get, Some(MediaIntent(MediaType.Paper)))))
     assert(roundTrip(product) == product)
 
+  /**
+   * Plain enums extend scala.Product (reference/enums.md), so they must stay scalar attributes in the derived
+   * codecs - the member is the attribute name "Status", never the enum class name "NodeStatus".
+   */
+  val nodeInfoStatus: Unit =
+    val info = NodeInfo(start = Some(time), status = Some(NodeStatus.Waiting))
+    val decoded = roundTrip(info)
+    assert(decoded.status.contains(NodeStatus.Waiting))
+    val members = info.asJson.hcursor.keys.getOrElse(Iterable.empty).toSet
+    assert(members.contains("Status"))
+    assert(!members.contains("NodeStatus"))
+
+  /** Value-type case classes (Rectangle here) are attributes too: the member is "ExpansionBox", not "Rectangle". */
+  val layoutExpansionBox: Unit =
+    val layout = Layout(expansionBox = Some(Rectangle(XYPair(0, 0), XYPair(100, 50))))
+    val decoded = roundTrip(layout)
+    assert(decoded.expansionBox.contains(Rectangle(XYPair(0, 0), XYPair(100, 50))))
+    val members = layout.asJson.hcursor.keys.getOrElse(Iterable.empty).toSet
+    assert(members.contains("ExpansionBox"))
+    assert(!members.contains("Rectangle"))
+
   val foreignExtensions: Unit =
     val mediaIntent = MediaIntent(
       MediaType.Paper,
