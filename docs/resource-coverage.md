@@ -1,108 +1,110 @@
 # SpecificResource coverage
 
-Generated from `xsdq.py hierarchy` for the abstract `SpecificResource` complex type.
+Combined from `xsdq.py hierarchy`, direct XSD substitution-group inspection, and the normative XJDF 2.2 resource tables.
 
-| # | Resource | Status |
-|---:|---|---|
-| 1 | `CustomerInfo` | typed |
-| 2 | `NodeInfo` | typed |
-| 3 | `Shape` | typed |
-| 4 | `BlockPreparationParams` | typed |
-| 5 | `BoxPackingParams` | typed |
-| 6 | `Bundle` | typed |
-| 7 | `CaseMakingParams` | typed |
-| 8 | `CasingInParams` | typed |
-| 9 | `CoverApplicationParams` | typed |
-| 10 | `CreasingParams` | typed |
-| 11 | `CuttingParams` | typed |
-| 12 | `DevelopingParams` | typed |
-| 13 | `Device` | typed |
-| 14 | `EmbossingParams` | typed |
-| 15 | `EndSheetGluingParams` | typed |
-| 16 | `GluingParams` | typed |
-| 17 | `HeadBandApplicationParams` | typed |
-| 18 | `InsertingParams` | typed |
-| 19 | `InterpretingParams` | typed |
-| 20 | `JacketingParams` | typed |
-| 21 | `LabelingParams` | typed |
-| 22 | `LaminatingParams` | typed |
-| 23 | `Pallet` | typed |
-| 24 | `PalletizingParams` | typed |
-| 25 | `PerforatingParams` | typed |
-| 26 | `ShapeCuttingParams` | typed |
-| 27 | `ShrinkingParams` | typed |
-| 28 | `SpinePreparationParams` | typed |
-| 29 | `SpineTapingParams` | typed |
-| 30 | `StackingParams` | typed |
-| 31 | `StrappingParams` | typed |
-| 32 | `ThreadSealingParams` | typed |
-| 33 | `Tool` | typed |
-| 34 | `VarnishingParams` | typed |
-| 35 | `VerificationParams` | typed |
-| 36 | `VerificationResult` | typed |
-| 37 | `WrappingParams` | typed |
-| 38 | `LooseBindingParams` | typed |
-| 39 | `ApprovalDetails` | typed |
-| 40 | `ApprovalParams` | typed |
-| 41 | `Assembly` | typed |
-| 42 | `BarcodeCompParams` | typed |
-| 43 | `BarcodeReproParams` | typed |
-| 44 | `BendingParams` | typed |
-| 45 | `BinderySignature` | typed |
-| 46 | `BoxFoldingParams` | typed |
-| 47 | `Color` | typed |
-| 48 | `ColorantControl` | typed |
-| 49 | `Component` | typed |
-| 50 | `Contact` | typed |
-| 51 | `Content` | typed |
-| 52 | `ConventionalPrintingParams` | typed |
-| 53 | `DeliveryParams` | typed |
-| 54 | `DieLayout` | typed |
-| 55 | `DieLayoutProductionParams` | typed |
-| 56 | `DigitalPrintingParams` | typed |
-| 57 | `ExposedMedia` | typed |
-| 58 | `FeedingParams` | typed |
-| 59 | `FontPolicy` | typed |
-| 60 | `ImageCompressionParams` | typed |
-| 61 | `ImageEnhancementParams` | typed |
-| 62 | `ImageSetterParams` | typed |
-| 63 | `Layout` | typed |
-| 64 | `LayoutElementProductionParams` | typed |
-| 65 | `LayoutShift` | typed |
-| 66 | `ManualLaborParams` | typed |
-| 67 | `Media` | typed |
-| 68 | `MiscConsumable` | typed |
-| 69 | `PDLCreationParams` | typed |
-| 70 | `PreflightParams` | typed |
-| 71 | `PreflightReport` | typed |
-| 72 | `Preview` | typed |
-| 73 | `QualityControlParams` | typed |
-| 74 | `QualityControlResult` | typed |
-| 75 | `RegisterMark` | typed |
-| 76 | `RunList` | typed |
-| 77 | `SeparationControlParams` | typed |
-| 78 | `ShapeDef` | typed |
-| 79 | `ShapeDefProductionParams` | typed |
-| 80 | `SheetOptimizingParams` | typed |
-| 81 | `TransferCurve` | typed |
-| 82 | `UsageCounter` | typed |
-| 83 | `BundlingParams` | typed |
-| 84 | `FoldingParams` | typed |
-| 85 | `HoleMakingParams` | typed |
-| 86 | `StitchingParams` | typed |
-| 87 | `ThreadSewingParams` | typed |
-| 88 | `TrimmingParams` | typed |
-| 89 | `WebInlineFinishingParams` | typed |
-| 90 | `ColorCorrectionParams` | typed |
-| 91 | `ColorSpaceConversionParams` | typed |
-| 92 | `Ink` | typed |
-| 93 | `InkZoneCalculationParams` | typed |
-| 94 | `InkZoneProfile` | typed |
-| 95 | `PreviewGenerationParams` | typed |
-| 96 | `RenderingParams` | typed |
-| 97 | `ScreeningParams` | typed |
-| 98 | `TrappingParams` | typed |
-| 99 | `PrintCondition` | typed |
-| 100 | `WindingParams` | typed |
+| # | Resource | Source | Status |
+|---:|---|---|---|
+| 1 | `CustomerInfo` | XSD hierarchy | typed |
+| 2 | `NodeInfo` | XSD hierarchy | typed |
+| 3 | `Shape` | XSD hierarchy | typed |
+| 4 | `BlockPreparationParams` | XSD hierarchy | typed |
+| 5 | `BoxPackingParams` | XSD hierarchy | typed |
+| 6 | `Bundle` | XSD hierarchy | typed |
+| 7 | `CaseMakingParams` | XSD hierarchy | typed |
+| 8 | `CasingInParams` | XSD hierarchy | typed |
+| 9 | `CoverApplicationParams` | XSD hierarchy | typed |
+| 10 | `CreasingParams` | XSD hierarchy | typed |
+| 11 | `CuttingParams` | XSD hierarchy | typed |
+| 12 | `DevelopingParams` | XSD hierarchy | typed |
+| 13 | `Device` | XSD hierarchy | typed |
+| 14 | `EmbossingParams` | XSD hierarchy | typed |
+| 15 | `EndSheetGluingParams` | XSD hierarchy | typed |
+| 16 | `GluingParams` | XSD hierarchy | typed |
+| 17 | `HeadBandApplicationParams` | XSD hierarchy | typed |
+| 18 | `InsertingParams` | XSD hierarchy | typed |
+| 19 | `InterpretingParams` | XSD hierarchy | typed |
+| 20 | `JacketingParams` | XSD hierarchy | typed |
+| 21 | `LabelingParams` | XSD hierarchy | typed |
+| 22 | `LaminatingParams` | XSD hierarchy | typed |
+| 23 | `Pallet` | XSD hierarchy | typed |
+| 24 | `PalletizingParams` | XSD hierarchy | typed |
+| 25 | `PerforatingParams` | XSD hierarchy | typed |
+| 26 | `ShapeCuttingParams` | XSD hierarchy | typed |
+| 27 | `ShrinkingParams` | XSD hierarchy | typed |
+| 28 | `SpinePreparationParams` | XSD hierarchy | typed |
+| 29 | `SpineTapingParams` | XSD hierarchy | typed |
+| 30 | `StackingParams` | XSD hierarchy | typed |
+| 31 | `StrappingParams` | XSD hierarchy | typed |
+| 32 | `ThreadSealingParams` | XSD hierarchy | typed |
+| 33 | `Tool` | XSD hierarchy | typed |
+| 34 | `VarnishingParams` | XSD hierarchy | typed |
+| 35 | `VerificationParams` | XSD hierarchy | typed |
+| 36 | `VerificationResult` | XSD hierarchy | typed |
+| 37 | `WrappingParams` | XSD hierarchy | typed |
+| 38 | `LooseBindingParams` | XSD hierarchy | typed |
+| 39 | `ApprovalDetails` | XSD hierarchy | typed |
+| 40 | `ApprovalParams` | XSD hierarchy | typed |
+| 41 | `Assembly` | XSD hierarchy | typed |
+| 42 | `BarcodeCompParams` | XSD hierarchy | typed |
+| 43 | `BarcodeReproParams` | XSD hierarchy | typed |
+| 44 | `BendingParams` | XSD hierarchy | typed |
+| 45 | `BinderySignature` | XSD hierarchy | typed |
+| 46 | `BoxFoldingParams` | XSD hierarchy | typed |
+| 47 | `Color` | XSD hierarchy | typed |
+| 48 | `ColorantControl` | XSD hierarchy | typed |
+| 49 | `Component` | XSD hierarchy | typed |
+| 50 | `Contact` | XSD hierarchy | typed |
+| 51 | `Content` | XSD hierarchy | typed |
+| 52 | `ConventionalPrintingParams` | XSD hierarchy | typed |
+| 53 | `DeliveryParams` | XSD hierarchy | typed |
+| 54 | `DieLayout` | XSD hierarchy | typed |
+| 55 | `DieLayoutProductionParams` | XSD hierarchy | typed |
+| 56 | `DigitalPrintingParams` | XSD hierarchy | typed |
+| 57 | `ExposedMedia` | XSD hierarchy | typed |
+| 58 | `FeedingParams` | XSD hierarchy | typed |
+| 59 | `FontPolicy` | XSD hierarchy | typed |
+| 60 | `ImageCompressionParams` | XSD hierarchy | typed |
+| 61 | `ImageEnhancementParams` | XSD hierarchy | typed |
+| 62 | `ImageSetterParams` | XSD hierarchy | typed |
+| 63 | `Layout` | XSD hierarchy | typed |
+| 64 | `LayoutElementProductionParams` | XSD hierarchy | typed |
+| 65 | `LayoutShift` | XSD hierarchy | typed |
+| 66 | `ManualLaborParams` | XSD hierarchy | typed |
+| 67 | `Media` | XSD hierarchy | typed |
+| 68 | `MiscConsumable` | XSD hierarchy | typed |
+| 69 | `PDLCreationParams` | XSD hierarchy | typed |
+| 70 | `PreflightParams` | XSD hierarchy | typed |
+| 71 | `PreflightReport` | XSD hierarchy | typed |
+| 72 | `Preview` | XSD hierarchy | typed |
+| 73 | `QualityControlParams` | XSD hierarchy | typed |
+| 74 | `QualityControlResult` | XSD hierarchy | typed |
+| 75 | `RegisterMark` | XSD hierarchy | typed |
+| 76 | `RunList` | XSD hierarchy | typed |
+| 77 | `SeparationControlParams` | XSD hierarchy | typed |
+| 78 | `ShapeDef` | XSD hierarchy | typed |
+| 79 | `ShapeDefProductionParams` | XSD hierarchy | typed |
+| 80 | `SheetOptimizingParams` | XSD hierarchy | typed |
+| 81 | `TransferCurve` | XSD hierarchy | typed |
+| 82 | `UsageCounter` | XSD hierarchy | typed |
+| 83 | `BundlingParams` | XSD hierarchy | typed |
+| 84 | `FoldingParams` | XSD hierarchy | typed |
+| 85 | `HoleMakingParams` | XSD hierarchy | typed |
+| 86 | `StitchingParams` | XSD hierarchy | typed |
+| 87 | `ThreadSewingParams` | XSD hierarchy | typed |
+| 88 | `TrimmingParams` | XSD hierarchy | typed |
+| 89 | `WebInlineFinishingParams` | XSD hierarchy | typed |
+| 90 | `ColorCorrectionParams` | XSD hierarchy | typed |
+| 91 | `ColorSpaceConversionParams` | XSD hierarchy | typed |
+| 92 | `Ink` | XSD hierarchy | typed |
+| 93 | `InkZoneCalculationParams` | XSD hierarchy | typed |
+| 94 | `InkZoneProfile` | XSD hierarchy | typed |
+| 95 | `PreviewGenerationParams` | XSD hierarchy | typed |
+| 96 | `RenderingParams` | XSD hierarchy | typed |
+| 97 | `ScreeningParams` | XSD hierarchy | typed |
+| 98 | `TrappingParams` | XSD hierarchy | typed |
+| 99 | `PrintCondition` | XSD hierarchy | typed |
+| 100 | `WindingParams` | XSD hierarchy | typed |
+| 101 | `RasterReadingParams` | XSD substitution group | typed |
+| 102 | `SheetOptimizingReport` | XJDF 2.2 table 6.162 | typed |
 
-Current coverage: **100/100** schema-defined descendants.
+Current coverage: **102/102** combined schema-defined and normative resources.

@@ -40,10 +40,12 @@ python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSche
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}SignalQueueStatus' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}CommandSubmitQueueEntry' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}FileSpec' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}RasterReadingParams' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 ```
 
-The index reports 365 elements, 366 complex types and 228 simple types. All 100 `SpecificResource` descendants and all 44
-concrete XJMF messages are now represented; the public algebra remains extensible at normative extension points. The
+The index reports 365 elements, 366 complex types and 228 simple types. All 100 descendants reported by the hierarchy,
+plus the omitted XSD member `RasterReadingParams` and normative 2.2 `SheetOptimizingReport`, are represented. All 44
+concrete XJMF messages are also represented; the public algebra remains extensible at normative extension points. The
 checked-in schema's `Version`
 facet lists `2.0` and `2.1`, while the normative 2.2 prose requires `2.2`; the domain enum deliberately accepts all three
 and records this source discrepancy rather than silently dropping the current specification value. Two further index/schema
@@ -56,7 +58,9 @@ Image compression follows chapter 8 where schema index types are corrupted (`CCI
 `JPEG2000Params/@LayerRates`). `ContentMetadata/@ISBN`, `RefAnchor/@AnchorType`, and
 `StopPersChParams/@MessageType` likewise follow their normative token/enumeration definitions instead of corrupt index
 types. `CommandShutDown/ShutDownCmdParams` follows the normative optional cardinality. Queue-entry resubmission uses
-normative `NMTOKEN` and closed update-method types instead of indexed `float` and unconstrained `string`.
+normative `NMTOKEN` and closed update-method types instead of indexed `float` and unconstrained `string`. The generated
+hierarchy omits the XSD substitution member `RasterReadingParams`; the normative 2.2-only `SheetOptimizingReport` is absent
+from the XSD entirely. Both are included in the model and combined coverage report.
 
 ## Scala 3 modelling rules
 
@@ -80,8 +84,9 @@ normative `NMTOKEN` and closed update-method types instead of indexed `float` an
 - **Slice 3 (implemented):** all 14 schema-defined chapter-4 ProductIntent descendants and their direct child algebras.
   `ProductIntent` remains open only because section 3.5.4 explicitly permits extension intents; `StandardProductIntent`
   exposes the complete closed union supplied by XJDF 2.2.
-- **Slice 4 (implemented):** all 100 `SpecificResource` descendants grouped by general/prepress/press/postpress process
-  domains, including their reusable and recursive child graphs. See [resource-coverage.md](resource-coverage.md).
+- **Slice 4 (implemented):** all 102 combined schema-index and normative 2.2 resources, grouped by
+  general/prepress/press/postpress domains, including reusable and recursive child graphs. See
+  [resource-coverage.md](resource-coverage.md).
 - **Slice 5 (implemented):** all 44 concrete XJMF query/command/signal/response elements and their payload graphs.
   Complete closed unions are exposed as `StandardCommand`, `StandardQuery`, `StandardResponse`, `StandardSignal`, and
   `StandardMessage`; protocol traits remain open for foreign extensions. See [message-coverage.md](message-coverage.md).

@@ -43,9 +43,10 @@ type PrepressSpecificResource =
     resources.InkZoneCalculationParams | resources.InterpretingParams |
     resources.InkZoneProfile | resources.LayoutElementProductionParams | resources.LayoutShift |
     resources.ManualLaborParams | resources.PDLCreationParams | resources.PreflightParams |
-    resources.PreflightReport | resources.PreviewGenerationParams | resources.RegisterMark |
-    resources.RenderingParams | resources.ScreeningParams | resources.SeparationControlParams |
-    resources.ShapeDefProductionParams | resources.SheetOptimizingParams | resources.TrappingParams
+    resources.PreflightReport | resources.PreviewGenerationParams | resources.RasterReadingParams |
+    resources.RegisterMark | resources.RenderingParams | resources.ScreeningParams |
+    resources.SeparationControlParams | resources.ShapeDefProductionParams | resources.SheetOptimizingParams |
+    resources.SheetOptimizingReport | resources.TrappingParams
 
 type GeneralSpecificResource =
   resources.ApprovalDetails | resources.ApprovalParams | resources.DeliveryParams | resources.Preview |
@@ -54,7 +55,7 @@ type GeneralSpecificResource =
 
 type PressSpecificResource = resources.ConventionalPrintingParams | resources.DigitalPrintingParams
 
-/** Complete union of all 100 schema-defined SpecificResource descendants. */
+/** Complete union of schema-defined and normative XJDF 2.2 SpecificResource descendants. */
 type StandardSpecificResource =
   FoundationalSpecificResource | PostpressSpecificResource | PrepressSpecificResource | GeneralSpecificResource |
     PressSpecificResource
@@ -62,7 +63,7 @@ type StandardSpecificResource =
 /** Compatibility name retained from the incremental construction phase. */
 type TypedSpecificResource = StandardSpecificResource
 
-/** Lossless schema-shaped fallback while dedicated resource records are added slice by slice. */
+/** Lossless carrier for ICS and foreign-namespace resources outside the standard XJDF resource union. */
 final case class NamedSpecificResource(
     elementName: QualifiedName,
     extensions: Extensions = Extensions.empty,

@@ -39,7 +39,7 @@ trait Response extends Message:
   def notification: Option[Notification]
 end Response
 
-/** Generic but family-safe records used before each chapter-7 message gets a dedicated payload. */
+/** Family-safe records for ICS and foreign-namespace message extensions outside the 44 standard messages. */
 final case class QueryMessage(
     elementName: QualifiedName,
     header: Header,

@@ -92,7 +92,7 @@ final case class ResourceInfo(
       Extensible
 
 final case class Activity(
-    activityId: Option[String] = None,
+    activityId: Option[Nmtoken] = None,
     activityName: Option[String] = None,
     endTime: Option[XsdDateTime] = None,
     personalId: Option[Nmtoken] = None,
@@ -126,12 +126,13 @@ final case class JobPhase(
     moduleIds: Vector[Nmtoken] = Vector.empty,
     percentCompleted: Option[Float] = None,
     queueEntryId: Option[Nmtoken] = None,
-    relatedJobId: Option[Nmtoken] = None,
-    relatedJobPartId: Option[Nmtoken] = None,
+    relatedJobId: Option[String] = None,
+    relatedJobPartId: Option[String] = None,
     restTime: Option[XsdDuration] = None,
     startTime: Option[XsdDateTime] = None,
     statusDetails: Option[Nmtoken] = None,
     toolIds: Vector[Nmtoken] = Vector.empty,
+    totalAmount: Option[Float] = None,
     waste: Option[Float] = None,
     workStepId: Option[Nmtoken] = None,
     activities: Vector[Activity] = Vector.empty,
@@ -196,6 +197,11 @@ final case class FileSpec(
 ) extends XjdfNode,
       Extensible
 
+final case class DeviceInfoSchemas(
+    current: Option[FileSpec] = None,
+    global: Option[FileSpec] = None,
+)
+
 final case class DeviceInfo(
     status: DeviceStatus,
     counterUnit: Option[Nmtoken] = None,
@@ -211,7 +217,7 @@ final case class DeviceInfo(
     totalProductionCounter: Option[Float] = None,
     activities: Vector[Activity] = Vector.empty,
     events: Vector[Event] = Vector.empty,
-    fileSpecs: AtMostTwo[FileSpec] = AtMostTwo.empty,
+    schemas: DeviceInfoSchemas = DeviceInfoSchemas(),
     jobPhases: Vector[JobPhase] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
