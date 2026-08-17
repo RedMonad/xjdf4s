@@ -103,4 +103,6 @@ Generic-носители принимают только `ForeignQName`.
 ## Дальше
 
 План развития — [roadmap/](../roadmap/README.md); понятийный минимум FP — [fp-glossary.md](fp-glossary.md);
-дизайн DSL — [free-dsl.md](free-dsl.md).
+дизайн DSL — [free-dsl.md](free-dsl.md). Перед реализацией JSON-кодека обязателен раздел
+«Предостережения из этапа 04» в [roadmap/05-json-codec.md](../roadmap/05-json-codec.md) — он сводит
+ловушки XML-этапа (имена, порядок, деривация, генераторы, строгие флаги) к списку правил.

@@ -237,6 +237,12 @@ def checkReferences(doc: XJDF): ValidatedNel[ValidationError, Unit] =
   2.2-атрибуты Tool/Patch, новые значения enum), не генерируются — падение property означает дефект кодека,
   а не известное расхождение. Строковое сравнение с нормативными примерами заменено этим proof-ом:
   он сильнее (сотни документов против трёх фикстур) и покрывает и XJDF, и XJMF.
+- **DoD этапа закрыт:** `sbt "clean ; compile ; test"` зелёный (6/6 сюитов), свойство-тест пройден
+  2×100 итераций. Свойство-тест оправдал себя сразу — поймал три дефекта, которых не видели round-trip-тесты:
+  (1) dangling IDREF `Component/@MediaRef` (`cvc-id.1`; генератор теперь держит якорный `Resource` с `@ID`
+  и ссылается на него); (2) порядок детей `QueryResource` — XSD задаёт `Header, Subscription?`,
+  `ResourceQuParams` после них (`cvc-complex-type.2.4.d`; энкодер выровнен); (3) порядок детей `XJDF` и
+  `Media` под их `xs:sequence`. Именно поэтому proof-подход закреплён как обязательный и для JSON-этапа.
 - **Открытые хвосты (осознанно, на будущие итерации):** `ReferenceCheck` покрывает поверхность ссылок
   среза (Component/Glue); расширение на FileSpec/@UID, PlacedObject/@PositionRef и т.п. — по мере
   необходимости. Имена атрибутов, где XSD расходится с нормативом (`@NPage` vs `@NumberOfPages`), —
