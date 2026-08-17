@@ -2,7 +2,6 @@ package xjdf4s.codec.xml.domain
 
 import xjdf4s.codec.xml.*
 import xjdf4s.codec.xml.derivation.{Derived, FieldCodec}
-import xjdf4s.codec.xml.derivation.Derived.given
 import xjdf4s.codec.xml.derivation.FieldCodec.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*

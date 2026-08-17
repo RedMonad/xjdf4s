@@ -22,7 +22,13 @@ import xjdf4s.core.*
  */
 object Derived:
 
-  inline given derived[A <: Product](using m: Mirror.ProductOf[A], ct: ClassTag[A]): XmlElementCodec[A] =
+  /**
+   * Compile-time derivation entry point. It is an inline *def* rather than an inline *given*: inline givens cannot
+   * be found by ordinary implicit search, so every `summon[XmlElementCodec[X]]` in registries and tests would fail.
+   * Instead, non-inline given instances are generated per type in `DerivedInstances` and call this method directly;
+   * the inlining then happens here, at those call sites.
+   */
+  inline def derived[A <: Product](using m: Mirror.ProductOf[A], ct: ClassTag[A]): XmlElementCodec[A] =
     val labels = constValueTuple[m.MirroredElemLabels]
     val codecs = summonAll[Tuple.Map[m.MirroredElemTypes, FieldCodec]]
     new DerivedCodec[A](
