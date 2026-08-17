@@ -21,8 +21,9 @@ import xjdf4s.model.resources.*
  * resolved by the canonical deriveOrSummon fallback in `FieldCodec.productCodec`, so the list order no longer
  * affects resolution (it is kept topologically sorted by field dependencies anyway).
  *
- * Excluded: hand codecs, attribute-only value types, the Audit family (dispatched through AuditCodec) and the
- * foreign fallback message carriers. Regenerate from the model case-class list when the model grows.
+ * Excluded: hand codecs (including the self-recursive AssemblySection and BundleItem), attribute-only value
+ * types, the Audit family (dispatched through AuditCodec) and the foreign fallback message carriers.
+ * Regenerate from the model case-class list when the model grows.
  */
 given derivedCodecActivity: XmlElementCodec[Activity] = Derived.derived[Activity]
 given derivedCodecAddress: XmlElementCodec[Address] = Derived.derived[Address]
@@ -58,7 +59,6 @@ given derivedCodecBlockPreparationParams: XmlElementCodec[BlockPreparationParams
 given derivedCodecBoxFoldAction: XmlElementCodec[BoxFoldAction] = Derived.derived[BoxFoldAction]
 given derivedCodecBoxFoldingParams: XmlElementCodec[BoxFoldingParams] = Derived.derived[BoxFoldingParams]
 given derivedCodecBoxPackingParams: XmlElementCodec[BoxPackingParams] = Derived.derived[BoxPackingParams]
-given derivedCodecBundleItem: XmlElementCodec[BundleItem] = Derived.derived[BundleItem]
 given derivedCodecBundle: XmlElementCodec[Bundle] = Derived.derived[Bundle]
 given derivedCodecBundlingParams: XmlElementCodec[BundlingParams] = Derived.derived[BundlingParams]
 given derivedCodecByteMap: XmlElementCodec[ByteMap] = Derived.derived[ByteMap]

@@ -440,6 +440,59 @@ given assemblySectionCodec: XmlElementCodec[AssemblySection] = XmlElementCodec.i
 given assemblySectionField: FieldCodec[AssemblySection] =
   FieldCodec.element(summon[XmlElementCodec[AssemblySection]])
 
+/**
+ * BundleItem is the second self-recursive case class of the model (`children: Vector[BundleItem]`, Table 6.23);
+ * its codec is hand-written for the same reason as AssemblySection: the generic derivation would recurse
+ * indefinitely while materializing the `children` field.
+ */
+object BundleItemCodec:
+  private val bundleType: Lexical.Lex[BundleType] = Lexical.enumOf(BundleType.values.toVector, _.toString)
+
+  def decoder: XmlDecoder[BundleItem] =
+    XmlDecoder.instance: element =>
+      for
+        amount <- XmlDecoders.requiredAttribute("Amount")(Lexical.int).decode(element)
+        bundleType <- XmlDecoders.attributeOf("BundleType")(bundleType).decode(element)
+        itemRef <- XmlDecoders.attributeOf("ItemRef")(Lexical.xsdIdRef).decode(element)
+        totalAmount <- XmlDecoders.attributeOf("TotalAmount")(Lexical.int).decode(element)
+        totalDimensions <- XmlDecoders.attributeOf("TotalDimensions")(Lexical.shape3d).decode(element)
+        totalVolume <- XmlDecoders.attributeOf("TotalVolume")(Lexical.float).decode(element)
+        totalWeight <- XmlDecoders.attributeOf("TotalWeight")(Lexical.float).decode(element)
+        children <- XmlDecoders.repeatedChild("BundleItem")(decoder).decode(element)
+        _ <- XmlDecoders.expectChildrenOnly(Set("BundleItem")).decode(element)
+      yield BundleItem(
+        amount,
+        bundleType,
+        itemRef,
+        totalAmount,
+        totalDimensions,
+        totalVolume,
+        totalWeight,
+        children,
+        CodecHelpers.decodeExtensionAttributes(element),
+      )
+
+  val encoder: XmlEncoder[BundleItem] =
+    XmlEncoder.instance: item =>
+      val attributes =
+        CodecHelpers.attributeOf("BundleType", item.bundleType, _.toString) ++
+          CodecHelpers.attributeOf("ItemRef", item.itemRef, (v: XsdIdRef) => v.value) ++
+          CodecHelpers.attributeOf("TotalAmount", item.totalAmount, CodecHelpers.renderInt) ++
+          CodecHelpers.attributeOf("TotalDimensions", item.totalDimensions, CodecHelpers.renderShape3d) ++
+          CodecHelpers.attributeOf("TotalVolume", item.totalVolume, CodecHelpers.renderFloat) ++
+          CodecHelpers.attributeOf("TotalWeight", item.totalWeight, CodecHelpers.renderFloat) ++
+          CodecHelpers.attribute("Amount", Some(CodecHelpers.renderInt(item.amount))) ++
+          CodecHelpers.extensionAttributes(item.extensions)
+      Xml.Element(CodecHelpers.qname("BundleItem"), attributes, item.children.map(encoder.encode))
+end BundleItemCodec
+
+given bundleItemCodec: XmlElementCodec[BundleItem] = XmlElementCodec.instance("BundleItem")(
+  BundleItemCodec.decoder.decode,
+  BundleItemCodec.encoder.encode,
+)
+given bundleItemField: FieldCodec[BundleItem] =
+  FieldCodec.element(summon[XmlElementCodec[BundleItem]])
+
 object AssemblyCodec:
   val decoder: XmlDecoder[Assembly] =
     XmlDecoder.instance: element =>
