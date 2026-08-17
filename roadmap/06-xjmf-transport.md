@@ -1,0 +1,126 @@
+# Этап 06 — XJMF-транспорт: каналы и сессии
+
+| Поле | Значение |
+|---|---|
+| Цель | Модель поведения XJMF-обмена: персистентные каналы, подписки, корреляция ответов, окна замены `SignalResource` — как чистая алгебра с интерпретаторами (in-memory, журнал) |
+| Вход | Этапы 03 (паттерн Free) и 04 (кодеки сообщений); модель messaging уже содержит 44 сообщения |
+| Выход | Модуль `xjmf`: алгебра `XjmfOp`, машина состояний каналов, in-memory интерпретатор, событийный журнал |
+| Сложкость | Высокая |
+| Зависимости | 03, 04 |
+
+## Зачем это нужно
+
+Модель знает *форму* сообщений (`SignalResource`, `Subscription`, `ChannelMode`…), но не знает
+*протокола*: как подписка превращается в канал, как `Signal` коррелирует с `Response` через
+`Header/@refID`, когда `SignalResource` замещает предыдущие данные (окна `@ReplaceAfter`/
+`@ReplaceBefore` уже валидируются в модели). Этот этап делает протокол исполняемым **без сети** —
+что даёт детерминированные тесты для всех сценариев обмена.
+
+## Предпосылки: что читать
+
+- норматив: `reference/xjdf/7 – Messaging.md` (Subscription/Signal/Response semantics,
+  `@refID`, persistent channels) и `reference/xjdf/8 – Subelements.md` Table 8.71
+  (`SubscriptionInfo`);
+- `reference/cats/docs/datatypes/freemonad.md` (паттерн из этапа 03),
+  `datatypes/state.md`, `datatypes/chain.md`, `datatypes/eval.md` (стекобезопасные рекурсии),
+  `datatypes/writer.md` (журнал событий).
+
+## Дизайн
+
+### 1. Алгебра транспорта
+
+Транспорт абстрагируется над *семантикой* обмена, а не над сокетами:
+
+```scala
+enum XjmfOp[A]:
+  case OpenChannel(subscription: Subscription, channelId: Nmtoken)        extends XjmfOp[Unit]
+  case CloseChannel(channelId: Nmtoken)                                   extends XjmfOp[Unit]
+  case Deliver(signal: Signal)                                            extends XjmfOp[Unit]
+  case AwaitResponse(refId: Nmtoken)                                      extends XjmfOp[Option[Response]]
+  case Channels                                                            extends XjmfOp[Vector[SubscriptionInfo]]
+
+type Xjmf[A] = Free[XjmfOp, A]
+```
+
+Заметьте: `Signal` — конкретный тип модели (а не «сырые байты») — транспорт работает на уровне
+домена; кодеки (этап 04) подключаются в HTTP-интерпретаторе (этап 07).
+
+### 2. Машина состояний канала
+
+Состояние in-memory интерпретатора — `State[XjmfState, *]`:
+
+```scala
+final case class XjmfState(
+    channels: Map[Nmtoken, ChannelState],
+    pending: Chain[Signal],                 // доставленные, ждущие ответа
+    events: Chain[TransportEvent],          // журнал
+)
+
+enum ChannelState:
+  case Subscribed(subscription: Subscription)
+  case Closed
+end ChannelState
+```
+
+Правила, которые кодируются в интерпретаторе (и только там — домен их не знает):
+
+- `Deliver(signal)` при закрытом канале → ошибка/событие;
+- `Signal/@ChannelMode = Reliable` ⇒ получатель **SHALL** ответить: `AwaitResponse` по
+  `signal.header.refId` находит (или не находит) `Response`; неотвеченный Reliable-сигнал —
+  это видимое состояние (для таймаутов на этапе 07);
+- `FireAndForget` — ответ опционален;
+- `SignalResource` с окнами: предыдущие сигналы канала, попавшие в окно
+  (`@ReplaceAfter < time ≤ @ReplaceBefore`), замещаются новым — реализуется как
+  трансформация `pending`, покрытая тестами (окна уже валидируются в модели).
+
+### 3. Корреляция через `@refID`
+
+`Header/@refID` связывает `Signal` с инициировавшим `Query` и с `Response`. В состоянии
+держите индекс `refId → channelId`; тест-сценарий: Query (refID=Q1) → подписка →
+`SignalResource` (refID=Q1) → `ResponseResource`. Это проверяет именно то, что ломается
+в реальных интеграциях.
+
+### 4. Два интерпретатора сейчас, сеть — потом
+
+1. `XjmfOp ~> State[XjmfState, *]` — детерминированная машина состояний (тесты);
+2. `XjmfOp ~> Writer[Chain[TransportEvent], *]` — трасса обмена (диагностика, replay).
+
+Один и тот же сценарий-программа исполняется обоими; на этапе 07 добавится
+`XjmfOp ~> IO` поверх HTTP.
+
+### 5. Free vs tagless (решение этого этапа)
+
+Для транспорта берите **tagless final** для внутренних границ (`Xjmf[F[_]]` с
+`Send`/`Receive`), а Free — для **сценариев** (программ, которые пользователь пишет и
+которые должны исполняться многократно и разно). Практический критерий: то, что будет
+сериализоваться/тестироваться как сценарий — Free; то, что является capability
+рантайма — tagless.
+
+## Задачи (пошагово)
+
+1. Модуль `xjmf`; алгебра `XjmfOp` + синтаксис.
+2. `XjmfState`/`ChannelState` и State-интерпретатор с правилами каналов.
+3. Сценарий «подписка → сигнал → ответ» с корреляцией `refID` (тест).
+4. Окна замены `SignalResource`: три сигнала, средний с окном, проверка замещения.
+5. Семантика `ChannelMode`: Reliable без ответа — наблюдаемое состояние; FireAndForget — нет.
+6. Writer-трасса: события `Opened/Closed/Delivered/Replaced` в хронологическом порядке.
+7. README модуля: диаграмма состояний канала + пример сценария.
+
+## Definition of Done
+
+- [ ] Сценарий подписки исполняется State- и Writer-интерпретаторами с одинаковой трассой.
+- [ ] Корреляция `refID`: тест связки Query→Signal→Response.
+- [ ] Окна замены `SignalResource` работают (замещение по `@ReplaceAfter/@ReplaceBefore`).
+- [ ] `Reliable`-сигнал без ответа виден как незакрытое ожидание; `FireAndForget` — нет.
+- [ ] Транспорт не содержит IO; сеть появится только на этапе 07.
+- [ ] `sbt "clean ; compile ; test"` зелёный.
+
+## Риски и альтернативы
+
+- **Перетащить в алгебру сетевые детали** (таймауты, ретраи) — они пойдут в
+  HTTP-интерпретатор этапа 07 через cats-retry/`IO.timeout`, иначе in-memory тесты
+  станут недетерминированными.
+- **Раздувание состояния.** `pending`/индексы должны быть минимальны; окна замены требуют
+  упорядоченного журнала — `Chain` сохраняет порядок и дёшево конкатенируется.
+- **Два стиля (Free и tagless) в одном модуле** сбивают новичков — зафиксируйте правило из
+  п. 5 в README и в ревью-гайде.

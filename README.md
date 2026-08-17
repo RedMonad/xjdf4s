@@ -13,14 +13,15 @@ The project is intentionally split along protocol boundaries:
 - `xjdf4s-messaging` — XJMF envelope, headers and the four message families (44 concrete messages);
 - `xjdf4s-protocol` — public protocol-wide union/intersection types.
 
-The data-model is complete at the entity-name level and consolidated against the XJDF/XJMF 2.2 audit reports
-(`AUDIT.md`, `FACTS-A/B/C.md`): see [docs/model-plan.md](docs/model-plan.md) for the implementation plan,
-[docs/resource-coverage.md](docs/resource-coverage.md) and [docs/message-coverage.md](docs/message-coverage.md) for
-coverage, and [docs/normative-choices.md](docs/normative-choices.md) for the register of deliberate
-XSD/normative divergences.
+The domain stays free of transport-specific members (the JSON `$schema`/`@Name` properties, XML escaping, MIME
+types live in the codec/HTTP layers planned in the roadmap).
 
-Transport (XML/JSON codecs) is a separate planned slice; the domain stays free of transport-specific members such as
-the JSON `$schema`/`@Name` properties.
+## Roadmap
+
+The development plan from the finished data-model to a full http4s-style framework (cats type classes, Validated
+validation, a Free-based construction DSL, XML/JSON codecs, XJMF transport, effects/HTTP runtime, laws and
+publishing) lives in [roadmap/](roadmap/README.md) — one file per stage, with prerequisites from the bundled
+`reference/cats` documentation, design rationale, code sketches and acceptance checklists for each stage.
 
 ## Build
 
