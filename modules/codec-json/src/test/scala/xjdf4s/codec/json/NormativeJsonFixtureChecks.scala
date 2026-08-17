@@ -54,7 +54,8 @@ object NormativeJsonFixtureChecks:
         |    "Usage": "Input"
         |  }
         |}""".stripMargin
-    val viaJson = parse(json).flatMap(_.as[ResourceSet]).toOption.get
+    // the normative JSON fragment carries ResourceSet as a MEMBER of an XJDF object, not as the root
+    val viaJson = parse(json).flatMap(_.hcursor.downField("ResourceSet").as[ResourceSet]).toOption.get
 
     val xml =
       """<ResourceSet Name="Media" Usage="Input">
