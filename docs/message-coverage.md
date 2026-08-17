@@ -6,15 +6,15 @@ Generated from the XSD element list obtained with `xsdq.py list --kind element`.
 |---|---|
 | `CommandForceGang` | pending |
 | `CommandModifyQueueEntry` | pending |
-| `CommandPipeControl` | pending |
+| `CommandPipeControl` | typed |
 | `CommandRequestQueueEntry` | pending |
 | `CommandResource` | typed |
 | `CommandResubmitQueueEntry` | pending |
 | `CommandReturnQueueEntry` | pending |
-| `CommandShutDown` | pending |
-| `CommandStopPersistentChannel` | pending |
+| `CommandShutDown` | typed |
+| `CommandStopPersistentChannel` | typed |
 | `CommandSubmitQueueEntry` | pending |
-| `CommandWakeUp` | pending |
+| `CommandWakeUp` | typed |
 | `QueryGangStatus` | pending |
 | `QueryKnownDevices` | pending |
 | `QueryKnownMessages` | pending |
@@ -30,17 +30,17 @@ Generated from the XSD element list obtained with `xsdq.py list --kind element`.
 | `ResponseKnownSubscriptions` | pending |
 | `ResponseModifyQueueEntry` | pending |
 | `ResponseNotification` | typed |
-| `ResponsePipeControl` | pending |
+| `ResponsePipeControl` | typed |
 | `ResponseQueueStatus` | pending |
 | `ResponseRequestQueueEntry` | pending |
 | `ResponseResource` | typed |
 | `ResponseResubmitQueueEntry` | pending |
 | `ResponseReturnQueueEntry` | pending |
-| `ResponseShutDown` | pending |
+| `ResponseShutDown` | typed |
 | `ResponseStatus` | typed |
-| `ResponseStopPersistentChannel` | pending |
+| `ResponseStopPersistentChannel` | typed |
 | `ResponseSubmitQueueEntry` | pending |
-| `ResponseWakeUp` | pending |
+| `ResponseWakeUp` | typed |
 | `SignalGangStatus` | pending |
 | `SignalKnownDevices` | pending |
 | `SignalKnownSubscriptions` | pending |
@@ -49,4 +49,4 @@ Generated from the XSD element list obtained with `xsdq.py list --kind element`.
 | `SignalResource` | typed |
 | `SignalStatus` | typed |
 
-Current coverage: **10/44** concrete XJMF messages.
+Current coverage: **18/44** concrete XJMF messages.
