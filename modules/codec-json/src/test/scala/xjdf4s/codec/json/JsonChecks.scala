@@ -1,7 +1,6 @@
 package xjdf4s.codec.json
 
 import io.circe.syntax.*
-import io.circe.parser.*
 
 import xjdf4s.codec.json.given
 import xjdf4s.core.*
