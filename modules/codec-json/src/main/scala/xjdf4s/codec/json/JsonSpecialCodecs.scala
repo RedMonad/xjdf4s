@@ -14,8 +14,56 @@ import xjdf4s.model.resources.*
  * the simple-content `NetworkHeader` (text under the `"Text"` member, like the Comment exception) and the
  * TIFF tag value variants (BinaryValue/IntegerValue/NumberValue/StringValue). The flat member sets mirror the
  * XML hand codecs so the XML and JSON encodings stay interchangeable.
+ *
+ * Members are ordered by dependency: a given is in scope only from its definition point onward, so the
+ * self-contained codecs (NetworkHeader, Disposition) precede the FileSpec codecs that use them.
  */
 object JsonSpecialCodecs:
+
+  // -- NetworkHeader (simple content: text maps to the "Text" member) --------------
+
+  given Encoder[NetworkHeader] = Encoder.instance(header =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Name", Json.fromString(header.name.value))),
+        Vector(JsonHelpers.member("Text", Json.fromString(header.value.value))),
+      ),
+    ),
+  )
+  given Decoder[NetworkHeader] = Decoder.instance(cursor =>
+    for
+      name <- cursor.get[XjdfString]("Name")
+      value <- cursor.get[XjdfString]("Text")
+    yield NetworkHeader(name, value),
+  )
+
+  // -- Disposition ---------------------------------------------------------------
+
+  given Encoder[Disposition] = Encoder.instance(disposition =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("Action", disposition.action),
+        JsonHelpers.optMember("ExtraDuration", disposition.extraDuration),
+        JsonHelpers.optMember("MinDuration", disposition.time.collect { case DispositionTime.AfterProcess(duration) => duration }),
+        JsonHelpers.optMember("Until", disposition.time.collect { case DispositionTime.At(until) => until }),
+        JsonHelpers.optMember("Priority", disposition.priority),
+      ),
+    ),
+  )
+  given Decoder[Disposition] = Decoder.instance(cursor =>
+    for
+      action <- JsonHelpers.opt[DispositionAction](cursor, "Action")
+      extraDuration <- JsonHelpers.opt[XsdDuration](cursor, "ExtraDuration")
+      minDuration <- JsonHelpers.opt[XsdDuration](cursor, "MinDuration")
+      until <- JsonHelpers.opt[XsdDateTime](cursor, "Until")
+      priority <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
+      time <- (minDuration, until) match
+        case (Some(duration), None) => Right(Some(DispositionTime.AfterProcess(duration)))
+        case (None, Some(at))       => Right(Some(DispositionTime.At(at)))
+        case (None, None)           => Right(None)
+        case _                      => JsonHelpers.fail(cursor, "MinDuration/Until are mutually exclusive")
+    yield Disposition(action, time, extraDuration, priority),
+  )
 
   // -- FileSpec ------------------------------------------------------------------
 
@@ -93,51 +141,6 @@ object JsonSpecialCodecs:
         )
       case FileLocation.Pipe => Vector.empty
 
-  // -- Disposition ---------------------------------------------------------------
-
-  given Encoder[Disposition] = Encoder.instance(disposition =>
-    JsonHelpers.obj(
-      JsonHelpers.memberList(
-        JsonHelpers.optMember("Action", disposition.action),
-        JsonHelpers.optMember("ExtraDuration", disposition.extraDuration),
-        JsonHelpers.optMember("MinDuration", disposition.time.collect { case DispositionTime.AfterProcess(duration) => duration }),
-        JsonHelpers.optMember("Until", disposition.time.collect { case DispositionTime.At(until) => until }),
-        JsonHelpers.optMember("Priority", disposition.priority),
-      ),
-    ),
-  )
-  given Decoder[Disposition] = Decoder.instance(cursor =>
-    for
-      action <- JsonHelpers.opt[DispositionAction](cursor, "Action")
-      extraDuration <- JsonHelpers.opt[XsdDuration](cursor, "ExtraDuration")
-      minDuration <- JsonHelpers.opt[XsdDuration](cursor, "MinDuration")
-      until <- JsonHelpers.opt[XsdDateTime](cursor, "Until")
-      priority <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
-      time <- (minDuration, until) match
-        case (Some(duration), None) => Right(Some(DispositionTime.AfterProcess(duration)))
-        case (None, Some(at))       => Right(Some(DispositionTime.At(at)))
-        case (None, None)           => Right(None)
-        case _                      => JsonHelpers.fail(cursor, "MinDuration/Until are mutually exclusive")
-    yield Disposition(action, time, extraDuration, priority),
-  )
-
-  // -- NetworkHeader (simple content: text maps to the "Text" member) --------------
-
-  given Encoder[NetworkHeader] = Encoder.instance(header =>
-    JsonHelpers.obj(
-      JsonHelpers.memberList(
-        Vector(JsonHelpers.member("Name", Json.fromString(header.name.value))),
-        Vector(JsonHelpers.member("Text", Json.fromString(header.value.value))),
-      ),
-    ),
-  )
-  given Decoder[NetworkHeader] = Decoder.instance(cursor =>
-    for
-      name <- cursor.get[XjdfString]("Name")
-      value <- cursor.get[XjdfString]("Text")
-    yield NetworkHeader(name, value),
-  )
-
   // -- FileSpec role wrappers (DeviceSchemas, DeliveryFiles, ...) -----------------
 
   /**
@@ -165,14 +168,14 @@ object JsonSpecialCodecs:
   given Encoder[DeliveryFiles] = Encoder.instance(files =>
     JsonHelpers.obj(
       JsonHelpers.memberList(
-        fileSpecRoleMembers(
+        fileSpecRoleMembers[DeliveryFiles](
           Vector("Contents" -> (_.contents), "MailingList" -> (_.mailingList), "RemoteURL" -> (_.remoteUrl)),
           files,
         ),
       ),
     ),
   )
-  given Decoder[DeliveryFiles] = fileSpecRoleDecoder(
+  given Decoder[DeliveryFiles] = fileSpecRoleDecoder[DeliveryFiles](
     Vector("Contents" -> (_.contents), "MailingList" -> (_.mailingList), "RemoteURL" -> (_.remoteUrl)),
     pairs =>
       DeliveryFiles(
@@ -185,11 +188,11 @@ object JsonSpecialCodecs:
   given Encoder[DeviceSchemas] = Encoder.instance(schemas =>
     JsonHelpers.obj(
       JsonHelpers.memberList(
-        fileSpecRoleMembers(Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)), schemas),
+        fileSpecRoleMembers[DeviceSchemas](Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)), schemas),
       ),
     ),
   )
-  given Decoder[DeviceSchemas] = fileSpecRoleDecoder(
+  given Decoder[DeviceSchemas] = fileSpecRoleDecoder[DeviceSchemas](
     Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)),
     pairs =>
       DeviceSchemas(
@@ -201,11 +204,11 @@ object JsonSpecialCodecs:
   given Encoder[DeviceInfoSchemas] = Encoder.instance(schemas =>
     JsonHelpers.obj(
       JsonHelpers.memberList(
-        fileSpecRoleMembers(Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)), schemas),
+        fileSpecRoleMembers[DeviceInfoSchemas](Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)), schemas),
       ),
     ),
   )
-  given Decoder[DeviceInfoSchemas] = fileSpecRoleDecoder(
+  given Decoder[DeviceInfoSchemas] = fileSpecRoleDecoder[DeviceInfoSchemas](
     Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)),
     pairs =>
       DeviceInfoSchemas(
@@ -217,14 +220,14 @@ object JsonSpecialCodecs:
   given Encoder[VerificationFiles] = Encoder.instance(files =>
     JsonHelpers.obj(
       JsonHelpers.memberList(
-        fileSpecRoleMembers(
+        fileSpecRoleMembers[VerificationFiles](
           Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
           files,
         ),
       ),
     ),
   )
-  given Decoder[VerificationFiles] = fileSpecRoleDecoder(
+  given Decoder[VerificationFiles] = fileSpecRoleDecoder[VerificationFiles](
     Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
     pairs =>
       VerificationFiles(
@@ -238,11 +241,11 @@ object JsonSpecialCodecs:
   given Encoder[QualityControlFiles] = Encoder.instance(files =>
     JsonHelpers.obj(
       JsonHelpers.memberList(
-        fileSpecRoleMembers(Vector("Image" -> (_.image), "Setup" -> (_.setup)), files),
+        fileSpecRoleMembers[QualityControlFiles](Vector("Image" -> (_.image), "Setup" -> (_.setup)), files),
       ),
     ),
   )
-  given Decoder[QualityControlFiles] = fileSpecRoleDecoder(
+  given Decoder[QualityControlFiles] = fileSpecRoleDecoder[QualityControlFiles](
     Vector("Image" -> (_.image), "Setup" -> (_.setup)),
     pairs => QualityControlFiles(pairs.find(_._1 == "Image").map(_._2), pairs.find(_._1 == "Setup").map(_._2)),
   )
