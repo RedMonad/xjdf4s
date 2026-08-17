@@ -206,11 +206,12 @@ def checkReferences(doc: XJDF): ValidatedNel[ValidationError, Unit] =
   рефлексивные default-значения `apply$default$N`). Инженерные правила деривации, выявленные компилятором:
   (1) inline-given невидимы для implicit search/summonAll — `derived` это inline-def, а на каждый тип
   генерируется обычный given; (2) порядок given'ов в одном scope значим — список топологически
-  отсортирован по зависимостям полей; (3) лексические/пакетные given, чей RHS — inline-деривация, не
-  находятся поиском внутри другой inline-экспансии: generated-кодеки живут членами `DerivedInstances`
-  и экспортируются из компаньона `XmlElementCodec` (`export DerivedInstances.given`) — компаньонный
-  implicit scope работает в любом контексте поиска (каноническая стратегия `derives` из справочника).
-  Ручными остались только семантически особые формы:
+  отсортирован по зависимостям полей; (3) вложенные продукт-поля резолвятся каноническим `deriveOrSummon` из справочника: `productCodec` —
+  `inline given` с `summonFrom` (сперва существующий `XmlElementCodec[A]`, иначе `Derived.derived[A]`
+  прямо в точке экспансии через `summonInline[Mirror]`); (4) сбор кодеков полей — inline-рекурсия по tuple
+  с `summonInline` (как в derivation.md), а для широких классов (GangElement: 30+ полей) добавлен
+  `-Xmax-inlines 256` — лимит последовательных инлайнов 32 пробивается per-field рекурсией. Ручными
+  остались только семантически особые формы:
   копродукты-в-атрибуты (FileLocation, DispositionTime, BindingSpecification, ColorSurfaces,
   QueueModification, AssemblyPlan, PlacedObjectKind, TiffTagValue), FileSpec-роли (`@ResourceUsage`),
   Audit-семейство, BindingIntent/ColorIntent/StickOn/CollatingItem/LooseBindingParams/Assembly/PlacedObject/

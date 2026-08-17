@@ -11,7 +11,9 @@ scalacOptions ++= Seq(
   "-unchecked",
   "-Werror",
   "-Wunused:all",
-  "-Yexplicit-nulls"
+  "-Yexplicit-nulls",
+  "-Xmax-inlines",
+  "256"
 )
 
 ThisBuild / libraryDependencies ++= Seq(

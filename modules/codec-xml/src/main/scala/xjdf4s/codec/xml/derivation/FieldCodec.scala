@@ -1,5 +1,7 @@
 package xjdf4s.codec.xml.derivation
 
+import scala.compiletime.{summonFrom, summonInline}
+import scala.deriving.Mirror
 import scala.reflect.ClassTag
 
 import xjdf4s.codec.xml.*
@@ -293,10 +295,18 @@ object FieldCodec extends LowPriorityFieldCodecs:
   // -- nodes: any Product with an XmlElementCodec becomes an element field ---------
 
   /**
-   * Fallback for case classes without a hand-written codec. Deliberately non-inline: `inline given` definitions
-   * are invisible to ordinary implicit search, which would break every nested product field.
-   * The [[XmlElementCodec]] instances themselves come from the generated non-inline givens in
-   * `DerivedInstances` (or from hand codecs), so the whole chain stays in ordinary implicit search.
+   * Canonical `deriveOrSummon` pattern from the reference documentation: an inline given selected through
+   * `summonInline` (the mechanism that finds inline givens), which at its expansion site first looks for an
+   * existing `XmlElementCodec[A]` (hand codecs, generated per-type givens) and otherwise derives one inline,
+   * right there. This resolves nested products without relying on the visibility of per-type instances in the
+   * search context.
    */
-  given productCodec[A <: Product](using codec: XmlElementCodec[A]): FieldCodec[A] = element(codec)
+  inline given productCodec[A <: Product]: FieldCodec[A] =
+    summonFrom {
+      case codec: XmlElementCodec[A] => FieldCodec.element(codec)
+      case _ =>
+        FieldCodec.element(
+          Derived.derived[A](using summonInline[Mirror.ProductOf[A]], summonInline[ClassTag[A]]),
+        )
+    }
 end FieldCodec

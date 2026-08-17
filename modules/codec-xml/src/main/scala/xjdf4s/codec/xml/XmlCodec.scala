@@ -34,12 +34,6 @@ object XmlElementCodec:
       def decode(element: Xml.Element): Either[XmlError, A] = decodeFunction(element)
       def encode(value: A): Xml.Element = encodeFunction(value)
 
-  /**
-   * The generated codecs for derived case classes are reachable through the implicit scope of this companion:
-   * that is the search mechanism which works inside inline expansions as well (lexical/package givens whose
-   * right-hand side is another inline derivation are not found there).
-   */
-  export xjdf4s.codec.xml.domain.DerivedInstances.given
 end XmlElementCodec
 
 object XmlEncoder:
