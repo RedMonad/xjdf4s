@@ -8,6 +8,7 @@ import io.circe.{Decoder, DecodingFailure, Encoder, HCursor, Json}
 
 import xjdf4s.codec.xml.derivation.{Defaults, Names}
 import xjdf4s.core.*
+import xjdf4s.model.*
 
 /**
  * Per-field serialization contract used by the derived JSON node codec. Unlike the XML side there is no
