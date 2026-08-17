@@ -28,6 +28,10 @@ final class MessageGenerators(seed: Long):
   def maybe[A](probability: Double)(value: => A): Option[A] =
     if rng.nextDouble() < probability then Some(value) else None
 
+  /** Optional vector field: either a 1..maxSize collection or the empty default. */
+  def maybeVector[A](probability: Double, maxSize: Int)(value: => A): Vector[A] =
+    if rng.nextDouble() < probability then Vector.fill(1 + rng.nextInt(maxSize))(value) else Vector.empty
+
   def dateTime: XsdDateTime =
     XsdDateTime.from("2026-08-17T12:00:00+03:00").toOption.get
 
@@ -41,7 +45,7 @@ final class MessageGenerators(seed: Long):
   def subscription(): Subscription =
     Subscription(
       url = uri,
-      channelMode = maybe(0.5)(Vector(pick(ChannelMode.FireAndForget, ChannelMode.Reliable))),
+      channelMode = maybeVector(0.5, 1)(pick(ChannelMode.FireAndForget, ChannelMode.Reliable)),
       repeatTime = maybe(0.3)(float(1f, 60f)),
     )
 

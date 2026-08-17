@@ -38,6 +38,14 @@ final class XjdfGenerators(seed: Long):
   def pick[A](values: A*): A = values(rng.nextInt(values.length))
   def maybe[A](probability: Double)(value: => A): Option[A] =
     if rng.nextDouble() < probability then Some(value) else None
+
+  /** Optional value that is itself optional (flattens the double Option of smart-constructor results). */
+  def maybeValue[A](probability: Double)(value: Option[A]): Option[A] =
+    if rng.nextDouble() < probability then value else None
+
+  /** Optional vector field: either a 1..maxSize collection or the empty default. */
+  def maybeVector[A](probability: Double, maxSize: Int)(value: => A): Vector[A] =
+    if rng.nextDouble() < probability then Vector.fill(1 + rng.nextInt(maxSize))(value) else Vector.empty
   def vector[A](maxSize: Int)(value: => A): Vector[A] =
     Vector.fill(rng.nextInt(maxSize + 1))(value)
 
@@ -85,7 +93,7 @@ final class XjdfGenerators(seed: Long):
     Color(
       density = maybe(0.5)(float(0f, 2f)),
       gray = maybe(0.5)(float(0f, 1f)),
-      lab = maybe(0.4)(LabColor.from(float(0f, 100f), float(-100f, 100f), float(-100f, 100f)).toOption),
+      lab = maybeValue(0.4)(LabColor.from(float(0f, 100f), float(-100f, 100f), float(-100f, 100f))),
     )
 
   def component(): Component =
@@ -116,7 +124,7 @@ final class XjdfGenerators(seed: Long):
       id = maybe(0.5)(xsdId("res")),
       externalId = maybe(0.5)(nmtoken("ext")),
       parts = vector(2)(part()),
-      comments = maybe(0.3)(Vector(comment())),
+      comments = maybeVector(0.3, 1)(comment()),
       specificResource = Some(specificResource()),
     )
 
@@ -133,6 +141,6 @@ final class XjdfGenerators(seed: Long):
       types = NonEmptyVector.one(nmtoken("process")),
       resourceSets = Vector.fill(1 + rng.nextInt(2))(resourceSet()),
       descriptiveName = maybe(0.4)(string("desc")),
-      comments = maybe(0.3)(Vector(comment())),
+      comments = maybeVector(0.3, 1)(comment()),
     )
 end XjdfGenerators
