@@ -8,8 +8,8 @@ import xjdf4s.model.*
 
 /**
  * Free-monadic grammar for constructing XJDF documents. A program of this grammar is pure data: it describes *what*
- * to build, and an interpreter decides *how* (document assembly, trace, step validation — see [[DocInterpreters]]).
- * The design rationale and the interpreter totality rule are documented in `docs/free-dsl.md`.
+ * to build, and an interpreter decides *how* (document assembly, trace, step validation — see the interpreters in
+ * `DocInterpreters`). The design rationale and the interpreter totality rule are documented in `docs/free-dsl.md`.
  */
 enum DocOp[A]:
   case SetVersion(value: Version)         extends DocOp[Unit]
@@ -33,7 +33,7 @@ object DocOp:
       fa.asInstanceOf[DocOp[B]]
 end DocOp
 
-/** A document-construction program: pure data, executed by an interpreter (see [[DocInterpreters]]). */
+/** A document-construction program: pure data, executed by an interpreter (see the `DocInterpreters` object). */
 type DocDsl[A] = Free[DocOp, A]
 
 object DocDsl:
