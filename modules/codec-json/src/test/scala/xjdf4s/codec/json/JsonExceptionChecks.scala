@@ -20,7 +20,7 @@ object JsonExceptionChecks:
 
   val rootSchemaMember: Unit =
     val document = XJDF(jobId, NonEmptyVector.one(process))
-    val withSchema = JsonCodec.withSchema(document.asJson, "https://schema.cip4.org/xjdf-2.2.json")
+    val withSchema = JsonHelpers.withSchema(document.asJson, "https://schema.cip4.org/xjdf-2.2.json")
     assert(withSchema.hcursor.get[String]("$schema").toOption.contains("https://schema.cip4.org/xjdf-2.2.json"))
     // the member is optional: the plain encoder omits it
     assert(document.asJson.hcursor.downField("$schema").focus.isEmpty)
