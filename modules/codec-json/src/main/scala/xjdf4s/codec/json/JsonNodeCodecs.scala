@@ -3,6 +3,8 @@ package xjdf4s.codec.json
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.*
 
+import xjdf4s.codec.xml.Lexical
+import xjdf4s.codec.xml.domain.CodecHelpers
 import xjdf4s.core.*
 import xjdf4s.model.*
 
@@ -60,13 +62,9 @@ object JsonNodeCodecs:
     yield GeneralId(usage, value, dataType),
   )
 
-  given Encoder[TileCoordinate] = Encoder.instance(tile => Json.arr(Json.fromInt(tile.x), Json.fromInt(tile.y)))
-  given Decoder[TileCoordinate] = Decoder.instance(cursor =>
-    cursor.as[List[Int]].flatMap {
-      case List(x, y) => Right(TileCoordinate(x, y))
-      case other      => JsonHelpers.fail(cursor, s"TileCoordinate requires exactly two integers, got ${other.size}")
-    },
-  )
+  /** Table 9.3 maps TileCoordinate (not listed) to a string: the XML lexical form "x y". */
+  given Encoder[TileCoordinate] = Encoder.encodeString.contramap(CodecHelpers.renderTile)
+  given Decoder[TileCoordinate] = Decoder.decodeString.emap(value => Lexical.tileCoordinate(value).left.map(_.toString))
 
   given Encoder[Part] = Encoder.instance(part =>
     JsonHelpers.obj(

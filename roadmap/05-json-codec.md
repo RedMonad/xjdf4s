@@ -180,6 +180,38 @@ def xmlJsonAgree[A: XmlDecoder: JsonCodec: Eq](value: A): Boolean =
   член `AuditPool` в кодеке корня XJDF. XJDF-кодеки корня вынесены в `JsonRootCodecs.scala`: компилятор
   поймал цикл givens (`E046` через export-форвардеры фасада: корень требует `Encoder[AuditPool]`, аудиты —
   `Encoder[Part]`/`Header`) — граф givens, как и граф файлов, должен оставаться ацикличным.
-- **Осталось:** расширение покрытия на остальные ресурсы/интенции/сообщения (батч с деривацией по правилам
-  этапа 04); JSON-представление `extensions`/foreign-членов (`"Prefix:Name"` + `"@context"`, Example 9.12);
-  `Dependent`/`ProductList` и JSON-мapping `AddressLine` (9.10.2.1).
+
+## Состояние исполнения (батч деривации — в работе)
+
+- **Деривация JSON-кодеков** (`JsonDerived.scala`, правила этапа 04): `JsonFieldCodec` (скаляры — low-priority
+  given поверх любой пары `Encoder`/`Decoder`, включая generic-энамы; контейнеры `Option`/`Vector`/
+  `NonEmptyVector`/`TwoOrMore`/`AtMostTwo`; узлы — inline `deriveOrSummon` через `productFieldCodec`),
+  inline `JsonDerived.derivedEncoder/derivedDecoder` (обход полей через `summonInline`, дефолты —
+  переиспользованный `Defaults` из XML-деривации), рантайм-кодеки: имена членов = `Names.attributeName`
+  для скалярных полей и element-name класса для узловых; отсутствующие опциональные члены падают в
+  дефолты; неизвестные стандартные члены отклоняются (как в XML).
+- **Генерируемые файлы** (`tools/gen-json-codecs.py`): `JsonDerivedInstances.scala` — по два не-inline given'а
+  (`Encoder`/`Decoder`) на каждый деривируемый case class (280 типов, топологический порядок; самодостаточно-
+  рекурсивные `BundleItem`/`AssemblySection` включены — их per-type givens оставляют рекурсию в рантайме);
+  `JsonRegistry.scala` — таблицы диспетчеризации 99 ресурсов / 11 интенций / 42 сообщений. Перегенерация —
+  скриптом при росте модели; замыкание «класс содержит спец-класс» вычисляется автоматически.
+- **Ручные кодеки спец-форм** (`JsonSpecialCodecs.scala`, зеркалят XML-маппинг): `FileSpec` (плоские члены
+  `URL`/`UID`/`FileFormat`+`FileTemplate`), `Disposition` (`MinDuration`/`Until`), `NetworkHeader` (`"Text"`),
+  `TiffTag` (`BinaryValue`/`IntegerValue`/`NumberValue`/`StringValue`), `PlacedObject` (`MarkObject`/
+  `ContentObject`), FileSpec-роли (`DeliveryFiles`, `DeviceSchemas`, `DeviceInfoSchemas`, `VerificationFiles`,
+  `QualityControlFiles`), JSON-исключения `Address`/`Company` (`"AddressLine"`/`"OrganizationalUnit"` —
+  массивы строк, 9.10.2.1).
+- **Foreign JSON** (`JsonForeign.scala`, 9.10.2.4 + Example 9.12): члены `"Prefix:Name"` + `"@context"`
+  (JSON-LD минимум); синтез префиксов `ns1…` для беспрефиксных пространств; декод по `"@context"`,
+  неотмапленный префикс → сам префикс как namespace (round-trip без потерь). `extensions`/`foreignElements`
+  обрабатываются рантайм-кодеками по имени поля.
+- **Выравнивание по Table 9.3**: `TileCoordinate` → строка (как `<all other types>`), `GridSize` → строка,
+  `GluingPattern` → массив float, `Vector[Byte]` → hex-строка, кардинальные контейнеры → массивы.
+- **Переиспользование XML-слоя**: `codecXml` подключён в compile-scope (`Names`, `Defaults`, `Lexical`,
+  `CodecHelpers`); naming-политика проверена скриптом против 116 `XjdfNames.element`-имён модели — 0 расхождений.
+- **Осталось:** ручные кодеки оставшихся спец-форм (payload-энамы: `BindingIntent`, `ColorIntent`, `StickOn`,
+  `CollatingItem`, `LooseBindingParams`, `Assembly`, `ModifyQueueEntryParams`, `QueueSubmissionParams` —
+  из-за них отложены ресурсы `Assembly`/`LooseBindingParams`/`FeedingParams`, интенты
+  `BindingIntent`/`ColorIntent`/`AssemblingIntent`, сообщения `CommandModifyQueueEntry`/`CommandSubmitQueueEntry`);
+  `Dependent`/`ProductList` и интенты в корне XJDF; foreign-ресурсы в `Resource`-членах; ReferenceCheck
+  для JSON (предостережение #4).

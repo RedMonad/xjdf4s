@@ -20,7 +20,17 @@ class JsonChecksSuite extends munit.FunSuite:
       NormativeJsonFixtureChecks.example71Xjmf,
       CrossCodecPropertyChecks.xjdfDocuments,
       CrossCodecPropertyChecks.xjmfMessages,
+      JsonDerivedChecks.fileSpec,
+      JsonDerivedChecks.deliveryParams,
+      JsonDerivedChecks.tiffFormatParams,
+      JsonDerivedChecks.placedObject,
+      JsonDerivedChecks.contact,
+      JsonDerivedChecks.bundleItem,
+      JsonDerivedChecks.message,
+      JsonDerivedChecks.intent,
+      JsonDerivedChecks.foreignExtensions,
+      JsonDerivedChecks.registryCoverage,
     )
-    assert(results.size == 16)
+    assert(results.size == 26)
   }
 end JsonChecksSuite

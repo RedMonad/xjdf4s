@@ -12,3 +12,5 @@ export JsonMediaCodecs.given
 export JsonMessagingCodecs.given
 export JsonAuditCodecs.given
 export JsonRootCodecs.given
+export JsonSpecialCodecs.given
+export JsonResources.given

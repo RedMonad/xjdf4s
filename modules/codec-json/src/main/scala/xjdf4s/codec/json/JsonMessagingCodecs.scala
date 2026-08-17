@@ -357,48 +357,14 @@ object JsonMessagingCodecs:
 
   // -- XJMF envelope (JSON exception: exactly one message) ------------------------
 
-  private val messageNames: Vector[String] = Vector(
-    "QueryKnownMessages",
-    "QueryResource",
-    "ResponseKnownMessages",
-    "ResponseResource",
-    "SignalNotification",
-    "SignalResource",
-    "SignalStatus",
-  )
+  private val messageNames: Vector[String] = JsonRegistry.messageNames.toVector.sorted
 
   private def decodeMessage(name: String, json: Json): Decoder.Result[Message] =
-    name match
-      case "QueryKnownMessages"    => json.as[QueryKnownMessages].map(identity)
-      case "QueryResource"         => json.as[QueryResource].map(identity)
-      case "ResponseKnownMessages" => json.as[ResponseKnownMessages].map(identity)
-      case "ResponseResource"      => json.as[ResponseResource].map(identity)
-      case "SignalNotification"    => json.as[SignalNotification].map(identity)
-      case "SignalResource"        => json.as[SignalResource].map(identity)
-      case "SignalStatus"          => json.as[SignalStatus].map(identity)
-      case other                   => JsonHelpers.fail(json.hcursor, s"message '$other' is not covered by the JSON slice")
+    JsonRegistry.decodeMessage(name, json)
 
-  private def encodeMessage(message: Message): Json =
-    message match
-      case query: QueryKnownMessages    => query.asJson
-      case query: QueryResource         => query.asJson
-      case response: ResponseKnownMessages => response.asJson
-      case response: ResponseResource   => response.asJson
-      case signal: SignalNotification   => signal.asJson
-      case signal: SignalResource       => signal.asJson
-      case signal: SignalStatus         => signal.asJson
-      case other => throw new UnsupportedOperationException(s"no JSON codec for ${other.getClass.getName} in this slice")
+  private def encodeMessage(message: Message): Json = JsonRegistry.encodeMessage(message)
 
-  private def messageName(message: Message): String =
-    message match
-      case _: QueryKnownMessages    => "QueryKnownMessages"
-      case _: QueryResource         => "QueryResource"
-      case _: ResponseKnownMessages => "ResponseKnownMessages"
-      case _: ResponseResource      => "ResponseResource"
-      case _: SignalNotification    => "SignalNotification"
-      case _: SignalResource        => "SignalResource"
-      case _: SignalStatus          => "SignalStatus"
-      case other => throw new UnsupportedOperationException(s"no JSON codec for ${other.getClass.getName} in this slice")
+  private def messageName(message: Message): String = JsonRegistry.messageName(message)
 
   given Encoder[XJMF] = Encoder.instance(xjmf =>
     val messages = xjmf.messages.toVector

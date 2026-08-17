@@ -61,8 +61,9 @@ lazy val codecJson = project
   .dependsOn(
     model % "compile->compile;test->test",
     messaging % "compile->compile;test->test",
-    // test-only reuse of the XML codecs for the XML<->JSON cross-codec law
-    codecXml % "test->compile"
+    // compile-time reuse of the XML module's naming policy (Names), defaults lookup and lexical helpers;
+    // the same dependency powers the XML<->JSON cross-codec law in the tests
+    codecXml % "compile->compile"
   )
   .settings(
     name := "xjdf4s-codec-json",

@@ -3,7 +3,10 @@ package xjdf4s.codec.json
 import scala.reflect.ClassTag
 
 import io.circe.{Decoder, Encoder, Json}
+import io.circe.syntax.*
 
+import xjdf4s.codec.xml.Lexical
+import xjdf4s.codec.xml.domain.CodecHelpers
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
@@ -231,4 +234,59 @@ object JsonScalars:
   given Decoder[MessageUrlScheme] = lexicalEnumCodec(MessageUrlScheme.values.toVector, _.lexical)._2
   given Encoder[NamedColor] = lexicalEnumCodec(NamedColor.values.toVector, _.lexical)._1
   given Decoder[NamedColor] = lexicalEnumCodec(NamedColor.values.toVector, _.lexical)._2
+  given Encoder[HolePatternCatalog] = lexicalEnumCodec(HolePatternCatalog.values.toVector, _.lexical)._1
+  given Decoder[HolePatternCatalog] = lexicalEnumCodec(HolePatternCatalog.values.toVector, _.lexical)._2
+  given Encoder[ScreeningType] = lexicalEnumCodec(ScreeningType.values.toVector, _.lexical)._1
+  given Decoder[ScreeningType] = lexicalEnumCodec(ScreeningType.values.toVector, _.lexical)._2
+
+  // -- remaining opaque wrappers -------------------------------------------------
+
+  given Encoder[CountryCode] = Encoder.encodeString.contramap(_.value)
+  given Decoder[CountryCode] = Decoder.decodeString.emap(value => CountryCode.from(value).left.map(_.toString))
+  given Encoder[XPath] = Encoder.encodeString.contramap(_.value)
+  given Decoder[XPath] = Decoder.decodeString.emap(value => XPath.from(value).left.map(_.toString))
+  given Encoder[FoldCatalog] = Encoder.encodeString.contramap(_.value)
+  given Decoder[FoldCatalog] = Decoder.decodeString.emap(value => FoldCatalog.from(value).left.map(_.toString))
+  given Encoder[EvenPageCount] = Encoder.encodeInt.contramap(_.value)
+  given Decoder[EvenPageCount] =
+    Decoder.decodeInt.emap(value => EvenPageCount.from(value).left.map(_.toString))
+  given Encoder[CommonFolds] = Encoder.encodeInt.contramap(_.value)
+  given Decoder[CommonFolds] = Decoder.decodeInt.emap(value => CommonFolds.from(value).left.map(_.toString))
+  given Encoder[QualityScore] = Encoder.encodeInt.contramap(_.value)
+  given Decoder[QualityScore] = Decoder.decodeInt.emap(value => QualityScore.from(value).left.map(_.toString))
+
+  /** `Vector[Byte]` follows the XML hexBinary lexical form; Table 9.3 maps all other types to a string. */
+  given Encoder[Vector[Byte]] = Encoder.encodeString.contramap(Lexical.renderHexBinary)
+  given Decoder[Vector[Byte]] = Decoder.decodeString.emap(value => Lexical.hexBinary(value).left.map(_.toString))
+
+  /** FloatList values (`GluingPattern`) map to an array of float per Table 9.3. */
+  given Encoder[GluingPattern] = Encoder[Vector[Float]].contramap(_.toVector)
+  given Decoder[GluingPattern] = Decoder[Vector[Float]].emap(values => GluingPattern.from(values).left.map(_.toString))
+
+  /** `GridSize` is not listed in Table 9.3, so it falls under "all other types" -> string (the XML lexical form). */
+  given Encoder[GridSize] = Encoder.encodeString.contramap(CodecHelpers.renderGridSize)
+  given Decoder[GridSize] = Decoder.decodeString.emap(value => Lexical.gridSize(value).left.map(_.toString))
+
+  // -- cardinality containers ---------------------------------------------------
+
+  given [A: Encoder]: Encoder[NonEmptyVector[A]] = Encoder.instance(values => Json.arr(values.toVector.map(_.asJson)*))
+  given [A: Decoder]: Decoder[NonEmptyVector[A]] = Decoder.instance(cursor =>
+    cursor
+      .as[List[A]]
+      .flatMap(values => NonEmptyVector.from(values.toVector).left.map(_ => io.circe.DecodingFailure("expected a non-empty array", cursor.history))),
+  )
+
+  given [A: Encoder]: Encoder[TwoOrMore[A]] = Encoder.instance(values => Json.arr(values.toVector.map(_.asJson)*))
+  given [A: Decoder]: Decoder[TwoOrMore[A]] = Decoder.instance(cursor =>
+    cursor
+      .as[List[A]]
+      .flatMap(values => TwoOrMore.from(values.toVector).left.map(_ => io.circe.DecodingFailure("expected at least two elements", cursor.history))),
+  )
+
+  given [A: Encoder]: Encoder[AtMostTwo[A]] = Encoder.instance(values => Json.arr(values.toVector.map(_.asJson)*))
+  given [A: Decoder]: Decoder[AtMostTwo[A]] = Decoder.instance(cursor =>
+    cursor
+      .as[List[A]]
+      .flatMap(values => AtMostTwo.from(values.toVector).left.map(_ => io.circe.DecodingFailure("expected at most two elements", cursor.history))),
+  )
 end JsonScalars
