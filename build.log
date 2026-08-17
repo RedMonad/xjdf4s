@@ -1,184 +1,2222 @@
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerivedInstances.scala:411:52
-[error] 411 |given derivedJsonEncoderProduct: Encoder[Product] = JsonDerived.derivedEncoder[Product]
-[error]     |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |No given instance of type xjdf4s.codec.json.JsonFieldCodec[Vector[xjdf4s.model.Intent]] was found.
-[error]     |I found:
-[error]     |
-[error]     |    xjdf4s.codec.json.JsonFieldCodec.vectorFieldCodec[xjdf4s.model.Intent](
-[error]     |      {
-[error]     |        val classTag: scala.reflect.ClassTag[xjdf4s.model.Intent] =
-[error]     |          scala.reflect.ClassTag.apply[xjdf4s.model.Intent](
-[error]     |            classOf[xjdf4s.model.Intent])
-[error]     |        {
-[error]     |          val node:
-[error]     |            (io.circe.Encoder[xjdf4s.model.Intent],
-[error]     |              io.circe.Decoder[xjdf4s.model.Intent])
-[error]     |           =
-[error]     |            {
-[error]     |              val mirror$proxy374:
-[error]     |
-[error]     |                  scala.deriving.Mirror.Product{
-[error]     |                    type MirroredMonoType = xjdf4s.model.Intent;
-[error]     |                      type MirroredType = xjdf4s.model.Intent;
-[error]     |                      type MirroredLabel = ("Intent" : String);
-[error]     |                      type MirroredElemTypes = (xjdf4s.core.Nmtoken,
-[error]     |                        Option[xjdf4s.model.ProductIntent],
-[error]     |                        Option[xjdf4s.core.XjdfString],
-[error]     |                        Option[xjdf4s.core.Nmtoken], xjdf4s.core.Extensions);
-[error]     |                      type MirroredElemLabels = (("name" : String),
-[error]     |                        ("productIntent" : String), ("descriptiveName" : String),
-[error]     |                        ("externalId" : String), ("extensions" : String))
-[error]     |                  }
-[error]     |
-[error]     |               =
-[error]     |                xjdf4s.model.Intent.$asInstanceOf[
-[error]     |
-[error]     |                    scala.deriving.Mirror.Product{
-[error]     |                      type MirroredMonoType = xjdf4s.model.Intent;
-[error]     |                        type MirroredType = xjdf4s.model.Intent;
-[error]     |                        type MirroredLabel = ("Intent" : String);
-[error]     |                        type MirroredElemTypes = (xjdf4s.core.Nmtoken,
-[error]     |                          Option[xjdf4s.model.ProductIntent],
-[error]     |                          Option[xjdf4s.core.XjdfString],
-[error]     |                          Option[xjdf4s.core.Nmtoken], xjdf4s.core.Extensions);
-[error]     |                        type MirroredElemLabels = (("name" : String),
-[error]     |                          ("productIntent" : String), ("descriptiveName" : String),
-[error]     |                          ("externalId" : String), ("extensions" : String))
-[error]     |                    }
-[error]     |
-[error]     |                ]
-[error]     |              Tuple2.apply²[io.circe.Encoder[xjdf4s.model.Intent],
-[error]     |                io.circe.Decoder[xjdf4s.model.Intent]](
-[error]     |                {
-[error]     |                  val labels: mirror$proxy374.MirroredElemLabels =
-[error]     |                    Tuple5.apply³[("name" : String), ("productIntent" : String),
-[error]     |                      ("descriptiveName" : String), ("externalId" : String),
-[error]     |                      ("extensions" : String)]("name", "productIntent",
-[error]     |                      "descriptiveName", "externalId", "extensions"):
-[error]     |                      mirror$proxy374.MirroredElemLabels
-[error]     |                  val codecs: Tuple =
-[error]     |                    {
-[error]     |                      {
-[error]     |                        val x$1:
-[error]     |                          xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken] =
-[error]     |                          xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
-[error]     |                            xjdf4s.core.Nmtoken](
-[error]     |                            xjdf4s.codec.json.JsonScalars.given_Encoder_Nmtoken,
-[error]     |                            xjdf4s.codec.json.JsonScalars.given_Decoder_Nmtoken)
-[error]     |                        {
-[error]     |                          {
-[error]     |                            val x$1²:
-[error]     |
-[error]     |                                xjdf4s.codec.json.JsonFieldCodec[
-[error]     |                                  Option[xjdf4s.model.ProductIntent]]
-[error]     |
-[error]     |                             =
-[error]     |                              scala.compiletime.summonInline[
-[error]     |                                xjdf4s.codec.json.JsonFieldCodec[
-[error]     |                                  Option[xjdf4s.model.ProductIntent]]
-[error]     |                              ]
-[error]     |                            xjdf4s.codec.json.JsonDerived.fieldCodecInstances[
-[error]     |                              (Option[xjdf4s.core.XjdfString],
-[error]     |                                Option[xjdf4s.core.Nmtoken], xjdf4s.core.Extensions)
-[error]     |                              ].*:[
-[error]     |
-[error]     |                                xjdf4s.codec.json.JsonFieldCodec[
-[error]     |                                  Option[xjdf4s.model.ProductIntent]]
-[error]     |                              ,
-[error]     |                            Tuple](x$1²):
-[error]     |                              (xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
-[error]     |                          }
-[error]     |                        }:Tuple.*:[
-[error]     |                          xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken],
-[error]     |                          Tuple](x$1):(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
-[error]     |                        }
-[error]     |                    }:Tuple
-[error]     |                  new xjdf4s.codec.json.DerivedJsonEncoder[xjdf4s.model.Intent](
-[error]     |                    mirror$proxy374, labels, codecs,
-[error]     |                    xjdf4s.codec.xml.derivation.Defaults.of(classTag))
-[error]     |                }:io.circe.Encoder[xjdf4s.model.Intent],
-[error]     |                xjdf4s.codec.json.JsonDerived.derivedDecoder[xjdf4s.model.Intent](
-[error]     |                  mirror$proxy374, classTag)
-[error]     |              ):
-[error]     |                Tuple2[io.circe.Encoder[xjdf4s.model.Intent],
-[error]     |                  io.circe.Decoder[xjdf4s.model.Intent]]
-[error]     |            }
-[error]     |          xjdf4s.codec.json.JsonFieldCodec.fromProduct[xjdf4s.model.Intent](
-[error]     |            node._1, node._2, classTag)
-[error]     |        }
-[error]     |      }:xjdf4s.codec.json.JsonFieldCodec[xjdf4s.model.Intent]
-[error]     |    )
-[error]     |
-[error]     |But given instance productFieldCodec in object JsonFieldCodec does not match type xjdf4s.codec.json.JsonFieldCodec[xjdf4s.model.Intent]
-[error]     |
-[error]     |where:    apply  is a method in object ClassTag
-[error]     |          apply² is a method in object Tuple2
-[error]     |          apply³ is a method in object Tuple5
-[error]     |          x$1    is a value in the initializer of value codecs
-[error]     |          x$1²   is a value in the initializer of value codecs
-[error]     |.
-[error]     |---------------------------------------------------------------------------
-[error]     |Inline stack trace
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
-[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[error]     |This location contains code that was inlined from JsonDerived.scala:267
-[error] 248 |    val codecs = fieldCodecInstances[mirror.MirroredElemTypes]
-[error]     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]      ---------------------------------------------------------------------------
+[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerivedInstances.scala:55:68
+[warn] 55 |given derivedJsonEncoderAssemblySection: Encoder[AssemblySection] = JsonDerived.derivedEncoder[AssemblySection]
+[warn]    |                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[warn]    |Infinite loop in function body
+[warn]    |{
+[warn]    |  val mirror$proxy13:
+[warn]    |
+[warn]    |      scala.deriving.Mirror.Product{
+[warn]    |        type MirroredMonoType = xjdf4s.model.resources.AssemblySection;
+[warn]    |          type MirroredType = xjdf4s.model.resources.AssemblySection;
+[warn]    |          type MirroredLabel = ("AssemblySection" : String);
+[warn]    |          type MirroredElemTypes = (xjdf4s.core.Nmtoken,
+[warn]    |            Option[xjdf4s.model.resources.CommonFolds],
+[warn]    |            Option[xjdf4s.core.XjdfString], Option[xjdf4s.core.Nmtoken],
+[warn]    |            Vector[xjdf4s.model.resources.AssemblySection],
+[warn]    |            xjdf4s.core.Extensions);
+[warn]    |          type MirroredElemLabels = (("binderySignatureId" : String),
+[warn]    |            ("commonFolds" : String), ("descriptiveName" : String),
+[warn]    |            ("externalId" : String), ("sections" : String),
+[warn]    |            ("extensions" : String))
+[warn]    |      }
+[warn]    |
+[warn]    |   =
+[warn]    |    xjdf4s.model.resources.AssemblySection.$asInstanceOf[
+[warn]    |
+[warn]    |        scala.deriving.Mirror.Product{
+[warn]    |          type MirroredMonoType = xjdf4s.model.resources.AssemblySection;
+[warn]    |            type MirroredType = xjdf4s.model.resources.AssemblySection;
+[warn]    |            type MirroredLabel = ("AssemblySection" : String);
+[warn]    |            type MirroredElemTypes = (xjdf4s.core.Nmtoken,
+[warn]    |              Option[xjdf4s.model.resources.CommonFolds],
+[warn]    |              Option[xjdf4s.core.XjdfString], Option[xjdf4s.core.Nmtoken],
+[warn]    |              Vector[xjdf4s.model.resources.AssemblySection],
+[warn]    |              xjdf4s.core.Extensions);
+[warn]    |            type MirroredElemLabels = (("binderySignatureId" : String),
+[warn]    |              ("commonFolds" : String), ("descriptiveName" : String),
+[warn]    |              ("externalId" : String), ("sections" : String),
+[warn]    |              ("extensions" : String))
+[warn]    |        }
+[warn]    |
+[warn]    |    ]
+[warn]    |  val classTag$proxy13:
+[warn]    |    scala.reflect.ClassTag[xjdf4s.model.resources.AssemblySection] =
+[warn]    |    scala.reflect.ClassTag.apply[xjdf4s.model.resources.AssemblySection](
+[warn]    |      classOf[xjdf4s.model.resources.AssemblySection])
+[warn]    |  {
+[warn]    |    val labels: mirror$proxy13.MirroredElemLabels =
+[warn]    |      Tuple6.apply²[("binderySignatureId" : String), ("commonFolds" : String),
+[warn]    |        ("descriptiveName" : String), ("externalId" : String),
+[warn]    |        ("sections" : String), ("extensions" : String)]("binderySignatureId",
+[warn]    |        "commonFolds", "descriptiveName", "externalId", "sections", "extensions"
+[warn]    |        ):mirror$proxy13.MirroredElemLabels
+[warn]    |    val codecs: Tuple =
+[warn]    |      {
+[warn]    |        {
+[warn]    |          val x$1: xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken] =
+[warn]    |            xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
+[warn]    |              xjdf4s.core.Nmtoken](
+[warn]    |              xjdf4s.codec.json.JsonScalars.given_Encoder_Nmtoken,
+[warn]    |              xjdf4s.codec.json.JsonScalars.given_Decoder_Nmtoken)
+[warn]    |          {
+[warn]    |            val Tuple_this: Tuple =
+[warn]    |              {
+[warn]    |                {
+[warn]    |                  val x$1²:
+[warn]    |
+[warn]    |                      xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                        Option[xjdf4s.model.resources.CommonFolds]]
+[warn]    |
+[warn]    |                   =
+[warn]    |                    xjdf4s.codec.json.JsonFieldCodec.optionFieldCodec[
+[warn]    |                      xjdf4s.model.resources.CommonFolds](
+[warn]    |                      xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
+[warn]    |                        xjdf4s.model.resources.CommonFolds](
+[warn]    |                        xjdf4s.codec.json.JsonScalars.given_Encoder_CommonFolds
+[warn]    |                          ,
+[warn]    |                        xjdf4s.codec.json.JsonScalars.given_Decoder_CommonFolds)
+[warn]    |                      )
+[warn]    |                  {
+[warn]    |                    val Tuple_this²: Tuple =
+[warn]    |                      {
+[warn]    |                        {
+[warn]    |                          val x$1³:
+[warn]    |
+[warn]    |                              xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                Option[xjdf4s.core.XjdfString]]
+[warn]    |
+[warn]    |                           =
+[warn]    |                            xjdf4s.codec.json.JsonFieldCodec.optionFieldCodec[
+[warn]    |                              xjdf4s.core.XjdfString](
+[warn]    |                              xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
+[warn]    |                                xjdf4s.core.XjdfString](
+[warn]    |                                xjdf4s.codec.json.JsonScalars.
+[warn]    |                                  given_Encoder_XjdfString,
+[warn]    |                                xjdf4s.codec.json.JsonScalars.
+[warn]    |                                  given_Decoder_XjdfString
+[warn]    |                              )
+[warn]    |                            )
+[warn]    |                          {
+[warn]    |                            val Tuple_this³: Tuple =
+[warn]    |                              {
+[warn]    |                                {
+[warn]    |                                  val x$1⁴:
+[warn]    |
+[warn]    |                                      xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                        Option[xjdf4s.core.Nmtoken]]
+[warn]    |
+[warn]    |                                   =
+[warn]    |                                    xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                      optionFieldCodec[xjdf4s.core.Nmtoken](
+[warn]    |                                      xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                        scalarFieldCodec[xjdf4s.core.Nmtoken](
+[warn]    |                                        xjdf4s.codec.json.JsonScalars.
+[warn]    |                                          given_Encoder_Nmtoken,
+[warn]    |                                        xjdf4s.codec.json.JsonScalars.
+[warn]    |                                          given_Decoder_Nmtoken
+[warn]    |                                      )
+[warn]    |                                    )
+[warn]    |                                  {
+[warn]    |                                    val Tuple_this⁴: Tuple =
+[warn]    |                                      {
+[warn]    |                                        {
+[warn]    |                                          val x$1⁵:
+[warn]    |
+[warn]    |                                              xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                                Vector[
+[warn]    |                                                  xjdf4s.model.resources.
+[warn]    |                                                    AssemblySection
+[warn]    |                                                ]
+[warn]    |                                              ]
+[warn]    |
+[warn]    |                                           =
+[warn]    |                                            xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                              vectorFieldCodec[
+[warn]    |
+[warn]    |                                                xjdf4s.model.resources.
+[warn]    |                                                  AssemblySection
+[warn]    |
+[warn]    |                                            ](
+[warn]    |                                              {
+[warn]    |                                                val classTag:
+[warn]    |
+[warn]    |                                                    scala.reflect.ClassTag[
+[warn]    |                                                      xjdf4s.model.resources.
+[warn]    |                                                        AssemblySection
+[warn]    |                                                    ]
+[warn]    |
+[warn]    |                                                 =
+[warn]    |                                                  scala.reflect.ClassTag.apply[
+[warn]    |
+[warn]    |                                                      xjdf4s.model.resources.
+[warn]    |                                                        AssemblySection
+[warn]    |
+[warn]    |                                                  ](
+[warn]    |                                                    classOf[
+[warn]    |                                                      xjdf4s.model.resources.
+[warn]    |                                                        AssemblySection
+[warn]    |                                                    ]
+[warn]    |                                                  )
+[warn]    |                                                {
+[warn]    |                                                  given val encoder:
+[warn]    |
+[warn]    |                                                      io.circe.Encoder[
+[warn]    |                                                        xjdf4s.model.resources.
+[warn]    |                                                          AssemblySection
+[warn]    |                                                      ]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    xjdf4s.codec.json.
+[warn]    |                                                      derivedJsonEncoderAssemblySection
+[warn]    |                                                  val decoder:
+[warn]    |
+[warn]    |                                                      io.circe.Decoder[
+[warn]    |                                                        xjdf4s.model.resources.
+[warn]    |                                                          AssemblySection
+[warn]    |                                                      ]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    {
+[warn]    |                                                      given val decoder²:
+[warn]    |
+[warn]    |                                                          io.circe.Decoder[
+[warn]    |                                                            xjdf4s.model.resources
+[warn]    |                                                              .AssemblySection
+[warn]    |                                                          ]
+[warn]    |
+[warn]    |                                                       =
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          derivedJsonDecoderAssemblySection
+[warn]    |                                                      decoder²:
+[warn]    |
+[warn]    |                                                          io.circe.Decoder[
+[warn]    |                                                            xjdf4s.model.resources
+[warn]    |                                                              .AssemblySection
+[warn]    |                                                          ]
+[warn]    |
+[warn]    |                                                    }
+[warn]    |                                                  xjdf4s.codec.json.
+[warn]    |                                                    JsonFieldCodec.fromProduct[
+[warn]    |
+[warn]    |                                                      xjdf4s.model.resources.
+[warn]    |                                                        AssemblySection
+[warn]    |
+[warn]    |                                                  ](encoder, decoder, classTag)
+[warn]    |                                                }
+[warn]    |                                              }:
+[warn]    |
+[warn]    |                                                  xjdf4s.codec.json.
+[warn]    |                                                    JsonFieldCodec[
+[warn]    |                                                    xjdf4s.model.resources.
+[warn]    |                                                      AssemblySection
+[warn]    |                                                  ]
+[warn]    |
+[warn]    |                                            )
+[warn]    |                                          {
+[warn]    |                                            val Tuple_this⁵: Tuple =
+[warn]    |                                              {
+[warn]    |                                                {
+[warn]    |                                                  val x$1⁶:
+[warn]    |
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec[
+[warn]    |                                                        xjdf4s.core.Extensions]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    xjdf4s.codec.json.
+[warn]    |                                                      JsonFieldCodec.
+[warn]    |                                                      extensionsFieldCodec
+[warn]    |                                                  {
+[warn]    |                                                    val Tuple_this⁶: Tuple =
+[warn]    |                                                      {
+[warn]    |                                                        EmptyTuple
+[warn]    |                                                      }:Tuple
+[warn]    |                                                    runtime.Tuples.cons(x$1⁶,
+[warn]    |                                                      Tuple_this⁶).asInstanceOf[
+[warn]    |
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonFieldCodec[
+[warn]    |                                                          xjdf4s.core.Extensions
+[warn]    |                                                          ]
+[warn]    |                                                       *: Tuple
+[warn]    |                                                    ]:
+[warn]    |                                                      (
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonFieldCodec[
+[warn]    |                                                          xjdf4s.core.Extensions
+[warn]    |                                                          ]
+[warn]    |                                                       *: Tuple)
+[warn]    |                                                  }:
+[warn]    |                                                    (
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec[?]
+[warn]    |                                                     *: Tuple)
+[warn]    |                                                }
+[warn]    |                                              }:Tuple
+[warn]    |                                            runtime.Tuples.cons(x$1⁵,
+[warn]    |                                              Tuple_this⁵).asInstanceOf[
+[warn]    |
+[warn]    |                                                xjdf4s.codec.json.JsonFieldCodec
+[warn]    |                                                  [
+[warn]    |                                                  Vector[
+[warn]    |                                                    xjdf4s.model.resources.
+[warn]    |                                                      AssemblySection
+[warn]    |                                                  ]
+[warn]    |                                                ]
+[warn]    |                                               *: Tuple
+[warn]    |                                            ]:
+[warn]    |                                              (
+[warn]    |                                                xjdf4s.codec.json.JsonFieldCodec
+[warn]    |                                                  [
+[warn]    |                                                  Vector[
+[warn]    |                                                    xjdf4s.model.resources.
+[warn]    |                                                      AssemblySection
+[warn]    |                                                  ]
+[warn]    |                                                ]
+[warn]    |                                               *: Tuple)
+[warn]    |                                          }:
+[warn]    |                                            (xjdf4s.codec.json.JsonFieldCodec[?]
+[warn]    |                                               *: Tuple)
+[warn]    |                                        }
+[warn]    |                                      }:Tuple
+[warn]    |                                    runtime.Tuples.cons(x$1⁴, Tuple_this⁴).
+[warn]    |                                      asInstanceOf[
+[warn]    |
+[warn]    |                                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                          Option[xjdf4s.core.Nmtoken]]
+[warn]    |                                       *: Tuple
+[warn]    |                                    ]:
+[warn]    |                                      (
+[warn]    |                                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                          Option[xjdf4s.core.Nmtoken]]
+[warn]    |                                       *: Tuple)
+[warn]    |                                  }:
+[warn]    |                                    (xjdf4s.codec.json.JsonFieldCodec[?] *:
+[warn]    |                                      Tuple)
+[warn]    |                                }
+[warn]    |                              }:Tuple
+[warn]    |                            runtime.Tuples.cons(x$1³, Tuple_this³).asInstanceOf[
+[warn]    |
+[warn]    |                                xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                  Option[xjdf4s.core.XjdfString]]
+[warn]    |                               *: Tuple
+[warn]    |                            ]:
+[warn]    |                              (
+[warn]    |                                xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                  Option[xjdf4s.core.XjdfString]]
+[warn]    |                               *: Tuple)
+[warn]    |                          }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |                        }
+[warn]    |                      }:Tuple
+[warn]    |                    runtime.Tuples.cons(x$1², Tuple_this²).asInstanceOf[
+[warn]    |
+[warn]    |                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                          Option[xjdf4s.model.resources.CommonFolds]]
+[warn]    |                       *: Tuple
+[warn]    |                    ]:
+[warn]    |                      (
+[warn]    |                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                          Option[xjdf4s.model.resources.CommonFolds]]
+[warn]    |                       *: Tuple)
+[warn]    |                  }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |                }
+[warn]    |              }:Tuple
+[warn]    |            runtime.Tuples.cons(x$1, Tuple_this).asInstanceOf[
+[warn]    |              xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken] *: Tuple]:
+[warn]    |              (xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken] *: Tuple)
+[warn]    |          }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |        }
+[warn]    |      }:Tuple
+[warn]    |    new
+[warn]    |
+[warn]    |        xjdf4s.codec.json.DerivedJsonEncoder[
+[warn]    |          xjdf4s.model.resources.AssemblySection]
+[warn]    |
+[warn]    |    (mirror$proxy13, labels, codecs,
+[warn]    |      xjdf4s.codec.xml.derivation.Defaults.of(classTag$proxy13))
+[warn]    |  }:io.circe.Encoder[xjdf4s.model.resources.AssemblySection]
+[warn]    |}
+[warn]    |
+[warn]    |where:    Tuple_this  is a value in the initializer of value codecs
+[warn]    |          Tuple_this² is a value in the initializer of value Tuple_this
+[warn]    |          Tuple_this³ is a value in the initializer of value Tuple_this²
+[warn]    |          Tuple_this⁴ is a value in the initializer of value Tuple_this³
+[warn]    |          Tuple_this⁵ is a value in the initializer of value Tuple_this⁴
+[warn]    |          Tuple_this⁶ is a value in the initializer of value Tuple_this⁵
+[warn]    |          apply       is a method in object ClassTag
+[warn]    |          apply²      is a method in object Tuple6
+[warn]    |          decoder     is a value in the initializer of value x$1⁵
+[warn]    |          decoder²    is a given instance in the initializer of value decoder
+[warn]    |          x$1         is a value in the initializer of value codecs
+[warn]    |          x$1²        is a value in the initializer of value Tuple_this
+[warn]    |          x$1³        is a value in the initializer of value Tuple_this²
+[warn]    |          x$1⁴        is a value in the initializer of value Tuple_this³
+[warn]    |          x$1⁵        is a value in the initializer of value Tuple_this⁴
+[warn]    |          x$1⁶        is a value in the initializer of value Tuple_this⁵
+[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerivedInstances.scala:56:68
+[warn] 56 |given derivedJsonDecoderAssemblySection: Decoder[AssemblySection] = JsonDerived.derivedDecoder[AssemblySection]
+[warn]    |                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[warn]    |Infinite loop in function body
+[warn]    |{
+[warn]    |  val mirror$proxy14:
+[warn]    |
+[warn]    |      scala.deriving.Mirror.Product{
+[warn]    |        type MirroredMonoType = xjdf4s.model.resources.AssemblySection;
+[warn]    |          type MirroredType = xjdf4s.model.resources.AssemblySection;
+[warn]    |          type MirroredLabel = ("AssemblySection" : String);
+[warn]    |          type MirroredElemTypes = (xjdf4s.core.Nmtoken,
+[warn]    |            Option[xjdf4s.model.resources.CommonFolds],
+[warn]    |            Option[xjdf4s.core.XjdfString], Option[xjdf4s.core.Nmtoken],
+[warn]    |            Vector[xjdf4s.model.resources.AssemblySection],
+[warn]    |            xjdf4s.core.Extensions);
+[warn]    |          type MirroredElemLabels = (("binderySignatureId" : String),
+[warn]    |            ("commonFolds" : String), ("descriptiveName" : String),
+[warn]    |            ("externalId" : String), ("sections" : String),
+[warn]    |            ("extensions" : String))
+[warn]    |      }
+[warn]    |
+[warn]    |   =
+[warn]    |    xjdf4s.model.resources.AssemblySection.$asInstanceOf[
+[warn]    |
+[warn]    |        scala.deriving.Mirror.Product{
+[warn]    |          type MirroredMonoType = xjdf4s.model.resources.AssemblySection;
+[warn]    |            type MirroredType = xjdf4s.model.resources.AssemblySection;
+[warn]    |            type MirroredLabel = ("AssemblySection" : String);
+[warn]    |            type MirroredElemTypes = (xjdf4s.core.Nmtoken,
+[warn]    |              Option[xjdf4s.model.resources.CommonFolds],
+[warn]    |              Option[xjdf4s.core.XjdfString], Option[xjdf4s.core.Nmtoken],
+[warn]    |              Vector[xjdf4s.model.resources.AssemblySection],
+[warn]    |              xjdf4s.core.Extensions);
+[warn]    |            type MirroredElemLabels = (("binderySignatureId" : String),
+[warn]    |              ("commonFolds" : String), ("descriptiveName" : String),
+[warn]    |              ("externalId" : String), ("sections" : String),
+[warn]    |              ("extensions" : String))
+[warn]    |        }
+[warn]    |
+[warn]    |    ]
+[warn]    |  val classTag$proxy14:
+[warn]    |    scala.reflect.ClassTag[xjdf4s.model.resources.AssemblySection] =
+[warn]    |    scala.reflect.ClassTag.apply[xjdf4s.model.resources.AssemblySection](
+[warn]    |      classOf[xjdf4s.model.resources.AssemblySection])
+[warn]    |  {
+[warn]    |    val labels: mirror$proxy14.MirroredElemLabels =
+[warn]    |      Tuple6.apply²[("binderySignatureId" : String), ("commonFolds" : String),
+[warn]    |        ("descriptiveName" : String), ("externalId" : String),
+[warn]    |        ("sections" : String), ("extensions" : String)]("binderySignatureId",
+[warn]    |        "commonFolds", "descriptiveName", "externalId", "sections", "extensions"
+[warn]    |        ):mirror$proxy14.MirroredElemLabels
+[warn]    |    val codecs: Tuple =
+[warn]    |      {
+[warn]    |        {
+[warn]    |          val x$1: xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken] =
+[warn]    |            xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
+[warn]    |              xjdf4s.core.Nmtoken](
+[warn]    |              xjdf4s.codec.json.JsonScalars.given_Encoder_Nmtoken,
+[warn]    |              xjdf4s.codec.json.JsonScalars.given_Decoder_Nmtoken)
+[warn]    |          {
+[warn]    |            val Tuple_this: Tuple =
+[warn]    |              {
+[warn]    |                {
+[warn]    |                  val x$1²:
+[warn]    |
+[warn]    |                      xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                        Option[xjdf4s.model.resources.CommonFolds]]
+[warn]    |
+[warn]    |                   =
+[warn]    |                    xjdf4s.codec.json.JsonFieldCodec.optionFieldCodec[
+[warn]    |                      xjdf4s.model.resources.CommonFolds](
+[warn]    |                      xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
+[warn]    |                        xjdf4s.model.resources.CommonFolds](
+[warn]    |                        xjdf4s.codec.json.JsonScalars.given_Encoder_CommonFolds
+[warn]    |                          ,
+[warn]    |                        xjdf4s.codec.json.JsonScalars.given_Decoder_CommonFolds)
+[warn]    |                      )
+[warn]    |                  {
+[warn]    |                    val Tuple_this²: Tuple =
+[warn]    |                      {
+[warn]    |                        {
+[warn]    |                          val x$1³:
+[warn]    |
+[warn]    |                              xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                Option[xjdf4s.core.XjdfString]]
+[warn]    |
+[warn]    |                           =
+[warn]    |                            xjdf4s.codec.json.JsonFieldCodec.optionFieldCodec[
+[warn]    |                              xjdf4s.core.XjdfString](
+[warn]    |                              xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
+[warn]    |                                xjdf4s.core.XjdfString](
+[warn]    |                                xjdf4s.codec.json.JsonScalars.
+[warn]    |                                  given_Encoder_XjdfString,
+[warn]    |                                xjdf4s.codec.json.JsonScalars.
+[warn]    |                                  given_Decoder_XjdfString
+[warn]    |                              )
+[warn]    |                            )
+[warn]    |                          {
+[warn]    |                            val Tuple_this³: Tuple =
+[warn]    |                              {
+[warn]    |                                {
+[warn]    |                                  val x$1⁴:
+[warn]    |
+[warn]    |                                      xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                        Option[xjdf4s.core.Nmtoken]]
+[warn]    |
+[warn]    |                                   =
+[warn]    |                                    xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                      optionFieldCodec[xjdf4s.core.Nmtoken](
+[warn]    |                                      xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                        scalarFieldCodec[xjdf4s.core.Nmtoken](
+[warn]    |                                        xjdf4s.codec.json.JsonScalars.
+[warn]    |                                          given_Encoder_Nmtoken,
+[warn]    |                                        xjdf4s.codec.json.JsonScalars.
+[warn]    |                                          given_Decoder_Nmtoken
+[warn]    |                                      )
+[warn]    |                                    )
+[warn]    |                                  {
+[warn]    |                                    val Tuple_this⁴: Tuple =
+[warn]    |                                      {
+[warn]    |                                        {
+[warn]    |                                          val x$1⁵:
+[warn]    |
+[warn]    |                                              xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                                Vector[
+[warn]    |                                                  xjdf4s.model.resources.
+[warn]    |                                                    AssemblySection
+[warn]    |                                                ]
+[warn]    |                                              ]
+[warn]    |
+[warn]    |                                           =
+[warn]    |                                            xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                              vectorFieldCodec[
+[warn]    |
+[warn]    |                                                xjdf4s.model.resources.
+[warn]    |                                                  AssemblySection
+[warn]    |
+[warn]    |                                            ](
+[warn]    |                                              {
+[warn]    |                                                val classTag:
+[warn]    |
+[warn]    |                                                    scala.reflect.ClassTag[
+[warn]    |                                                      xjdf4s.model.resources.
+[warn]    |                                                        AssemblySection
+[warn]    |                                                    ]
+[warn]    |
+[warn]    |                                                 =
+[warn]    |                                                  scala.reflect.ClassTag.apply[
+[warn]    |
+[warn]    |                                                      xjdf4s.model.resources.
+[warn]    |                                                        AssemblySection
+[warn]    |
+[warn]    |                                                  ](
+[warn]    |                                                    classOf[
+[warn]    |                                                      xjdf4s.model.resources.
+[warn]    |                                                        AssemblySection
+[warn]    |                                                    ]
+[warn]    |                                                  )
+[warn]    |                                                {
+[warn]    |                                                  given val encoder:
+[warn]    |
+[warn]    |                                                      io.circe.Encoder[
+[warn]    |                                                        xjdf4s.model.resources.
+[warn]    |                                                          AssemblySection
+[warn]    |                                                      ]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    xjdf4s.codec.json.
+[warn]    |                                                      derivedJsonEncoderAssemblySection
+[warn]    |                                                  val decoder:
+[warn]    |
+[warn]    |                                                      io.circe.Decoder[
+[warn]    |                                                        xjdf4s.model.resources.
+[warn]    |                                                          AssemblySection
+[warn]    |                                                      ]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    {
+[warn]    |                                                      given val decoder²:
+[warn]    |
+[warn]    |                                                          io.circe.Decoder[
+[warn]    |                                                            xjdf4s.model.resources
+[warn]    |                                                              .AssemblySection
+[warn]    |                                                          ]
+[warn]    |
+[warn]    |                                                       =
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          derivedJsonDecoderAssemblySection
+[warn]    |                                                      decoder²:
+[warn]    |
+[warn]    |                                                          io.circe.Decoder[
+[warn]    |                                                            xjdf4s.model.resources
+[warn]    |                                                              .AssemblySection
+[warn]    |                                                          ]
+[warn]    |
+[warn]    |                                                    }
+[warn]    |                                                  xjdf4s.codec.json.
+[warn]    |                                                    JsonFieldCodec.fromProduct[
+[warn]    |
+[warn]    |                                                      xjdf4s.model.resources.
+[warn]    |                                                        AssemblySection
+[warn]    |
+[warn]    |                                                  ](encoder, decoder, classTag)
+[warn]    |                                                }
+[warn]    |                                              }:
+[warn]    |
+[warn]    |                                                  xjdf4s.codec.json.
+[warn]    |                                                    JsonFieldCodec[
+[warn]    |                                                    xjdf4s.model.resources.
+[warn]    |                                                      AssemblySection
+[warn]    |                                                  ]
+[warn]    |
+[warn]    |                                            )
+[warn]    |                                          {
+[warn]    |                                            val Tuple_this⁵: Tuple =
+[warn]    |                                              {
+[warn]    |                                                {
+[warn]    |                                                  val x$1⁶:
+[warn]    |
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec[
+[warn]    |                                                        xjdf4s.core.Extensions]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    xjdf4s.codec.json.
+[warn]    |                                                      JsonFieldCodec.
+[warn]    |                                                      extensionsFieldCodec
+[warn]    |                                                  {
+[warn]    |                                                    val Tuple_this⁶: Tuple =
+[warn]    |                                                      {
+[warn]    |                                                        EmptyTuple
+[warn]    |                                                      }:Tuple
+[warn]    |                                                    runtime.Tuples.cons(x$1⁶,
+[warn]    |                                                      Tuple_this⁶).asInstanceOf[
+[warn]    |
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonFieldCodec[
+[warn]    |                                                          xjdf4s.core.Extensions
+[warn]    |                                                          ]
+[warn]    |                                                       *: Tuple
+[warn]    |                                                    ]:
+[warn]    |                                                      (
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonFieldCodec[
+[warn]    |                                                          xjdf4s.core.Extensions
+[warn]    |                                                          ]
+[warn]    |                                                       *: Tuple)
+[warn]    |                                                  }:
+[warn]    |                                                    (
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec[?]
+[warn]    |                                                     *: Tuple)
+[warn]    |                                                }
+[warn]    |                                              }:Tuple
+[warn]    |                                            runtime.Tuples.cons(x$1⁵,
+[warn]    |                                              Tuple_this⁵).asInstanceOf[
+[warn]    |
+[warn]    |                                                xjdf4s.codec.json.JsonFieldCodec
+[warn]    |                                                  [
+[warn]    |                                                  Vector[
+[warn]    |                                                    xjdf4s.model.resources.
+[warn]    |                                                      AssemblySection
+[warn]    |                                                  ]
+[warn]    |                                                ]
+[warn]    |                                               *: Tuple
+[warn]    |                                            ]:
+[warn]    |                                              (
+[warn]    |                                                xjdf4s.codec.json.JsonFieldCodec
+[warn]    |                                                  [
+[warn]    |                                                  Vector[
+[warn]    |                                                    xjdf4s.model.resources.
+[warn]    |                                                      AssemblySection
+[warn]    |                                                  ]
+[warn]    |                                                ]
+[warn]    |                                               *: Tuple)
+[warn]    |                                          }:
+[warn]    |                                            (xjdf4s.codec.json.JsonFieldCodec[?]
+[warn]    |                                               *: Tuple)
+[warn]    |                                        }
+[warn]    |                                      }:Tuple
+[warn]    |                                    runtime.Tuples.cons(x$1⁴, Tuple_this⁴).
+[warn]    |                                      asInstanceOf[
+[warn]    |
+[warn]    |                                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                          Option[xjdf4s.core.Nmtoken]]
+[warn]    |                                       *: Tuple
+[warn]    |                                    ]:
+[warn]    |                                      (
+[warn]    |                                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                          Option[xjdf4s.core.Nmtoken]]
+[warn]    |                                       *: Tuple)
+[warn]    |                                  }:
+[warn]    |                                    (xjdf4s.codec.json.JsonFieldCodec[?] *:
+[warn]    |                                      Tuple)
+[warn]    |                                }
+[warn]    |                              }:Tuple
+[warn]    |                            runtime.Tuples.cons(x$1³, Tuple_this³).asInstanceOf[
+[warn]    |
+[warn]    |                                xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                  Option[xjdf4s.core.XjdfString]]
+[warn]    |                               *: Tuple
+[warn]    |                            ]:
+[warn]    |                              (
+[warn]    |                                xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                  Option[xjdf4s.core.XjdfString]]
+[warn]    |                               *: Tuple)
+[warn]    |                          }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |                        }
+[warn]    |                      }:Tuple
+[warn]    |                    runtime.Tuples.cons(x$1², Tuple_this²).asInstanceOf[
+[warn]    |
+[warn]    |                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                          Option[xjdf4s.model.resources.CommonFolds]]
+[warn]    |                       *: Tuple
+[warn]    |                    ]:
+[warn]    |                      (
+[warn]    |                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                          Option[xjdf4s.model.resources.CommonFolds]]
+[warn]    |                       *: Tuple)
+[warn]    |                  }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |                }
+[warn]    |              }:Tuple
+[warn]    |            runtime.Tuples.cons(x$1, Tuple_this).asInstanceOf[
+[warn]    |              xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken] *: Tuple]:
+[warn]    |              (xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken] *: Tuple)
+[warn]    |          }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |        }
+[warn]    |      }:Tuple
+[warn]    |    new
+[warn]    |
+[warn]    |        xjdf4s.codec.json.DerivedJsonDecoder[
+[warn]    |          xjdf4s.model.resources.AssemblySection]
+[warn]    |
+[warn]    |    (mirror$proxy14, labels, codecs,
+[warn]    |      xjdf4s.codec.xml.derivation.Defaults.of(classTag$proxy14))
+[warn]    |  }:io.circe.Decoder[xjdf4s.model.resources.AssemblySection]
+[warn]    |}
+[warn]    |
+[warn]    |where:    Tuple_this  is a value in the initializer of value codecs
+[warn]    |          Tuple_this² is a value in the initializer of value Tuple_this
+[warn]    |          Tuple_this³ is a value in the initializer of value Tuple_this²
+[warn]    |          Tuple_this⁴ is a value in the initializer of value Tuple_this³
+[warn]    |          Tuple_this⁵ is a value in the initializer of value Tuple_this⁴
+[warn]    |          Tuple_this⁶ is a value in the initializer of value Tuple_this⁵
+[warn]    |          apply       is a method in object ClassTag
+[warn]    |          apply²      is a method in object Tuple6
+[warn]    |          decoder     is a value in the initializer of value x$1⁵
+[warn]    |          decoder²    is a given instance in the initializer of value decoder
+[warn]    |          x$1         is a value in the initializer of value codecs
+[warn]    |          x$1²        is a value in the initializer of value Tuple_this
+[warn]    |          x$1³        is a value in the initializer of value Tuple_this²
+[warn]    |          x$1⁴        is a value in the initializer of value Tuple_this³
+[warn]    |          x$1⁵        is a value in the initializer of value Tuple_this⁴
+[warn]    |          x$1⁶        is a value in the initializer of value Tuple_this⁵
+[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerivedInstances.scala:93:58
+[warn] 93 |given derivedJsonEncoderBundleItem: Encoder[BundleItem] = JsonDerived.derivedEncoder[BundleItem]
+[warn]    |                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[warn]    |Infinite loop in function body
+[warn]    |{
+[warn]    |  val mirror$proxy51:
+[warn]    |
+[warn]    |      scala.deriving.Mirror.Product{
+[warn]    |        type MirroredMonoType = xjdf4s.model.resources.BundleItem;
+[warn]    |          type MirroredType = xjdf4s.model.resources.BundleItem;
+[warn]    |          type MirroredLabel = ("BundleItem" : String);
+[warn]    |          type MirroredElemTypes = (Int,
+[warn]    |            Option[xjdf4s.model.resources.BundleType],
+[warn]    |            Option[xjdf4s.core.XsdIdRef], Option[Int],
+[warn]    |            Option[xjdf4s.model.Shape3D], Option[Float], Option[Float],
+[warn]    |            Vector[xjdf4s.model.resources.BundleItem], xjdf4s.core.Extensions);
+[warn]    |          type MirroredElemLabels = (("amount" : String),
+[warn]    |            ("bundleType" : String), ("itemRef" : String),
+[warn]    |            ("totalAmount" : String), ("totalDimensions" : String),
+[warn]    |            ("totalVolume" : String), ("totalWeight" : String),
+[warn]    |            ("children" : String), ("extensions" : String))
+[warn]    |      }
+[warn]    |
+[warn]    |   =
+[warn]    |    xjdf4s.model.resources.BundleItem.$asInstanceOf[
+[warn]    |
+[warn]    |        scala.deriving.Mirror.Product{
+[warn]    |          type MirroredMonoType = xjdf4s.model.resources.BundleItem;
+[warn]    |            type MirroredType = xjdf4s.model.resources.BundleItem;
+[warn]    |            type MirroredLabel = ("BundleItem" : String);
+[warn]    |            type MirroredElemTypes = (Int,
+[warn]    |              Option[xjdf4s.model.resources.BundleType],
+[warn]    |              Option[xjdf4s.core.XsdIdRef], Option[Int],
+[warn]    |              Option[xjdf4s.model.Shape3D], Option[Float], Option[Float],
+[warn]    |              Vector[xjdf4s.model.resources.BundleItem], xjdf4s.core.Extensions)
+[warn]    |              ;
+[warn]    |            type MirroredElemLabels = (("amount" : String),
+[warn]    |              ("bundleType" : String), ("itemRef" : String),
+[warn]    |              ("totalAmount" : String), ("totalDimensions" : String),
+[warn]    |              ("totalVolume" : String), ("totalWeight" : String),
+[warn]    |              ("children" : String), ("extensions" : String))
+[warn]    |        }
+[warn]    |
+[warn]    |    ]
+[warn]    |  val classTag$proxy51:
+[warn]    |    scala.reflect.ClassTag[xjdf4s.model.resources.BundleItem] =
+[warn]    |    scala.reflect.ClassTag.apply[xjdf4s.model.resources.BundleItem](
+[warn]    |      classOf[xjdf4s.model.resources.BundleItem])
+[warn]    |  {
+[warn]    |    val labels: mirror$proxy51.MirroredElemLabels =
+[warn]    |      Tuple9.apply²[("amount" : String), ("bundleType" : String),
+[warn]    |        ("itemRef" : String), ("totalAmount" : String),
+[warn]    |        ("totalDimensions" : String), ("totalVolume" : String),
+[warn]    |        ("totalWeight" : String), ("children" : String), ("extensions" : String)
+[warn]    |        ]("amount", "bundleType", "itemRef", "totalAmount", "totalDimensions",
+[warn]    |        "totalVolume", "totalWeight", "children", "extensions"):
+[warn]    |        mirror$proxy51.MirroredElemLabels
+[warn]    |    val codecs: Tuple =
+[warn]    |      {
+[warn]    |        {
+[warn]    |          val x$1: xjdf4s.codec.json.JsonFieldCodec[Int] =
+[warn]    |            xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[Int](
+[warn]    |              io.circe.Encoder.encodeInt, io.circe.Decoder.decodeInt)
+[warn]    |          {
+[warn]    |            val Tuple_this: Tuple =
+[warn]    |              {
+[warn]    |                {
+[warn]    |                  val x$1²:
+[warn]    |
+[warn]    |                      xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                        Option[xjdf4s.model.resources.BundleType]]
+[warn]    |
+[warn]    |                   =
+[warn]    |                    xjdf4s.codec.json.JsonFieldCodec.optionFieldCodec[
+[warn]    |                      xjdf4s.model.resources.BundleType](
+[warn]    |                      {
+[warn]    |                        val classTag:
+[warn]    |
+[warn]    |                            scala.reflect.ClassTag[
+[warn]    |                              xjdf4s.model.resources.BundleType]
+[warn]    |
+[warn]    |                         =
+[warn]    |                          scala.reflect.ClassTag.apply[
+[warn]    |                            xjdf4s.model.resources.BundleType](
+[warn]    |                            classOf[xjdf4s.model.resources.BundleType])
+[warn]    |                        {
+[warn]    |                          given val encoder:
+[warn]    |                            io.circe.Encoder[xjdf4s.model.resources.BundleType]
+[warn]    |                             =
+[warn]    |                            xjdf4s.codec.json.JsonScalars.given_Encoder_A[
+[warn]    |                              xjdf4s.model.resources.BundleType]
+[warn]    |                          val decoder:
+[warn]    |                            io.circe.Decoder[xjdf4s.model.resources.BundleType]
+[warn]    |                             =
+[warn]    |                            {
+[warn]    |                              given val decoder²:
+[warn]    |
+[warn]    |                                  io.circe.Decoder[
+[warn]    |                                    xjdf4s.model.resources.BundleType]
+[warn]    |
+[warn]    |                               =
+[warn]    |                                xjdf4s.codec.json.JsonScalars.given_Decoder_A[
+[warn]    |                                  xjdf4s.model.resources.BundleType](
+[warn]    |                                  scala.reflect.ClassTag.apply[
+[warn]    |                                    xjdf4s.model.resources.BundleType](
+[warn]    |                                    classOf[xjdf4s.model.resources.BundleType])
+[warn]    |                                )
+[warn]    |                              decoder²:
+[warn]    |
+[warn]    |                                  io.circe.Decoder[
+[warn]    |                                    xjdf4s.model.resources.BundleType]
+[warn]    |
+[warn]    |                            }
+[warn]    |                          xjdf4s.codec.json.JsonFieldCodec.fromProduct[
+[warn]    |                            xjdf4s.model.resources.BundleType](encoder,
+[warn]    |                            decoder, classTag)
+[warn]    |                        }
+[warn]    |                      }:
+[warn]    |
+[warn]    |                          xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                            xjdf4s.model.resources.BundleType]
+[warn]    |
+[warn]    |                    )
+[warn]    |                  {
+[warn]    |                    val Tuple_this²: Tuple =
+[warn]    |                      {
+[warn]    |                        {
+[warn]    |                          val x$1³:
+[warn]    |
+[warn]    |                              xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                Option[xjdf4s.core.XsdIdRef]]
+[warn]    |
+[warn]    |                           =
+[warn]    |                            xjdf4s.codec.json.JsonFieldCodec.optionFieldCodec[
+[warn]    |                              xjdf4s.core.XsdIdRef](
+[warn]    |                              xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
+[warn]    |                                xjdf4s.core.XsdIdRef](
+[warn]    |                                xjdf4s.codec.json.JsonScalars.
+[warn]    |                                  given_Encoder_XsdIdRef,
+[warn]    |                                xjdf4s.codec.json.JsonScalars.
+[warn]    |                                  given_Decoder_XsdIdRef
+[warn]    |                              )
+[warn]    |                            )
+[warn]    |                          {
+[warn]    |                            val Tuple_this³: Tuple =
+[warn]    |                              {
+[warn]    |                                {
+[warn]    |                                  val x$1⁴:
+[warn]    |
+[warn]    |                                      xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                        Option[Int]]
+[warn]    |
+[warn]    |                                   =
+[warn]    |                                    xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                      optionFieldCodec[Int](
+[warn]    |                                      xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                        scalarFieldCodec[Int](
+[warn]    |                                        io.circe.Encoder.encodeInt,
+[warn]    |                                        io.circe.Decoder.decodeInt)
+[warn]    |                                    )
+[warn]    |                                  {
+[warn]    |                                    val Tuple_this⁴: Tuple =
+[warn]    |                                      {
+[warn]    |                                        {
+[warn]    |                                          val x$1⁵:
+[warn]    |
+[warn]    |                                              xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                                Option[xjdf4s.model.Shape3D]]
+[warn]    |
+[warn]    |                                           =
+[warn]    |                                            xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                              optionFieldCodec[
+[warn]    |                                              xjdf4s.model.Shape3D](
+[warn]    |                                              {
+[warn]    |                                                val classTag²:
+[warn]    |
+[warn]    |                                                    scala.reflect.ClassTag[
+[warn]    |                                                      xjdf4s.model.Shape3D]
+[warn]    |
+[warn]    |                                                 =
+[warn]    |                                                  scala.reflect.ClassTag.apply[
+[warn]    |                                                    xjdf4s.model.Shape3D](
+[warn]    |                                                    classOf[xjdf4s.model.Shape3D
+[warn]    |                                                      ]
+[warn]    |                                                  )
+[warn]    |                                                {
+[warn]    |                                                  given val encoder²:
+[warn]    |
+[warn]    |                                                      io.circe.Encoder[
+[warn]    |                                                        xjdf4s.model.Shape3D]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    xjdf4s.codec.json.
+[warn]    |                                                      JsonScalars.
+[warn]    |                                                      given_Encoder_Shape3D
+[warn]    |                                                  val decoder³:
+[warn]    |
+[warn]    |                                                      io.circe.Decoder[
+[warn]    |                                                        xjdf4s.model.Shape3D]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    {
+[warn]    |                                                      given val decoder⁴:
+[warn]    |
+[warn]    |                                                          io.circe.Decoder[
+[warn]    |                                                            xjdf4s.model.Shape3D
+[warn]    |                                                            ]
+[warn]    |
+[warn]    |                                                       =
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonScalars.
+[warn]    |                                                          given_Decoder_Shape3D
+[warn]    |                                                      decoder⁴:
+[warn]    |
+[warn]    |                                                          io.circe.Decoder[
+[warn]    |                                                            xjdf4s.model.Shape3D
+[warn]    |                                                            ]
+[warn]    |
+[warn]    |                                                    }
+[warn]    |                                                  xjdf4s.codec.json.
+[warn]    |                                                    JsonFieldCodec.fromProduct[
+[warn]    |                                                    xjdf4s.model.Shape3D](
+[warn]    |                                                    encoder², decoder³,
+[warn]    |                                                    classTag²)
+[warn]    |                                                }
+[warn]    |                                              }:
+[warn]    |
+[warn]    |                                                  xjdf4s.codec.json.
+[warn]    |                                                    JsonFieldCodec[
+[warn]    |                                                    xjdf4s.model.Shape3D]
+[warn]    |
+[warn]    |                                            )
+[warn]    |                                          {
+[warn]    |                                            val Tuple_this⁵: Tuple =
+[warn]    |                                              {
+[warn]    |                                                {
+[warn]    |                                                  val x$1⁶:
+[warn]    |
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec[
+[warn]    |                                                        Option[Float]]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    xjdf4s.codec.json.
+[warn]    |                                                      JsonFieldCodec.
+[warn]    |                                                      optionFieldCodec[Float](
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec.
+[warn]    |                                                        scalarFieldCodec[Float](
+[warn]    |                                                        io.circe.Encoder.
+[warn]    |                                                          encodeFloat,
+[warn]    |                                                        io.circe.Decoder.
+[warn]    |                                                          decodeFloat
+[warn]    |                                                      )
+[warn]    |                                                    )
+[warn]    |                                                  {
+[warn]    |                                                    val Tuple_this⁶: Tuple =
+[warn]    |                                                      {
+[warn]    |                                                        {
+[warn]    |                                                          val x$1⁷:
+[warn]    |
+[warn]    |                                                              xjdf4s.codec.json.
+[warn]    |                                                                JsonFieldCodec[
+[warn]    |                                                                Option[Float]]
+[warn]    |
+[warn]    |                                                           =
+[warn]    |                                                            xjdf4s.codec.json.
+[warn]    |                                                              JsonFieldCodec.
+[warn]    |                                                              optionFieldCodec[
+[warn]    |                                                              Float](
+[warn]    |                                                              xjdf4s.codec.json.
+[warn]    |                                                                JsonFieldCodec.
+[warn]    |                                                                scalarFieldCodec
+[warn]    |                                                                [Float](
+[warn]    |                                                                io.circe.Encoder
+[warn]    |                                                                  .encodeFloat,
+[warn]    |                                                                io.circe.Decoder
+[warn]    |                                                                  .decodeFloat
+[warn]    |                                                              )
+[warn]    |                                                            )
+[warn]    |                                                          {
+[warn]    |                                                            val Tuple_this⁷:
+[warn]    |                                                              Tuple =
+[warn]    |                                                              {
+[warn]    |                                                                {
+[warn]    |                                                                  val x$1⁸:
+[warn]    |
+[warn]    |                                                                      xjdf4s.codec.json
+[warn]    |                                                                        .
+[warn]    |                                                                        JsonFieldCodec
+[warn]    |                                                                        [
+[warn]    |                                                                        Vector[
+[warn]    |                                                                          xjdf4s.model.resources
+[warn]    |                                                                            .
+[warn]    |                                                                            BundleItem
+[warn]    |                                                                          ]
+[warn]    |                                                                      ]
+[warn]    |
+[warn]    |                                                                   =
+[warn]    |                                                                    xjdf4s.codec.json
+[warn]    |                                                                      .
+[warn]    |                                                                      JsonFieldCodec
+[warn]    |                                                                      .
+[warn]    |                                                                      vectorFieldCodec
+[warn]    |                                                                      [
+[warn]    |
+[warn]    |                                                                        xjdf4s.model.resources
+[warn]    |                                                                          .
+[warn]    |                                                                          BundleItem
+[warn]    |
+[warn]    |                                                                    ](
+[warn]    |                                                                      {
+[warn]    |                                                                        val
+[warn]    |                                                                          classTag³
+[warn]    |                                                                          :
+[warn]    |
+[warn]    |                                                                            scala.reflect
+[warn]    |                                                                              .
+[warn]    |                                                                              ClassTag
+[warn]    |                                                                              [
+[warn]    |                                                                              xjdf4s.model.resources
+[warn]    |                                                                                .
+[warn]    |                                                                                BundleItem
+[warn]    |                                                                              ]
+[warn]    |
+[warn]    |                                                                         =
+[warn]    |                                                                          scala.reflect
+[warn]    |                                                                            .
+[warn]    |                                                                            ClassTag
+[warn]    |                                                                            .
+[warn]    |                                                                            apply
+[warn]    |                                                                            [
+[warn]    |
+[warn]    |                                                                              xjdf4s.model.resources
+[warn]    |                                                                                .
+[warn]    |                                                                                BundleItem
+[warn]    |
+[warn]    |                                                                          ](
+[warn]    |                                                                            classOf[
+[warn]    |                                                                              xjdf4s.model.resources
+[warn]    |                                                                                .
+[warn]    |                                                                                BundleItem
+[warn]    |                                                                              ]
+[warn]    |                                                                          )
+[warn]    |                                                                        {
+[warn]    |                                                                          given
+[warn]    |                                                                            val
+[warn]    |                                                                            encoder³
+[warn]    |                                                                            :
+[warn]    |
+[warn]    |                                                                              io.circe
+[warn]    |                                                                                .
+[warn]    |                                                                                Encoder
+[warn]    |                                                                                [
+[warn]    |                                                                                xjdf4s.model.resources
+[warn]    |                                                                                  .
+[warn]    |                                                                                  BundleItem
+[warn]    |                                                                                ]
+[warn]    |
+[warn]    |                                                                             =
+[warn]    |                                                                            xjdf4s.codec.json
+[warn]    |                                                                              .
+[warn]    |                                                                              derivedJsonEncoderBundleItem
+[warn]    |                                                                          val
+[warn]    |                                                                            decoder⁵
+[warn]    |                                                                            :
+[warn]    |
+[warn]    |                                                                              io.circe
+[warn]    |                                                                                .
+[warn]    |                                                                                Decoder
+[warn]    |                                                                                [
+[warn]    |                                                                                xjdf4s.model.resources
+[warn]    |                                                                                  .
+[warn]    |                                                                                  BundleItem
+[warn]    |                                                                                ]
+[warn]    |
+[warn]    |                                                                             =
+[warn]    |                                                                            {
+[warn]    |                                                                              given
+[warn]    |
+[warn]    |                                                                                val
+[warn]    |
+[warn]    |
+[warn]    |                                                                                decoder⁶
+[warn]    |
+[warn]    |                                                                                :
+[warn]    |
+[warn]    |                                                                                  io.circe
+[warn]    |                                                                                    .
+[warn]    |                                                                                    Decoder
+[warn]    |                                                                                    [
+[warn]    |                                                                                    xjdf4s.model.resources
+[warn]    |                                                                                      .
+[warn]    |                                                                                      BundleItem
+[warn]    |                                                                                    ]
+[warn]    |
+[warn]    |                                                                                 =
+[warn]    |                                                                                xjdf4s.codec.json
+[warn]    |                                                                                  .
+[warn]    |                                                                                  derivedJsonDecoderBundleItem
+[warn]    |                                                                              decoder⁶
+[warn]    |                                                                                :
+[warn]    |
+[warn]    |                                                                                  io.circe
+[warn]    |                                                                                    .
+[warn]    |                                                                                    Decoder
+[warn]    |                                                                                    [
+[warn]    |                                                                                    xjdf4s.model.resources
+[warn]    |                                                                                      .
+[warn]    |                                                                                      BundleItem
+[warn]    |                                                                                    ]
+[warn]    |
+[warn]    |                                                                              }
+[warn]    |                                                                          xjdf4s.codec.json
+[warn]    |                                                                            .
+[warn]    |                                                                            JsonFieldCodec
+[warn]    |                                                                            .
+[warn]    |                                                                            fromProduct
+[warn]    |                                                                            [
+[warn]    |
+[warn]    |                                                                              xjdf4s.model.resources
+[warn]    |                                                                                .
+[warn]    |                                                                                BundleItem
+[warn]    |
+[warn]    |                                                                          ](
+[warn]    |                                                                            encoder³
+[warn]    |                                                                              ,
+[warn]    |                                                                            decoder⁵
+[warn]    |                                                                              ,
+[warn]    |                                                                            classTag³
+[warn]    |                                                                            )
+[warn]    |                                                                        }
+[warn]    |                                                                      }:
+[warn]    |
+[warn]    |                                                                          xjdf4s.codec.json
+[warn]    |                                                                            .
+[warn]    |                                                                            JsonFieldCodec
+[warn]    |                                                                            [
+[warn]    |                                                                            xjdf4s.model.resources
+[warn]    |                                                                              .
+[warn]    |                                                                              BundleItem
+[warn]    |                                                                            ]
+[warn]    |
+[warn]    |                                                                    )
+[warn]    |                                                                  {
+[warn]    |                                                                    val
+[warn]    |                                                                      Tuple_this⁸
+[warn]    |                                                                      : Tuple =
+[warn]    |                                                                      {
+[warn]    |                                                                        {
+[warn]    |                                                                          val
+[warn]    |                                                                            x$1⁹
+[warn]    |                                                                            :
+[warn]    |
+[warn]    |                                                                              xjdf4s.codec.json
+[warn]    |                                                                                .
+[warn]    |                                                                                JsonFieldCodec
+[warn]    |                                                                                [
+[warn]    |                                                                                xjdf4s.core
+[warn]    |                                                                                  .
+[warn]    |                                                                                  Extensions
+[warn]    |                                                                                ]
+[warn]    |
+[warn]    |                                                                             =
+[warn]    |                                                                            xjdf4s.codec.json
+[warn]    |                                                                              .
+[warn]    |                                                                              JsonFieldCodec
+[warn]    |                                                                              .
+[warn]    |                                                                              extensionsFieldCodec
+[warn]    |                                                                          {
+[warn]    |                                                                            val
+[warn]    |                                                                              Tuple_this⁹
+[warn]    |                                                                              :
+[warn]    |
+[warn]    |                                                                                Tuple
+[warn]    |
+[warn]    |                                                                               =
+[warn]    |                                                                              {
+[warn]    |                                                                                EmptyTuple
+[warn]    |                                                                                }
+[warn]    |                                                                                :
+[warn]    |
+[warn]    |                                                                                  Tuple
+[warn]    |
+[warn]    |                                                                            runtime
+[warn]    |                                                                              .
+[warn]    |                                                                              Tuples
+[warn]    |                                                                              .
+[warn]    |                                                                              cons
+[warn]    |                                                                              (
+[warn]    |                                                                              x$1⁹
+[warn]    |                                                                                ,
+[warn]    |                                                                              Tuple_this⁹
+[warn]    |                                                                              ).
+[warn]    |                                                                              asInstanceOf
+[warn]    |                                                                              [
+[warn]    |
+[warn]    |                                                                                xjdf4s.codec.json
+[warn]    |                                                                                  .
+[warn]    |                                                                                  JsonFieldCodec
+[warn]    |                                                                                  [
+[warn]    |                                                                                  xjdf4s.core
+[warn]    |                                                                                    .
+[warn]    |                                                                                    Extensions
+[warn]    |                                                                                  ]
+[warn]    |
+[warn]    |                                                                                *:
+[warn]    |
+[warn]    |                                                                                Tuple
+[warn]    |
+[warn]    |                                                                              ]:
+[warn]    |                                                                              (
+[warn]    |                                                                                xjdf4s.codec.json
+[warn]    |                                                                                  .
+[warn]    |                                                                                  JsonFieldCodec
+[warn]    |                                                                                  [
+[warn]    |                                                                                  xjdf4s.core
+[warn]    |                                                                                    .
+[warn]    |                                                                                    Extensions
+[warn]    |                                                                                  ]
+[warn]    |
+[warn]    |                                                                                *:
+[warn]    |
+[warn]    |                                                                                Tuple
+[warn]    |                                                                                )
+[warn]    |
+[warn]    |                                                                            }:
+[warn]    |                                                                            (
+[warn]    |                                                                              xjdf4s.codec.json
+[warn]    |                                                                                .
+[warn]    |                                                                                JsonFieldCodec
+[warn]    |                                                                                [
+[warn]    |                                                                                ?
+[warn]    |                                                                                ]
+[warn]    |
+[warn]    |                                                                              *:
+[warn]    |
+[warn]    |                                                                              Tuple
+[warn]    |                                                                              )
+[warn]    |                                                                        }
+[warn]    |                                                                      }:Tuple
+[warn]    |                                                                    runtime.
+[warn]    |                                                                      Tuples.
+[warn]    |                                                                      cons(
+[warn]    |                                                                      x$1⁸,
+[warn]    |                                                                      Tuple_this⁸
+[warn]    |                                                                      ).
+[warn]    |                                                                      asInstanceOf
+[warn]    |                                                                      [
+[warn]    |
+[warn]    |                                                                        xjdf4s.codec.json
+[warn]    |                                                                          .
+[warn]    |                                                                          JsonFieldCodec
+[warn]    |                                                                          [
+[warn]    |                                                                          Vector
+[warn]    |                                                                            [
+[warn]    |                                                                            xjdf4s.model.resources
+[warn]    |                                                                              .
+[warn]    |                                                                              BundleItem
+[warn]    |                                                                            ]
+[warn]    |                                                                        ]
+[warn]    |                                                                       *: Tuple
+[warn]    |                                                                    ]:
+[warn]    |                                                                      (
+[warn]    |                                                                        xjdf4s.codec.json
+[warn]    |                                                                          .
+[warn]    |                                                                          JsonFieldCodec
+[warn]    |                                                                          [
+[warn]    |                                                                          Vector
+[warn]    |                                                                            [
+[warn]    |                                                                            xjdf4s.model.resources
+[warn]    |                                                                              .
+[warn]    |                                                                              BundleItem
+[warn]    |                                                                            ]
+[warn]    |                                                                        ]
+[warn]    |                                                                       *: Tuple)
+[warn]    |                                                                    }:
+[warn]    |                                                                    (
+[warn]    |                                                                      xjdf4s.codec.json
+[warn]    |                                                                        .
+[warn]    |                                                                        JsonFieldCodec
+[warn]    |                                                                        [?]
+[warn]    |                                                                     *: Tuple)
+[warn]    |                                                                }
+[warn]    |                                                              }:Tuple
+[warn]    |                                                            runtime.Tuples.cons(
+[warn]    |                                                              x$1⁷, Tuple_this⁷)
+[warn]    |                                                              .asInstanceOf[
+[warn]    |
+[warn]    |                                                                xjdf4s.codec.json
+[warn]    |                                                                  .
+[warn]    |                                                                  JsonFieldCodec
+[warn]    |                                                                  [Option[Float]
+[warn]    |                                                                  ]
+[warn]    |                                                               *: Tuple
+[warn]    |                                                            ]:
+[warn]    |                                                              (
+[warn]    |                                                                xjdf4s.codec.json
+[warn]    |                                                                  .
+[warn]    |                                                                  JsonFieldCodec
+[warn]    |                                                                  [Option[Float]
+[warn]    |                                                                  ]
+[warn]    |                                                               *: Tuple)
+[warn]    |                                                          }:
+[warn]    |                                                            (
+[warn]    |                                                              xjdf4s.codec.json.
+[warn]    |                                                                JsonFieldCodec[?
+[warn]    |                                                                ]
+[warn]    |                                                             *: Tuple)
+[warn]    |                                                        }
+[warn]    |                                                      }:Tuple
+[warn]    |                                                    runtime.Tuples.cons(x$1⁶,
+[warn]    |                                                      Tuple_this⁶).asInstanceOf[
+[warn]    |
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonFieldCodec[
+[warn]    |                                                          Option[Float]]
+[warn]    |                                                       *: Tuple
+[warn]    |                                                    ]:
+[warn]    |                                                      (
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonFieldCodec[
+[warn]    |                                                          Option[Float]]
+[warn]    |                                                       *: Tuple)
+[warn]    |                                                  }:
+[warn]    |                                                    (
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec[?]
+[warn]    |                                                     *: Tuple)
+[warn]    |                                                }
+[warn]    |                                              }:Tuple
+[warn]    |                                            runtime.Tuples.cons(x$1⁵,
+[warn]    |                                              Tuple_this⁵).asInstanceOf[
+[warn]    |
+[warn]    |                                                xjdf4s.codec.json.JsonFieldCodec
+[warn]    |                                                  [Option[xjdf4s.model.Shape3D]]
+[warn]    |                                                 *: Tuple
+[warn]    |                                            ]:
+[warn]    |                                              (
+[warn]    |                                                xjdf4s.codec.json.JsonFieldCodec
+[warn]    |                                                  [Option[xjdf4s.model.Shape3D]]
+[warn]    |                                                 *: Tuple)
+[warn]    |                                          }:
+[warn]    |                                            (xjdf4s.codec.json.JsonFieldCodec[?]
+[warn]    |                                               *: Tuple)
+[warn]    |                                        }
+[warn]    |                                      }:Tuple
+[warn]    |                                    runtime.Tuples.cons(x$1⁴, Tuple_this⁴).
+[warn]    |                                      asInstanceOf[
+[warn]    |
+[warn]    |                                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                          Option[Int]]
+[warn]    |                                       *: Tuple
+[warn]    |                                    ]:
+[warn]    |                                      (
+[warn]    |                                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                          Option[Int]]
+[warn]    |                                       *: Tuple)
+[warn]    |                                  }:
+[warn]    |                                    (xjdf4s.codec.json.JsonFieldCodec[?] *:
+[warn]    |                                      Tuple)
+[warn]    |                                }
+[warn]    |                              }:Tuple
+[warn]    |                            runtime.Tuples.cons(x$1³, Tuple_this³).asInstanceOf[
+[warn]    |
+[warn]    |                                xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                  Option[xjdf4s.core.XsdIdRef]]
+[warn]    |                               *: Tuple
+[warn]    |                            ]:
+[warn]    |                              (
+[warn]    |                                xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                  Option[xjdf4s.core.XsdIdRef]]
+[warn]    |                               *: Tuple)
+[warn]    |                          }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |                        }
+[warn]    |                      }:Tuple
+[warn]    |                    runtime.Tuples.cons(x$1², Tuple_this²).asInstanceOf[
+[warn]    |
+[warn]    |                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                          Option[xjdf4s.model.resources.BundleType]]
+[warn]    |                       *: Tuple
+[warn]    |                    ]:
+[warn]    |                      (
+[warn]    |                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                          Option[xjdf4s.model.resources.BundleType]]
+[warn]    |                       *: Tuple)
+[warn]    |                  }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |                }
+[warn]    |              }:Tuple
+[warn]    |            runtime.Tuples.cons(x$1, Tuple_this).asInstanceOf[
+[warn]    |              xjdf4s.codec.json.JsonFieldCodec[Int] *: Tuple]:
+[warn]    |              (xjdf4s.codec.json.JsonFieldCodec[Int] *: Tuple)
+[warn]    |          }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |        }
+[warn]    |      }:Tuple
+[warn]    |    new xjdf4s.codec.json.DerivedJsonEncoder[xjdf4s.model.resources.BundleItem](
+[warn]    |      mirror$proxy51, labels, codecs,
+[warn]    |      xjdf4s.codec.xml.derivation.Defaults.of(classTag$proxy51))
+[warn]    |  }:io.circe.Encoder[xjdf4s.model.resources.BundleItem]
+[warn]    |}
+[warn]    |
+[warn]    |where:    Tuple_this  is a value in the initializer of value codecs
+[warn]    |          Tuple_this² is a value in the initializer of value Tuple_this
+[warn]    |          Tuple_this³ is a value in the initializer of value Tuple_this²
+[warn]    |          Tuple_this⁴ is a value in the initializer of value Tuple_this³
+[warn]    |          Tuple_this⁵ is a value in the initializer of value Tuple_this⁴
+[warn]    |          Tuple_this⁶ is a value in the initializer of value Tuple_this⁵
+[warn]    |          Tuple_this⁷ is a value in the initializer of value Tuple_this⁶
+[warn]    |          Tuple_this⁸ is a value in the initializer of value Tuple_this⁷
+[warn]    |          Tuple_this⁹ is a value in the initializer of value Tuple_this⁸
+[warn]    |          apply       is a method in object ClassTag
+[warn]    |          apply²      is a method in object Tuple9
+[warn]    |          classTag    is a value in the initializer of value x$1²
+[warn]    |          classTag²   is a value in the initializer of value x$1⁵
+[warn]    |          classTag³   is a value in the initializer of value x$1⁸
+[warn]    |          decoder     is a value in the initializer of value x$1²
+[warn]    |          decoder²    is a given instance in the initializer of value decoder
+[warn]    |          decoder³    is a value in the initializer of value x$1⁵
+[warn]    |          decoder⁴    is a given instance in the initializer of value decoder³
+[warn]    |          decoder⁵    is a value in the initializer of value x$1⁸
+[warn]    |          decoder⁶    is a given instance in the initializer of value decoder⁵
+[warn]    |          encoder     is a given instance in the initializer of value x$1²
+[warn]    |          encoder²    is a given instance in the initializer of value x$1⁵
+[warn]    |          encoder³    is a given instance in the initializer of value x$1⁸
+[warn]    |          x$1         is a value in the initializer of value codecs
+[warn]    |          x$1²        is a value in the initializer of value Tuple_this
+[warn]    |          x$1³        is a value in the initializer of value Tuple_this²
+[warn]    |          x$1⁴        is a value in the initializer of value Tuple_this³
+[warn]    |          x$1⁵        is a value in the initializer of value Tuple_this⁴
+[warn]    |          x$1⁶        is a value in the initializer of value Tuple_this⁵
+[warn]    |          x$1⁷        is a value in the initializer of value Tuple_this⁶
+[warn]    |          x$1⁸        is a value in the initializer of value Tuple_this⁷
+[warn]    |          x$1⁹        is a value in the initializer of value Tuple_this⁸
+[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerivedInstances.scala:94:58
+[warn] 94 |given derivedJsonDecoderBundleItem: Decoder[BundleItem] = JsonDerived.derivedDecoder[BundleItem]
+[warn]    |                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[warn]    |Infinite loop in function body
+[warn]    |{
+[warn]    |  val mirror$proxy52:
+[warn]    |
+[warn]    |      scala.deriving.Mirror.Product{
+[warn]    |        type MirroredMonoType = xjdf4s.model.resources.BundleItem;
+[warn]    |          type MirroredType = xjdf4s.model.resources.BundleItem;
+[warn]    |          type MirroredLabel = ("BundleItem" : String);
+[warn]    |          type MirroredElemTypes = (Int,
+[warn]    |            Option[xjdf4s.model.resources.BundleType],
+[warn]    |            Option[xjdf4s.core.XsdIdRef], Option[Int],
+[warn]    |            Option[xjdf4s.model.Shape3D], Option[Float], Option[Float],
+[warn]    |            Vector[xjdf4s.model.resources.BundleItem], xjdf4s.core.Extensions);
+[warn]    |          type MirroredElemLabels = (("amount" : String),
+[warn]    |            ("bundleType" : String), ("itemRef" : String),
+[warn]    |            ("totalAmount" : String), ("totalDimensions" : String),
+[warn]    |            ("totalVolume" : String), ("totalWeight" : String),
+[warn]    |            ("children" : String), ("extensions" : String))
+[warn]    |      }
+[warn]    |
+[warn]    |   =
+[warn]    |    xjdf4s.model.resources.BundleItem.$asInstanceOf[
+[warn]    |
+[warn]    |        scala.deriving.Mirror.Product{
+[warn]    |          type MirroredMonoType = xjdf4s.model.resources.BundleItem;
+[warn]    |            type MirroredType = xjdf4s.model.resources.BundleItem;
+[warn]    |            type MirroredLabel = ("BundleItem" : String);
+[warn]    |            type MirroredElemTypes = (Int,
+[warn]    |              Option[xjdf4s.model.resources.BundleType],
+[warn]    |              Option[xjdf4s.core.XsdIdRef], Option[Int],
+[warn]    |              Option[xjdf4s.model.Shape3D], Option[Float], Option[Float],
+[warn]    |              Vector[xjdf4s.model.resources.BundleItem], xjdf4s.core.Extensions)
+[warn]    |              ;
+[warn]    |            type MirroredElemLabels = (("amount" : String),
+[warn]    |              ("bundleType" : String), ("itemRef" : String),
+[warn]    |              ("totalAmount" : String), ("totalDimensions" : String),
+[warn]    |              ("totalVolume" : String), ("totalWeight" : String),
+[warn]    |              ("children" : String), ("extensions" : String))
+[warn]    |        }
+[warn]    |
+[warn]    |    ]
+[warn]    |  val classTag$proxy52:
+[warn]    |    scala.reflect.ClassTag[xjdf4s.model.resources.BundleItem] =
+[warn]    |    scala.reflect.ClassTag.apply[xjdf4s.model.resources.BundleItem](
+[warn]    |      classOf[xjdf4s.model.resources.BundleItem])
+[warn]    |  {
+[warn]    |    val labels: mirror$proxy52.MirroredElemLabels =
+[warn]    |      Tuple9.apply²[("amount" : String), ("bundleType" : String),
+[warn]    |        ("itemRef" : String), ("totalAmount" : String),
+[warn]    |        ("totalDimensions" : String), ("totalVolume" : String),
+[warn]    |        ("totalWeight" : String), ("children" : String), ("extensions" : String)
+[warn]    |        ]("amount", "bundleType", "itemRef", "totalAmount", "totalDimensions",
+[warn]    |        "totalVolume", "totalWeight", "children", "extensions"):
+[warn]    |        mirror$proxy52.MirroredElemLabels
+[warn]    |    val codecs: Tuple =
+[warn]    |      {
+[warn]    |        {
+[warn]    |          val x$1: xjdf4s.codec.json.JsonFieldCodec[Int] =
+[warn]    |            xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[Int](
+[warn]    |              io.circe.Encoder.encodeInt, io.circe.Decoder.decodeInt)
+[warn]    |          {
+[warn]    |            val Tuple_this: Tuple =
+[warn]    |              {
+[warn]    |                {
+[warn]    |                  val x$1²:
+[warn]    |
+[warn]    |                      xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                        Option[xjdf4s.model.resources.BundleType]]
+[warn]    |
+[warn]    |                   =
+[warn]    |                    xjdf4s.codec.json.JsonFieldCodec.optionFieldCodec[
+[warn]    |                      xjdf4s.model.resources.BundleType](
+[warn]    |                      {
+[warn]    |                        val classTag:
+[warn]    |
+[warn]    |                            scala.reflect.ClassTag[
+[warn]    |                              xjdf4s.model.resources.BundleType]
+[warn]    |
+[warn]    |                         =
+[warn]    |                          scala.reflect.ClassTag.apply[
+[warn]    |                            xjdf4s.model.resources.BundleType](
+[warn]    |                            classOf[xjdf4s.model.resources.BundleType])
+[warn]    |                        {
+[warn]    |                          given val encoder:
+[warn]    |                            io.circe.Encoder[xjdf4s.model.resources.BundleType]
+[warn]    |                             =
+[warn]    |                            xjdf4s.codec.json.JsonScalars.given_Encoder_A[
+[warn]    |                              xjdf4s.model.resources.BundleType]
+[warn]    |                          val decoder:
+[warn]    |                            io.circe.Decoder[xjdf4s.model.resources.BundleType]
+[warn]    |                             =
+[warn]    |                            {
+[warn]    |                              given val decoder²:
+[warn]    |
+[warn]    |                                  io.circe.Decoder[
+[warn]    |                                    xjdf4s.model.resources.BundleType]
+[warn]    |
+[warn]    |                               =
+[warn]    |                                xjdf4s.codec.json.JsonScalars.given_Decoder_A[
+[warn]    |                                  xjdf4s.model.resources.BundleType](
+[warn]    |                                  scala.reflect.ClassTag.apply[
+[warn]    |                                    xjdf4s.model.resources.BundleType](
+[warn]    |                                    classOf[xjdf4s.model.resources.BundleType])
+[warn]    |                                )
+[warn]    |                              decoder²:
+[warn]    |
+[warn]    |                                  io.circe.Decoder[
+[warn]    |                                    xjdf4s.model.resources.BundleType]
+[warn]    |
+[warn]    |                            }
+[warn]    |                          xjdf4s.codec.json.JsonFieldCodec.fromProduct[
+[warn]    |                            xjdf4s.model.resources.BundleType](encoder,
+[warn]    |                            decoder, classTag)
+[warn]    |                        }
+[warn]    |                      }:
+[warn]    |
+[warn]    |                          xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                            xjdf4s.model.resources.BundleType]
+[warn]    |
+[warn]    |                    )
+[warn]    |                  {
+[warn]    |                    val Tuple_this²: Tuple =
+[warn]    |                      {
+[warn]    |                        {
+[warn]    |                          val x$1³:
+[warn]    |
+[warn]    |                              xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                Option[xjdf4s.core.XsdIdRef]]
+[warn]    |
+[warn]    |                           =
+[warn]    |                            xjdf4s.codec.json.JsonFieldCodec.optionFieldCodec[
+[warn]    |                              xjdf4s.core.XsdIdRef](
+[warn]    |                              xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
+[warn]    |                                xjdf4s.core.XsdIdRef](
+[warn]    |                                xjdf4s.codec.json.JsonScalars.
+[warn]    |                                  given_Encoder_XsdIdRef,
+[warn]    |                                xjdf4s.codec.json.JsonScalars.
+[warn]    |                                  given_Decoder_XsdIdRef
+[warn]    |                              )
+[warn]    |                            )
+[warn]    |                          {
+[warn]    |                            val Tuple_this³: Tuple =
+[warn]    |                              {
+[warn]    |                                {
+[warn]    |                                  val x$1⁴:
+[warn]    |
+[warn]    |                                      xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                        Option[Int]]
+[warn]    |
+[warn]    |                                   =
+[warn]    |                                    xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                      optionFieldCodec[Int](
+[warn]    |                                      xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                        scalarFieldCodec[Int](
+[warn]    |                                        io.circe.Encoder.encodeInt,
+[warn]    |                                        io.circe.Decoder.decodeInt)
+[warn]    |                                    )
+[warn]    |                                  {
+[warn]    |                                    val Tuple_this⁴: Tuple =
+[warn]    |                                      {
+[warn]    |                                        {
+[warn]    |                                          val x$1⁵:
+[warn]    |
+[warn]    |                                              xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                                Option[xjdf4s.model.Shape3D]]
+[warn]    |
+[warn]    |                                           =
+[warn]    |                                            xjdf4s.codec.json.JsonFieldCodec.
+[warn]    |                                              optionFieldCodec[
+[warn]    |                                              xjdf4s.model.Shape3D](
+[warn]    |                                              {
+[warn]    |                                                val classTag²:
+[warn]    |
+[warn]    |                                                    scala.reflect.ClassTag[
+[warn]    |                                                      xjdf4s.model.Shape3D]
+[warn]    |
+[warn]    |                                                 =
+[warn]    |                                                  scala.reflect.ClassTag.apply[
+[warn]    |                                                    xjdf4s.model.Shape3D](
+[warn]    |                                                    classOf[xjdf4s.model.Shape3D
+[warn]    |                                                      ]
+[warn]    |                                                  )
+[warn]    |                                                {
+[warn]    |                                                  given val encoder²:
+[warn]    |
+[warn]    |                                                      io.circe.Encoder[
+[warn]    |                                                        xjdf4s.model.Shape3D]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    xjdf4s.codec.json.
+[warn]    |                                                      JsonScalars.
+[warn]    |                                                      given_Encoder_Shape3D
+[warn]    |                                                  val decoder³:
+[warn]    |
+[warn]    |                                                      io.circe.Decoder[
+[warn]    |                                                        xjdf4s.model.Shape3D]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    {
+[warn]    |                                                      given val decoder⁴:
+[warn]    |
+[warn]    |                                                          io.circe.Decoder[
+[warn]    |                                                            xjdf4s.model.Shape3D
+[warn]    |                                                            ]
+[warn]    |
+[warn]    |                                                       =
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonScalars.
+[warn]    |                                                          given_Decoder_Shape3D
+[warn]    |                                                      decoder⁴:
+[warn]    |
+[warn]    |                                                          io.circe.Decoder[
+[warn]    |                                                            xjdf4s.model.Shape3D
+[warn]    |                                                            ]
+[warn]    |
+[warn]    |                                                    }
+[warn]    |                                                  xjdf4s.codec.json.
+[warn]    |                                                    JsonFieldCodec.fromProduct[
+[warn]    |                                                    xjdf4s.model.Shape3D](
+[warn]    |                                                    encoder², decoder³,
+[warn]    |                                                    classTag²)
+[warn]    |                                                }
+[warn]    |                                              }:
+[warn]    |
+[warn]    |                                                  xjdf4s.codec.json.
+[warn]    |                                                    JsonFieldCodec[
+[warn]    |                                                    xjdf4s.model.Shape3D]
+[warn]    |
+[warn]    |                                            )
+[warn]    |                                          {
+[warn]    |                                            val Tuple_this⁵: Tuple =
+[warn]    |                                              {
+[warn]    |                                                {
+[warn]    |                                                  val x$1⁶:
+[warn]    |
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec[
+[warn]    |                                                        Option[Float]]
+[warn]    |
+[warn]    |                                                   =
+[warn]    |                                                    xjdf4s.codec.json.
+[warn]    |                                                      JsonFieldCodec.
+[warn]    |                                                      optionFieldCodec[Float](
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec.
+[warn]    |                                                        scalarFieldCodec[Float](
+[warn]    |                                                        io.circe.Encoder.
+[warn]    |                                                          encodeFloat,
+[warn]    |                                                        io.circe.Decoder.
+[warn]    |                                                          decodeFloat
+[warn]    |                                                      )
+[warn]    |                                                    )
+[warn]    |                                                  {
+[warn]    |                                                    val Tuple_this⁶: Tuple =
+[warn]    |                                                      {
+[warn]    |                                                        {
+[warn]    |                                                          val x$1⁷:
+[warn]    |
+[warn]    |                                                              xjdf4s.codec.json.
+[warn]    |                                                                JsonFieldCodec[
+[warn]    |                                                                Option[Float]]
+[warn]    |
+[warn]    |                                                           =
+[warn]    |                                                            xjdf4s.codec.json.
+[warn]    |                                                              JsonFieldCodec.
+[warn]    |                                                              optionFieldCodec[
+[warn]    |                                                              Float](
+[warn]    |                                                              xjdf4s.codec.json.
+[warn]    |                                                                JsonFieldCodec.
+[warn]    |                                                                scalarFieldCodec
+[warn]    |                                                                [Float](
+[warn]    |                                                                io.circe.Encoder
+[warn]    |                                                                  .encodeFloat,
+[warn]    |                                                                io.circe.Decoder
+[warn]    |                                                                  .decodeFloat
+[warn]    |                                                              )
+[warn]    |                                                            )
+[warn]    |                                                          {
+[warn]    |                                                            val Tuple_this⁷:
+[warn]    |                                                              Tuple =
+[warn]    |                                                              {
+[warn]    |                                                                {
+[warn]    |                                                                  val x$1⁸:
+[warn]    |
+[warn]    |                                                                      xjdf4s.codec.json
+[warn]    |                                                                        .
+[warn]    |                                                                        JsonFieldCodec
+[warn]    |                                                                        [
+[warn]    |                                                                        Vector[
+[warn]    |                                                                          xjdf4s.model.resources
+[warn]    |                                                                            .
+[warn]    |                                                                            BundleItem
+[warn]    |                                                                          ]
+[warn]    |                                                                      ]
+[warn]    |
+[warn]    |                                                                   =
+[warn]    |                                                                    xjdf4s.codec.json
+[warn]    |                                                                      .
+[warn]    |                                                                      JsonFieldCodec
+[warn]    |                                                                      .
+[warn]    |                                                                      vectorFieldCodec
+[warn]    |                                                                      [
+[warn]    |
+[warn]    |                                                                        xjdf4s.model.resources
+[warn]    |                                                                          .
+[warn]    |                                                                          BundleItem
+[warn]    |
+[warn]    |                                                                    ](
+[warn]    |                                                                      {
+[warn]    |                                                                        val
+[warn]    |                                                                          classTag³
+[warn]    |                                                                          :
+[warn]    |
+[warn]    |                                                                            scala.reflect
+[warn]    |                                                                              .
+[warn]    |                                                                              ClassTag
+[warn]    |                                                                              [
+[warn]    |                                                                              xjdf4s.model.resources
+[warn]    |                                                                                .
+[warn]    |                                                                                BundleItem
+[warn]    |                                                                              ]
+[warn]    |
+[warn]    |                                                                         =
+[warn]    |                                                                          scala.reflect
+[warn]    |                                                                            .
+[warn]    |                                                                            ClassTag
+[warn]    |                                                                            .
+[warn]    |                                                                            apply
+[warn]    |                                                                            [
+[warn]    |
+[warn]    |                                                                              xjdf4s.model.resources
+[warn]    |                                                                                .
+[warn]    |                                                                                BundleItem
+[warn]    |
+[warn]    |                                                                          ](
+[warn]    |                                                                            classOf[
+[warn]    |                                                                              xjdf4s.model.resources
+[warn]    |                                                                                .
+[warn]    |                                                                                BundleItem
+[warn]    |                                                                              ]
+[warn]    |                                                                          )
+[warn]    |                                                                        {
+[warn]    |                                                                          given
+[warn]    |                                                                            val
+[warn]    |                                                                            encoder³
+[warn]    |                                                                            :
+[warn]    |
+[warn]    |                                                                              io.circe
+[warn]    |                                                                                .
+[warn]    |                                                                                Encoder
+[warn]    |                                                                                [
+[warn]    |                                                                                xjdf4s.model.resources
+[warn]    |                                                                                  .
+[warn]    |                                                                                  BundleItem
+[warn]    |                                                                                ]
+[warn]    |
+[warn]    |                                                                             =
+[warn]    |                                                                            xjdf4s.codec.json
+[warn]    |                                                                              .
+[warn]    |                                                                              derivedJsonEncoderBundleItem
+[warn]    |                                                                          val
+[warn]    |                                                                            decoder⁵
+[warn]    |                                                                            :
+[warn]    |
+[warn]    |                                                                              io.circe
+[warn]    |                                                                                .
+[warn]    |                                                                                Decoder
+[warn]    |                                                                                [
+[warn]    |                                                                                xjdf4s.model.resources
+[warn]    |                                                                                  .
+[warn]    |                                                                                  BundleItem
+[warn]    |                                                                                ]
+[warn]    |
+[warn]    |                                                                             =
+[warn]    |                                                                            {
+[warn]    |                                                                              given
+[warn]    |
+[warn]    |                                                                                val
+[warn]    |
+[warn]    |
+[warn]    |                                                                                decoder⁶
+[warn]    |
+[warn]    |                                                                                :
+[warn]    |
+[warn]    |                                                                                  io.circe
+[warn]    |                                                                                    .
+[warn]    |                                                                                    Decoder
+[warn]    |                                                                                    [
+[warn]    |                                                                                    xjdf4s.model.resources
+[warn]    |                                                                                      .
+[warn]    |                                                                                      BundleItem
+[warn]    |                                                                                    ]
+[warn]    |
+[warn]    |                                                                                 =
+[warn]    |                                                                                xjdf4s.codec.json
+[warn]    |                                                                                  .
+[warn]    |                                                                                  derivedJsonDecoderBundleItem
+[warn]    |                                                                              decoder⁶
+[warn]    |                                                                                :
+[warn]    |
+[warn]    |                                                                                  io.circe
+[warn]    |                                                                                    .
+[warn]    |                                                                                    Decoder
+[warn]    |                                                                                    [
+[warn]    |                                                                                    xjdf4s.model.resources
+[warn]    |                                                                                      .
+[warn]    |                                                                                      BundleItem
+[warn]    |                                                                                    ]
+[warn]    |
+[warn]    |                                                                              }
+[warn]    |                                                                          xjdf4s.codec.json
+[warn]    |                                                                            .
+[warn]    |                                                                            JsonFieldCodec
+[warn]    |                                                                            .
+[warn]    |                                                                            fromProduct
+[warn]    |                                                                            [
+[warn]    |
+[warn]    |                                                                              xjdf4s.model.resources
+[warn]    |                                                                                .
+[warn]    |                                                                                BundleItem
+[warn]    |
+[warn]    |                                                                          ](
+[warn]    |                                                                            encoder³
+[warn]    |                                                                              ,
+[warn]    |                                                                            decoder⁵
+[warn]    |                                                                              ,
+[warn]    |                                                                            classTag³
+[warn]    |                                                                            )
+[warn]    |                                                                        }
+[warn]    |                                                                      }:
+[warn]    |
+[warn]    |                                                                          xjdf4s.codec.json
+[warn]    |                                                                            .
+[warn]    |                                                                            JsonFieldCodec
+[warn]    |                                                                            [
+[warn]    |                                                                            xjdf4s.model.resources
+[warn]    |                                                                              .
+[warn]    |                                                                              BundleItem
+[warn]    |                                                                            ]
+[warn]    |
+[warn]    |                                                                    )
+[warn]    |                                                                  {
+[warn]    |                                                                    val
+[warn]    |                                                                      Tuple_this⁸
+[warn]    |                                                                      : Tuple =
+[warn]    |                                                                      {
+[warn]    |                                                                        {
+[warn]    |                                                                          val
+[warn]    |                                                                            x$1⁹
+[warn]    |                                                                            :
+[warn]    |
+[warn]    |                                                                              xjdf4s.codec.json
+[warn]    |                                                                                .
+[warn]    |                                                                                JsonFieldCodec
+[warn]    |                                                                                [
+[warn]    |                                                                                xjdf4s.core
+[warn]    |                                                                                  .
+[warn]    |                                                                                  Extensions
+[warn]    |                                                                                ]
+[warn]    |
+[warn]    |                                                                             =
+[warn]    |                                                                            xjdf4s.codec.json
+[warn]    |                                                                              .
+[warn]    |                                                                              JsonFieldCodec
+[warn]    |                                                                              .
+[warn]    |                                                                              extensionsFieldCodec
+[warn]    |                                                                          {
+[warn]    |                                                                            val
+[warn]    |                                                                              Tuple_this⁹
+[warn]    |                                                                              :
+[warn]    |
+[warn]    |                                                                                Tuple
+[warn]    |
+[warn]    |                                                                               =
+[warn]    |                                                                              {
+[warn]    |                                                                                EmptyTuple
+[warn]    |                                                                                }
+[warn]    |                                                                                :
+[warn]    |
+[warn]    |                                                                                  Tuple
+[warn]    |
+[warn]    |                                                                            runtime
+[warn]    |                                                                              .
+[warn]    |                                                                              Tuples
+[warn]    |                                                                              .
+[warn]    |                                                                              cons
+[warn]    |                                                                              (
+[warn]    |                                                                              x$1⁹
+[warn]    |                                                                                ,
+[warn]    |                                                                              Tuple_this⁹
+[warn]    |                                                                              ).
+[warn]    |                                                                              asInstanceOf
+[warn]    |                                                                              [
+[warn]    |
+[warn]    |                                                                                xjdf4s.codec.json
+[warn]    |                                                                                  .
+[warn]    |                                                                                  JsonFieldCodec
+[warn]    |                                                                                  [
+[warn]    |                                                                                  xjdf4s.core
+[warn]    |                                                                                    .
+[warn]    |                                                                                    Extensions
+[warn]    |                                                                                  ]
+[warn]    |
+[warn]    |                                                                                *:
+[warn]    |
+[warn]    |                                                                                Tuple
+[warn]    |
+[warn]    |                                                                              ]:
+[warn]    |                                                                              (
+[warn]    |                                                                                xjdf4s.codec.json
+[warn]    |                                                                                  .
+[warn]    |                                                                                  JsonFieldCodec
+[warn]    |                                                                                  [
+[warn]    |                                                                                  xjdf4s.core
+[warn]    |                                                                                    .
+[warn]    |                                                                                    Extensions
+[warn]    |                                                                                  ]
+[warn]    |
+[warn]    |                                                                                *:
+[warn]    |
+[warn]    |                                                                                Tuple
+[warn]    |                                                                                )
+[warn]    |
+[warn]    |                                                                            }:
+[warn]    |                                                                            (
+[warn]    |                                                                              xjdf4s.codec.json
+[warn]    |                                                                                .
+[warn]    |                                                                                JsonFieldCodec
+[warn]    |                                                                                [
+[warn]    |                                                                                ?
+[warn]    |                                                                                ]
+[warn]    |
+[warn]    |                                                                              *:
+[warn]    |
+[warn]    |                                                                              Tuple
+[warn]    |                                                                              )
+[warn]    |                                                                        }
+[warn]    |                                                                      }:Tuple
+[warn]    |                                                                    runtime.
+[warn]    |                                                                      Tuples.
+[warn]    |                                                                      cons(
+[warn]    |                                                                      x$1⁸,
+[warn]    |                                                                      Tuple_this⁸
+[warn]    |                                                                      ).
+[warn]    |                                                                      asInstanceOf
+[warn]    |                                                                      [
+[warn]    |
+[warn]    |                                                                        xjdf4s.codec.json
+[warn]    |                                                                          .
+[warn]    |                                                                          JsonFieldCodec
+[warn]    |                                                                          [
+[warn]    |                                                                          Vector
+[warn]    |                                                                            [
+[warn]    |                                                                            xjdf4s.model.resources
+[warn]    |                                                                              .
+[warn]    |                                                                              BundleItem
+[warn]    |                                                                            ]
+[warn]    |                                                                        ]
+[warn]    |                                                                       *: Tuple
+[warn]    |                                                                    ]:
+[warn]    |                                                                      (
+[warn]    |                                                                        xjdf4s.codec.json
+[warn]    |                                                                          .
+[warn]    |                                                                          JsonFieldCodec
+[warn]    |                                                                          [
+[warn]    |                                                                          Vector
+[warn]    |                                                                            [
+[warn]    |                                                                            xjdf4s.model.resources
+[warn]    |                                                                              .
+[warn]    |                                                                              BundleItem
+[warn]    |                                                                            ]
+[warn]    |                                                                        ]
+[warn]    |                                                                       *: Tuple)
+[warn]    |                                                                    }:
+[warn]    |                                                                    (
+[warn]    |                                                                      xjdf4s.codec.json
+[warn]    |                                                                        .
+[warn]    |                                                                        JsonFieldCodec
+[warn]    |                                                                        [?]
+[warn]    |                                                                     *: Tuple)
+[warn]    |                                                                }
+[warn]    |                                                              }:Tuple
+[warn]    |                                                            runtime.Tuples.cons(
+[warn]    |                                                              x$1⁷, Tuple_this⁷)
+[warn]    |                                                              .asInstanceOf[
+[warn]    |
+[warn]    |                                                                xjdf4s.codec.json
+[warn]    |                                                                  .
+[warn]    |                                                                  JsonFieldCodec
+[warn]    |                                                                  [Option[Float]
+[warn]    |                                                                  ]
+[warn]    |                                                               *: Tuple
+[warn]    |                                                            ]:
+[warn]    |                                                              (
+[warn]    |                                                                xjdf4s.codec.json
+[warn]    |                                                                  .
+[warn]    |                                                                  JsonFieldCodec
+[warn]    |                                                                  [Option[Float]
+[warn]    |                                                                  ]
+[warn]    |                                                               *: Tuple)
+[warn]    |                                                          }:
+[warn]    |                                                            (
+[warn]    |                                                              xjdf4s.codec.json.
+[warn]    |                                                                JsonFieldCodec[?
+[warn]    |                                                                ]
+[warn]    |                                                             *: Tuple)
+[warn]    |                                                        }
+[warn]    |                                                      }:Tuple
+[warn]    |                                                    runtime.Tuples.cons(x$1⁶,
+[warn]    |                                                      Tuple_this⁶).asInstanceOf[
+[warn]    |
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonFieldCodec[
+[warn]    |                                                          Option[Float]]
+[warn]    |                                                       *: Tuple
+[warn]    |                                                    ]:
+[warn]    |                                                      (
+[warn]    |                                                        xjdf4s.codec.json.
+[warn]    |                                                          JsonFieldCodec[
+[warn]    |                                                          Option[Float]]
+[warn]    |                                                       *: Tuple)
+[warn]    |                                                  }:
+[warn]    |                                                    (
+[warn]    |                                                      xjdf4s.codec.json.
+[warn]    |                                                        JsonFieldCodec[?]
+[warn]    |                                                     *: Tuple)
+[warn]    |                                                }
+[warn]    |                                              }:Tuple
+[warn]    |                                            runtime.Tuples.cons(x$1⁵,
+[warn]    |                                              Tuple_this⁵).asInstanceOf[
+[warn]    |
+[warn]    |                                                xjdf4s.codec.json.JsonFieldCodec
+[warn]    |                                                  [Option[xjdf4s.model.Shape3D]]
+[warn]    |                                                 *: Tuple
+[warn]    |                                            ]:
+[warn]    |                                              (
+[warn]    |                                                xjdf4s.codec.json.JsonFieldCodec
+[warn]    |                                                  [Option[xjdf4s.model.Shape3D]]
+[warn]    |                                                 *: Tuple)
+[warn]    |                                          }:
+[warn]    |                                            (xjdf4s.codec.json.JsonFieldCodec[?]
+[warn]    |                                               *: Tuple)
+[warn]    |                                        }
+[warn]    |                                      }:Tuple
+[warn]    |                                    runtime.Tuples.cons(x$1⁴, Tuple_this⁴).
+[warn]    |                                      asInstanceOf[
+[warn]    |
+[warn]    |                                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                          Option[Int]]
+[warn]    |                                       *: Tuple
+[warn]    |                                    ]:
+[warn]    |                                      (
+[warn]    |                                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                          Option[Int]]
+[warn]    |                                       *: Tuple)
+[warn]    |                                  }:
+[warn]    |                                    (xjdf4s.codec.json.JsonFieldCodec[?] *:
+[warn]    |                                      Tuple)
+[warn]    |                                }
+[warn]    |                              }:Tuple
+[warn]    |                            runtime.Tuples.cons(x$1³, Tuple_this³).asInstanceOf[
+[warn]    |
+[warn]    |                                xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                  Option[xjdf4s.core.XsdIdRef]]
+[warn]    |                               *: Tuple
+[warn]    |                            ]:
+[warn]    |                              (
+[warn]    |                                xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                                  Option[xjdf4s.core.XsdIdRef]]
+[warn]    |                               *: Tuple)
+[warn]    |                          }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |                        }
+[warn]    |                      }:Tuple
+[warn]    |                    runtime.Tuples.cons(x$1², Tuple_this²).asInstanceOf[
+[warn]    |
+[warn]    |                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                          Option[xjdf4s.model.resources.BundleType]]
+[warn]    |                       *: Tuple
+[warn]    |                    ]:
+[warn]    |                      (
+[warn]    |                        xjdf4s.codec.json.JsonFieldCodec[
+[warn]    |                          Option[xjdf4s.model.resources.BundleType]]
+[warn]    |                       *: Tuple)
+[warn]    |                  }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |                }
+[warn]    |              }:Tuple
+[warn]    |            runtime.Tuples.cons(x$1, Tuple_this).asInstanceOf[
+[warn]    |              xjdf4s.codec.json.JsonFieldCodec[Int] *: Tuple]:
+[warn]    |              (xjdf4s.codec.json.JsonFieldCodec[Int] *: Tuple)
+[warn]    |          }:(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[warn]    |        }
+[warn]    |      }:Tuple
+[warn]    |    new xjdf4s.codec.json.DerivedJsonDecoder[xjdf4s.model.resources.BundleItem](
+[warn]    |      mirror$proxy52, labels, codecs,
+[warn]    |      xjdf4s.codec.xml.derivation.Defaults.of(classTag$proxy52))
+[warn]    |  }:io.circe.Decoder[xjdf4s.model.resources.BundleItem]
+[warn]    |}
+[warn]    |
+[warn]    |where:    Tuple_this  is a value in the initializer of value codecs
+[warn]    |          Tuple_this² is a value in the initializer of value Tuple_this
+[warn]    |          Tuple_this³ is a value in the initializer of value Tuple_this²
+[warn]    |          Tuple_this⁴ is a value in the initializer of value Tuple_this³
+[warn]    |          Tuple_this⁵ is a value in the initializer of value Tuple_this⁴
+[warn]    |          Tuple_this⁶ is a value in the initializer of value Tuple_this⁵
+[warn]    |          Tuple_this⁷ is a value in the initializer of value Tuple_this⁶
+[warn]    |          Tuple_this⁸ is a value in the initializer of value Tuple_this⁷
+[warn]    |          Tuple_this⁹ is a value in the initializer of value Tuple_this⁸
+[warn]    |          apply       is a method in object ClassTag
+[warn]    |          apply²      is a method in object Tuple9
+[warn]    |          classTag    is a value in the initializer of value x$1²
+[warn]    |          classTag²   is a value in the initializer of value x$1⁵
+[warn]    |          classTag³   is a value in the initializer of value x$1⁸
+[warn]    |          decoder     is a value in the initializer of value x$1²
+[warn]    |          decoder²    is a given instance in the initializer of value decoder
+[warn]    |          decoder³    is a value in the initializer of value x$1⁵
+[warn]    |          decoder⁴    is a given instance in the initializer of value decoder³
+[warn]    |          decoder⁵    is a value in the initializer of value x$1⁸
+[warn]    |          decoder⁶    is a given instance in the initializer of value decoder⁵
+[warn]    |          encoder     is a given instance in the initializer of value x$1²
+[warn]    |          encoder²    is a given instance in the initializer of value x$1⁵
+[warn]    |          encoder³    is a given instance in the initializer of value x$1⁸
+[warn]    |          x$1         is a value in the initializer of value codecs
+[warn]    |          x$1²        is a value in the initializer of value Tuple_this
+[warn]    |          x$1³        is a value in the initializer of value Tuple_this²
+[warn]    |          x$1⁴        is a value in the initializer of value Tuple_this³
+[warn]    |          x$1⁵        is a value in the initializer of value Tuple_this⁴
+[warn]    |          x$1⁶        is a value in the initializer of value Tuple_this⁵
+[warn]    |          x$1⁷        is a value in the initializer of value Tuple_this⁶
+[warn]    |          x$1⁸        is a value in the initializer of value Tuple_this⁷
+[warn]    |          x$1⁹        is a value in the initializer of value Tuple_this⁸
+[warn] -- [E198] Unused Symbol Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:277:4
+[warn] 277 |    mirror: Mirror.ProductOf[A],
+[warn]     |    ^^^^^^
+[warn]     |    unused explicit parameter
+[warn] -- [E198] Unused Symbol Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:280:4
+[warn] 280 |    defaults: Defaults,
+[warn]     |    ^^^^^^^^
+[warn]     |    unused explicit parameter
+[warn] -- [E198] Unused Symbol Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonRegistry.scala:3:26
+[warn] 3 |import io.circe.{Decoder, Encoder, Json}
+[warn]   |                          ^^^^^^^
+[warn]   |                          unused import
+[warn] -- [E198] Unused Symbol Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonRegistry.scala:6:43
+[warn] 6 |import xjdf4s.codec.json.JsonSpecialCodecs.given
+[warn]   |                                           ^^^^^
+[warn]   |                                           unused import
+[warn] -- [E198] Unused Symbol Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonRegistry.scala:8:39
+[warn] 8 |import xjdf4s.codec.json.JsonResources.given
+[warn]   |                                       ^^^^^
+[warn]   |                                       unused import
+[warn] -- [E198] Unused Symbol Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonRegistry.scala:10:19
+[warn] 10 |import xjdf4s.core.*
+[warn]    |                   ^
+[warn]    |                   unused import
+[warn] -- [E092] Pattern Match Unchecked Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:128:15
+[warn] 128 |          case values: NonEmptyVector[?] => Some(Json.arr(values.toVector.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
+[warn]     |               ^
+[warn]     |the type test for xjdf4s.core.NonEmptyVector[_] @_ cannot be checked at runtime because it refers to an abstract type member or type parameter
+[warn]     |
+[warn]     | longer explanation available when compiling with `-explain`
+[warn] -- [E092] Pattern Match Unchecked Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:146:15
+[warn] 146 |          case values: TwoOrMore[?] => Some(Json.arr(values.toVector.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
+[warn]     |               ^
+[warn]     |the type test for xjdf4s.core.TwoOrMore[_] @_ cannot be checked at runtime because it refers to an abstract type member or type parameter
+[warn]     |
+[warn]     | longer explanation available when compiling with `-explain`
+[warn] -- [E092] Pattern Match Unchecked Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:164:15
+[warn] 164 |          case values: AtMostTwo[?] => Some(Json.arr(values.toVector.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
+[warn]     |               ^
+[warn]     |the type test for xjdf4s.core.AtMostTwo[_] @_ cannot be checked at runtime because it refers to an abstract type member or type parameter
+[warn]     |
+[warn]     | longer explanation available when compiling with `-explain`
+[error] No warnings can be incurred under -Werror
+[warn] 13 warnings found
 [error] one error found
 [error] (codecJson / Compile / compileIncremental) Compilation failed
