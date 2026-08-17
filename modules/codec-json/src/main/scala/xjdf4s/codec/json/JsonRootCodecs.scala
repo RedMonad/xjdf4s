@@ -6,6 +6,8 @@ import io.circe.syntax.*
 import xjdf4s.core.*
 import xjdf4s.model.*
 
+import xjdf4s.codec.json.JsonAuditCodecs.given
+
 /**
  * JSON codecs for the XJDF root document. The root is the top of the codec dependency graph: it references the
  * node codecs (Comment, GeneralID, ResourceSet), the scalar codecs and the AuditPool codecs, so it lives in its

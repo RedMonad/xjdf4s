@@ -3,6 +3,10 @@ package xjdf4s.codec.json
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.*
 
+import xjdf4s.codec.json.JsonSpecialCodecs.given
+
+import xjdf4s.codec.json.JsonResources.given
+
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*

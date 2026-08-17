@@ -84,14 +84,7 @@ object JsonForeign:
 
   private def decodeForeignMembers(cursor: HCursor): Decoder.Result[(Map[QualifiedName, ExtensionValue], Vector[ExtensionElement])] =
     val keys = cursor.keys.getOrElse(Iterable.empty).toVector
-    val context = keys
-      .filter(_ == "@context")
-      .flatMap { key =>
-        cursor.downField(key).focus.toVector.flatMap { json =>
-          json.asObject.toVector.flatMap(_.toIterable).collect { case (prefix, value) if value.isString => (prefix, value.asString.get) }
-        }
-      }
-      .toMap
+    val context = contextOf(cursor)
     keys
       .filter(key => key != "@context" && key.contains(":"))
       .foldLeft[Decoder.Result[(Map[QualifiedName, ExtensionValue], Vector[ExtensionElement])]](
@@ -103,6 +96,21 @@ object JsonForeign:
           decoded <- decodeForeignMember(key, context, member)
         yield (accumulated._1 ++ decoded._1, accumulated._2 ++ decoded._2)
       }
+
+  private def contextOf(cursor: HCursor): Map[String, String] =
+    val mappings = Vector.newBuilder[(String, String)]
+    for
+      key <- cursor.keys.getOrElse(Iterable.empty)
+      if key == "@context"
+      json <- cursor.downField(key).focus
+      obj <- json.asObject
+      (prefix, value) <- obj.toIterable
+      if value.isString
+    do mappings += ((prefix, value.asString.getOrElse("")))
+    mappings.result().toMap
+
+  private def contextOf(json: Json): Map[String, String] =
+    contextOf(json.hcursor)
 
   private def decodeForeignMember(
       key: String,
@@ -136,11 +144,7 @@ object JsonForeign:
       .map(error => DecodingFailure(error.toString, Nil))
       .flatMap { name =>
         val keys = json.asObject.map(_.keys.toVector).getOrElse(Vector.empty)
-        val innerContext = keys
-          .filter(_ == "@context")
-          .flatMap(key => json.hcursor.downField(key).focus.toVector.flatMap(_.asObject.toVector.flatMap(_.toIterable)))
-          .collect { case (innerPrefix, value) if value.isString => (innerPrefix, value.asString.get) }
-          .toMap
+        val innerContext = contextOf(json)
         val memberKeys = keys.filter(key => key != "@context" && key != "Text" && key.contains(":"))
         memberKeys
           .foldLeft[Decoder.Result[(Map[QualifiedName, ExtensionValue], Vector[ExtensionContent])]](
