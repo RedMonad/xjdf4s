@@ -28,7 +28,7 @@ object Derived:
    * Instead, non-inline given instances are generated per type in `DerivedInstances` and call this method directly;
    * the inlining then happens here, at those call sites.
    */
-  inline def derived[A <: Product](using m: Mirror.ProductOf[A], ct: ClassTag[A]): XmlElementCodec[A] =
+  inline def derived[A <: scala.Product](using m: Mirror.ProductOf[A], ct: ClassTag[A]): XmlElementCodec[A] =
     val labels = constValueTuple[m.MirroredElemLabels]
     val codecs = fieldCodecInstances[m.MirroredElemTypes]
     new DerivedCodec[A](
@@ -40,7 +40,7 @@ object Derived:
     )
 
   /** Same derivation with an explicit element name (for names the naming policy cannot derive, e.g. TIFFtag). */
-  inline def derivedNamed[A <: Product](elementName: String)(using
+  inline def derivedNamed[A <: scala.Product](elementName: String)(using
       m: Mirror.ProductOf[A],
       ct: ClassTag[A],
   ): XmlElementCodec[A] =
@@ -140,10 +140,10 @@ final class DerivedCodec[A](
     for
       _ <- unexpected
       _ <- failure.toLeft(())
-    yield mirror.fromProduct(Tuple.fromArray(values.asInstanceOf[Array[Object]]).asInstanceOf[Product])
+    yield mirror.fromProduct(Tuple.fromArray(values.asInstanceOf[Array[Object]]).asInstanceOf[scala.Product])
 
   def encode(value: A): Xml.Element =
-    val product = value.asInstanceOf[Product]
+    val product = value.asInstanceOf[scala.Product]
     val attributes = Vector.newBuilder[(QualifiedName, String)]
     val children = Vector.newBuilder[Xml.Element]
     var index = 0

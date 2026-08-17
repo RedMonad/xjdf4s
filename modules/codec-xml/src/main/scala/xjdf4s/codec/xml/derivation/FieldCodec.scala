@@ -301,9 +301,9 @@ object FieldCodec extends LowPriorityFieldCodecs:
    * right there. This resolves nested products without relying on the visibility of per-type instances in the
    * search context.
    */
-  inline given productCodec[A <: Product]: FieldCodec[A] =
+  inline given productCodec[A <: scala.Product]: FieldCodec[A] =
     summonFrom {
-      case codec: XmlElementCodec[A] => FieldCodec.element(codec)
+      case elementCodec: XmlElementCodec[A] => FieldCodec.element(elementCodec)
       case _ =>
         FieldCodec.element(
           Derived.derived[A](using summonInline[Mirror.ProductOf[A]], summonInline[ClassTag[A]]),
