@@ -12,7 +12,7 @@ object GangAndSignatureChecks:
     assert(resource.elementName.localName == "SheetOptimizingParams")
 
   val cellConditions: Unit =
-    val condition = CellConditionTerm(NonEmptyVector.one(Part()))
+    val condition = Condition(NonEmptyVector.one(Part()))
     val cell = SignatureCell(conditions = Vector(CellCondition(Side.Front, NonEmptyVector.one(condition))))
     val resource: FoundationalSpecificResource = BinderySignature(
       BinderySignatureType.Fold,

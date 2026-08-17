@@ -9,7 +9,7 @@ end BoxType
 
 final case class BoxPackingParams(
     boxType: BoxType,
-    boxTypeDetails: Option[String] = None,
+    boxTypeDetails: Option[XjdfString] = None,
     columns: Option[Int] = None,
     componentsPerRow: Option[Int] = None,
     copies: Option[Int] = None,
@@ -56,7 +56,7 @@ final case class FontPolicy(
 
 final case class TransferCurve(
     ctm: Option[Matrix] = None,
-    curve: Vector[Float] = Vector.empty,
+    curve: Option[TransferFunction] = None,
     extensions: Extensions = Extensions.empty,
 ) extends SpecificResource:
   val elementName: QualifiedName = XjdfNames.element("TransferCurve")
@@ -85,7 +85,7 @@ end BundleType
 final case class BundleItem(
     amount: Int,
     bundleType: Option[BundleType] = None,
-    itemRef: Option[XsdId] = None,
+    itemRef: Option[XsdIdRef] = None,
     totalAmount: Option[Int] = None,
     totalDimensions: Option[Shape3D] = None,
     totalVolume: Option[Float] = None,
@@ -122,7 +122,7 @@ final case class EmbossOperation(
     height: Option[Float] = None,
     imageSize: Option[XYPair] = None,
     position: Option[XYPair] = None,
-    toolRef: Option[XsdId] = None,
+    toolRef: Option[XsdIdRef] = None,
     identificationField: Option[IdentificationField] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
@@ -176,7 +176,7 @@ end CommonFolds
 final case class AssemblySection(
     binderySignatureId: Nmtoken,
     commonFolds: Option[CommonFolds] = None,
-    descriptiveName: Option[String] = None,
+    descriptiveName: Option[XjdfString] = None,
     externalId: Option[Nmtoken] = None,
     sections: Vector[AssemblySection] = Vector.empty,
     extensions: Extensions = Extensions.empty,

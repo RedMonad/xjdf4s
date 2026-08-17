@@ -6,12 +6,12 @@ import xjdf4s.model.*
 /** Present in the XSD substitution group but omitted by the generated hierarchy index. */
 final case class RasterReadingParams(
     center: Option[Boolean] = None,
-    filmRef: Option[XsdId] = None,
+    filmRef: Option[XsdIdRef] = None,
     mirrorAround: Option[DeviceAxis] = None,
-    paperRef: Option[XsdId] = None,
-    plateRef: Option[XsdId] = None,
+    paperRef: Option[XsdIdRef] = None,
+    plateRef: Option[XsdIdRef] = None,
     polarity: Option[Polarity] = None,
-    proofPaperRef: Option[XsdId] = None,
+    proofPaperRef: Option[XsdIdRef] = None,
     scaling: Option[XYPair] = None,
     scalingOrigin: Option[XYPair] = None,
     fitPolicy: Option[FitPolicy] = None,

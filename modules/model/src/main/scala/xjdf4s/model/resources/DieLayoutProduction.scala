@@ -28,7 +28,7 @@ final case class ConvertingConfig(
       Extensible
 
 final case class RepeatDescription(
-    shapeDefRef: XsdId,
+    shapeDefRef: XsdIdRef,
     allowedRotation: Option[AllowedRotation] = None,
     gutterX: Option[Float] = None,
     gutterX2: Option[Float] = None,

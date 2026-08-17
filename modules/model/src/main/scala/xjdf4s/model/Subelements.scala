@@ -4,7 +4,7 @@ import xjdf4s.core.*
 
 final case class Event(
     eventId: Nmtoken,
-    eventValue: Option[String] = None,
+    eventValue: Option[XjdfString] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -93,7 +93,7 @@ final case class ResourceInfo(
 
 final case class Activity(
     activityId: Option[Nmtoken] = None,
-    activityName: Option[String] = None,
+    activityName: Option[XjdfString] = None,
     endTime: Option[XsdDateTime] = None,
     personalId: Option[Nmtoken] = None,
     roles: Vector[Nmtoken] = Vector.empty,
@@ -126,8 +126,8 @@ final case class JobPhase(
     moduleIds: Vector[Nmtoken] = Vector.empty,
     percentCompleted: Option[Float] = None,
     queueEntryId: Option[Nmtoken] = None,
-    relatedJobId: Option[String] = None,
-    relatedJobPartId: Option[String] = None,
+    relatedJobId: Option[XjdfString] = None,
+    relatedJobPartId: Option[XjdfString] = None,
     restTime: Option[XsdDuration] = None,
     startTime: Option[XsdDateTime] = None,
     statusDetails: Option[Nmtoken] = None,
@@ -160,14 +160,14 @@ final case class Disposition(
     action: Option[DispositionAction] = None,
     time: Option[DispositionTime] = None,
     extraDuration: Option[XsdDuration] = None,
-    priority: Option[Int] = None,
+    priority: Option[Priority0To100] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
 
 final case class NetworkHeader(
-    name: String,
-    value: String,
+    name: XjdfString,
+    value: XjdfString,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -175,7 +175,7 @@ final case class NetworkHeader(
 enum FileLocation:
   case Url(value: UriRef)
   case Uid(value: Nmtoken)
-  case Sequence(format: String, template: NonEmptyVector[Nmtoken])
+  case Sequence(format: XjdfString, template: NonEmptyVector[Nmtoken])
   case Pipe
 end FileLocation
 
@@ -184,13 +184,13 @@ final case class FileSpec(
     checkSum: Option[Vector[Byte]] = None,
     encoding: Option[Nmtoken] = None,
     fileSize: Option[Long] = None,
-    mimeType: Option[String] = None,
+    mimeType: Option[XjdfString] = None,
     numberOfPages: Option[Int] = None,
     overwritePolicy: Option[OverwritePolicy] = None,
-    password: Option[String] = None,
+    password: Option[XjdfString] = None,
     resourceUsage: Option[Nmtoken] = None,
     searchDepth: Option[Int] = None,
-    userFileName: Option[String] = None,
+    userFileName: Option[XjdfString] = None,
     disposition: Option[Disposition] = None,
     networkHeaders: Vector[NetworkHeader] = Vector.empty,
     extensions: Extensions = Extensions.empty,

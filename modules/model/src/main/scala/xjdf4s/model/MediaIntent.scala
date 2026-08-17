@@ -7,7 +7,7 @@ enum Coating derives CanEqual:
 end Coating
 
 enum IsoPaperSubstrate derives CanEqual:
-  case PS1, PS2, PS3, PS4, PS5, PS6, PS7, PS8
+  case PS1, PS2, PS3, PS4, PS5, PS6, PS7, PS8, PS9
   case LWCPlus, LWCStandard, NewsPlus, SCPlus, SCStandard, SNP
 end IsoPaperSubstrate
 
@@ -18,20 +18,22 @@ end MediaDirection
 enum MediaType derives CanEqual:
   case Blanket, CorrugatedBoard, Disc, EmbossingFoil, Film, Foil, GravureCylinder, ImagingCylinder
   case LaminatingFoil, MountingTape, Other, Paper, Plate, Screen, SelfAdhesive, ShrinkFoil, Sleeve
-  case Textile, Transparency, Vinyl
+  case Synthetic, Textile, Transparency
+
+  /** Deprecated in XJDF 2.1: use `Synthetic` with `MediaTypeDetails = "Vinyl"`. */
+  @deprecated("Deprecated in XJDF 2.1: use MediaType.Synthetic with MediaTypeDetails = \"Vinyl\"", "XJDF 2.1")
+  case Vinyl
 end MediaType
 
 enum Opacity derives CanEqual:
   case Opaque, Translucent, Transparent
 end Opacity
 
-final case class LabColor(lightness: Double, a: Double, b: Double) derives CanEqual
-
 final case class MediaIntent(
     mediaType: MediaType,
     backCoating: Option[Coating] = None,
     backIsoPaperSubstrate: Option[IsoPaperSubstrate] = None,
-    brand: Option[String] = None,
+    brand: Option[XjdfString] = None,
     buyerSupplied: Option[Boolean] = None,
     coating: Option[Coating] = None,
     flute: Option[Nmtoken] = None,
@@ -39,9 +41,9 @@ final case class MediaIntent(
     grainDirection: Option[MediaDirection] = None,
     isoPaperSubstrate: Option[IsoPaperSubstrate] = None,
     labColorValue: Option[LabColor] = None,
-    mediaColor: Option[String] = None,
-    mediaColorDetails: Option[String] = None,
-    mediaQuality: Option[String] = None,
+    mediaColor: Option[NamedColor] = None,
+    mediaColorDetails: Option[XjdfString] = None,
+    mediaQuality: Option[XjdfString] = None,
     mediaTypeDetails: Option[Nmtoken] = None,
     opacity: Option[Opacity] = None,
     prePrinted: Option[Boolean] = None,
@@ -51,5 +53,13 @@ final case class MediaIntent(
     weight: Option[Float] = None,
     certifications: Vector[Certification] = Vector.empty,
     extensions: Extensions = Extensions.empty,
-) extends ProductIntent:
+) extends ProductIntent,
+      ValidatedNode:
   val elementName: QualifiedName = XjdfNames.element("MediaIntent")
+
+  override def validate: Vector[ValidationError] =
+    backIsoPaperSubstrate match
+      case Some(_) if isoPaperSubstrate.isEmpty =>
+        Vector(ValidationError.MissingCompanionValue("MediaIntent/@BackISOPaperSubstrate", "MediaIntent/@ISOPaperSubstrate"))
+      case _ => Vector.empty
+end MediaIntent

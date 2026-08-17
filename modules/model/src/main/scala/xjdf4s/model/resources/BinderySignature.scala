@@ -30,16 +30,22 @@ final case class MultiPageFold(
 ) extends XjdfNode,
       Extensible
 
-final case class CellConditionTerm(
+/**
+ * The Table 8.15 `Condition` element, shared by `Layout` (PageActivation, PageCondition, SheetActivation) and
+ * `BinderySignature` (CellCondition). `@PartContext` is a normative `NMTOKENS` list of partition keys that reset the
+ * Part context; modelling it as a list makes multi-key resets such as `PartContext="DocIndex SetIndex"`
+ * representable. The two former isomorphic clones (`LayoutCondition`, `CellConditionTerm`) are unified here.
+ */
+final case class Condition(
     parts: NonEmptyVector[Part],
-    partContext: Option[Nmtoken] = None,
+    partContext: Vector[Nmtoken] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
 
 final case class CellCondition(
     side: Side,
-    conditions: NonEmptyVector[CellConditionTerm],
+    conditions: NonEmptyVector[Condition],
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -75,8 +81,8 @@ final case class BinderySignature(
     size: Option[XYPair] = None,
     bindingOrientation: Option[Orientation] = None,
     bottling: Option[Bottling] = None,
-    dieLayoutRef: Option[XsdId] = None,
-    foldCatalog: Option[Nmtoken] = None,
+    dieLayoutRef: Option[XsdIdRef] = None,
+    foldCatalog: Option[FoldCatalog] = None,
     numberUp: Option[GridSize] = None,
     overfold: Option[Float] = None,
     overfoldSide: Option[OverfoldSide] = None,

@@ -36,7 +36,7 @@ end RunListOrderType
 final case class RunList(
     automation: Option[Automation] = None,
     clipPath: Option[PdfPath] = None,
-    contentRefs: Vector[XsdId] = Vector.empty,
+    contentRefs: Vector[XsdIdRef] = Vector.empty,
     docs: Option[IntegerRange] = None,
     docPages: Vector[Int] = Vector.empty,
     endOfDocument: Option[Boolean] = None,

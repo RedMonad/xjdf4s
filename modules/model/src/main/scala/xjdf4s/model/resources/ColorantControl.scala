@@ -4,7 +4,7 @@ import xjdf4s.core.*
 import xjdf4s.model.*
 
 final case class ColorantAlias(
-    colorantName: String,
+    colorantName: XjdfString,
     replacementColorantName: Nmtoken,
     rawName: Vector[Byte] = Vector.empty,
     extensions: Extensions = Extensions.empty,

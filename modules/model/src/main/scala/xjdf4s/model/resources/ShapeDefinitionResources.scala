@@ -18,7 +18,7 @@ final case class ShapeDef(
     flatDimensions: Option[Shape3D] = None,
     fluteDirection: Option[MediaDirection] = None,
     grainDirection: Option[MediaDirection] = None,
-    mediaRef: Option[XsdId] = None,
+    mediaRef: Option[XsdIdRef] = None,
     mediaSide: Option[Side] = None,
     resourceWeight: Option[Float] = None,
     fileSpecs: Vector[FileSpec] = Vector.empty,
@@ -36,7 +36,7 @@ final case class ObjectModel(
       Extensible
 
 final case class ShapeDimension(
-    usage: String,
+    usage: XjdfString,
     value: Float,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,

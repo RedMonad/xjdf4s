@@ -4,7 +4,7 @@ import xjdf4s.core.*
 import xjdf4s.model.resources.*
 
 object InterpretingAndDieChecks:
-  private val shapeId = XsdId.from("shape-1").toOption.get
+  private val shapeId = XsdIdRef.from("shape-1").toOption.get
 
   val interpretingPolicy: Unit =
     val policy = FitPolicy(sizePolicy = Some(FitSizePolicy.FitToPage))

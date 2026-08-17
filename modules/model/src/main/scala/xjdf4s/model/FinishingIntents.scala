@@ -14,8 +14,8 @@ final case class EmbossingItem(
     embossingType: EmbossType,
     direction: Option[EmbossDirection] = None,
     face: Option[Face] = None,
-    foilColor: Option[String] = None,
-    foilColorDetails: Option[String] = None,
+    foilColor: Option[NamedColor] = None,
+    foilColorDetails: Option[XjdfString] = None,
     height: Option[Float] = None,
     imageSize: Option[XYPair] = None,
     position: Option[XYPair] = None,
@@ -67,7 +67,7 @@ final case class Perforate(
       Extensible
 
 final case class FoldingIntent(
-    foldCatalog: Option[Nmtoken] = None,
+    foldCatalog: Option[FoldCatalog] = None,
     foldingDetails: Option[Nmtoken] = None,
     orientation: Option[Orientation] = None,
     creases: Vector[Crease] = Vector.empty,

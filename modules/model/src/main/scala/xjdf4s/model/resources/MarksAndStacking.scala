@@ -7,13 +7,13 @@ enum KnockoutSource derives CanEqual:
   case ClipPath, SourceClipPath, TrimBox
 end KnockoutSource
 
-final case class MarkColor(name: String, tint: Float) derives CanEqual
+final case class MarkColor(name: XjdfString, tint: Float) derives CanEqual
 
 final case class FillMark(
     knockoutSource: KnockoutSource,
     colors: NonEmptyVector[MarkColor],
     knockoutBleed: Option[Float] = None,
-    knockoutRefs: Vector[XsdId] = Vector.empty,
+    knockoutRefs: Vector[XsdIdRef] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -24,7 +24,7 @@ final case class CieLabMeasuringField(
     diameter: Option[Float] = None,
     percentages: Vector[Float] = Vector.empty,
     screenRuling: Vector[Float] = Vector.empty,
-    screenShape: Option[String] = None,
+    screenShape: Option[XjdfString] = None,
     tolerance: Option[Float] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
@@ -49,18 +49,25 @@ enum PatchUsage derives CanEqual:
   case Color, Ignore, Image, Technical
 end PatchUsage
 
+/** `Patch/@SpotType` (Table 8.10, New in XJDF 2.2): how the patch colorant is produced. */
+enum SpotType derives CanEqual:
+  case Emulated, Spot
+end SpotType
+
 final case class SeparationTint(name: Nmtoken, tint: Float) derives CanEqual
 
-final case class ColorPatch(
+/** The normative element name is `Patch`; the earlier construction-phase name `ColorPatch` has been retired. */
+final case class Patch(
     usage: PatchUsage,
     center: Option[XYPair] = None,
     density: Option[Float] = None,
     externalId: Option[Nmtoken] = None,
     lab: Option[LabColor] = None,
-    neutralDensity: Option[Float] = None,
+    neutralDensity: Option[NeutralDensity] = None,
     rgb: Option[SrgbColor] = None,
     size: Option[XYPair] = None,
-    spectrum: Vector[Float] = Vector.empty,
+    spectrum: Option[TransferFunction] = None,
+    spotType: Option[SpotType] = None,
     separationTints: Vector[SeparationTint] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
@@ -71,11 +78,11 @@ final case class ColorControlStrip(
     rotation: Option[Float] = None,
     separations: Vector[Nmtoken] = Vector.empty,
     size: Option[XYPair] = None,
-    stripType: Option[String] = None,
+    stripType: Option[XjdfString] = None,
     cieLabFields: Vector[CieLabMeasuringField] = Vector.empty,
     measurementConditions: Option[ColorMeasurementConditions] = None,
     densityFields: Vector[DensityMeasuringField] = Vector.empty,
-    patches: Vector[ColorPatch] = Vector.empty,
+    patches: Vector[Patch] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -88,7 +95,7 @@ end CutMarkType
 final case class CutMark(markType: CutMarkType, position: XYPair) derives CanEqual
 
 final case class JobField(
-    jobFormat: Option[String] = None,
+    jobFormat: Option[XjdfString] = None,
     jobTemplate: Vector[Nmtoken] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
@@ -119,7 +126,7 @@ final case class StripMark(
     orientation: Option[Orientation] = None,
     relativeHeight: Option[Float] = None,
     relativeWidth: Option[Float] = None,
-    details: Option[String] = None,
+    details: Option[XjdfString] = None,
     verticalFitPolicy: Option[MarkFitPolicy] = None,
     barcodeReproduction: Option[BarcodeReproParams] = None,
     colorControlStrips: Vector[ColorControlStrip] = Vector.empty,
@@ -146,7 +153,7 @@ final case class InsertSheet(
     sheetType: InsertSheetType,
     sheetUsage: InsertSheetUsage,
     isWaste: Option[Boolean] = None,
-    mediaRef: Option[XsdId] = None,
+    mediaRef: Option[XsdIdRef] = None,
     sheetFormat: Option[Nmtoken] = None,
     stripMarks: Vector[StripMark] = Vector.empty,
     extensions: Extensions = Extensions.empty,

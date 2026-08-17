@@ -4,14 +4,14 @@ import xjdf4s.core.*
 import xjdf4s.model.resources.*
 
 object StackingResourceChecks:
-  private val separation = Nmtoken.from("Black").toOption.get
+  private val colorName = XjdfString.from("Black").toOption.get
 
   val nestedStripMarks: Unit =
     val mark = StripMark(
       fillMarks = Vector(
         FillMark(
           KnockoutSource.TrimBox,
-          NonEmptyVector.one(MarkColor(separation.value, 1.0f)),
+          NonEmptyVector.one(MarkColor(colorName, 1.0f)),
         ),
       ),
     )

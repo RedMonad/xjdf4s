@@ -3,13 +3,20 @@ package xjdf4s.messaging
 import xjdf4s.core.*
 import xjdf4s.model.{HasHeader, Header, Notification}
 
+/** Table A.10: the reliability mode of a message channel. */
 enum ChannelMode derives CanEqual:
-  case Reliable, Simulate, Transactional, Unreliable
+  case FireAndForget, Reliable
 end ChannelMode
 
+/**
+ * Table 7.5. `@ChannelMode` is an ordered list of channel modes with the most preferred mode first; keeping the list
+ * ordered preserves the preference semantics of a persistent channel subscription. `@Languages` is Deprecated in
+ * XJDF 2.2 (the Query and the `SubscriptionInfo` element now carry the language selection) and is retained only for
+ * deprecated-backward compatibility.
+ */
 final case class Subscription(
     url: UriRef,
-    channelMode: Option[ChannelMode] = None,
+    channelMode: Vector[ChannelMode] = Vector.empty,
     languages: Vector[LanguageTag] = Vector.empty,
     repeatTime: Option[Float] = None,
     extensions: Extensions = Extensions.empty,
@@ -23,8 +30,12 @@ trait Message extends XjdfNode,
   def extensions: Extensions
 end Message
 
+/**
+ * The family contract of Table 7.4 defines the common message attributes, but `@Languages` is only listed by the
+ * concrete tables of QueryNotification, QueryKnownDevices, QueryResource and QueryStatus. The trait therefore does
+ * not force a `languages` member; each query carries it exactly where the normative table does.
+ */
 trait Query extends Message:
-  def languages: Vector[LanguageTag]
   def subscription: Option[Subscription]
 end Query
 
@@ -39,36 +50,44 @@ trait Response extends Message:
   def notification: Option[Notification]
 end Response
 
-/** Family-safe records for ICS and foreign-namespace message extensions outside the 44 standard messages. */
+/**
+ * Family-safe records for ICS and foreign-namespace message extensions outside the 44 standard messages. Each
+ * constructor takes a [[ForeignQName]], so a standard XJMF message name can never be smuggled through the generic
+ * fallback; the trait accessor re-exposes the name as a plain `QualifiedName`.
+ */
 final case class QueryMessage(
-    elementName: QualifiedName,
+    foreignName: ForeignQName,
     header: Header,
     content: Vector[ExtensionElement] = Vector.empty,
     languages: Vector[LanguageTag] = Vector.empty,
     subscription: Option[Subscription] = None,
     extensions: Extensions = Extensions.empty,
-) extends Query
+) extends Query:
+  def elementName: QualifiedName = foreignName.qualifiedName
 
 final case class CommandMessage(
-    elementName: QualifiedName,
+    foreignName: ForeignQName,
     header: Header,
     content: Vector[ExtensionElement] = Vector.empty,
     extensions: Extensions = Extensions.empty,
-) extends Command
+) extends Command:
+  def elementName: QualifiedName = foreignName.qualifiedName
 
 final case class SignalMessage(
-    elementName: QualifiedName,
+    foreignName: ForeignQName,
     header: Header,
     content: Vector[ExtensionElement] = Vector.empty,
     channelMode: Option[ChannelMode] = None,
     extensions: Extensions = Extensions.empty,
-) extends Signal
+) extends Signal:
+  def elementName: QualifiedName = foreignName.qualifiedName
 
 final case class ResponseMessage(
-    elementName: QualifiedName,
+    foreignName: ForeignQName,
     header: Header,
     content: Vector[ExtensionElement] = Vector.empty,
     returnCode: Option[Int] = None,
     notification: Option[Notification] = None,
     extensions: Extensions = Extensions.empty,
-) extends Response
+) extends Response:
+  def elementName: QualifiedName = foreignName.qualifiedName

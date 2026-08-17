@@ -28,7 +28,7 @@ enum Severity derives CanEqual:
 end Severity
 
 enum Scope derives CanEqual:
-  case Allowed, Estimate, Job, Present
+  case Allowed, Device, Estimate, Job, Present
 end Scope
 
 enum NodeStatus derives CanEqual:

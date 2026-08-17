@@ -8,11 +8,18 @@ object MediaResourceChecks:
   private val separation = Nmtoken.from("Black").toOption.get
   private val colorSpace = Nmtoken.from("DeviceCMYK").toOption.get
 
-  val recursiveMediaLayers: Unit =
+  val orderedMediaLayers: Unit =
     val inner = Media(MediaType.Paper)
-    val outer = Media(MediaType.Paper, mediaLayers = Some(MediaLayers(Glue(), inner)))
+    val layers = Vector(
+      MediaLayer.MediaLayer(Media(MediaType.Paper)),
+      MediaLayer.GlueLayer(Glue()),
+      MediaLayer.MediaLayer(inner),
+    )
+    val outer = Media(MediaType.SelfAdhesive, mediaLayers = Some(MediaLayers(layers)))
     val resource: FoundationalSpecificResource = outer
     assert(resource.elementName.localName == "Media")
+    assert(MediaLayers(layers).validate.isEmpty)
+    assert(MediaLayers(Vector(MediaLayer.GlueLayer(Glue()))).validate.nonEmpty)
 
   val deviceCardinality: Unit =
     val icon = DeviceIcon(bitDepth = 8, size = XYPair(32, 32))

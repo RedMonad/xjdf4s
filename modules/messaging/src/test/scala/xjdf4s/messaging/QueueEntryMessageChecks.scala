@@ -11,7 +11,7 @@ object QueueEntryMessageChecks:
   private val header = Header(deviceId, time)
 
   val exclusiveMoveTarget: Unit =
-    val priority = QueuePriority.from(75).toOption.get
+    val priority = Priority0To100.from(75).toOption.get
     val params = ModifyQueueEntryParams(
       QueueModification.Move(Some(QueueMoveTarget.Priority(priority))),
       QueueFilter(queueEntryIds = Vector(entryId)),
@@ -30,7 +30,7 @@ object QueueEntryMessageChecks:
     assert(message.elementName.localName == "CommandSubmitQueueEntry")
 
   val priorityBounds: Unit =
-    assert(QueuePriority.from(0).isRight)
-    assert(QueuePriority.from(100).isRight)
-    assert(QueuePriority.from(101).isLeft)
+    assert(Priority0To100.from(0).isRight)
+    assert(Priority0To100.from(100).isRight)
+    assert(Priority0To100.from(101).isLeft)
 end QueueEntryMessageChecks

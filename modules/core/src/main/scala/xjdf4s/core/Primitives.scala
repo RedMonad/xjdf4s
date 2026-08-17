@@ -1,6 +1,7 @@
 package xjdf4s.core
 
 import java.net.URI
+import java.time.OffsetDateTime
 
 import scala.util.Try
 
@@ -37,6 +38,27 @@ object XsdId:
   extension (value: XsdId) def value: String = value
 end XsdId
 
+/**
+ * The IDREF side of the XSD identity constraint pair. IDREF shares the lexical space of [[XsdId]] but is a *reference*,
+ * never a declaration: keeping the two types separate makes it impossible to point a reference at a declaration slot or
+ * vice versa. Reference integrity (existence, target type) is checked document-wide, see the `validate` methods of the
+ * document roots.
+ */
+opaque type XsdIdRef = String
+object XsdIdRef:
+  private val Pattern = "[\\p{L}_][\\p{L}\\p{N}._·\\p{M}-]*".r
+
+  def from(value: String): Either[ValidationError, XsdIdRef] =
+    nonBlank("IDREF", value).flatMap: candidate =>
+      Either.cond(
+        Pattern.matches(candidate),
+        candidate,
+        ValidationError.InvalidValue("IDREF", value, "an XML Name without ':'"),
+      )
+
+  extension (value: XsdIdRef) def value: String = value
+end XsdIdRef
+
 opaque type UriRef = URI
 object UriRef:
   def from(value: String): Either[ValidationError, UriRef] =
@@ -60,22 +82,42 @@ object LanguageTag:
   extension (value: LanguageTag) def value: String = value
 end LanguageTag
 
-opaque type RangeExpression = String
-object RangeExpression:
-  def from(value: String): Either[ValidationError, RangeExpression] = nonBlank("range", value)
-  extension (value: RangeExpression) def value: String = value
-end RangeExpression
+/**
+ * The XJDF `string` simple type (Appendix A.1): a normalized string of at most 1023 characters. Tabs, line feeds and
+ * similar control characters are not valid. Field values of the normative `string` type are modelled with this opaque
+ * type; XML `text` element bodies (which are not length-restricted) remain plain `String`.
+ */
+opaque type XjdfString = String
+object XjdfString:
+  val MaxLength: Int = 1023
+
+  def from(value: String): Either[ValidationError, XjdfString] =
+    Either.cond(
+      value.length <= MaxLength && !value.exists(_ < ' '),
+      value,
+      ValidationError.InvalidValue(
+        "string",
+        value,
+        "a normalized string of at most 1023 characters without tabs, line feeds or control characters",
+      ),
+    )
+
+  extension (value: XjdfString) def value: String = value
+end XjdfString
 
 opaque type XsdDateTime = String
 object XsdDateTime:
-  private val Pattern =
-    "-?[0-9]{4,}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})?".r
+  private val Pattern = "[0-9]{4,}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})".r
 
   def from(value: String): Either[ValidationError, XsdDateTime] =
     Either.cond(
-      Pattern.matches(value),
+      Pattern.matches(value) && Try(OffsetDateTime.parse(value)).isSuccess,
       value,
-      ValidationError.InvalidValue("dateTime", value, "an XSD dateTime lexical value"),
+      ValidationError.InvalidValue(
+        "dateTime",
+        value,
+        "an XSD dateTime lexical value with a mandatory time zone and a valid calendar date",
+      ),
     )
 
   extension (value: XsdDateTime) def value: String = value
@@ -83,14 +125,29 @@ end XsdDateTime
 
 opaque type XsdDuration = String
 object XsdDuration:
-  private val Pattern = "-?P(?=.+)([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)?".r
+  // `(?=.)` guards reject the empty forms "P" and "PT" as well as a trailing "T" without any component.
+  private val Pattern =
+    "-?P(?=.)(?:[0-9]+Y)?(?:[0-9]+M)?(?:[0-9]+D)?(?:T(?=.)(?:[0-9]+H)?(?:[0-9]+M)?(?:[0-9]+(\\.[0-9]+)?S)?)?".r
 
   def from(value: String): Either[ValidationError, XsdDuration] =
     Either.cond(
       Pattern.matches(value),
       value,
-      ValidationError.InvalidValue("duration", value, "an XSD duration lexical value"),
+      ValidationError.InvalidValue("duration", value, "an XSD duration lexical value with at least one component"),
     )
 
   extension (value: XsdDuration) def value: String = value
 end XsdDuration
+
+/** The normative 0..100 integer priority used by Disposition, NodeInfo, GangElement and queue entries. */
+opaque type Priority0To100 = Int
+object Priority0To100:
+  def from(value: Int): Either[ValidationError, Priority0To100] =
+    Either.cond(
+      value >= 0 && value <= 100,
+      value,
+      ValidationError.ValueOutOfBounds("Priority", value.toString, "[0..100]"),
+    )
+
+  extension (value: Priority0To100) def value: Int = value
+end Priority0To100

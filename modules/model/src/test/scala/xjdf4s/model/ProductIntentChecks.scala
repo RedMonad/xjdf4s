@@ -3,7 +3,7 @@ package xjdf4s.model
 import xjdf4s.core.*
 
 object ProductIntentChecks:
-  private val productId = XsdId.from("product-1").toOption.get
+  private val productId = XsdIdRef.from("product-1").toOption.get
 
   val assemblingIsStandard: Unit =
     val intent: StandardProductIntent = AssemblingIntent(productId)

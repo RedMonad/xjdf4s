@@ -33,7 +33,7 @@ end SourceObject
 
 final case class ImageEnhancementOperation(
     operation: Nmtoken,
-    operationDetails: Option[String] = None,
+    operationDetails: Option[XjdfString] = None,
     sourceObjects: Vector[SourceObject] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,

@@ -48,7 +48,6 @@ final case class QueryGangStatus(
     subscription: Option[Subscription] = None,
     extensions: Extensions = Extensions.empty,
 ) extends Query:
-  val languages: Vector[LanguageTag] = Vector.empty
   val elementName: QualifiedName = MessageNames.element("QueryGangStatus")
 
 final case class ResponseGangStatus(
@@ -72,17 +71,8 @@ enum UpdateGranularity derives CanEqual:
   case All, ChangesOnly
 end UpdateGranularity
 
-opaque type QueuePriority = Int
-object QueuePriority:
-  def from(value: Int): Either[ValidationError, QueuePriority] =
-    Either.cond(
-      value >= 0 && value <= 100,
-      value,
-      ValidationError.InvalidValue("Priority", value.toString, "an integer from zero through one hundred"),
-    )
-
-  extension (value: QueuePriority) def value: Int = value
-end QueuePriority
+/** Compatibility alias: the 0..100 priority is the shared core type [[Priority0To100]]. */
+type QueuePriority = Priority0To100
 
 enum QueueActivation derives CanEqual:
   case Informative, Held, Active, PendingReturn, Removed
@@ -155,7 +145,6 @@ final case class QueryQueueStatus(
     subscription: Option[Subscription] = None,
     extensions: Extensions = Extensions.empty,
 ) extends Query:
-  val languages: Vector[LanguageTag] = Vector.empty
   val elementName: QualifiedName = MessageNames.element("QueryQueueStatus")
 
 final case class ResponseQueueStatus(

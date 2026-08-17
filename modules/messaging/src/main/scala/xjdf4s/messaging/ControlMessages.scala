@@ -80,11 +80,16 @@ final case class StopPersistentChannelParams(
 ) extends XjdfNode,
       Extensible
 
+/**
+ * Table 8.71. `@ChannelID` is the NMTOKEN-valued `Header/@ID` of the Query that initiated the persistent channel;
+ * `@Languages` (New in XJDF 2.2) reports the language list selected by that Query.
+ */
 final case class SubscriptionInfo(
-    channelId: String,
+    channelId: Nmtoken,
     messageType: Nmtoken,
     subscription: Subscription,
     deviceId: Option[Nmtoken] = None,
+    languages: Vector[LanguageTag] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible

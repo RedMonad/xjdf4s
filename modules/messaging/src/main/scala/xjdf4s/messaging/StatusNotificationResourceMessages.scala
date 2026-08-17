@@ -35,9 +35,13 @@ final case class SignalNotification(
 ) extends Signal:
   val elementName: QualifiedName = MessageNames.element("SignalNotification")
 
-final case class StatusQueryParams(
-    jobId: Option[String] = None,
-    jobPartId: Option[String] = None,
+/**
+ * The normative element name is `StatusQuParams` (Table 7.65); the earlier construction-phase name
+ * `StatusQueryParams` has been retired for round-trip fidelity.
+ */
+final case class StatusQuParams(
+    jobId: Option[XjdfString] = None,
+    jobPartId: Option[XjdfString] = None,
     queueEntryId: Option[Nmtoken] = None,
     types: Vector[Nmtoken] = Vector.empty,
     parts: Vector[Part] = Vector.empty,
@@ -47,7 +51,7 @@ final case class StatusQueryParams(
 
 final case class QueryStatus(
     header: Header,
-    params: Option[StatusQueryParams] = None,
+    params: Option[StatusQuParams] = None,
     languages: Vector[LanguageTag] = Vector.empty,
     subscription: Option[Subscription] = None,
     extensions: Extensions = Extensions.empty,
@@ -96,7 +100,12 @@ enum ResourceDetails derives CanEqual:
   case Brief, Full
 end ResourceDetails
 
-final case class ResourceQueryParams(
+/**
+ * The normative element name is `ResourceQuParams` (Table 7.49); the earlier construction-phase name
+ * `ResourceQueryParams` has been retired for round-trip fidelity. `@Types` (New in XJDF 2.2) filters by the
+ * `XJDF/@Types` of the processes whose resources are queried.
+ */
+final case class ResourceQuParams(
     scope: Scope,
     externalId: Option[Nmtoken] = None,
     jobId: Option[Nmtoken] = None,
@@ -104,6 +113,7 @@ final case class ResourceQueryParams(
     queueEntryId: Option[Nmtoken] = None,
     details: Option[ResourceDetails] = None,
     resourceName: Option[Nmtoken] = None,
+    types: Vector[Nmtoken] = Vector.empty,
     parts: Vector[Part] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
@@ -111,7 +121,7 @@ final case class ResourceQueryParams(
 
 final case class QueryResource(
     header: Header,
-    params: ResourceQueryParams,
+    params: ResourceQuParams,
     languages: Vector[LanguageTag] = Vector.empty,
     subscription: Option[Subscription] = None,
     extensions: Extensions = Extensions.empty,
@@ -127,10 +137,29 @@ final case class ResponseResource(
 ) extends Response:
   val elementName: QualifiedName = MessageNames.element("ResponseResource")
 
+/**
+ * Table 7.54: `@ReplaceAfter` and `@ReplaceBefore` bound the replacement window of previous SignalResource data in
+ * the same scope. If neither is specified, the signal is an original and SHALL NOT replace a previous signal.
+ */
 final case class SignalResource(
     header: Header,
     resourceInfo: Vector[ResourceInfo] = Vector.empty,
+    replaceAfter: Option[XsdDateTime] = None,
+    replaceBefore: Option[XsdDateTime] = None,
     channelMode: Option[ChannelMode] = None,
     extensions: Extensions = Extensions.empty,
-) extends Signal:
+) extends Signal,
+      ValidatedNode:
   val elementName: QualifiedName = MessageNames.element("SignalResource")
+
+  override def validate: Vector[ValidationError] =
+    (replaceAfter, replaceBefore) match
+      case (Some(after), Some(before)) if after.value > before.value =>
+        Vector(
+          ValidationError.ConflictingValues(
+            Vector("SignalResource/@ReplaceAfter", "SignalResource/@ReplaceBefore"),
+            "the replacement window start SHALL NOT be later than its end",
+          ),
+        )
+      case _ => Vector.empty
+end SignalResource

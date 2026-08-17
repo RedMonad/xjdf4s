@@ -5,7 +5,7 @@ import xjdf4s.model.*
 
 final case class DropItem(
     amount: Int,
-    itemRef: XsdId,
+    itemRef: XsdIdRef,
     totalDimensions: Option[Shape3D] = None,
     totalVolume: Option[Float] = None,
     totalWeight: Option[Float] = None,
@@ -28,14 +28,14 @@ final case class DeliveryFiles(
 )
 
 final case class DeliveryParams(
-    buyerAccount: Option[String] = None,
+    buyerAccount: Option[XjdfString] = None,
     earliest: Option[XsdDateTime] = None,
     earliestDuration: Option[XsdDuration] = None,
     method: Option[Nmtoken] = None,
     ownership: Option[DeliveryOwnership] = None,
     required: Option[XsdDateTime] = None,
     requiredDuration: Option[XsdDuration] = None,
-    trackingId: Option[String] = None,
+    trackingId: Option[XjdfString] = None,
     transfer: Option[DeliveryTransfer] = None,
     dropItems: Vector[DropItem] = Vector.empty,
     files: DeliveryFiles = DeliveryFiles(),
@@ -49,7 +49,7 @@ end PreflightAction
 
 final case class PreflightTest(
     action: Option[PreflightAction] = None,
-    descriptiveName: Option[String] = None,
+    descriptiveName: Option[XjdfString] = None,
     severity: Option[Severity] = None,
     testClass: Option[Nmtoken] = None,
     testId: Option[Nmtoken] = None,

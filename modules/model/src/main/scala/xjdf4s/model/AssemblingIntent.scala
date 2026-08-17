@@ -3,13 +3,13 @@ package xjdf4s.model
 import xjdf4s.core.*
 
 final case class AssemblyItem(
-    childRef: XsdId,
+    childRef: XsdIdRef,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
 
 final case class BindIn(
-    childRef: XsdId,
+    childRef: XsdIdRef,
     folio: Option[Int] = None,
     orientation: Option[Orientation] = None,
     position: Option[XYPair] = None,
@@ -19,7 +19,7 @@ final case class BindIn(
       Extensible
 
 final case class BlowIn(
-    childRef: XsdId,
+    childRef: XsdIdRef,
     folioFrom: Option[Int] = None,
     folioTo: Option[Int] = None,
     orientation: Option[Orientation] = None,
@@ -33,7 +33,7 @@ enum ProductLocation derives CanEqual:
 end ProductLocation
 
 final case class StickOn(
-    childRef: XsdId,
+    childRef: XsdIdRef,
     location: Option[ProductLocation] = None,
     orientation: Option[Orientation] = None,
     position: Option[XYPair] = None,
@@ -53,9 +53,9 @@ end GluingTechnique
 final case class Glue(
     areaGlue: Option[Boolean] = None,
     glueLineWidth: Option[Float] = None,
-    glueRef: Option[XsdId] = None,
+    glueRef: Option[XsdIdRef] = None,
     glueType: Option[GlueType] = None,
-    gluingPattern: Vector[Float] = Vector.empty,
+    gluingPattern: Option[GluingPattern] = None,
     gluingTechnique: Option[GluingTechnique] = None,
     meltingTemperature: Option[Int] = None,
     startPosition: Option[XYPair] = None,
@@ -66,7 +66,7 @@ final case class Glue(
       Extensible
 
 final case class AssemblingIntent(
-    container: XsdId,
+    container: XsdIdRef,
     assemblyItems: Vector[AssemblyItem] = Vector.empty,
     bindIns: Vector[BindIn] = Vector.empty,
     blowIns: Vector[BlowIn] = Vector.empty,

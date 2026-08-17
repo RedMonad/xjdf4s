@@ -3,8 +3,8 @@ package xjdf4s.model
 import xjdf4s.core.*
 
 final case class Certification(
-    claim: Option[String] = None,
-    identifier: Option[String] = None,
+    claim: Option[XjdfString] = None,
+    identifier: Option[XjdfString] = None,
     organization: Option[Nmtoken] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
@@ -67,7 +67,7 @@ object EvenPageCount:
 end EvenPageCount
 
 enum Sides derives CanEqual:
-  case OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead
+  case OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead, Unprinted
 end Sides
 
 enum SpreadType derives CanEqual:
@@ -112,7 +112,7 @@ final case class VariableIntent(
     variableType: VariableType,
     area: Option[Float] = None,
     averagePages: Option[Int] = None,
-    childRefs: Vector[XsdId] = Vector.empty,
+    childRefs: Vector[XsdIdRef] = Vector.empty,
     colorsUsedBack: Vector[Nmtoken] = Vector.empty,
     colorsUsedFront: Vector[Nmtoken] = Vector.empty,
     maxPages: Option[Int] = None,

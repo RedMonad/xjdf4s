@@ -68,19 +68,28 @@ enum BoxFoldActionType derives CanEqual:
   case FrontFoldComplete, FrontFoldDiagonal, FrontFoldCompleteDiagonal
   case BackFoldComplete, BackFoldDiagonal, BackFoldCompleteDiagonal
   case ReverseFold, Milling, Rotate90, Rotate180, Rotate270
+
+  /** New in XJDF 2.2: glue application is now an individual action of the folder-gluer sequence. */
+  case Glue
 end BoxFoldActionType
 
 final case class BoxFoldAction(
     action: BoxFoldActionType,
     foldIndex: XYPair,
+    glue: Option[Glue] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
 
+/**
+ * Tables 6.17/6.19/6.20 and release note H.1: a folder-gluer program is an ordered, repeatable sequence of
+ * `BoxFoldAction` elements; glue application is the `Action = "Glue"` action with a child `Glue` element. The
+ * deprecated 2.1-style top-level `Glue` children remain representable for compatibility but are optional.
+ */
 final case class BoxFoldingParams(
     boxFoldingType: BoxFoldingType,
-    action: BoxFoldAction,
-    glue: Glue,
+    actions: Vector[BoxFoldAction] = Vector.empty,
+    legacyGlues: Vector[Glue] = Vector.empty,
     blankDimensionsX: Vector[Float] = Vector.empty,
     blankDimensionsY: Vector[Float] = Vector.empty,
     extensions: Extensions = Extensions.empty,
@@ -98,7 +107,7 @@ end TransformationContext
 
 final case class CollatingItem(
     amount: Option[Int] = None,
-    componentRef: Option[XsdId] = None,
+    componentRef: Option[XsdIdRef] = None,
     placement: Option[CollatingPlacement] = None,
     transformationContext: Option[TransformationContext] = None,
     extensions: Extensions = Extensions.empty,
@@ -130,7 +139,7 @@ end FeederOpening
 
 final case class Feeder(
     alternatePositions: Vector[Int] = Vector.empty,
-    componentRef: Option[XsdId] = None,
+    componentRef: Option[XsdIdRef] = None,
     synchronization: Option[FeederSynchronization] = None,
     feederType: Option[Nmtoken] = None,
     loading: Option[Nmtoken] = None,

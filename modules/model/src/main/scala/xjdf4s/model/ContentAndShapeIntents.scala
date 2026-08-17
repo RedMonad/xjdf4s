@@ -16,7 +16,20 @@ enum ProofColorType derives CanEqual:
   case Monochrome, BasicColor, MatchedColor
 end ProofColorType
 
+/**
+ * An inclusive two-integer range (Appendix A.1). `IntegerRange` MAY select a contiguous set of items from a list;
+ * the two values represent an inclusive index range.
+ */
 final case class IntegerRange(first: Int, last: Int) derives CanEqual
+
+object IntegerRange:
+  def from(first: Int, last: Int): Either[ValidationError, IntegerRange] =
+    Either.cond(
+      first <= last,
+      IntegerRange(first, last),
+      ValidationError.InvalidValue("IntegerRange", s"$first $last", "a range whose first value does not exceed its last"),
+    )
+end IntegerRange
 
 final case class ProofItem(
     amount: Option[Int] = None,
@@ -71,7 +84,7 @@ final case class ShapeCut(
     cutOut: Option[Boolean] = None,
     cutPath: Option[PdfPath] = None,
     cutType: Option[ShapeCutType] = None,
-    shapeTypeDetails: Option[String] = None,
+    shapeTypeDetails: Option[XjdfString] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible

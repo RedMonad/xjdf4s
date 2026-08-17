@@ -4,7 +4,7 @@ import xjdf4s.core.*
 import xjdf4s.model.resources.*
 
 object ContentAndDieLayoutChecks:
-  private val contentRef = XsdId.from("content-1").toOption.get
+  private val contentRef = XsdIdRef.from("content-1").toOption.get
   private val stationName = Nmtoken.from("station-1").toOption.get
 
   val positionedContent: Unit =

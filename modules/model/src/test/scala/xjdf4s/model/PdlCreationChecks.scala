@@ -1,5 +1,6 @@
 package xjdf4s.model
 
+import xjdf4s.core.*
 import xjdf4s.model.resources.*
 
 object PdlCreationChecks:
@@ -9,7 +10,7 @@ object PdlCreationChecks:
       pdfXParams = Some(PdfXParams(trapped = Some(PdfXTrapped.True))),
     )
     val resource: PrepressSpecificResource = PDLCreationParams(
-      mimeType = "application/pdf",
+      mimeType = XjdfString.from("application/pdf").toOption.get,
       pdfCreationDetails = Some(details),
     )
     assert(resource.elementName.localName == "PDLCreationParams")
@@ -20,7 +21,7 @@ object PdlCreationChecks:
       includeTrueTypeFonts = Some(IncludeResources.IncludeOncePerDoc),
     )
     val resource: TypedSpecificResource = PDLCreationParams(
-      mimeType = "application/postscript",
+      mimeType = XjdfString.from("application/postscript").toOption.get,
       postScriptCreationDetails = Some(details),
     )
     assert(resource.elementName.localName == "PDLCreationParams")

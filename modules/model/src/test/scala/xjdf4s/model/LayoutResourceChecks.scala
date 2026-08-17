@@ -13,7 +13,7 @@ object LayoutResourceChecks:
     assert(resource.elementName.localName == "Layout")
 
   val conditionalSheet: Unit =
-    val condition = LayoutCondition(NonEmptyVector.one(Part()))
+    val condition = Condition(NonEmptyVector.one(Part()))
     val resource: FoundationalSpecificResource = Layout(
       sheetActivation = Some(SheetActivation(NonEmptyVector.one(condition))),
     )

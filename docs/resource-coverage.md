@@ -108,3 +108,22 @@ Combined from `xsdq.py hierarchy`, direct XSD substitution-group inspection, and
 | 102 | `SheetOptimizingReport` | XJDF 2.2 table 6.162 | typed |
 
 Current coverage: **102/102** combined schema-defined and normative resources.
+
+## Coverage taxonomy
+
+"typed" above means **entity-name coverage**: every standard resource element has a Scala ADT and is a member of the
+`StandardSpecificResource` union. Full 2.2 conformance is tracked on four further axes:
+
+1. **Field coverage** — every normative attribute/child is present. XJDF 2.2 fields added by the audit consolidation:
+   `Tool/@Manufacturer`, `Tool/@ManufacturerURL`, `Tool/@SerialNumber`, `Patch/@SpotType`, `MediaLayers` ordered
+   `Glue* | Media*`, `BoxFoldingParams` ordered `BoxFoldAction*` with the `Action="Glue"` step, and the corrected
+   `Condition/@PartContext` as `NMTOKENS`.
+2. **Simple-type coverage** — closed vocabularies are Scala `enum`s (`NamedColor` carries the full 147-name
+   `[Color Names]` vocabulary), pattern types keep their patterns (`FoldCatalog`), and list types keep their
+   cardinality laws (`TransferFunction`, `GluingPattern` even length; `IntegerRange` ordering).
+3. **Semantic validation coverage** — cross-field SHALL constraints that cannot be expressed as coproducts are
+   exposed through `ValidatedNode#validate` (`Resource` placement/timing XOR pairs, `Media`/`MediaIntent` back-side
+   companions, `MediaLayers` front/back boundaries, `Part` range and `regExp` metadata, whole-document ID
+   uniqueness). Document-level ID/IDREF target-type checks are a codec-layer responsibility, see model-plan.md.
+4. **Transport coverage** — no XML/JSON codec ships yet (planned Slice 6). The domain is transport-independent: the
+   JSON-only `$schema`/`@Name` members and the `MediaLayers` JSON in-lining exception are codec concerns.

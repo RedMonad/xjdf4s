@@ -8,9 +8,9 @@ enum ApprovalRole derives CanEqual:
 end ApprovalRole
 
 final case class ApprovalPerson(
-    contactRef: XsdId,
+    contactRef: XsdIdRef,
     approvalRole: Option[ApprovalRole] = None,
-    approvalRoleDetails: Option[String] = None,
+    approvalRoleDetails: Option[XjdfString] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -21,7 +21,7 @@ end ApprovalState
 
 final case class ApprovalDetails(
     approvalState: ApprovalState,
-    approvalStateDetails: Option[String] = None,
+    approvalStateDetails: Option[XjdfString] = None,
     approvalPerson: Option[ApprovalPerson] = None,
     comment: Option[Comment] = None,
     fileSpec: Option[FileSpec] = None,

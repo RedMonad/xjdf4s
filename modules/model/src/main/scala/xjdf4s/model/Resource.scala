@@ -2,7 +2,7 @@ package xjdf4s.model
 
 import xjdf4s.core.*
 
-/** Open XSD extension point with 100 schema-defined descendants plus foreign-namespace descendants. */
+/** Open XSD extension point with 101 schema-defined descendants plus foreign-namespace descendants. */
 trait SpecificResource extends XjdfNode,
       Extensible:
   def elementName: QualifiedName
@@ -63,11 +63,16 @@ type StandardSpecificResource =
 /** Compatibility name retained from the incremental construction phase. */
 type TypedSpecificResource = StandardSpecificResource
 
-/** Lossless carrier for ICS and foreign-namespace resources outside the standard XJDF resource union. */
+/**
+ * Lossless carrier for ICS and foreign-namespace resources outside the standard XJDF resource union. The
+ * constructor takes a [[ForeignQName]], so a standard XJDF resource name can never be smuggled through the generic
+ * fallback; the trait accessor re-exposes the name as a plain `QualifiedName`.
+ */
 final case class NamedSpecificResource(
-    elementName: QualifiedName,
+    foreignName: ForeignQName,
     extensions: Extensions = Extensions.empty,
-) extends SpecificResource
+) extends SpecificResource:
+  def elementName: QualifiedName = foreignName.qualifiedName
 
 enum WasteOrigin:
   case Modules(moduleIds: NonEmptyVector[Nmtoken])
@@ -107,9 +112,9 @@ final case class Resource(
     parts: Vector[Part] = Vector.empty,
     specificResource: Option[SpecificResource] = None,
     foreignElements: Vector[ExtensionElement] = Vector.empty,
-    brand: Option[String] = None,
+    brand: Option[XjdfString] = None,
     commentUrl: Option[UriRef] = None,
-    descriptiveName: Option[String] = None,
+    descriptiveName: Option[XjdfString] = None,
     duration: Option[XsdDuration] = None,
     expires: Option[XsdDateTime] = None,
     externalId: Option[Nmtoken] = None,
@@ -123,7 +128,30 @@ final case class Resource(
     transformation: Option[Matrix] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
-      Extensible
+      Extensible,
+      ValidatedNode:
+
+  override def validate: Vector[ValidationError] =
+    val placementErrors =
+      if orientation.nonEmpty && transformation.nonEmpty then
+        Vector(
+          ValidationError.ConflictingValues(
+            Vector("Resource/@Orientation", "Resource/@Transformation"),
+            "the two placement attributes are mutually exclusive",
+          ),
+        )
+      else Vector.empty
+    val timingErrors =
+      if start.nonEmpty && startOffset.nonEmpty then
+        Vector(
+          ValidationError.ConflictingValues(
+            Vector("Resource/@Start", "Resource/@StartOffset"),
+            "the two timing attributes are mutually exclusive",
+          ),
+        )
+      else Vector.empty
+    placementErrors ++ timingErrors
+end Resource
 
 final case class Dependent(
     jobId: Nmtoken,
@@ -137,9 +165,9 @@ final case class Dependent(
 
 final case class ResourceSet(
     name: Nmtoken,
-    combinedProcessIndex: Vector[Float] = Vector.empty,
+    combinedProcessIndex: Vector[Int] = Vector.empty,
     commentUrl: Option[UriRef] = None,
-    descriptiveName: Option[String] = None,
+    descriptiveName: Option[XjdfString] = None,
     id: Option[XsdId] = None,
     processUsage: Option[Nmtoken] = None,
     unit: Option[Nmtoken] = None,

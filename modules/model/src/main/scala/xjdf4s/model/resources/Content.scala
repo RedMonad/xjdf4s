@@ -11,7 +11,7 @@ final case class BarcodeProductionParams(
       Extensible
 
 final case class ContentMetadata(
-    contactRefs: Vector[XsdId] = Vector.empty,
+    contactRefs: Vector[XsdIdRef] = Vector.empty,
     isbn: Option[Nmtoken] = None,
     title: Option[Nmtoken] = None,
     comment: Option[Comment] = None,
@@ -27,7 +27,7 @@ end RefAnchorType
 final case class RefAnchor(
     anchor: Anchor,
     anchorType: RefAnchorType,
-    ref: XsdId,
+    ref: XsdIdRef,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -53,7 +53,7 @@ final case class Content(
     hasBleeds: Option[Boolean] = None,
     isBlank: Option[Boolean] = None,
     isTrapped: Option[Boolean] = None,
-    pageLabel: Option[String] = None,
+    pageLabel: Option[XjdfString] = None,
     separations: Vector[Nmtoken] = Vector.empty,
     sourceBleedBox: Option[Rectangle] = None,
     sourceClipBox: Option[Rectangle] = None,

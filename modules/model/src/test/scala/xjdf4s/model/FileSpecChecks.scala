@@ -8,7 +8,8 @@ object FileSpecChecks:
 
   val exclusiveLocations: Unit =
     val remote = FileSpec(location = FileLocation.Url(url))
-    val sequence = FileSpec(location = FileLocation.Sequence("page_%02d.pdf", NonEmptyVector.one(template)))
+    val format = XjdfString.from("page_%02d.pdf").toOption.get
+    val sequence = FileSpec(location = FileLocation.Sequence(format, NonEmptyVector.one(template)))
     val pipe = FileSpec()
     assert(remote.location.isInstanceOf[FileLocation.Url])
     assert(sequence.location.isInstanceOf[FileLocation.Sequence])
@@ -16,6 +17,11 @@ object FileSpecChecks:
 
   val typedDisposition: Unit =
     val disposition = Disposition(action = Some(DispositionAction.Archive))
-    val file = FileSpec(disposition = Some(disposition), networkHeaders = Vector(NetworkHeader("Authorization", "Bearer")))
+    val headerName = XjdfString.from("Authorization").toOption.get
+    val headerValue = XjdfString.from("Bearer").toOption.get
+    val file = FileSpec(
+      disposition = Some(disposition),
+      networkHeaders = Vector(NetworkHeader(headerName, headerValue)),
+    )
     assert(file.networkHeaders.nonEmpty)
 end FileSpecChecks

@@ -15,8 +15,8 @@ final case class InkZoneCalculationParams(
   val elementName: QualifiedName = XjdfNames.element("InkZoneCalculationParams")
 
 final case class LayoutElementProductionParams(
-    contentRefs: Vector[XsdId] = Vector.empty,
-    shapeDefRef: Option[XsdId] = None,
+    contentRefs: Vector[XsdIdRef] = Vector.empty,
+    shapeDefRef: Option[XsdIdRef] = None,
     dataList: Option[FileSpec] = None,
     extensions: Extensions = Extensions.empty,
 ) extends SpecificResource:

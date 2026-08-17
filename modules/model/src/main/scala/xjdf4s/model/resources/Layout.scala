@@ -3,15 +3,9 @@ package xjdf4s.model.resources
 import xjdf4s.core.*
 import xjdf4s.model.*
 
-final case class LayoutCondition(
-    parts: NonEmptyVector[Part],
-    partContext: Option[Nmtoken] = None,
-    extensions: Extensions = Extensions.empty,
-) extends XjdfNode,
-      Extensible
 
 final case class MarkObject(
-    contentRef: Option[XsdId] = None,
+    contentRef: Option[XsdIdRef] = None,
     colorControlStrips: Vector[ColorControlStrip] = Vector.empty,
     cutMarks: Vector[CutMark] = Vector.empty,
     registerMarks: Vector[RegisterMark] = Vector.empty,
@@ -26,13 +20,13 @@ enum PlacedObjectKind:
 end PlacedObjectKind
 
 final case class PageActivation(
-    conditions: NonEmptyVector[LayoutCondition],
+    conditions: NonEmptyVector[Condition],
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
 
 final case class PageCondition(
-    conditions: NonEmptyVector[LayoutCondition],
+    conditions: NonEmptyVector[Condition],
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -46,7 +40,7 @@ final case class PlacedObject(
     halfTonePhaseOrigin: Option[XYPair] = None,
     id: Option[XsdId] = None,
     order: Option[Int] = None,
-    positionRef: Option[XsdId] = None,
+    positionRef: Option[XsdIdRef] = None,
     sourceClipPath: Option[PdfPath] = None,
     trimCtm: Option[Matrix] = None,
     trimSize: Option[XYPair] = None,
@@ -77,7 +71,7 @@ final case class LayoutPosition(
       Extensible
 
 final case class SheetActivation(
-    conditions: NonEmptyVector[LayoutCondition],
+    conditions: NonEmptyVector[Condition],
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -86,14 +80,14 @@ final case class Layout(
     anchor: Option[Anchor] = None,
     automated: Option[Boolean] = None,
     expansionBox: Option[Rectangle] = None,
-    filmRef: Option[XsdId] = None,
+    filmRef: Option[XsdIdRef] = None,
     innermostShingling: Option[Float] = None,
     maxCollect: Option[Int] = None,
     minCollect: Option[Int] = None,
     outermostShingling: Option[Float] = None,
-    paperRef: Option[XsdId] = None,
-    plateRef: Option[XsdId] = None,
-    proofPaperRef: Option[XsdId] = None,
+    paperRef: Option[XsdIdRef] = None,
+    plateRef: Option[XsdIdRef] = None,
+    proofPaperRef: Option[XsdIdRef] = None,
     sheetLay: Option[SheetLay] = None,
     surfaceContentsBox: Option[Rectangle] = None,
     workStyle: Option[WorkStyle] = None,

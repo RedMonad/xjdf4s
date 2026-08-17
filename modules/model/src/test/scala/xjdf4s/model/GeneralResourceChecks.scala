@@ -4,7 +4,7 @@ import xjdf4s.core.*
 import xjdf4s.model.resources.*
 
 object GeneralResourceChecks:
-  private val contactId = XsdId.from("contact-1").toOption.get
+  private val contactId = XsdIdRef.from("contact-1").toOption.get
 
   val requiredApprovalPeople: Unit =
     val person = ApprovalPerson(contactId)

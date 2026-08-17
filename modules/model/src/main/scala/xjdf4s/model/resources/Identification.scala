@@ -22,7 +22,7 @@ final case class BarcodeDetails(
 
 final case class ExtraValues(
     usage: Nmtoken,
-    value: String,
+    value: XjdfString,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
@@ -44,7 +44,7 @@ final case class MetadataExpression(
 
 final case class MetadataMap(
     name: Nmtoken,
-    valueFormat: String,
+    valueFormat: XjdfString,
     valueTemplate: NonEmptyVector[Nmtoken],
     expressions: Vector[MetadataExpression] = Vector.empty,
     extensions: Extensions = Extensions.empty,
@@ -55,13 +55,13 @@ final case class IdentificationField(
     boundingBox: Option[Rectangle] = None,
     encoding: Option[IdentificationEncoding] = None,
     encodingDetails: Option[Nmtoken] = None,
-    format: Option[String] = None,
+    format: Option[XjdfString] = None,
     orientation: Option[Matrix] = None,
     position: Option[Face] = None,
     purpose: Option[IdentificationPurpose] = None,
     purposeDetails: Option[Nmtoken] = None,
-    value: Option[String] = None,
-    valueFormat: Option[String] = None,
+    value: Option[XjdfString] = None,
+    valueFormat: Option[XjdfString] = None,
     valueTemplate: Vector[Nmtoken] = Vector.empty,
     barcodeDetails: Option[BarcodeDetails] = None,
     extraValues: Option[ExtraValues] = None,

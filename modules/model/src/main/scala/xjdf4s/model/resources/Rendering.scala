@@ -62,7 +62,7 @@ final case class RenderingParams(
     bandWidth: Option[Int] = None,
     colorantDepth: Option[Int] = None,
     interleaved: Option[Boolean] = None,
-    mimeType: Option[String] = None,
+    mimeType: Option[XjdfString] = None,
     automatedOverPrintParams: Option[AutomatedOverPrintParams] = None,
     objectResolutions: Vector[ObjectResolution] = Vector.empty,
     tiffFormatParams: Option[TiffFormatParams] = None,

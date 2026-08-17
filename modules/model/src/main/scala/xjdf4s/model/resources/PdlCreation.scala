@@ -147,7 +147,7 @@ final case class PostScriptCreationDetails(
       Extensible
 
 final case class PDLCreationParams(
-    mimeType: String,
+    mimeType: XjdfString,
     fontParams: Option[FontParams] = None,
     pdfCreationDetails: Option[PdfCreationDetails] = None,
     postScriptCreationDetails: Option[PostScriptCreationDetails] = None,

@@ -22,7 +22,7 @@ end WhiteBase
 final case class ColorMeasurementConditions(
     aperture: Option[Float] = None,
     densityStandard: Option[Nmtoken] = None,
-    illumination: Option[Float] = None,
+    illumination: Option[Nmtoken] = None,
     illuminationAngle: Option[Int] = None,
     inkState: Option[InkState] = None,
     measurementAngle: Option[Int] = None,
@@ -64,12 +64,40 @@ enum PlateTechnology derives CanEqual:
   case FlexoDirectEngraving, InkJet, Thermal, UV, Visible
 end PlateTechnology
 
+/** One ordered entry of a MediaLayers sequence: either a glue layer or a media layer (section 8.28). */
+enum MediaLayer derives CanEqual:
+  case GlueLayer(value: Glue)
+  case MediaLayer(value: Media)
+end MediaLayer
+
+/**
+ * Section 8.28: an ordered list of `Glue* | Media*` subelements. The order SHALL precisely describe the order of the
+ * individual layers; the first and the last layer SHALL be `Media` layers (front and back of the composite). The JSON
+ * `@Name` exception for in-lined layers is a codec concern and is not part of the domain representation.
+ */
 final case class MediaLayers(
-    glue: Glue,
-    media: Media,
+    layers: Vector[MediaLayer],
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
-      Extensible
+      Extensible,
+      ValidatedNode:
+
+  override def validate: Vector[ValidationError] =
+    val emptyErrors =
+      if layers.isEmpty then Vector(ValidationError.EmptyCollection("MediaLayers"))
+      else Vector.empty
+    val boundaryErrors =
+      if layers.nonEmpty then
+        val frontErrors = layers.head match
+          case _: MediaLayer.MediaLayer => Vector.empty
+          case _: MediaLayer.GlueLayer  => Vector(ValidationError.InvalidValue("MediaLayers/first", "Glue", "Media"))
+        val backErrors = layers.last match
+          case _: MediaLayer.MediaLayer => Vector.empty
+          case _: MediaLayer.GlueLayer  => Vector(ValidationError.InvalidValue("MediaLayers/last", "Glue", "Media"))
+        frontErrors ++ backErrors
+      else Vector.empty
+    emptyErrors ++ boundaryErrors
+end MediaLayers
 
 final case class Media(
     mediaType: MediaType,
@@ -81,7 +109,7 @@ final case class Media(
     backGlossValue: Option[Float] = None,
     backIsoPaperSubstrate: Option[IsoPaperSubstrate] = None,
     backLabColorValue: Option[LabColor] = None,
-    backSpectrum: Vector[Float] = Vector.empty,
+    backSpectrum: Option[TransferFunction] = None,
     brightness: Option[Float] = None,
     cieTint: Option[Float] = None,
     cieWhiteness: Option[Float] = None,
@@ -98,9 +126,9 @@ final case class Media(
     insideLoss: Option[Float] = None,
     isoPaperSubstrate: Option[IsoPaperSubstrate] = None,
     labColorValue: Option[LabColor] = None,
-    mediaColorName: Option[String] = None,
-    mediaColorNameDetails: Option[String] = None,
-    mediaQuality: Option[String] = None,
+    mediaColorName: Option[NamedColor] = None,
+    mediaColorNameDetails: Option[XjdfString] = None,
+    mediaQuality: Option[XjdfString] = None,
     mediaSetCount: Option[Int] = None,
     mediaTypeDetails: Option[Nmtoken] = None,
     mediaUnit: Option[MediaUnit] = None,
@@ -116,7 +144,7 @@ final case class Media(
     rollDiameter: Option[Float] = None,
     shrinkIndex: Option[XYPair] = None,
     sleeveInterlock: Option[Nmtoken] = None,
-    spectrum: Vector[Float] = Vector.empty,
+    spectrum: Option[TransferFunction] = None,
     stockType: Option[Nmtoken] = None,
     texture: Option[Nmtoken] = None,
     thickness: Option[Float] = None,
@@ -128,11 +156,17 @@ final case class Media(
     mediaLayers: Option[MediaLayers] = None,
     tabDimensions: Option[TabDimensions] = None,
     extensions: Extensions = Extensions.empty,
-) extends SpecificResource:
+) extends SpecificResource,
+      ValidatedNode:
   val elementName: QualifiedName = XjdfNames.element("Media")
 
-final case class CmykColor(cyan: Double, magenta: Double, yellow: Double, black: Double) derives CanEqual
-final case class SrgbColor(red: Double, green: Double, blue: Double) derives CanEqual
+  override def validate: Vector[ValidationError] =
+    val companionErrors =
+      if backIsoPaperSubstrate.nonEmpty && isoPaperSubstrate.isEmpty then
+        Vector(ValidationError.MissingCompanionValue("Media/@BackISOPaperSubstrate", "Media/@ISOPaperSubstrate"))
+      else Vector.empty
+    companionErrors ++ mediaLayers.toVector.flatMap(_.validate)
+end Media
 
 enum ColorType derives CanEqual:
   case DieLine, Normal, Opaque, OpaqueIgnore, Primer, Transparent
@@ -146,22 +180,22 @@ final case class DeviceNColor(
       Extensible
 
 final case class Color(
-    actualColorName: Option[String] = None,
+    actualColorName: Option[XjdfString] = None,
     cmyk: Option[CmykColor] = None,
-    colorBook: Option[String] = None,
-    colorBookEntry: Option[String] = None,
-    colorDetails: Option[String] = None,
-    colorName: Option[String] = None,
+    colorBook: Option[XjdfString] = None,
+    colorBookEntry: Option[XjdfString] = None,
+    colorDetails: Option[XjdfString] = None,
+    colorName: Option[NamedColor] = None,
     colorType: Option[ColorType] = None,
-    colorTypeDetails: Option[String] = None,
+    colorTypeDetails: Option[XjdfString] = None,
     density: Option[Float] = None,
     gray: Option[Float] = None,
     lab: Option[LabColor] = None,
-    neutralDensity: Option[Float] = None,
+    neutralDensity: Option[NeutralDensity] = None,
     printingTechnology: Option[Nmtoken] = None,
-    printStandard: Option[String] = None,
+    printStandard: Option[XjdfString] = None,
     rawName: Vector[Byte] = Vector.empty,
-    spectrum: Vector[Float] = Vector.empty,
+    spectrum: Option[TransferFunction] = None,
     srgb: Option[SrgbColor] = None,
     colorMeasurementConditions: Option[ColorMeasurementConditions] = None,
     deviceNColors: Vector[DeviceNColor] = Vector.empty,

@@ -8,7 +8,7 @@ final case class CutBlock(
     binderySignatureIds: Vector[Nmtoken] = Vector.empty,
     box: Option[Rectangle] = None,
     cutWidth: Option[Float] = None,
-    descriptiveName: Option[String] = None,
+    descriptiveName: Option[XjdfString] = None,
     externalId: Option[Nmtoken] = None,
     operations: Vector[Nmtoken] = Vector.empty,
     extensions: Extensions = Extensions.empty,
@@ -30,7 +30,7 @@ end ShapeCuttingDeliveryMode
 
 final case class ShapeCuttingParams(
     deliveryMode: Option[ShapeCuttingDeliveryMode] = None,
-    dieLayoutRef: Option[XsdId] = None,
+    dieLayoutRef: Option[XsdIdRef] = None,
     moduleId: Option[Nmtoken] = None,
     sheetLay: Option[SheetLay] = None,
     shapes: Vector[Shape] = Vector.empty,
@@ -68,7 +68,7 @@ final case class ScreenSelector(
     angle: Option[Float] = None,
     dotSize: Option[Float] = None,
     frequency: Option[Float] = None,
-    screeningFamily: Option[String] = None,
+    screeningFamily: Option[XjdfString] = None,
     screeningType: Option[ScreeningType] = None,
     separation: Option[Nmtoken] = None,
     sourceFrequencyMax: Option[Float] = None,

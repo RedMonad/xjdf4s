@@ -21,9 +21,9 @@ end PlateType
 
 final case class CustomerInfo(
     customerId: Option[Nmtoken] = None,
-    customerJobName: Option[String] = None,
-    customerOrderId: Option[String] = None,
-    customerProjectId: Option[String] = None,
+    customerJobName: Option[XjdfString] = None,
+    customerOrderId: Option[XjdfString] = None,
+    customerProjectId: Option[XjdfString] = None,
     extensions: Extensions = Extensions.empty,
 ) extends SpecificResource:
   val elementName: QualifiedName = XjdfNames.element("CustomerInfo")
@@ -34,7 +34,7 @@ final case class NodeInfo(
     end: Option[XsdDateTime] = None,
     firstEnd: Option[XsdDateTime] = None,
     firstStart: Option[XsdDateTime] = None,
-    jobPriority: Option[Int] = None,
+    jobPriority: Option[Priority0To100] = None,
     lastEnd: Option[XsdDateTime] = None,
     lastStart: Option[XsdDateTime] = None,
     naturalLanguage: Option[LanguageTag] = None,
@@ -54,14 +54,14 @@ final case class Component(
     automation: Option[Automation] = None,
     cartonTopFlaps: Option[XYPair] = None,
     columns: Option[Int] = None,
-    contentRefs: Vector[XsdId] = Vector.empty,
+    contentRefs: Vector[XsdIdRef] = Vector.empty,
     dimensions: Option[Shape3D] = None,
     maxHeat: Option[Float] = None,
-    mediaRef: Option[XsdId] = None,
+    mediaRef: Option[XsdIdRef] = None,
     overfold: Option[Float] = None,
     overfoldSide: Option[Side] = None,
     productType: Option[Nmtoken] = None,
-    productTypeDetails: Option[String] = None,
+    productTypeDetails: Option[XjdfString] = None,
     readerPageCount: Option[Int] = None,
     surfaceCount: Option[Int] = None,
     windingResult: Option[Int] = None,
@@ -71,7 +71,7 @@ final case class Component(
   val elementName: QualifiedName = XjdfNames.element("Component")
 
 final case class ExposedMedia(
-    mediaRef: XsdId,
+    mediaRef: XsdIdRef,
     plateType: Option[PlateType] = None,
     polarity: Option[Polarity] = None,
     punchType: Option[Nmtoken] = None,

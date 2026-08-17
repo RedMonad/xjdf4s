@@ -14,16 +14,21 @@ type StandardProductIntent =
     HoleMakingIntent | IntentResource | LaminatingIntent | LayoutIntent | MediaIntent | ProductionIntent |
     ShapeCuttingIntent | VariableIntent
 
-/** Lossless fallback for a product intent defined by an ICS or a foreign namespace. */
+/**
+ * Lossless fallback for a product intent defined by an ICS or a foreign namespace. The constructor takes a
+ * [[ForeignQName]], so a standard XJDF intent name can never be smuggled through the generic fallback; the trait
+ * accessor re-exposes the name as a plain `QualifiedName`.
+ */
 final case class NamedProductIntent(
-    elementName: QualifiedName,
+    foreignName: ForeignQName,
     extensions: Extensions = Extensions.empty,
-) extends ProductIntent
+) extends ProductIntent:
+  def elementName: QualifiedName = foreignName.qualifiedName
 
 final case class Intent(
     name: Nmtoken,
     productIntent: Option[ProductIntent] = None,
-    descriptiveName: Option[String] = None,
+    descriptiveName: Option[XjdfString] = None,
     externalId: Option[Nmtoken] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
@@ -32,7 +37,7 @@ final case class Intent(
 final case class Product(
     amount: Option[Int] = None,
     commentUrl: Option[UriRef] = None,
-    descriptiveName: Option[String] = None,
+    descriptiveName: Option[XjdfString] = None,
     externalId: Option[Nmtoken] = None,
     id: Option[XsdId] = None,
     isRoot: Option[Boolean] = None,
@@ -40,7 +45,7 @@ final case class Product(
     minAmount: Option[Int] = None,
     partVersion: Option[Nmtoken] = None,
     productType: Option[Nmtoken] = None,
-    productTypeDetails: Option[String] = None,
+    productTypeDetails: Option[XjdfString] = None,
     comments: Vector[Comment] = Vector.empty,
     generalIds: Vector[GeneralId] = Vector.empty,
     intents: Vector[Intent] = Vector.empty,

@@ -5,7 +5,7 @@ import xjdf4s.model.resources.*
 
 object FoundationalResourceChecks:
   private val customerId = Nmtoken.from("customer-1").toOption.get
-  private val mediaId = XsdId.from("media-1").toOption.get
+  private val mediaId = XsdIdRef.from("media-1").toOption.get
 
   val foundationalUnion: Unit =
     val customer: FoundationalSpecificResource = CustomerInfo(customerId = Some(customerId))

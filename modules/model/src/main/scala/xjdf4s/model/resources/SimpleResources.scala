@@ -21,6 +21,9 @@ final case class Shape(
 
 final case class Tool(
     toolType: Option[Nmtoken] = None,
+    manufacturer: Option[XjdfString] = None,
+    manufacturerUrl: Option[UriRef] = None,
+    serialNumber: Option[XjdfString] = None,
     identificationFields: Vector[IdentificationField] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends SpecificResource:
@@ -39,8 +42,8 @@ final case class UsageCounter(
 
 final case class MiscConsumable(
     consumableType: Nmtoken,
-    color: Option[String] = None,
-    colorDetails: Option[String] = None,
+    color: Option[NamedColor] = None,
+    colorDetails: Option[XjdfString] = None,
     typeDetails: Option[Nmtoken] = None,
     certifications: Vector[Certification] = Vector.empty,
     identificationFields: Vector[IdentificationField] = Vector.empty,

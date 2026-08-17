@@ -61,7 +61,6 @@ final case class QueryKnownMessages(
     header: Header,
     extensions: Extensions = Extensions.empty,
 ) extends Query:
-  val languages: Vector[LanguageTag] = Vector.empty
   val subscription: Option[Subscription] = None
   val elementName: QualifiedName = MessageNames.element("QueryKnownMessages")
 
@@ -87,7 +86,6 @@ final case class QueryKnownSubscriptions(
     subscription: Option[Subscription] = None,
     extensions: Extensions = Extensions.empty,
 ) extends Query:
-  val languages: Vector[LanguageTag] = Vector.empty
   val elementName: QualifiedName = MessageNames.element("QueryKnownSubscriptions")
 
 final case class ResponseKnownSubscriptions(

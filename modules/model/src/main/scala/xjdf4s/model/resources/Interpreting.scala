@@ -44,7 +44,7 @@ final case class InterpretingDetails(
 
 final case class OptionalContentGroupControl(
     include: Boolean,
-    name: Option[String] = None,
+    name: Option[XjdfString] = None,
     processStepsGroup: Option[Nmtoken] = None,
     processStepsType: Option[Nmtoken] = None,
     extensions: Extensions = Extensions.empty,
@@ -83,13 +83,13 @@ final case class PdfInterpretingParams(
 
 final case class InterpretingParams(
     center: Option[Boolean] = None,
-    filmRef: Option[XsdId] = None,
+    filmRef: Option[XsdIdRef] = None,
     mirrorAround: Option[DeviceAxis] = None,
-    paperRef: Option[XsdId] = None,
-    plateRef: Option[XsdId] = None,
+    paperRef: Option[XsdIdRef] = None,
+    plateRef: Option[XsdIdRef] = None,
     polarity: Option[Polarity] = None,
     printQuality: Option[PrintQuality] = None,
-    proofPaperRef: Option[XsdId] = None,
+    proofPaperRef: Option[XsdIdRef] = None,
     scaling: Option[XYPair] = None,
     scalingOrigin: Option[XYPair] = None,
     fitPolicy: Option[FitPolicy] = None,

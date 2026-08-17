@@ -10,7 +10,7 @@ end DieSide
 final case class DieStation(
     stationName: Nmtoken,
     binderySignatureIds: Vector[Nmtoken] = Vector.empty,
-    shapeDefRef: Option[XsdId] = None,
+    shapeDefRef: Option[XsdIdRef] = None,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible

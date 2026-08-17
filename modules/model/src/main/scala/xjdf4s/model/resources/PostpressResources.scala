@@ -19,7 +19,7 @@ final case class EndSheetGluingParams(
   val elementName: QualifiedName = XjdfNames.element("EndSheetGluingParams")
 
 final case class GluingParams(
-    gluingProductionId: Option[String] = None,
+    gluingProductionId: Option[XjdfString] = None,
     glues: Vector[Glue] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends SpecificResource:

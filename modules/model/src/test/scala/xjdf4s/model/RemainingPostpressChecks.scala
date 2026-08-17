@@ -9,9 +9,14 @@ object RemainingPostpressChecks:
     val resource: PostpressSpecificResource = LooseBindingParams(binding)
     assert(resource.elementName.localName == "LooseBindingParams")
 
-  val boxFoldingRequiredChildren: Unit =
-    val action = BoxFoldAction(BoxFoldActionType.Rotate90, XYPair(1, 0))
-    val resource: TypedSpecificResource = BoxFoldingParams(BoxFoldingType.Type00, action, Glue())
+  val boxFoldingOrderedActions: Unit =
+    val fold = BoxFoldAction(BoxFoldActionType.Rotate90, XYPair(1, 0))
+    val glueAction = BoxFoldAction(BoxFoldActionType.Glue, XYPair(0, 1), glue = Some(Glue()))
+    val resource: TypedSpecificResource = BoxFoldingParams(
+      BoxFoldingType.Type00,
+      actions = Vector(fold, glueAction),
+      legacyGlues = Vector(Glue()),
+    )
     assert(resource.elementName.localName == "BoxFoldingParams")
 
   val exclusiveCollatingPlacement: Unit =
