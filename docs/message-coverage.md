@@ -16,18 +16,18 @@ Generated from the XSD element list obtained with `xsdq.py list --kind element`.
 | `CommandSubmitQueueEntry` | pending |
 | `CommandWakeUp` | typed |
 | `QueryGangStatus` | pending |
-| `QueryKnownDevices` | pending |
-| `QueryKnownMessages` | pending |
-| `QueryKnownSubscriptions` | pending |
+| `QueryKnownDevices` | typed |
+| `QueryKnownMessages` | typed |
+| `QueryKnownSubscriptions` | typed |
 | `QueryNotification` | typed |
 | `QueryQueueStatus` | pending |
 | `QueryResource` | typed |
 | `QueryStatus` | typed |
 | `ResponseForceGang` | pending |
 | `ResponseGangStatus` | pending |
-| `ResponseKnownDevices` | pending |
-| `ResponseKnownMessages` | pending |
-| `ResponseKnownSubscriptions` | pending |
+| `ResponseKnownDevices` | typed |
+| `ResponseKnownMessages` | typed |
+| `ResponseKnownSubscriptions` | typed |
 | `ResponseModifyQueueEntry` | pending |
 | `ResponseNotification` | typed |
 | `ResponsePipeControl` | typed |
@@ -42,11 +42,11 @@ Generated from the XSD element list obtained with `xsdq.py list --kind element`.
 | `ResponseSubmitQueueEntry` | pending |
 | `ResponseWakeUp` | typed |
 | `SignalGangStatus` | pending |
-| `SignalKnownDevices` | pending |
-| `SignalKnownSubscriptions` | pending |
+| `SignalKnownDevices` | typed |
+| `SignalKnownSubscriptions` | typed |
 | `SignalNotification` | typed |
 | `SignalQueueStatus` | pending |
 | `SignalResource` | typed |
 | `SignalStatus` | typed |
 
-Current coverage: **18/44** concrete XJMF messages.
+Current coverage: **26/44** concrete XJMF messages.

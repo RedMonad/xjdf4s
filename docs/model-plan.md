@@ -36,6 +36,7 @@ python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSche
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}Layout' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}SignalStatus' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}CommandPipeControl' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}ResponseKnownMessages' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 ```
 
 The index reports 365 elements, 366 complex types and 228 simple types. `SpecificResource` alone has 100 derived
@@ -76,7 +77,7 @@ types. `CommandShutDown/ShutDownCmdParams` follows the normative optional cardin
 - **Slice 4 (implemented):** all 100 `SpecificResource` descendants grouped by general/prepress/press/postpress process
   domains, including their reusable and recursive child graphs. See [resource-coverage.md](resource-coverage.md).
 - **Slice 5 (in progress):** every concrete XJMF query/command/signal/response. Status, notification, resource, pipe,
-  shutdown, wake-up, and persistent-channel control families are typed; see
+  shutdown, wake-up, persistent-channel control, known-device, known-message, and known-subscription families are typed; see
   [message-coverage.md](message-coverage.md). Audit payloads are complete in Slice 2.
 - **Slice 6:** schema-derived XML and JSON codecs, validation laws, round-trip fixtures and compatibility tests.
 
