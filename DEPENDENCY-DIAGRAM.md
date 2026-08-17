@@ -6,7 +6,7 @@
 
 ```mermaid
 graph TD
-    codec_json["codec-json<br/>(6 files)"]
+    codec_json["codec-json<br/>(7 files)"]
     codec_xml["codec-xml<br/>(26 files)"]
     core["core<br/>(6 files)"]
     dsl["dsl<br/>(2 files)"]
@@ -217,27 +217,7 @@ graph LR
     xjdf4s_codec_xml_derivation_Derived["derivation.Derived"] --> xjdf4s_codec_xml_derivation_FieldCodec["derivation.FieldCodec"]
 ```
 
-### Cycle 2 (6 files)
-
-```mermaid
-graph LR
-    xjdf4s_codec_json_JsonCodec["json.JsonCodec"] --> xjdf4s_codec_json_JsonMediaCodecs["json.JsonMediaCodecs"]
-    xjdf4s_codec_json_JsonMediaCodecs["json.JsonMediaCodecs"] --> xjdf4s_codec_json_JsonNodeCodecs["json.JsonNodeCodecs"]
-    xjdf4s_codec_json_JsonNodeCodecs["json.JsonNodeCodecs"] --> xjdf4s_codec_json_JsonResources["json.JsonResources"]
-    xjdf4s_codec_json_JsonResources["json.JsonResources"] --> xjdf4s_codec_json_JsonScalars["json.JsonScalars"]
-    xjdf4s_codec_json_JsonScalars["json.JsonScalars"] --> xjdf4s_codec_json_JsonMessagingCodecs["json.JsonMessagingCodecs"]
-    xjdf4s_codec_json_JsonMessagingCodecs["json.JsonMessagingCodecs"] --> xjdf4s_codec_json_JsonCodec["json.JsonCodec"]
-```
-
-### Cycle 3 (2 files)
-
-```mermaid
-graph LR
-    xjdf4s_codec_xml_Lexical["xml.Lexical"] --> xjdf4s_codec_xml_XmlDecoders["xml.XmlDecoders"]
-    xjdf4s_codec_xml_XmlDecoders["xml.XmlDecoders"] --> xjdf4s_codec_xml_Lexical["xml.Lexical"]
-```
-
-### Cycle 4 (43 files)
+### Cycle 2 (43 files)
 
 ```mermaid
 graph LR
