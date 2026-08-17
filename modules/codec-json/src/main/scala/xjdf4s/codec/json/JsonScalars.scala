@@ -55,7 +55,7 @@ object JsonScalars:
   given Decoder[CmykColor] = Decoder.instance(cursor =>
     cursor.as[List[Double]].flatMap {
       case List(c, m, y, k) => CmykColor.from(c, m, y, k).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
-      case other            => JsonCodec.fail(cursor, s"CMYKColor requires exactly four numbers, got ${other.size}")
+      case other            => JsonHelpers.fail(cursor, s"CMYKColor requires exactly four numbers, got ${other.size}")
     },
   )
 
@@ -69,7 +69,7 @@ object JsonScalars:
   given Decoder[SrgbColor] = Decoder.instance(cursor =>
     cursor.as[List[Double]].flatMap {
       case List(r, g, b) => SrgbColor.from(r, g, b).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
-      case other         => JsonCodec.fail(cursor, s"sRGBColor requires exactly three numbers, got ${other.size}")
+      case other         => JsonHelpers.fail(cursor, s"sRGBColor requires exactly three numbers, got ${other.size}")
     },
   )
 
@@ -92,7 +92,7 @@ object JsonScalars:
   given Decoder[Rectangle] = Decoder.instance(cursor =>
     cursor.as[List[Double]].flatMap {
       case List(x1, y1, x2, y2) => Right(Rectangle(XYPair(x1, y1), XYPair(x2, y2)))
-      case other => JsonCodec.fail(cursor, s"rectangle requires exactly four numbers, got ${other.size}")
+      case other => JsonHelpers.fail(cursor, s"rectangle requires exactly four numbers, got ${other.size}")
     },
   )
 
@@ -104,7 +104,7 @@ object JsonScalars:
       values <- cursor.as[List[Double]]
       pair <- values match
         case List(x, y) => Right(XYPair(x, y))
-        case other      => JsonCodec.fail(cursor, s"XYPair requires exactly two numbers, got ${other.size}")
+        case other      => JsonHelpers.fail(cursor, s"XYPair requires exactly two numbers, got ${other.size}")
     yield pair,
   )
 
@@ -116,7 +116,7 @@ object JsonScalars:
       range <- values match
         case List(first, last) =>
           IntegerRange.from(first, last).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
-        case other => JsonCodec.fail(cursor, s"IntegerRange requires exactly two integers, got ${other.size}")
+        case other => JsonHelpers.fail(cursor, s"IntegerRange requires exactly two integers, got ${other.size}")
     yield range,
   )
 
@@ -130,7 +130,7 @@ object JsonScalars:
   given Decoder[LabColor] = Decoder.instance(cursor =>
     cursor.as[List[Double]].flatMap {
       case List(l, a, b) => LabColor.from(l, a, b).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
-      case other         => JsonCodec.fail(cursor, s"LabColor requires exactly three numbers, got ${other.size}")
+      case other         => JsonHelpers.fail(cursor, s"LabColor requires exactly three numbers, got ${other.size}")
     },
   )
 
@@ -147,7 +147,7 @@ object JsonScalars:
   given Decoder[Matrix] = Decoder.instance(cursor =>
     cursor.as[List[Double]].flatMap {
       case List(a, b, c, d, e, f) => Right(Matrix(a, b, c, d, e, f))
-      case other                  => JsonCodec.fail(cursor, s"matrix requires exactly six numbers, got ${other.size}")
+      case other                  => JsonHelpers.fail(cursor, s"matrix requires exactly six numbers, got ${other.size}")
     },
   )
 
@@ -161,7 +161,7 @@ object JsonScalars:
   given Decoder[Shape3D] = Decoder.instance(cursor =>
     cursor.as[List[Double]].flatMap {
       case List(width, height, depth) => Right(Shape3D(width, height, depth))
-      case other => JsonCodec.fail(cursor, s"shape requires exactly three numbers, got ${other.size}")
+      case other => JsonHelpers.fail(cursor, s"shape requires exactly three numbers, got ${other.size}")
     },
   )
 

@@ -14,33 +14,33 @@ import xjdf4s.model.resources.*
 object JsonMediaCodecs:
 
   given Encoder[Glue] = Encoder.instance(glue =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("AreaGlue", glue.areaGlue),
-        JsonCodec.optMember("GlueLineWidth", glue.glueLineWidth),
-        JsonCodec.optMember("GlueRef", glue.glueRef),
-        JsonCodec.optMember("GlueType", glue.glueType),
-        JsonCodec.optMember("GluingPattern", glue.gluingPattern.map(_.toVector)),
-        JsonCodec.optMember("GluingTechnique", glue.gluingTechnique),
-        JsonCodec.optMember("MeltingTemperature", glue.meltingTemperature),
-        JsonCodec.optMember("StartPosition", glue.startPosition),
-        JsonCodec.optMember("WorkingDirection", glue.workingDirection),
-        JsonCodec.optMember("WorkingPath", glue.workingPath),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("AreaGlue", glue.areaGlue),
+        JsonHelpers.optMember("GlueLineWidth", glue.glueLineWidth),
+        JsonHelpers.optMember("GlueRef", glue.glueRef),
+        JsonHelpers.optMember("GlueType", glue.glueType),
+        JsonHelpers.optMember("GluingPattern", glue.gluingPattern.map(_.toVector)),
+        JsonHelpers.optMember("GluingTechnique", glue.gluingTechnique),
+        JsonHelpers.optMember("MeltingTemperature", glue.meltingTemperature),
+        JsonHelpers.optMember("StartPosition", glue.startPosition),
+        JsonHelpers.optMember("WorkingDirection", glue.workingDirection),
+        JsonHelpers.optMember("WorkingPath", glue.workingPath),
       ),
     ),
   )
   given Decoder[Glue] = Decoder.instance(cursor =>
     for
-      areaGlue <- JsonCodec.opt[Boolean](cursor, "AreaGlue")
-      glueLineWidth <- JsonCodec.opt[Float](cursor, "GlueLineWidth")
-      glueRef <- JsonCodec.opt[XsdIdRef](cursor, "GlueRef")
-      glueType <- JsonCodec.opt[GlueType](cursor, "GlueType")
-      gluingPattern <- JsonCodec.opt[Vector[Float]](cursor, "GluingPattern")
-      gluingTechnique <- JsonCodec.opt[GluingTechnique](cursor, "GluingTechnique")
-      meltingTemperature <- JsonCodec.opt[Int](cursor, "MeltingTemperature")
-      startPosition <- JsonCodec.opt[XYPair](cursor, "StartPosition")
-      workingDirection <- JsonCodec.opt[Face](cursor, "WorkingDirection")
-      workingPath <- JsonCodec.opt[XYPair](cursor, "WorkingPath")
+      areaGlue <- JsonHelpers.opt[Boolean](cursor, "AreaGlue")
+      glueLineWidth <- JsonHelpers.opt[Float](cursor, "GlueLineWidth")
+      glueRef <- JsonHelpers.opt[XsdIdRef](cursor, "GlueRef")
+      glueType <- JsonHelpers.opt[GlueType](cursor, "GlueType")
+      gluingPattern <- JsonHelpers.opt[Vector[Float]](cursor, "GluingPattern")
+      gluingTechnique <- JsonHelpers.opt[GluingTechnique](cursor, "GluingTechnique")
+      meltingTemperature <- JsonHelpers.opt[Int](cursor, "MeltingTemperature")
+      startPosition <- JsonHelpers.opt[XYPair](cursor, "StartPosition")
+      workingDirection <- JsonHelpers.opt[Face](cursor, "WorkingDirection")
+      workingPath <- JsonHelpers.opt[XYPair](cursor, "WorkingPath")
       pattern <- gluingPattern match
         case Some(values) => GluingPattern.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case None         => Right(None)
@@ -59,37 +59,37 @@ object JsonMediaCodecs:
   )
 
   given Encoder[ColorMeasurementConditions] = Encoder.instance(conditions =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("Aperture", conditions.aperture),
-        JsonCodec.optMember("DensityStandard", conditions.densityStandard),
-        JsonCodec.optMember("Illumination", conditions.illumination),
-        JsonCodec.optMember("IlluminationAngle", conditions.illuminationAngle),
-        JsonCodec.optMember("InkState", conditions.inkState),
-        JsonCodec.optMember("MeasurementAngle", conditions.measurementAngle),
-        JsonCodec.optMember("MeasurementFilter", conditions.measurementFilter),
-        JsonCodec.optMember("MeasurementMode", conditions.measurementMode),
-        JsonCodec.optMember("Observer", conditions.observer),
-        JsonCodec.optMember("SampleBacking", conditions.sampleBacking),
-        JsonCodec.optMember("SpectralResolution", conditions.spectralResolution),
-        JsonCodec.optMember("WhiteBase", conditions.whiteBase),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("Aperture", conditions.aperture),
+        JsonHelpers.optMember("DensityStandard", conditions.densityStandard),
+        JsonHelpers.optMember("Illumination", conditions.illumination),
+        JsonHelpers.optMember("IlluminationAngle", conditions.illuminationAngle),
+        JsonHelpers.optMember("InkState", conditions.inkState),
+        JsonHelpers.optMember("MeasurementAngle", conditions.measurementAngle),
+        JsonHelpers.optMember("MeasurementFilter", conditions.measurementFilter),
+        JsonHelpers.optMember("MeasurementMode", conditions.measurementMode),
+        JsonHelpers.optMember("Observer", conditions.observer),
+        JsonHelpers.optMember("SampleBacking", conditions.sampleBacking),
+        JsonHelpers.optMember("SpectralResolution", conditions.spectralResolution),
+        JsonHelpers.optMember("WhiteBase", conditions.whiteBase),
       ),
     ),
   )
   given Decoder[ColorMeasurementConditions] = Decoder.instance(cursor =>
     for
-      aperture <- JsonCodec.opt[Float](cursor, "Aperture")
-      densityStandard <- JsonCodec.opt[Nmtoken](cursor, "DensityStandard")
-      illumination <- JsonCodec.opt[Nmtoken](cursor, "Illumination")
-      illuminationAngle <- JsonCodec.opt[Int](cursor, "IlluminationAngle")
-      inkState <- JsonCodec.opt[InkState](cursor, "InkState")
-      measurementAngle <- JsonCodec.opt[Int](cursor, "MeasurementAngle")
-      measurementFilter <- JsonCodec.opt[MeasurementFilter](cursor, "MeasurementFilter")
-      measurementMode <- JsonCodec.opt[Nmtoken](cursor, "MeasurementMode")
-      observer <- JsonCodec.opt[Int](cursor, "Observer")
-      sampleBacking <- JsonCodec.opt[SampleBacking](cursor, "SampleBacking")
-      spectralResolution <- JsonCodec.opt[Float](cursor, "SpectralResolution")
-      whiteBase <- JsonCodec.opt[WhiteBase](cursor, "WhiteBase")
+      aperture <- JsonHelpers.opt[Float](cursor, "Aperture")
+      densityStandard <- JsonHelpers.opt[Nmtoken](cursor, "DensityStandard")
+      illumination <- JsonHelpers.opt[Nmtoken](cursor, "Illumination")
+      illuminationAngle <- JsonHelpers.opt[Int](cursor, "IlluminationAngle")
+      inkState <- JsonHelpers.opt[InkState](cursor, "InkState")
+      measurementAngle <- JsonHelpers.opt[Int](cursor, "MeasurementAngle")
+      measurementFilter <- JsonHelpers.opt[MeasurementFilter](cursor, "MeasurementFilter")
+      measurementMode <- JsonHelpers.opt[Nmtoken](cursor, "MeasurementMode")
+      observer <- JsonHelpers.opt[Int](cursor, "Observer")
+      sampleBacking <- JsonHelpers.opt[SampleBacking](cursor, "SampleBacking")
+      spectralResolution <- JsonHelpers.opt[Float](cursor, "SpectralResolution")
+      whiteBase <- JsonHelpers.opt[WhiteBase](cursor, "WhiteBase")
     yield ColorMeasurementConditions(
       aperture,
       densityStandard,
@@ -107,121 +107,121 @@ object JsonMediaCodecs:
   )
 
   given Encoder[Media] = Encoder.instance(media =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("BackBrightness", media.backBrightness),
-        JsonCodec.optMember("BackCIETint", media.backCieTint),
-        JsonCodec.optMember("BackCIEWhiteness", media.backCieWhiteness),
-        JsonCodec.optMember("BackCoating", media.backCoating),
-        JsonCodec.optMember("BackCoatingDetail", media.backCoatingDetail),
-        JsonCodec.optMember("BackGlossValue", media.backGlossValue),
-        JsonCodec.optMember("BackISOPaperSubstrate", media.backIsoPaperSubstrate),
-        JsonCodec.optMember("BackLabColorValue", media.backLabColorValue),
-        JsonCodec.optMember("BackSpectrum", media.backSpectrum.map(_.toVector)),
-        JsonCodec.optMember("Brightness", media.brightness),
-        JsonCodec.optMember("CIETint", media.cieTint),
-        JsonCodec.optMember("CIEWhiteness", media.cieWhiteness),
-        JsonCodec.optMember("Coating", media.coating),
-        JsonCodec.optMember("CoatingDetail", media.coatingDetail),
-        JsonCodec.optMember("CoreWeight", media.coreWeight),
-        JsonCodec.optMember("Dimension", media.dimension),
-        JsonCodec.optMember("Flute", media.flute),
-        JsonCodec.optMember("FluteDirection", media.fluteDirection),
-        JsonCodec.optMember("GlossValue", media.glossValue),
-        JsonCodec.optMember("GrainDirection", media.grainDirection),
-        JsonCodec.optMember("ImagableSide", media.imagableSide),
-        JsonCodec.optMember("InnerCoreDiameter", media.innerCoreDiameter),
-        JsonCodec.optMember("InsideLoss", media.insideLoss),
-        JsonCodec.optMember("ISOPaperSubstrate", media.isoPaperSubstrate),
-        JsonCodec.optMember("LabColorValue", media.labColorValue),
-        JsonCodec.optMember("MediaColorName", media.mediaColorName),
-        JsonCodec.optMember("MediaColorNameDetails", media.mediaColorNameDetails),
-        JsonCodec.optMember("MediaQuality", media.mediaQuality),
-        JsonCodec.optMember("MediaSetCount", media.mediaSetCount),
-        Vector(JsonCodec.member("MediaType", Json.fromString(media.mediaType.toString))),
-        JsonCodec.optMember("MediaTypeDetails", media.mediaTypeDetails),
-        JsonCodec.optMember("MediaUnit", media.mediaUnit),
-        JsonCodec.optMember("Opacity", media.opacity),
-        JsonCodec.optMember("OpacityLevel", media.opacityLevel),
-        JsonCodec.optMember("OuterCoreDiameter", media.outerCoreDiameter),
-        JsonCodec.optMember("OutsideGain", media.outsideGain),
-        JsonCodec.optMember("PlateTechnology", media.plateTechnology),
-        JsonCodec.optMember("Polarity", media.polarity),
-        JsonCodec.optMember("PrintingTechnology", media.printingTechnology),
-        JsonCodec.optMember("RecycledPercentage", media.recycledPercentage),
-        JsonCodec.optMember("ReliefThickness", media.reliefThickness),
-        JsonCodec.optMember("RollDiameter", media.rollDiameter),
-        JsonCodec.optMember("ShrinkIndex", media.shrinkIndex),
-        JsonCodec.optMember("SleeveInterlock", media.sleeveInterlock),
-        JsonCodec.optMember("Spectrum", media.spectrum.map(_.toVector)),
-        JsonCodec.optMember("StockType", media.stockType),
-        JsonCodec.optMember("Texture", media.texture),
-        JsonCodec.optMember("Thickness", media.thickness),
-        JsonCodec.optMember("Weight", media.weight),
-        JsonCodec.optMember("ColorMeasurementConditions", media.colorMeasurementConditions),
-        JsonCodec.optMember("MediaLayers", media.mediaLayers),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("BackBrightness", media.backBrightness),
+        JsonHelpers.optMember("BackCIETint", media.backCieTint),
+        JsonHelpers.optMember("BackCIEWhiteness", media.backCieWhiteness),
+        JsonHelpers.optMember("BackCoating", media.backCoating),
+        JsonHelpers.optMember("BackCoatingDetail", media.backCoatingDetail),
+        JsonHelpers.optMember("BackGlossValue", media.backGlossValue),
+        JsonHelpers.optMember("BackISOPaperSubstrate", media.backIsoPaperSubstrate),
+        JsonHelpers.optMember("BackLabColorValue", media.backLabColorValue),
+        JsonHelpers.optMember("BackSpectrum", media.backSpectrum.map(_.toVector)),
+        JsonHelpers.optMember("Brightness", media.brightness),
+        JsonHelpers.optMember("CIETint", media.cieTint),
+        JsonHelpers.optMember("CIEWhiteness", media.cieWhiteness),
+        JsonHelpers.optMember("Coating", media.coating),
+        JsonHelpers.optMember("CoatingDetail", media.coatingDetail),
+        JsonHelpers.optMember("CoreWeight", media.coreWeight),
+        JsonHelpers.optMember("Dimension", media.dimension),
+        JsonHelpers.optMember("Flute", media.flute),
+        JsonHelpers.optMember("FluteDirection", media.fluteDirection),
+        JsonHelpers.optMember("GlossValue", media.glossValue),
+        JsonHelpers.optMember("GrainDirection", media.grainDirection),
+        JsonHelpers.optMember("ImagableSide", media.imagableSide),
+        JsonHelpers.optMember("InnerCoreDiameter", media.innerCoreDiameter),
+        JsonHelpers.optMember("InsideLoss", media.insideLoss),
+        JsonHelpers.optMember("ISOPaperSubstrate", media.isoPaperSubstrate),
+        JsonHelpers.optMember("LabColorValue", media.labColorValue),
+        JsonHelpers.optMember("MediaColorName", media.mediaColorName),
+        JsonHelpers.optMember("MediaColorNameDetails", media.mediaColorNameDetails),
+        JsonHelpers.optMember("MediaQuality", media.mediaQuality),
+        JsonHelpers.optMember("MediaSetCount", media.mediaSetCount),
+        Vector(JsonHelpers.member("MediaType", Json.fromString(media.mediaType.toString))),
+        JsonHelpers.optMember("MediaTypeDetails", media.mediaTypeDetails),
+        JsonHelpers.optMember("MediaUnit", media.mediaUnit),
+        JsonHelpers.optMember("Opacity", media.opacity),
+        JsonHelpers.optMember("OpacityLevel", media.opacityLevel),
+        JsonHelpers.optMember("OuterCoreDiameter", media.outerCoreDiameter),
+        JsonHelpers.optMember("OutsideGain", media.outsideGain),
+        JsonHelpers.optMember("PlateTechnology", media.plateTechnology),
+        JsonHelpers.optMember("Polarity", media.polarity),
+        JsonHelpers.optMember("PrintingTechnology", media.printingTechnology),
+        JsonHelpers.optMember("RecycledPercentage", media.recycledPercentage),
+        JsonHelpers.optMember("ReliefThickness", media.reliefThickness),
+        JsonHelpers.optMember("RollDiameter", media.rollDiameter),
+        JsonHelpers.optMember("ShrinkIndex", media.shrinkIndex),
+        JsonHelpers.optMember("SleeveInterlock", media.sleeveInterlock),
+        JsonHelpers.optMember("Spectrum", media.spectrum.map(_.toVector)),
+        JsonHelpers.optMember("StockType", media.stockType),
+        JsonHelpers.optMember("Texture", media.texture),
+        JsonHelpers.optMember("Thickness", media.thickness),
+        JsonHelpers.optMember("Weight", media.weight),
+        JsonHelpers.optMember("ColorMeasurementConditions", media.colorMeasurementConditions),
+        JsonHelpers.optMember("MediaLayers", media.mediaLayers),
       ),
     ),
   )
   given Decoder[Media] = Decoder.instance(cursor =>
     for
       mediaType <- cursor.get[MediaType]("MediaType")
-      backBrightness <- JsonCodec.opt[Float](cursor, "BackBrightness")
-      backCieTint <- JsonCodec.opt[Float](cursor, "BackCIETint")
-      backCieWhiteness <- JsonCodec.opt[Float](cursor, "BackCIEWhiteness")
-      backCoating <- JsonCodec.opt[Coating](cursor, "BackCoating")
-      backCoatingDetail <- JsonCodec.opt[Nmtoken](cursor, "BackCoatingDetail")
-      backGlossValue <- JsonCodec.opt[Float](cursor, "BackGlossValue")
-      backIsoPaperSubstrate <- JsonCodec.opt[IsoPaperSubstrate](cursor, "BackISOPaperSubstrate")
-      backLabColorValue <- JsonCodec.opt[LabColor](cursor, "BackLabColorValue")
-      backSpectrum <- JsonCodec.opt[Vector[Float]](cursor, "BackSpectrum")
-      brightness <- JsonCodec.opt[Float](cursor, "Brightness")
-      cieTint <- JsonCodec.opt[Float](cursor, "CIETint")
-      cieWhiteness <- JsonCodec.opt[Float](cursor, "CIEWhiteness")
-      coating <- JsonCodec.opt[Coating](cursor, "Coating")
-      coatingDetail <- JsonCodec.opt[Nmtoken](cursor, "CoatingDetail")
-      coreWeight <- JsonCodec.opt[Float](cursor, "CoreWeight")
-      dimension <- JsonCodec.opt[XYPair](cursor, "Dimension")
-      flute <- JsonCodec.opt[Nmtoken](cursor, "Flute")
-      fluteDirection <- JsonCodec.opt[MediaDirection](cursor, "FluteDirection")
-      glossValue <- JsonCodec.opt[Float](cursor, "GlossValue")
-      grainDirection <- JsonCodec.opt[MediaDirection](cursor, "GrainDirection")
-      imagableSide <- JsonCodec.opt[ImagableSide](cursor, "ImagableSide")
-      innerCoreDiameter <- JsonCodec.opt[Float](cursor, "InnerCoreDiameter")
-      insideLoss <- JsonCodec.opt[Float](cursor, "InsideLoss")
-      isoPaperSubstrate <- JsonCodec.opt[IsoPaperSubstrate](cursor, "ISOPaperSubstrate")
-      labColorValue <- JsonCodec.opt[LabColor](cursor, "LabColorValue")
-      mediaColorName <- JsonCodec.opt[NamedColor](cursor, "MediaColorName")
-      mediaColorNameDetails <- JsonCodec.opt[XjdfString](cursor, "MediaColorNameDetails")
-      mediaQuality <- JsonCodec.opt[XjdfString](cursor, "MediaQuality")
-      mediaSetCount <- JsonCodec.opt[Int](cursor, "MediaSetCount")
-      mediaTypeDetails <- JsonCodec.opt[Nmtoken](cursor, "MediaTypeDetails")
-      mediaUnit <- JsonCodec.opt[MediaUnit](cursor, "MediaUnit")
-      opacity <- JsonCodec.opt[Opacity](cursor, "Opacity")
-      opacityLevel <- JsonCodec.opt[Float](cursor, "OpacityLevel")
-      outerCoreDiameter <- JsonCodec.opt[Float](cursor, "OuterCoreDiameter")
-      outsideGain <- JsonCodec.opt[Float](cursor, "OutsideGain")
-      plateTechnology <- JsonCodec.opt[PlateTechnology](cursor, "PlateTechnology")
-      polarity <- JsonCodec.opt[Polarity](cursor, "Polarity")
-      printingTechnology <- JsonCodec.opt[Nmtoken](cursor, "PrintingTechnology")
-      recycledPercentage <- JsonCodec.opt[Float](cursor, "RecycledPercentage")
-      reliefThickness <- JsonCodec.opt[Float](cursor, "ReliefThickness")
-      rollDiameter <- JsonCodec.opt[Float](cursor, "RollDiameter")
-      shrinkIndex <- JsonCodec.opt[XYPair](cursor, "ShrinkIndex")
-      sleeveInterlock <- JsonCodec.opt[Nmtoken](cursor, "SleeveInterlock")
-      spectrum <- JsonCodec.opt[Vector[Float]](cursor, "Spectrum")
-      stockType <- JsonCodec.opt[Nmtoken](cursor, "StockType")
-      texture <- JsonCodec.opt[Nmtoken](cursor, "Texture")
-      thickness <- JsonCodec.opt[Float](cursor, "Thickness")
-      weight <- JsonCodec.opt[Float](cursor, "Weight")
+      backBrightness <- JsonHelpers.opt[Float](cursor, "BackBrightness")
+      backCieTint <- JsonHelpers.opt[Float](cursor, "BackCIETint")
+      backCieWhiteness <- JsonHelpers.opt[Float](cursor, "BackCIEWhiteness")
+      backCoating <- JsonHelpers.opt[Coating](cursor, "BackCoating")
+      backCoatingDetail <- JsonHelpers.opt[Nmtoken](cursor, "BackCoatingDetail")
+      backGlossValue <- JsonHelpers.opt[Float](cursor, "BackGlossValue")
+      backIsoPaperSubstrate <- JsonHelpers.opt[IsoPaperSubstrate](cursor, "BackISOPaperSubstrate")
+      backLabColorValue <- JsonHelpers.opt[LabColor](cursor, "BackLabColorValue")
+      backSpectrum <- JsonHelpers.opt[Vector[Float]](cursor, "BackSpectrum")
+      brightness <- JsonHelpers.opt[Float](cursor, "Brightness")
+      cieTint <- JsonHelpers.opt[Float](cursor, "CIETint")
+      cieWhiteness <- JsonHelpers.opt[Float](cursor, "CIEWhiteness")
+      coating <- JsonHelpers.opt[Coating](cursor, "Coating")
+      coatingDetail <- JsonHelpers.opt[Nmtoken](cursor, "CoatingDetail")
+      coreWeight <- JsonHelpers.opt[Float](cursor, "CoreWeight")
+      dimension <- JsonHelpers.opt[XYPair](cursor, "Dimension")
+      flute <- JsonHelpers.opt[Nmtoken](cursor, "Flute")
+      fluteDirection <- JsonHelpers.opt[MediaDirection](cursor, "FluteDirection")
+      glossValue <- JsonHelpers.opt[Float](cursor, "GlossValue")
+      grainDirection <- JsonHelpers.opt[MediaDirection](cursor, "GrainDirection")
+      imagableSide <- JsonHelpers.opt[ImagableSide](cursor, "ImagableSide")
+      innerCoreDiameter <- JsonHelpers.opt[Float](cursor, "InnerCoreDiameter")
+      insideLoss <- JsonHelpers.opt[Float](cursor, "InsideLoss")
+      isoPaperSubstrate <- JsonHelpers.opt[IsoPaperSubstrate](cursor, "ISOPaperSubstrate")
+      labColorValue <- JsonHelpers.opt[LabColor](cursor, "LabColorValue")
+      mediaColorName <- JsonHelpers.opt[NamedColor](cursor, "MediaColorName")
+      mediaColorNameDetails <- JsonHelpers.opt[XjdfString](cursor, "MediaColorNameDetails")
+      mediaQuality <- JsonHelpers.opt[XjdfString](cursor, "MediaQuality")
+      mediaSetCount <- JsonHelpers.opt[Int](cursor, "MediaSetCount")
+      mediaTypeDetails <- JsonHelpers.opt[Nmtoken](cursor, "MediaTypeDetails")
+      mediaUnit <- JsonHelpers.opt[MediaUnit](cursor, "MediaUnit")
+      opacity <- JsonHelpers.opt[Opacity](cursor, "Opacity")
+      opacityLevel <- JsonHelpers.opt[Float](cursor, "OpacityLevel")
+      outerCoreDiameter <- JsonHelpers.opt[Float](cursor, "OuterCoreDiameter")
+      outsideGain <- JsonHelpers.opt[Float](cursor, "OutsideGain")
+      plateTechnology <- JsonHelpers.opt[PlateTechnology](cursor, "PlateTechnology")
+      polarity <- JsonHelpers.opt[Polarity](cursor, "Polarity")
+      printingTechnology <- JsonHelpers.opt[Nmtoken](cursor, "PrintingTechnology")
+      recycledPercentage <- JsonHelpers.opt[Float](cursor, "RecycledPercentage")
+      reliefThickness <- JsonHelpers.opt[Float](cursor, "ReliefThickness")
+      rollDiameter <- JsonHelpers.opt[Float](cursor, "RollDiameter")
+      shrinkIndex <- JsonHelpers.opt[XYPair](cursor, "ShrinkIndex")
+      sleeveInterlock <- JsonHelpers.opt[Nmtoken](cursor, "SleeveInterlock")
+      spectrum <- JsonHelpers.opt[Vector[Float]](cursor, "Spectrum")
+      stockType <- JsonHelpers.opt[Nmtoken](cursor, "StockType")
+      texture <- JsonHelpers.opt[Nmtoken](cursor, "Texture")
+      thickness <- JsonHelpers.opt[Float](cursor, "Thickness")
+      weight <- JsonHelpers.opt[Float](cursor, "Weight")
       backSpectrumValue <- backSpectrum match
         case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case None         => Right(None)
       spectrumValue <- spectrum match
         case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case None         => Right(None)
-      conditions <- JsonCodec.opt[ColorMeasurementConditions](cursor, "ColorMeasurementConditions")
-      mediaLayers <- JsonCodec.opt[MediaLayers](cursor, "MediaLayers")
+      conditions <- JsonHelpers.opt[ColorMeasurementConditions](cursor, "ColorMeasurementConditions")
+      mediaLayers <- JsonHelpers.opt[MediaLayers](cursor, "MediaLayers")
     yield Media(
       mediaType,
       backBrightness,
@@ -299,64 +299,64 @@ object JsonMediaCodecs:
           layer <- kind match
             case "Glue"  => item.as[Glue].map(MediaLayer.GlueLayer(_))
             case "Media" => item.as[Media].map(MediaLayer.MediaLayer(_))
-            case other   => JsonCodec.fail(item.hcursor, s"unknown MediaLayers Name '$other'")
+            case other   => JsonHelpers.fail(item.hcursor, s"unknown MediaLayers Name '$other'")
         yield accumulated :+ layer
       }
     yield MediaLayers(layers),
   )
 
   given Encoder[Color] = Encoder.instance(color =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("ActualColorName", color.actualColorName),
-        JsonCodec.optMember("CMYK", color.cmyk),
-        JsonCodec.optMember("ColorBook", color.colorBook),
-        JsonCodec.optMember("ColorBookEntry", color.colorBookEntry),
-        JsonCodec.optMember("ColorDetails", color.colorDetails),
-        JsonCodec.optMember("ColorName", color.colorName),
-        JsonCodec.optMember("ColorType", color.colorType),
-        JsonCodec.optMember("ColorTypeDetails", color.colorTypeDetails),
-        JsonCodec.optMember("Density", color.density),
-        JsonCodec.optMember("Gray", color.gray),
-        JsonCodec.optMember("Lab", color.lab),
-        JsonCodec.optMember("NeutralDensity", color.neutralDensity),
-        JsonCodec.optMember("PrintingTechnology", color.printingTechnology),
-        JsonCodec.optMember("PrintStandard", color.printStandard),
-        JsonCodec.optMember("Spectrum", color.spectrum.map(_.toVector)),
-        JsonCodec.optMember("sRGB", color.srgb),
-        JsonCodec.optMember("ColorMeasurementConditions", color.colorMeasurementConditions),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("ActualColorName", color.actualColorName),
+        JsonHelpers.optMember("CMYK", color.cmyk),
+        JsonHelpers.optMember("ColorBook", color.colorBook),
+        JsonHelpers.optMember("ColorBookEntry", color.colorBookEntry),
+        JsonHelpers.optMember("ColorDetails", color.colorDetails),
+        JsonHelpers.optMember("ColorName", color.colorName),
+        JsonHelpers.optMember("ColorType", color.colorType),
+        JsonHelpers.optMember("ColorTypeDetails", color.colorTypeDetails),
+        JsonHelpers.optMember("Density", color.density),
+        JsonHelpers.optMember("Gray", color.gray),
+        JsonHelpers.optMember("Lab", color.lab),
+        JsonHelpers.optMember("NeutralDensity", color.neutralDensity),
+        JsonHelpers.optMember("PrintingTechnology", color.printingTechnology),
+        JsonHelpers.optMember("PrintStandard", color.printStandard),
+        JsonHelpers.optMember("Spectrum", color.spectrum.map(_.toVector)),
+        JsonHelpers.optMember("sRGB", color.srgb),
+        JsonHelpers.optMember("ColorMeasurementConditions", color.colorMeasurementConditions),
       ),
     ),
   )
   given Decoder[Color] = Decoder.instance(cursor =>
     for
-      actualColorName <- JsonCodec.opt[XjdfString](cursor, "ActualColorName")
-      cmyk <- JsonCodec.opt[Vector[Float]](cursor, "CMYK")
-      colorBook <- JsonCodec.opt[XjdfString](cursor, "ColorBook")
-      colorBookEntry <- JsonCodec.opt[XjdfString](cursor, "ColorBookEntry")
-      colorDetails <- JsonCodec.opt[XjdfString](cursor, "ColorDetails")
-      colorName <- JsonCodec.opt[NamedColor](cursor, "ColorName")
-      colorType <- JsonCodec.opt[ColorType](cursor, "ColorType")
-      colorTypeDetails <- JsonCodec.opt[XjdfString](cursor, "ColorTypeDetails")
-      density <- JsonCodec.opt[Float](cursor, "Density")
-      gray <- JsonCodec.opt[Float](cursor, "Gray")
-      lab <- JsonCodec.opt[LabColor](cursor, "Lab")
-      neutralDensity <- JsonCodec.opt[Float](cursor, "NeutralDensity")
-      printingTechnology <- JsonCodec.opt[Nmtoken](cursor, "PrintingTechnology")
-      printStandard <- JsonCodec.opt[XjdfString](cursor, "PrintStandard")
-      spectrum <- JsonCodec.opt[Vector[Float]](cursor, "Spectrum")
-      srgb <- JsonCodec.opt[Vector[Float]](cursor, "sRGB")
-      conditions <- JsonCodec.opt[ColorMeasurementConditions](cursor, "ColorMeasurementConditions")
+      actualColorName <- JsonHelpers.opt[XjdfString](cursor, "ActualColorName")
+      cmyk <- JsonHelpers.opt[Vector[Float]](cursor, "CMYK")
+      colorBook <- JsonHelpers.opt[XjdfString](cursor, "ColorBook")
+      colorBookEntry <- JsonHelpers.opt[XjdfString](cursor, "ColorBookEntry")
+      colorDetails <- JsonHelpers.opt[XjdfString](cursor, "ColorDetails")
+      colorName <- JsonHelpers.opt[NamedColor](cursor, "ColorName")
+      colorType <- JsonHelpers.opt[ColorType](cursor, "ColorType")
+      colorTypeDetails <- JsonHelpers.opt[XjdfString](cursor, "ColorTypeDetails")
+      density <- JsonHelpers.opt[Float](cursor, "Density")
+      gray <- JsonHelpers.opt[Float](cursor, "Gray")
+      lab <- JsonHelpers.opt[LabColor](cursor, "Lab")
+      neutralDensity <- JsonHelpers.opt[Float](cursor, "NeutralDensity")
+      printingTechnology <- JsonHelpers.opt[Nmtoken](cursor, "PrintingTechnology")
+      printStandard <- JsonHelpers.opt[XjdfString](cursor, "PrintStandard")
+      spectrum <- JsonHelpers.opt[Vector[Float]](cursor, "Spectrum")
+      srgb <- JsonHelpers.opt[Vector[Float]](cursor, "sRGB")
+      conditions <- JsonHelpers.opt[ColorMeasurementConditions](cursor, "ColorMeasurementConditions")
       cmykValue <- cmyk match
         case Some(Vector(c, m, y, k)) => CmykColor.from(c, m, y, k).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
-        case Some(_)                  => JsonCodec.fail(cursor, "CMYK requires exactly four numbers")
+        case Some(_)                  => JsonHelpers.fail(cursor, "CMYK requires exactly four numbers")
         case None                     => Right(None)
       spectrumValue <- spectrum match
         case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case None         => Right(None)
       srgbValue <- srgb match
         case Some(Vector(r, g, b)) => SrgbColor.from(r, g, b).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
-        case Some(_)               => JsonCodec.fail(cursor, "sRGB requires exactly three numbers")
+        case Some(_)               => JsonHelpers.fail(cursor, "sRGB requires exactly three numbers")
         case None                  => Right(None)
       neutralDensityValue <- neutralDensity match
         case Some(value) => NeutralDensity.from(value).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
@@ -385,41 +385,41 @@ object JsonMediaCodecs:
   )
 
   given Encoder[Component] = Encoder.instance(component =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("Automation", component.automation),
-        JsonCodec.optMember("CartonTopFlaps", component.cartonTopFlaps),
-        JsonCodec.optMember("Columns", component.columns),
-        JsonCodec.vecMember("ContentRefs", component.contentRefs),
-        JsonCodec.optMember("Dimensions", component.dimensions),
-        JsonCodec.optMember("MaxHeat", component.maxHeat),
-        JsonCodec.optMember("MediaRef", component.mediaRef),
-        JsonCodec.optMember("Overfold", component.overfold),
-        JsonCodec.optMember("OverfoldSide", component.overfoldSide),
-        JsonCodec.optMember("ProductType", component.productType),
-        JsonCodec.optMember("ProductTypeDetails", component.productTypeDetails),
-        JsonCodec.optMember("ReaderPageCount", component.readerPageCount),
-        JsonCodec.optMember("SurfaceCount", component.surfaceCount),
-        JsonCodec.optMember("WindingResult", component.windingResult),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("Automation", component.automation),
+        JsonHelpers.optMember("CartonTopFlaps", component.cartonTopFlaps),
+        JsonHelpers.optMember("Columns", component.columns),
+        JsonHelpers.vecMember("ContentRefs", component.contentRefs),
+        JsonHelpers.optMember("Dimensions", component.dimensions),
+        JsonHelpers.optMember("MaxHeat", component.maxHeat),
+        JsonHelpers.optMember("MediaRef", component.mediaRef),
+        JsonHelpers.optMember("Overfold", component.overfold),
+        JsonHelpers.optMember("OverfoldSide", component.overfoldSide),
+        JsonHelpers.optMember("ProductType", component.productType),
+        JsonHelpers.optMember("ProductTypeDetails", component.productTypeDetails),
+        JsonHelpers.optMember("ReaderPageCount", component.readerPageCount),
+        JsonHelpers.optMember("SurfaceCount", component.surfaceCount),
+        JsonHelpers.optMember("WindingResult", component.windingResult),
       ),
     ),
   )
   given Decoder[Component] = Decoder.instance(cursor =>
     for
-      automation <- JsonCodec.opt[Automation](cursor, "Automation")
-      cartonTopFlaps <- JsonCodec.opt[XYPair](cursor, "CartonTopFlaps")
-      columns <- JsonCodec.opt[Int](cursor, "Columns")
-      contentRefs <- JsonCodec.vec[XsdIdRef](cursor, "ContentRefs")
-      dimensions <- JsonCodec.opt[Shape3D](cursor, "Dimensions")
-      maxHeat <- JsonCodec.opt[Float](cursor, "MaxHeat")
-      mediaRef <- JsonCodec.opt[XsdIdRef](cursor, "MediaRef")
-      overfold <- JsonCodec.opt[Float](cursor, "Overfold")
-      overfoldSide <- JsonCodec.opt[Side](cursor, "OverfoldSide")
-      productType <- JsonCodec.opt[Nmtoken](cursor, "ProductType")
-      productTypeDetails <- JsonCodec.opt[XjdfString](cursor, "ProductTypeDetails")
-      readerPageCount <- JsonCodec.opt[Int](cursor, "ReaderPageCount")
-      surfaceCount <- JsonCodec.opt[Int](cursor, "SurfaceCount")
-      windingResult <- JsonCodec.opt[Int](cursor, "WindingResult")
+      automation <- JsonHelpers.opt[Automation](cursor, "Automation")
+      cartonTopFlaps <- JsonHelpers.opt[XYPair](cursor, "CartonTopFlaps")
+      columns <- JsonHelpers.opt[Int](cursor, "Columns")
+      contentRefs <- JsonHelpers.vec[XsdIdRef](cursor, "ContentRefs")
+      dimensions <- JsonHelpers.opt[Shape3D](cursor, "Dimensions")
+      maxHeat <- JsonHelpers.opt[Float](cursor, "MaxHeat")
+      mediaRef <- JsonHelpers.opt[XsdIdRef](cursor, "MediaRef")
+      overfold <- JsonHelpers.opt[Float](cursor, "Overfold")
+      overfoldSide <- JsonHelpers.opt[Side](cursor, "OverfoldSide")
+      productType <- JsonHelpers.opt[Nmtoken](cursor, "ProductType")
+      productTypeDetails <- JsonHelpers.opt[XjdfString](cursor, "ProductTypeDetails")
+      readerPageCount <- JsonHelpers.opt[Int](cursor, "ReaderPageCount")
+      surfaceCount <- JsonHelpers.opt[Int](cursor, "SurfaceCount")
+      windingResult <- JsonHelpers.opt[Int](cursor, "WindingResult")
     yield Component(
       automation,
       cartonTopFlaps,
@@ -440,66 +440,66 @@ object JsonMediaCodecs:
   )
 
   given Encoder[Tool] = Encoder.instance(tool =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("ToolType", tool.toolType),
-        JsonCodec.optMember("Manufacturer", tool.manufacturer),
-        JsonCodec.optMember("ManufacturerURL", tool.manufacturerUrl),
-        JsonCodec.optMember("SerialNumber", tool.serialNumber),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("ToolType", tool.toolType),
+        JsonHelpers.optMember("Manufacturer", tool.manufacturer),
+        JsonHelpers.optMember("ManufacturerURL", tool.manufacturerUrl),
+        JsonHelpers.optMember("SerialNumber", tool.serialNumber),
       ),
     ),
   )
   given Decoder[Tool] = Decoder.instance(cursor =>
     for
-      toolType <- JsonCodec.opt[Nmtoken](cursor, "ToolType")
-      manufacturer <- JsonCodec.opt[XjdfString](cursor, "Manufacturer")
-      manufacturerUrl <- JsonCodec.opt[UriRef](cursor, "ManufacturerURL")
-      serialNumber <- JsonCodec.opt[XjdfString](cursor, "SerialNumber")
+      toolType <- JsonHelpers.opt[Nmtoken](cursor, "ToolType")
+      manufacturer <- JsonHelpers.opt[XjdfString](cursor, "Manufacturer")
+      manufacturerUrl <- JsonHelpers.opt[UriRef](cursor, "ManufacturerURL")
+      serialNumber <- JsonHelpers.opt[XjdfString](cursor, "SerialNumber")
     yield Tool(toolType, manufacturer, manufacturerUrl, serialNumber, Vector.empty),
   )
 
   given Encoder[RunList] = Encoder.instance(runList =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("Automation", runList.automation),
-        JsonCodec.optMember("ClipPath", runList.clipPath),
-        JsonCodec.vecMember("ContentRefs", runList.contentRefs),
-        JsonCodec.optMember("Docs", runList.docs),
-        JsonCodec.vecMember("DocPages", runList.docPages),
-        JsonCodec.optMember("EndOfDocument", runList.endOfDocument),
-        JsonCodec.optMember("EndOfSet", runList.endOfSet),
-        JsonCodec.optMember("FinishedPages", runList.finishedPages),
-        JsonCodec.optMember("LogicalPage", runList.logicalPage),
-        JsonCodec.optMember("NumberOfPages", runList.numberOfPages),
-        JsonCodec.optMember("OrderType", runList.orderType),
-        JsonCodec.optMember("Pages", runList.pages),
-        JsonCodec.optMember("Sets", runList.sets),
-        JsonCodec.optMember("SourceBleedBox", runList.sourceBleedBox),
-        JsonCodec.optMember("SourceClipBox", runList.sourceClipBox),
-        JsonCodec.optMember("SourceMediaBox", runList.sourceMediaBox),
-        JsonCodec.optMember("SourceTrimBox", runList.sourceTrimBox),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("Automation", runList.automation),
+        JsonHelpers.optMember("ClipPath", runList.clipPath),
+        JsonHelpers.vecMember("ContentRefs", runList.contentRefs),
+        JsonHelpers.optMember("Docs", runList.docs),
+        JsonHelpers.vecMember("DocPages", runList.docPages),
+        JsonHelpers.optMember("EndOfDocument", runList.endOfDocument),
+        JsonHelpers.optMember("EndOfSet", runList.endOfSet),
+        JsonHelpers.optMember("FinishedPages", runList.finishedPages),
+        JsonHelpers.optMember("LogicalPage", runList.logicalPage),
+        JsonHelpers.optMember("NumberOfPages", runList.numberOfPages),
+        JsonHelpers.optMember("OrderType", runList.orderType),
+        JsonHelpers.optMember("Pages", runList.pages),
+        JsonHelpers.optMember("Sets", runList.sets),
+        JsonHelpers.optMember("SourceBleedBox", runList.sourceBleedBox),
+        JsonHelpers.optMember("SourceClipBox", runList.sourceClipBox),
+        JsonHelpers.optMember("SourceMediaBox", runList.sourceMediaBox),
+        JsonHelpers.optMember("SourceTrimBox", runList.sourceTrimBox),
       ),
     ),
   )
   given Decoder[RunList] = Decoder.instance(cursor =>
     for
-      automation <- JsonCodec.opt[Automation](cursor, "Automation")
-      clipPath <- JsonCodec.opt[PdfPath](cursor, "ClipPath")
-      contentRefs <- JsonCodec.vec[XsdIdRef](cursor, "ContentRefs")
-      docs <- JsonCodec.opt[IntegerRange](cursor, "Docs")
-      docPages <- JsonCodec.vec[Int](cursor, "DocPages")
-      endOfDocument <- JsonCodec.opt[Boolean](cursor, "EndOfDocument")
-      endOfSet <- JsonCodec.opt[Boolean](cursor, "EndOfSet")
-      finishedPages <- JsonCodec.opt[Int](cursor, "FinishedPages")
-      logicalPage <- JsonCodec.opt[Int](cursor, "LogicalPage")
-      numberOfPages <- JsonCodec.opt[Int](cursor, "NumberOfPages")
-      orderType <- JsonCodec.opt[RunListOrderType](cursor, "OrderType")
-      pages <- JsonCodec.opt[IntegerRange](cursor, "Pages")
-      sets <- JsonCodec.opt[IntegerRange](cursor, "Sets")
-      sourceBleedBox <- JsonCodec.opt[Rectangle](cursor, "SourceBleedBox")
-      sourceClipBox <- JsonCodec.opt[Rectangle](cursor, "SourceClipBox")
-      sourceMediaBox <- JsonCodec.opt[Rectangle](cursor, "SourceMediaBox")
-      sourceTrimBox <- JsonCodec.opt[Rectangle](cursor, "SourceTrimBox")
+      automation <- JsonHelpers.opt[Automation](cursor, "Automation")
+      clipPath <- JsonHelpers.opt[PdfPath](cursor, "ClipPath")
+      contentRefs <- JsonHelpers.vec[XsdIdRef](cursor, "ContentRefs")
+      docs <- JsonHelpers.opt[IntegerRange](cursor, "Docs")
+      docPages <- JsonHelpers.vec[Int](cursor, "DocPages")
+      endOfDocument <- JsonHelpers.opt[Boolean](cursor, "EndOfDocument")
+      endOfSet <- JsonHelpers.opt[Boolean](cursor, "EndOfSet")
+      finishedPages <- JsonHelpers.opt[Int](cursor, "FinishedPages")
+      logicalPage <- JsonHelpers.opt[Int](cursor, "LogicalPage")
+      numberOfPages <- JsonHelpers.opt[Int](cursor, "NumberOfPages")
+      orderType <- JsonHelpers.opt[RunListOrderType](cursor, "OrderType")
+      pages <- JsonHelpers.opt[IntegerRange](cursor, "Pages")
+      sets <- JsonHelpers.opt[IntegerRange](cursor, "Sets")
+      sourceBleedBox <- JsonHelpers.opt[Rectangle](cursor, "SourceBleedBox")
+      sourceClipBox <- JsonHelpers.opt[Rectangle](cursor, "SourceClipBox")
+      sourceMediaBox <- JsonHelpers.opt[Rectangle](cursor, "SourceMediaBox")
+      sourceTrimBox <- JsonHelpers.opt[Rectangle](cursor, "SourceTrimBox")
     yield RunList(
       automation,
       clipPath,
@@ -525,74 +525,74 @@ object JsonMediaCodecs:
   )
 
   given Encoder[RegisterMark] = Encoder.instance(mark =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("Center", mark.center),
-        JsonCodec.optMember("MarkName", mark.markName),
-        JsonCodec.vecMember("MarkTypes", mark.markTypes),
-        JsonCodec.vecMember("MarkUsage", mark.markUsage),
-        JsonCodec.optMember("Rotation", mark.rotation),
-        JsonCodec.vecMember("Separations", mark.separations),
-        JsonCodec.optMember("Size", mark.size),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("Center", mark.center),
+        JsonHelpers.optMember("MarkName", mark.markName),
+        JsonHelpers.vecMember("MarkTypes", mark.markTypes),
+        JsonHelpers.vecMember("MarkUsage", mark.markUsage),
+        JsonHelpers.optMember("Rotation", mark.rotation),
+        JsonHelpers.vecMember("Separations", mark.separations),
+        JsonHelpers.optMember("Size", mark.size),
       ),
     ),
   )
   given Decoder[RegisterMark] = Decoder.instance(cursor =>
     for
-      center <- JsonCodec.opt[XYPair](cursor, "Center")
-      markName <- JsonCodec.opt[Nmtoken](cursor, "MarkName")
-      markTypes <- JsonCodec.vec[Nmtoken](cursor, "MarkTypes")
-      markUsage <- JsonCodec.vec[MarkUsage](cursor, "MarkUsage")
-      rotation <- JsonCodec.opt[Float](cursor, "Rotation")
-      separations <- JsonCodec.vec[Nmtoken](cursor, "Separations")
-      size <- JsonCodec.opt[XYPair](cursor, "Size")
+      center <- JsonHelpers.opt[XYPair](cursor, "Center")
+      markName <- JsonHelpers.opt[Nmtoken](cursor, "MarkName")
+      markTypes <- JsonHelpers.vec[Nmtoken](cursor, "MarkTypes")
+      markUsage <- JsonHelpers.vec[MarkUsage](cursor, "MarkUsage")
+      rotation <- JsonHelpers.opt[Float](cursor, "Rotation")
+      separations <- JsonHelpers.vec[Nmtoken](cursor, "Separations")
+      size <- JsonHelpers.opt[XYPair](cursor, "Size")
     yield RegisterMark(center, markName, markTypes, markUsage, rotation, separations, size, Vector.empty),
   )
 
   given Encoder[Device] = Encoder.instance(device =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("CostCenterID", device.costCenterId),
-        JsonCodec.optMember("DescriptiveName", device.descriptiveName),
-        JsonCodec.vecMember("DeviceClass", device.deviceClasses),
-        Vector(JsonCodec.member("DeviceID", Json.fromString(device.deviceId.value))),
-        JsonCodec.optMember("DeviceType", device.deviceType),
-        JsonCodec.vecMember("ICSVersions", device.icsVersions),
-        JsonCodec.vecMember("JDFVersions", device.jdfVersions),
-        JsonCodec.vecMember("KnownLocalizations", device.knownLocalizations),
-        JsonCodec.optMember("Manufacturer", device.manufacturer),
-        JsonCodec.optMember("ManufacturerURL", device.manufacturerUrl),
-        JsonCodec.optMember("MaxRunSpeed", device.maxRunSpeed),
-        JsonCodec.vecMember("Packaging", device.packaging),
-        JsonCodec.optMember("PresentationURL", device.presentationUrl),
-        JsonCodec.optMember("RestApiBaseURL", device.restApiBaseUrl),
-        JsonCodec.optMember("Revision", device.revision),
-        JsonCodec.optMember("SerialNumber", device.serialNumber),
-        JsonCodec.vecMember("URLSchemes", device.urlSchemes),
-        JsonCodec.optMember("XJMFURL", device.xjmfUrl),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("CostCenterID", device.costCenterId),
+        JsonHelpers.optMember("DescriptiveName", device.descriptiveName),
+        JsonHelpers.vecMember("DeviceClass", device.deviceClasses),
+        Vector(JsonHelpers.member("DeviceID", Json.fromString(device.deviceId.value))),
+        JsonHelpers.optMember("DeviceType", device.deviceType),
+        JsonHelpers.vecMember("ICSVersions", device.icsVersions),
+        JsonHelpers.vecMember("JDFVersions", device.jdfVersions),
+        JsonHelpers.vecMember("KnownLocalizations", device.knownLocalizations),
+        JsonHelpers.optMember("Manufacturer", device.manufacturer),
+        JsonHelpers.optMember("ManufacturerURL", device.manufacturerUrl),
+        JsonHelpers.optMember("MaxRunSpeed", device.maxRunSpeed),
+        JsonHelpers.vecMember("Packaging", device.packaging),
+        JsonHelpers.optMember("PresentationURL", device.presentationUrl),
+        JsonHelpers.optMember("RestApiBaseURL", device.restApiBaseUrl),
+        JsonHelpers.optMember("Revision", device.revision),
+        JsonHelpers.optMember("SerialNumber", device.serialNumber),
+        JsonHelpers.vecMember("URLSchemes", device.urlSchemes),
+        JsonHelpers.optMember("XJMFURL", device.xjmfUrl),
       ),
     ),
   )
   given Decoder[Device] = Decoder.instance(cursor =>
     for
       deviceId <- cursor.get[Nmtoken]("DeviceID")
-      costCenterId <- JsonCodec.opt[Nmtoken](cursor, "CostCenterID")
-      descriptiveName <- JsonCodec.opt[XjdfString](cursor, "DescriptiveName")
-      deviceClasses <- JsonCodec.vec[Nmtoken](cursor, "DeviceClass")
-      deviceType <- JsonCodec.opt[XjdfString](cursor, "DeviceType")
-      icsVersions <- JsonCodec.vec[Nmtoken](cursor, "ICSVersions")
-      jdfVersions <- JsonCodec.vec[JdfVersion](cursor, "JDFVersions")
-      knownLocalizations <- JsonCodec.vec[LanguageTag](cursor, "KnownLocalizations")
-      manufacturer <- JsonCodec.opt[XjdfString](cursor, "Manufacturer")
-      manufacturerUrl <- JsonCodec.opt[UriRef](cursor, "ManufacturerURL")
-      maxRunSpeed <- JsonCodec.opt[Float](cursor, "MaxRunSpeed")
-      packaging <- JsonCodec.vec[DevicePackaging](cursor, "Packaging")
-      presentationUrl <- JsonCodec.opt[UriRef](cursor, "PresentationURL")
-      restApiBaseUrl <- JsonCodec.opt[UriRef](cursor, "RestApiBaseURL")
-      revision <- JsonCodec.opt[XjdfString](cursor, "Revision")
-      serialNumber <- JsonCodec.opt[XjdfString](cursor, "SerialNumber")
-      urlSchemes <- JsonCodec.vec[Nmtoken](cursor, "URLSchemes")
-      xjmfUrl <- JsonCodec.opt[UriRef](cursor, "XJMFURL")
+      costCenterId <- JsonHelpers.opt[Nmtoken](cursor, "CostCenterID")
+      descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
+      deviceClasses <- JsonHelpers.vec[Nmtoken](cursor, "DeviceClass")
+      deviceType <- JsonHelpers.opt[XjdfString](cursor, "DeviceType")
+      icsVersions <- JsonHelpers.vec[Nmtoken](cursor, "ICSVersions")
+      jdfVersions <- JsonHelpers.vec[JdfVersion](cursor, "JDFVersions")
+      knownLocalizations <- JsonHelpers.vec[LanguageTag](cursor, "KnownLocalizations")
+      manufacturer <- JsonHelpers.opt[XjdfString](cursor, "Manufacturer")
+      manufacturerUrl <- JsonHelpers.opt[UriRef](cursor, "ManufacturerURL")
+      maxRunSpeed <- JsonHelpers.opt[Float](cursor, "MaxRunSpeed")
+      packaging <- JsonHelpers.vec[DevicePackaging](cursor, "Packaging")
+      presentationUrl <- JsonHelpers.opt[UriRef](cursor, "PresentationURL")
+      restApiBaseUrl <- JsonHelpers.opt[UriRef](cursor, "RestApiBaseURL")
+      revision <- JsonHelpers.opt[XjdfString](cursor, "Revision")
+      serialNumber <- JsonHelpers.opt[XjdfString](cursor, "SerialNumber")
+      urlSchemes <- JsonHelpers.vec[Nmtoken](cursor, "URLSchemes")
+      xjmfUrl <- JsonHelpers.opt[UriRef](cursor, "XJMFURL")
     yield Device(
       deviceId,
       costCenterId,

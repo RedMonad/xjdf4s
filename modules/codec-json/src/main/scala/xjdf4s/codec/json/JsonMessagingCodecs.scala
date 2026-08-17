@@ -14,18 +14,18 @@ import xjdf4s.model.*
 object JsonMessagingCodecs:
 
   given Encoder[Header] = Encoder.instance(header =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("AgentName", header.agentName),
-        JsonCodec.optMember("AgentVersion", header.agentVersion),
-        JsonCodec.optMember("Author", header.author),
-        JsonCodec.optMember("DescriptiveName", header.descriptiveName),
-        Vector(JsonCodec.member("DeviceID", Json.fromString(header.deviceId.value))),
-        JsonCodec.vecMember("ICSVersions", header.icsVersions),
-        JsonCodec.optMember("ID", header.id),
-        JsonCodec.optMember("PersonalID", header.personalId),
-        JsonCodec.optMember("refID", header.refId),
-        Vector(JsonCodec.member("Time", Json.fromString(header.time.value))),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("AgentName", header.agentName),
+        JsonHelpers.optMember("AgentVersion", header.agentVersion),
+        JsonHelpers.optMember("Author", header.author),
+        JsonHelpers.optMember("DescriptiveName", header.descriptiveName),
+        Vector(JsonHelpers.member("DeviceID", Json.fromString(header.deviceId.value))),
+        JsonHelpers.vecMember("ICSVersions", header.icsVersions),
+        JsonHelpers.optMember("ID", header.id),
+        JsonHelpers.optMember("PersonalID", header.personalId),
+        JsonHelpers.optMember("refID", header.refId),
+        Vector(JsonHelpers.member("Time", Json.fromString(header.time.value))),
       ),
     ),
   )
@@ -33,95 +33,95 @@ object JsonMessagingCodecs:
     for
       deviceId <- cursor.get[Nmtoken]("DeviceID")
       time <- cursor.get[XsdDateTime]("Time")
-      agentName <- JsonCodec.opt[XjdfString](cursor, "AgentName")
-      agentVersion <- JsonCodec.opt[XjdfString](cursor, "AgentVersion")
-      author <- JsonCodec.opt[XjdfString](cursor, "Author")
-      descriptiveName <- JsonCodec.opt[XjdfString](cursor, "DescriptiveName")
-      icsVersions <- JsonCodec.vec[Nmtoken](cursor, "ICSVersions")
-      id <- JsonCodec.opt[XsdId](cursor, "ID")
-      personalId <- JsonCodec.opt[Nmtoken](cursor, "PersonalID")
-      refId <- JsonCodec.opt[Nmtoken](cursor, "refID")
+      agentName <- JsonHelpers.opt[XjdfString](cursor, "AgentName")
+      agentVersion <- JsonHelpers.opt[XjdfString](cursor, "AgentVersion")
+      author <- JsonHelpers.opt[XjdfString](cursor, "Author")
+      descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
+      icsVersions <- JsonHelpers.vec[Nmtoken](cursor, "ICSVersions")
+      id <- JsonHelpers.opt[XsdId](cursor, "ID")
+      personalId <- JsonHelpers.opt[Nmtoken](cursor, "PersonalID")
+      refId <- JsonHelpers.opt[Nmtoken](cursor, "refID")
     yield Header(deviceId, time, agentName, agentVersion, author, descriptiveName, icsVersions, id, personalId, refId),
   )
 
   given Encoder[Subscription] = Encoder.instance(subscription =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.vecMember("ChannelMode", subscription.channelMode),
-        JsonCodec.vecMember("Languages", subscription.languages),
-        JsonCodec.optMember("RepeatTime", subscription.repeatTime),
-        Vector(JsonCodec.member("URL", Json.fromString(subscription.url.value.toString))),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.vecMember("ChannelMode", subscription.channelMode),
+        JsonHelpers.vecMember("Languages", subscription.languages),
+        JsonHelpers.optMember("RepeatTime", subscription.repeatTime),
+        Vector(JsonHelpers.member("URL", Json.fromString(subscription.url.value.toString))),
       ),
     ),
   )
   given Decoder[Subscription] = Decoder.instance(cursor =>
     for
       url <- cursor.get[UriRef]("URL")
-      channelMode <- JsonCodec.vec[ChannelMode](cursor, "ChannelMode")
-      languages <- JsonCodec.vec[LanguageTag](cursor, "Languages")
-      repeatTime <- JsonCodec.opt[Float](cursor, "RepeatTime")
+      channelMode <- JsonHelpers.vec[ChannelMode](cursor, "ChannelMode")
+      languages <- JsonHelpers.vec[LanguageTag](cursor, "Languages")
+      repeatTime <- JsonHelpers.opt[Float](cursor, "RepeatTime")
     yield Subscription(url, channelMode, languages, repeatTime),
   )
 
   given Encoder[ResourceQuParams] = Encoder.instance(params =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("ExternalID", params.externalId),
-        JsonCodec.optMember("JobID", params.jobId),
-        JsonCodec.optMember("JobPartID", params.jobPartId),
-        JsonCodec.optMember("QueueEntryID", params.queueEntryId),
-        JsonCodec.optMember("ResourceDetails", params.details),
-        JsonCodec.optMember("ResourceName", params.resourceName),
-        Vector(JsonCodec.member("Scope", Json.fromString(params.scope.toString))),
-        JsonCodec.vecMember("Types", params.types),
-        JsonCodec.vecMember("Part", params.parts),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("ExternalID", params.externalId),
+        JsonHelpers.optMember("JobID", params.jobId),
+        JsonHelpers.optMember("JobPartID", params.jobPartId),
+        JsonHelpers.optMember("QueueEntryID", params.queueEntryId),
+        JsonHelpers.optMember("ResourceDetails", params.details),
+        JsonHelpers.optMember("ResourceName", params.resourceName),
+        Vector(JsonHelpers.member("Scope", Json.fromString(params.scope.toString))),
+        JsonHelpers.vecMember("Types", params.types),
+        JsonHelpers.vecMember("Part", params.parts),
       ),
     ),
   )
   given Decoder[ResourceQuParams] = Decoder.instance(cursor =>
     for
       scope <- cursor.get[Scope]("Scope")
-      externalId <- JsonCodec.opt[Nmtoken](cursor, "ExternalID")
-      jobId <- JsonCodec.opt[Nmtoken](cursor, "JobID")
-      jobPartId <- JsonCodec.opt[Nmtoken](cursor, "JobPartID")
-      queueEntryId <- JsonCodec.opt[Nmtoken](cursor, "QueueEntryID")
-      details <- JsonCodec.opt[ResourceDetails](cursor, "ResourceDetails")
-      resourceName <- JsonCodec.opt[Nmtoken](cursor, "ResourceName")
-      types <- JsonCodec.vec[Nmtoken](cursor, "Types")
-      parts <- JsonCodec.vec[Part](cursor, "Part")
+      externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+      jobId <- JsonHelpers.opt[Nmtoken](cursor, "JobID")
+      jobPartId <- JsonHelpers.opt[Nmtoken](cursor, "JobPartID")
+      queueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "QueueEntryID")
+      details <- JsonHelpers.opt[ResourceDetails](cursor, "ResourceDetails")
+      resourceName <- JsonHelpers.opt[Nmtoken](cursor, "ResourceName")
+      types <- JsonHelpers.vec[Nmtoken](cursor, "Types")
+      parts <- JsonHelpers.vec[Part](cursor, "Part")
     yield ResourceQuParams(scope, externalId, jobId, jobPartId, queueEntryId, details, resourceName, types, parts),
   )
 
   given Encoder[ResourceInfo] = Encoder.instance(info =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("CommandResult", info.commandResult),
-        JsonCodec.optMember("JobID", info.jobId),
-        JsonCodec.optMember("JobPartID", info.jobPartId),
-        JsonCodec.optMember("Level", info.level),
-        JsonCodec.optMember("ModuleID", info.moduleId),
-        JsonCodec.optMember("QueueEntryID", info.queueEntryId),
-        JsonCodec.optMember("Scope", info.scope),
-        JsonCodec.optMember("Speed", info.speed),
-        JsonCodec.vecMember("Types", info.types),
-        JsonCodec.optMember("TotalAmount", info.totalAmount),
-        Vector(JsonCodec.member("ResourceSet", info.resourceSet.asJson)),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("CommandResult", info.commandResult),
+        JsonHelpers.optMember("JobID", info.jobId),
+        JsonHelpers.optMember("JobPartID", info.jobPartId),
+        JsonHelpers.optMember("Level", info.level),
+        JsonHelpers.optMember("ModuleID", info.moduleId),
+        JsonHelpers.optMember("QueueEntryID", info.queueEntryId),
+        JsonHelpers.optMember("Scope", info.scope),
+        JsonHelpers.optMember("Speed", info.speed),
+        JsonHelpers.vecMember("Types", info.types),
+        JsonHelpers.optMember("TotalAmount", info.totalAmount),
+        Vector(JsonHelpers.member("ResourceSet", info.resourceSet.asJson)),
       ),
     ),
   )
   given Decoder[ResourceInfo] = Decoder.instance(cursor =>
     for
       resourceSet <- cursor.get[ResourceSet]("ResourceSet")
-      commandResult <- JsonCodec.opt[CommandResult](cursor, "CommandResult")
-      jobId <- JsonCodec.opt[Nmtoken](cursor, "JobID")
-      jobPartId <- JsonCodec.opt[Nmtoken](cursor, "JobPartID")
-      level <- JsonCodec.opt[ResourceLevel](cursor, "Level")
-      moduleId <- JsonCodec.opt[Nmtoken](cursor, "ModuleID")
-      queueEntryId <- JsonCodec.opt[Nmtoken](cursor, "QueueEntryID")
-      scope <- JsonCodec.opt[Scope](cursor, "Scope")
-      speed <- JsonCodec.opt[Float](cursor, "Speed")
-      types <- JsonCodec.vec[Nmtoken](cursor, "Types")
-      totalAmount <- JsonCodec.opt[Float](cursor, "TotalAmount")
+      commandResult <- JsonHelpers.opt[CommandResult](cursor, "CommandResult")
+      jobId <- JsonHelpers.opt[Nmtoken](cursor, "JobID")
+      jobPartId <- JsonHelpers.opt[Nmtoken](cursor, "JobPartID")
+      level <- JsonHelpers.opt[ResourceLevel](cursor, "Level")
+      moduleId <- JsonHelpers.opt[Nmtoken](cursor, "ModuleID")
+      queueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "QueueEntryID")
+      scope <- JsonHelpers.opt[Scope](cursor, "Scope")
+      speed <- JsonHelpers.opt[Float](cursor, "Speed")
+      types <- JsonHelpers.vec[Nmtoken](cursor, "Types")
+      totalAmount <- JsonHelpers.opt[Float](cursor, "TotalAmount")
     yield ResourceInfo(resourceSet, Vector.empty, None, commandResult, jobId, jobPartId, level, moduleId, queueEntryId, scope, speed, types, totalAmount),
   )
 
@@ -130,37 +130,37 @@ object JsonMessagingCodecs:
         info.schemas.current.nonEmpty || info.schemas.global.nonEmpty
     then
       throw new UnsupportedOperationException("DeviceInfo children are not covered by the JSON codec slice yet")
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("CounterUnit", info.counterUnit),
-        JsonCodec.optMember("EndTime", info.endTime),
-        JsonCodec.optMember("HourCounter", info.hourCounter),
-        JsonCodec.optMember("IdleStartTime", info.idleStartTime),
-        JsonCodec.vecMember("ModuleIDs", info.moduleIds),
-        JsonCodec.optMember("PowerOnTime", info.powerOnTime),
-        JsonCodec.optMember("ProductionCounter", info.productionCounter),
-        JsonCodec.optMember("Speed", info.speed),
-        Vector(JsonCodec.member("Status", Json.fromString(info.status.toString))),
-        JsonCodec.optMember("StatusDetails", info.statusDetails),
-        JsonCodec.vecMember("ToolIDs", info.toolIds),
-        JsonCodec.optMember("TotalProductionCounter", info.totalProductionCounter),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("CounterUnit", info.counterUnit),
+        JsonHelpers.optMember("EndTime", info.endTime),
+        JsonHelpers.optMember("HourCounter", info.hourCounter),
+        JsonHelpers.optMember("IdleStartTime", info.idleStartTime),
+        JsonHelpers.vecMember("ModuleIDs", info.moduleIds),
+        JsonHelpers.optMember("PowerOnTime", info.powerOnTime),
+        JsonHelpers.optMember("ProductionCounter", info.productionCounter),
+        JsonHelpers.optMember("Speed", info.speed),
+        Vector(JsonHelpers.member("Status", Json.fromString(info.status.toString))),
+        JsonHelpers.optMember("StatusDetails", info.statusDetails),
+        JsonHelpers.vecMember("ToolIDs", info.toolIds),
+        JsonHelpers.optMember("TotalProductionCounter", info.totalProductionCounter),
       ),
     ),
   )
   given Decoder[DeviceInfo] = Decoder.instance(cursor =>
     for
       status <- cursor.get[DeviceStatus]("Status")
-      counterUnit <- JsonCodec.opt[Nmtoken](cursor, "CounterUnit")
-      endTime <- JsonCodec.opt[XsdDateTime](cursor, "EndTime")
-      hourCounter <- JsonCodec.opt[XsdDuration](cursor, "HourCounter")
-      idleStartTime <- JsonCodec.opt[XsdDateTime](cursor, "IdleStartTime")
-      moduleIds <- JsonCodec.vec[Nmtoken](cursor, "ModuleIDs")
-      powerOnTime <- JsonCodec.opt[XsdDateTime](cursor, "PowerOnTime")
-      productionCounter <- JsonCodec.opt[Float](cursor, "ProductionCounter")
-      speed <- JsonCodec.opt[Float](cursor, "Speed")
-      statusDetails <- JsonCodec.opt[Nmtoken](cursor, "StatusDetails")
-      toolIds <- JsonCodec.vec[Nmtoken](cursor, "ToolIDs")
-      totalProductionCounter <- JsonCodec.opt[Float](cursor, "TotalProductionCounter")
+      counterUnit <- JsonHelpers.opt[Nmtoken](cursor, "CounterUnit")
+      endTime <- JsonHelpers.opt[XsdDateTime](cursor, "EndTime")
+      hourCounter <- JsonHelpers.opt[XsdDuration](cursor, "HourCounter")
+      idleStartTime <- JsonHelpers.opt[XsdDateTime](cursor, "IdleStartTime")
+      moduleIds <- JsonHelpers.vec[Nmtoken](cursor, "ModuleIDs")
+      powerOnTime <- JsonHelpers.opt[XsdDateTime](cursor, "PowerOnTime")
+      productionCounter <- JsonHelpers.opt[Float](cursor, "ProductionCounter")
+      speed <- JsonHelpers.opt[Float](cursor, "Speed")
+      statusDetails <- JsonHelpers.opt[Nmtoken](cursor, "StatusDetails")
+      toolIds <- JsonHelpers.vec[Nmtoken](cursor, "ToolIDs")
+      totalProductionCounter <- JsonHelpers.opt[Float](cursor, "TotalProductionCounter")
     yield DeviceInfo(
       status,
       counterUnit,
@@ -184,60 +184,60 @@ object JsonMessagingCodecs:
   given Encoder[Notification] = Encoder.instance(notification =>
     if notification.event.nonEmpty || notification.milestone.nonEmpty || notification.parts.nonEmpty then
       throw new UnsupportedOperationException("Notification children are not covered by the JSON codec slice yet")
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        Vector(JsonCodec.member("Class", Json.fromString(notification.severity.toString))),
-        JsonCodec.vecMember("Comment", notification.comments),
-        JsonCodec.optMember("JobID", notification.jobId),
-        JsonCodec.optMember("JobPartID", notification.jobPartId),
-        JsonCodec.optMember("ModuleID", notification.moduleId),
-        JsonCodec.optMember("QueueEntryID", notification.queueEntryId),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Class", Json.fromString(notification.severity.toString))),
+        JsonHelpers.vecMember("Comment", notification.comments),
+        JsonHelpers.optMember("JobID", notification.jobId),
+        JsonHelpers.optMember("JobPartID", notification.jobPartId),
+        JsonHelpers.optMember("ModuleID", notification.moduleId),
+        JsonHelpers.optMember("QueueEntryID", notification.queueEntryId),
       ),
     ),
   )
   given Decoder[Notification] = Decoder.instance(cursor =>
     for
       severity <- cursor.get[Severity]("Class")
-      comments <- JsonCodec.vec[Comment](cursor, "Comment")
-      jobId <- JsonCodec.opt[Nmtoken](cursor, "JobID")
-      jobPartId <- JsonCodec.opt[Nmtoken](cursor, "JobPartID")
-      moduleId <- JsonCodec.opt[Nmtoken](cursor, "ModuleID")
-      queueEntryId <- JsonCodec.opt[Nmtoken](cursor, "QueueEntryID")
+      comments <- JsonHelpers.vec[Comment](cursor, "Comment")
+      jobId <- JsonHelpers.opt[Nmtoken](cursor, "JobID")
+      jobPartId <- JsonHelpers.opt[Nmtoken](cursor, "JobPartID")
+      moduleId <- JsonHelpers.opt[Nmtoken](cursor, "ModuleID")
+      queueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "QueueEntryID")
     yield Notification(severity, comments, None, None, Vector.empty, Vector.empty, jobId, jobPartId, moduleId, queueEntryId),
   )
 
   given Encoder[MessageService] = Encoder.instance(service =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.vecMember("ResponseModes", service.responseModes),
-        Vector(JsonCodec.member("Type", Json.fromString(service.messageType.value))),
-        JsonCodec.vecMember("URLSchemes", service.urlSchemes),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.vecMember("ResponseModes", service.responseModes),
+        Vector(JsonHelpers.member("Type", Json.fromString(service.messageType.value))),
+        JsonHelpers.vecMember("URLSchemes", service.urlSchemes),
       ),
     ),
   )
   given Decoder[MessageService] = Decoder.instance(cursor =>
     for
       messageType <- cursor.get[Nmtoken]("Type")
-      responseModes <- JsonCodec.vec[MessageResponseMode](cursor, "ResponseModes")
-      urlSchemes <- JsonCodec.vec[MessageUrlScheme](cursor, "URLSchemes")
+      responseModes <- JsonHelpers.vec[MessageResponseMode](cursor, "ResponseModes")
+      urlSchemes <- JsonHelpers.vec[MessageUrlScheme](cursor, "URLSchemes")
     yield MessageService(messageType, responseModes, urlSchemes),
   )
 
   // -- concrete messages ---------------------------------------------------------
 
   given Encoder[QueryKnownMessages] =
-    Encoder.instance(query => Json.obj(JsonCodec.member("Header", query.header.asJson)))
+    Encoder.instance(query => Json.obj(JsonHelpers.member("Header", query.header.asJson)))
   given Decoder[QueryKnownMessages] = Decoder.instance(cursor =>
     cursor.get[Header]("Header").map(QueryKnownMessages(_)),
   )
 
   given Encoder[QueryResource] = Encoder.instance(query =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        Vector(JsonCodec.member("Header", query.header.asJson)),
-        JsonCodec.vecMember("Languages", query.languages),
-        query.subscription.toVector.map(subscription => JsonCodec.member("Subscription", subscription.asJson)),
-        Vector(JsonCodec.member("ResourceQuParams", query.params.asJson)),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Header", query.header.asJson)),
+        JsonHelpers.vecMember("Languages", query.languages),
+        query.subscription.toVector.map(subscription => JsonHelpers.member("Subscription", subscription.asJson)),
+        Vector(JsonHelpers.member("ResourceQuParams", query.params.asJson)),
       ),
     ),
   )
@@ -245,76 +245,76 @@ object JsonMessagingCodecs:
     for
       header <- cursor.get[Header]("Header")
       params <- cursor.get[ResourceQuParams]("ResourceQuParams")
-      subscription <- JsonCodec.opt[Subscription](cursor, "Subscription")
-      languages <- JsonCodec.vec[LanguageTag](cursor, "Languages")
+      subscription <- JsonHelpers.opt[Subscription](cursor, "Subscription")
+      languages <- JsonHelpers.vec[LanguageTag](cursor, "Languages")
     yield QueryResource(header, params, languages, subscription),
   )
 
   given Encoder[ResponseKnownMessages] = Encoder.instance(response =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        Vector(JsonCodec.member("Header", response.header.asJson)),
-        JsonCodec.vecMember("MessageService", response.services),
-        JsonCodec.optMember("ReturnCode", response.returnCode),
-        response.notification.toVector.map(notification => JsonCodec.member("Notification", notification.asJson)),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Header", response.header.asJson)),
+        JsonHelpers.vecMember("MessageService", response.services),
+        JsonHelpers.optMember("ReturnCode", response.returnCode),
+        response.notification.toVector.map(notification => JsonHelpers.member("Notification", notification.asJson)),
       ),
     ),
   )
   given Decoder[ResponseKnownMessages] = Decoder.instance(cursor =>
     for
       header <- cursor.get[Header]("Header")
-      services <- JsonCodec.vec[MessageService](cursor, "MessageService")
-      returnCode <- JsonCodec.opt[Int](cursor, "ReturnCode")
-      notification <- JsonCodec.opt[Notification](cursor, "Notification")
+      services <- JsonHelpers.vec[MessageService](cursor, "MessageService")
+      returnCode <- JsonHelpers.opt[Int](cursor, "ReturnCode")
+      notification <- JsonHelpers.opt[Notification](cursor, "Notification")
     yield ResponseKnownMessages(header, services, returnCode, notification),
   )
 
   given Encoder[ResponseResource] = Encoder.instance(response =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        Vector(JsonCodec.member("Header", response.header.asJson)),
-        JsonCodec.vecMember("ResourceInfo", response.resourceInfo),
-        JsonCodec.optMember("ReturnCode", response.returnCode),
-        response.notification.toVector.map(notification => JsonCodec.member("Notification", notification.asJson)),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Header", response.header.asJson)),
+        JsonHelpers.vecMember("ResourceInfo", response.resourceInfo),
+        JsonHelpers.optMember("ReturnCode", response.returnCode),
+        response.notification.toVector.map(notification => JsonHelpers.member("Notification", notification.asJson)),
       ),
     ),
   )
   given Decoder[ResponseResource] = Decoder.instance(cursor =>
     for
       header <- cursor.get[Header]("Header")
-      resourceInfo <- JsonCodec.vec[ResourceInfo](cursor, "ResourceInfo")
-      returnCode <- JsonCodec.opt[Int](cursor, "ReturnCode")
-      notification <- JsonCodec.opt[Notification](cursor, "Notification")
+      resourceInfo <- JsonHelpers.vec[ResourceInfo](cursor, "ResourceInfo")
+      returnCode <- JsonHelpers.opt[Int](cursor, "ReturnCode")
+      notification <- JsonHelpers.opt[Notification](cursor, "Notification")
     yield ResponseResource(header, resourceInfo, returnCode, notification),
   )
 
   given Encoder[SignalResource] = Encoder.instance(signal =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("ChannelMode", signal.channelMode),
-        Vector(JsonCodec.member("Header", signal.header.asJson)),
-        JsonCodec.optMember("ReplaceAfter", signal.replaceAfter),
-        JsonCodec.optMember("ReplaceBefore", signal.replaceBefore),
-        JsonCodec.vecMember("ResourceInfo", signal.resourceInfo),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("ChannelMode", signal.channelMode),
+        Vector(JsonHelpers.member("Header", signal.header.asJson)),
+        JsonHelpers.optMember("ReplaceAfter", signal.replaceAfter),
+        JsonHelpers.optMember("ReplaceBefore", signal.replaceBefore),
+        JsonHelpers.vecMember("ResourceInfo", signal.resourceInfo),
       ),
     ),
   )
   given Decoder[SignalResource] = Decoder.instance(cursor =>
     for
       header <- cursor.get[Header]("Header")
-      resourceInfo <- JsonCodec.vec[ResourceInfo](cursor, "ResourceInfo")
-      channelMode <- JsonCodec.opt[ChannelMode](cursor, "ChannelMode")
-      replaceAfter <- JsonCodec.opt[XsdDateTime](cursor, "ReplaceAfter")
-      replaceBefore <- JsonCodec.opt[XsdDateTime](cursor, "ReplaceBefore")
+      resourceInfo <- JsonHelpers.vec[ResourceInfo](cursor, "ResourceInfo")
+      channelMode <- JsonHelpers.opt[ChannelMode](cursor, "ChannelMode")
+      replaceAfter <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceAfter")
+      replaceBefore <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceBefore")
     yield SignalResource(header, resourceInfo, replaceAfter, replaceBefore, channelMode),
   )
 
   given Encoder[SignalNotification] = Encoder.instance(signal =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("ChannelMode", signal.channelMode),
-        Vector(JsonCodec.member("Header", signal.header.asJson)),
-        Vector(JsonCodec.member("Notification", signal.notification.asJson)),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("ChannelMode", signal.channelMode),
+        Vector(JsonHelpers.member("Header", signal.header.asJson)),
+        Vector(JsonHelpers.member("Notification", signal.notification.asJson)),
       ),
     ),
   )
@@ -322,21 +322,21 @@ object JsonMessagingCodecs:
     for
       header <- cursor.get[Header]("Header")
       notification <- cursor.get[Notification]("Notification")
-      channelMode <- JsonCodec.opt[ChannelMode](cursor, "ChannelMode")
+      channelMode <- JsonHelpers.opt[ChannelMode](cursor, "ChannelMode")
     yield SignalNotification(header, notification, channelMode),
   )
 
   given Encoder[SignalStatus] = Encoder.instance(signal =>
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        JsonCodec.optMember("ChannelMode", signal.channelMode),
-        Vector(JsonCodec.member("Header", signal.header.asJson)),
-        Vector(JsonCodec.member("DeviceInfo", signal.deviceInfo.asJson)),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("ChannelMode", signal.channelMode),
+        Vector(JsonHelpers.member("Header", signal.header.asJson)),
+        Vector(JsonHelpers.member("DeviceInfo", signal.deviceInfo.asJson)),
         signal.replacement.toVector.map(window =>
-          JsonCodec.member("ReplaceAfter", Json.fromString(window.after.value)),
+          JsonHelpers.member("ReplaceAfter", Json.fromString(window.after.value)),
         ),
         signal.replacement.toVector.map(window =>
-          JsonCodec.member("ReplaceBefore", Json.fromString(window.before.value)),
+          JsonHelpers.member("ReplaceBefore", Json.fromString(window.before.value)),
         ),
       ),
     ),
@@ -345,13 +345,13 @@ object JsonMessagingCodecs:
     for
       header <- cursor.get[Header]("Header")
       deviceInfo <- cursor.get[DeviceInfo]("DeviceInfo")
-      replaceAfter <- JsonCodec.opt[XsdDateTime](cursor, "ReplaceAfter")
-      replaceBefore <- JsonCodec.opt[XsdDateTime](cursor, "ReplaceBefore")
-      channelMode <- JsonCodec.opt[ChannelMode](cursor, "ChannelMode")
+      replaceAfter <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceAfter")
+      replaceBefore <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceBefore")
+      channelMode <- JsonHelpers.opt[ChannelMode](cursor, "ChannelMode")
       replacement <- (replaceAfter, replaceBefore) match
         case (Some(after), Some(before)) => Right(Some(StatusReplacementWindow(after, before)))
         case (None, None)                => Right(None)
-        case _                           => JsonCodec.fail(cursor, "both ReplaceAfter and ReplaceBefore or neither")
+        case _                           => JsonHelpers.fail(cursor, "both ReplaceAfter and ReplaceBefore or neither")
     yield SignalStatus(header, deviceInfo, replacement, channelMode),
   )
 
@@ -376,7 +376,7 @@ object JsonMessagingCodecs:
       case "SignalNotification"    => json.as[SignalNotification].map(identity)
       case "SignalResource"        => json.as[SignalResource].map(identity)
       case "SignalStatus"          => json.as[SignalStatus].map(identity)
-      case other                   => JsonCodec.fail(json.hcursor, s"message '$other' is not covered by the JSON slice")
+      case other                   => JsonHelpers.fail(json.hcursor, s"message '$other' is not covered by the JSON slice")
 
   private def encodeMessage(message: Message): Json =
     message match
@@ -406,19 +406,19 @@ object JsonMessagingCodecs:
       throw new UnsupportedOperationException(
         s"JSON XJMF requires exactly one message (normative JSON exception), got ${messages.size}",
       )
-    JsonCodec.obj(
-      JsonCodec.memberList(
-        Vector(JsonCodec.member("Header", xjmf.header.asJson)),
-        JsonCodec.optMember("Version", xjmf.version),
-        Vector(JsonCodec.member(messageName(messages.head), encodeMessage(messages.head))),
-        Vector(JsonCodec.rootName("XJMF")),
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Header", xjmf.header.asJson)),
+        JsonHelpers.optMember("Version", xjmf.version),
+        Vector(JsonHelpers.member(messageName(messages.head), encodeMessage(messages.head))),
+        Vector(JsonHelpers.rootName("XJMF")),
       ),
     ),
   )
   given Decoder[XJMF] = Decoder.instance(cursor =>
     for
       header <- cursor.get[Header]("Header")
-      version <- JsonCodec.opt[Version](cursor, "Version")
+      version <- JsonHelpers.opt[Version](cursor, "Version")
       messageMembers <- messageNames.foldLeft[Decoder.Result[Vector[Message]]](Right(Vector.empty)) { (acc, name) =>
         for
           accumulated <- acc
@@ -429,7 +429,7 @@ object JsonMessagingCodecs:
       }
       single <- messageMembers match
         case Vector(one) => Right(one)
-        case other => JsonCodec.fail(cursor, s"JSON XJMF requires exactly one message, found ${other.size}")
+        case other => JsonHelpers.fail(cursor, s"JSON XJMF requires exactly one message, found ${other.size}")
     yield XJMF(header, NonEmptyVector.one(single), version),
   )
 end JsonMessagingCodecs

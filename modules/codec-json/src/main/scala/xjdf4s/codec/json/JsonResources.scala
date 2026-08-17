@@ -53,5 +53,5 @@ object JsonResources:
       case "Tool"         => json.as[Tool].map(identity)
       case "RunList"      => json.as[RunList].map(identity)
       case "RegisterMark" => json.as[RegisterMark].map(identity)
-      case other          => JsonCodec.fail(json.hcursor, s"resource '$other' is not covered by the JSON slice")
+      case other          => JsonHelpers.fail(json.hcursor, s"resource '$other' is not covered by the JSON slice")
 end JsonResources

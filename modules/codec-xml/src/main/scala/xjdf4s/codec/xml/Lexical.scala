@@ -9,7 +9,7 @@ import xjdf4s.model.resources.*
 
 /**
  * Attribute-value parsers for every scalar type used by the codec. Each parser maps a raw attribute string to a
- * domain value or a human-readable failure; the [[XmlDecoders]] combinators attach the element/attribute context.
+ * domain value or a human-readable failure; the decoder combinators (XmlDecoders) attach the element/attribute context.
  * Domain smart constructors are reused, so the lexical space stays in sync with the model invariants.
  */
 object Lexical:
