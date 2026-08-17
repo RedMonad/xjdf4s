@@ -4,7 +4,6 @@ import io.circe.parser.*
 import io.circe.syntax.*
 
 import xjdf4s.codec.json.given
-import xjdf4s.codec.json.JsonAuditCodecs.given
 import xjdf4s.codec.json.JsonRootCodecs.given
 import xjdf4s.codec.xml.*
 import xjdf4s.codec.xml.domain.*

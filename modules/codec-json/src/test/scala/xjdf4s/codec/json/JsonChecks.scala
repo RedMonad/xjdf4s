@@ -3,7 +3,6 @@ package xjdf4s.codec.json
 import io.circe.syntax.*
 
 import xjdf4s.codec.json.given
-import xjdf4s.codec.json.JsonAuditCodecs.given
 import xjdf4s.codec.json.JsonRootCodecs.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
