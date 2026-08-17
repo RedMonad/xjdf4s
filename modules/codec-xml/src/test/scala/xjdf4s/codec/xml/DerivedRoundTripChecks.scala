@@ -11,7 +11,7 @@ import xjdf4s.model.resources.*
  * across intents, audits, derived resources and derived messages.
  */
 object DerivedRoundTripChecks:
-  private def roundTrip[A](value: A): A =
+  private def roundTrip[A: XmlElementCodec](value: A): A =
     val codec = summon[XmlElementCodec[A]]
     val decoded = codec.decode(codec.encode(value))
     assert(decoded.isRight, decoded.left.toOption.map(_.toString).getOrElse(""))
