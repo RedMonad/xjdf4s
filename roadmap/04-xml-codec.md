@@ -182,7 +182,7 @@ def checkReferences(doc: XJDF): ValidatedNel[ValidationError, Unit] =
 
 ---
 
-## Состояние исполнения (первый заход)
+## Состояние исполнения (обновляется до закрытия этапа)
 
 Реализовано в модуле `codec-xml` (зависит от `model`, `messaging`):
 
@@ -207,3 +207,10 @@ def checkReferences(doc: XJDF): ValidatedNel[ValidationError, Unit] =
 - **Тесты:** нормативные фикстуры Example 7.5 / 8.5 / 7.8, round-trip-закон на покрытых узлах, ID/IDREF,
   wildcards, негативные случаи. Оставшиеся ~97 ресурсов и ~39 сообщений добавляются тем же шаблоном
   (объект-кодек + строка в `Registry`).
+- **Рубеж:** `sbt "clean ; compile ; test"` зелёный, все 6 сюитов проходят (35 проверок кодеков).
+  Из инженерных находок итераций: `XmlWriter` эмитит namespace-декларации по мере необходимости
+  (`xmlns`/`xmlns:prefix`), без чего foreign-контент не переживает round-trip; foreign-дети `Resource`
+  живут в `foreignElements`, а `NamedSpecificResource` даёт fallback-путь `Registry`.
+- **Осталось по DoD этапа:** расширение покрытия узлов до 102 ресурсов / 44 сообщений; строковое
+  сравнение эмиттера с нормативными примерами (пока проверяется только round-trip); документные
+  проверки за пределами кодековой поверхности (AuditPool/ProductList/Notification) после их кодеков.

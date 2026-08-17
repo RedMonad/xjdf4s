@@ -118,8 +118,9 @@ errors.toValidatedNel.toEither    // fail-fast перевод
 
 ## Round-trip-закон
 
-`decode(encode(a)) == a` — кодек без потерь. Для XML и JSON-кодеков xjdf4s это приёмочный тест на
-фикстурах из нормативного текста; кросс-закон: XML- и JSON-декод одного значения дают равные ADT.
+`decode(encode(a)) == a` — кодек без потерь. В xjdf4s этот закон уже работает для XML-кодека
+(`codec-xml`: round-trip на нормативных фикстурах Example 7.5/8.5/7.8 и покрытых узлах); для JSON он
+появится на этапе 05 вместе с кросс-законом: XML- и JSON-декод одного значения дают равные ADT.
 
 ## Property-based testing
 

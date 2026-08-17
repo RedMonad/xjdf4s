@@ -69,8 +69,10 @@
 
 - Этапы 01–03 выполнены: cats-инстансы (core/model), валидация на `ValidatedNel` с путями и
   предупреждениями, модуль `dsl` с Free-алгеброй и тремя интерпретаторами.
-- Модули: `core`, `model`, `messaging`, `protocol`, `dsl`; сборка и munit-сюиты зелёные
+- Модули: `core`, `model`, `messaging`, `protocol`, `dsl`, `codec-xml`; сборка и **6 munit-сюитов** зелёные
   (`sbt "clean ; compile ; test"`, Scala 3.8.4, sbt 2.0.0, `-Werror`, `-Wunused:all`, `-Yexplicit-nulls`).
 - Модель: 102 стандартных ресурса, 14 product intents, 44 XJMF-сообщения, открытые extension-точки;
   smart-конструкторы для скаляров, `ValidatedNode#validate` для межполевых SHALL-ограничений.
-- Этапы 04–08 — план.
+- Этап 04 в работе: ядро XML-кодека и вертикальный срез покрытия зелёные (нормативные фикстуры,
+  round-trip, ID/IDREF, wildcards); расширение покрытия узлов продолжается тем же шаблоном.
+- Этапы 05–08 — план.

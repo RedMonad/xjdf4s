@@ -20,10 +20,12 @@ model      — XJDF: продукт, интенции, ресурсы, саб-э
 messaging  — XJMF: конверт, заголовки, 44 сообщения                             (→ model)
 protocol   — union/intersection-типы поверх XJDF + XJMF                         (→ model, messaging)
 dsl        — Free-DSL конструирования документов (см. free-dsl.md)              (→ model, cats-free)
+codec-xml  — XML-кодек поверх домена: парсер/писатель, декодеры/энкодеры,
+             ID/IDREF, покрытие узлов растёт по этапу 04 roadmap            (→ model, messaging)
 ```
 
 Домен (`core`–`protocol`) не тянет эффектов и транспорта: JSON/XML-кодеки, HTTP и `IO` — слои поверх,
-по roadmap.
+по roadmap. `codec-xml` — первый такой слой; домен о нём не знает.
 
 ## Принципы
 

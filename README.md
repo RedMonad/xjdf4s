@@ -13,7 +13,9 @@ The project is intentionally split along protocol boundaries:
   product intents) plus accumulating document validation;
 - `xjdf4s-messaging` — XJMF envelope, headers and the four message families (44 concrete messages);
 - `xjdf4s-protocol` — public protocol-wide union/intersection types;
-- `xjdf4s-dsl` — Free-based DSL for constructing XJDF documents (one program, several interpreters).
+- `xjdf4s-dsl` — Free-based DSL for constructing XJDF documents (one program, several interpreters);
+- `xjdf4s-codec-xml` — XML codec over the domain: parser, writer, decoders/encoders, ID/IDREF pass;
+  node coverage grows stage by stage per the roadmap;
 
 The domain stays free of transport-specific members (the JSON `$schema`/`@Name` properties, XML escaping, MIME
 types live in the codec/HTTP layers planned in the roadmap).
