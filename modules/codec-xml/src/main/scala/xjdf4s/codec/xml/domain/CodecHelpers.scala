@@ -21,7 +21,10 @@ object CodecHelpers:
   def decodeExtensionAttributes(element: Xml.Element): Extensions =
     Extensions(
       attributes = element.attributes
-        .collect { case (name, value) if name.namespace != XjdfNamespace.uri => (name, ExtensionValue.Text(value)) }
+        .collect {
+          case (name, value) if name.namespace.nonEmpty && name.namespace != XjdfNamespace.uri =>
+            (name, ExtensionValue.Text(value))
+        }
         .toMap,
     )
 

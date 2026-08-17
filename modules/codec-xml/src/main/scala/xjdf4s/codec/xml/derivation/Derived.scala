@@ -172,7 +172,10 @@ final class DerivedCodec[A](
 
   private def foreignAttributes(element: Xml.Element): Map[QualifiedName, ExtensionValue] =
     element.attributes
-      .collect { case (name, raw) if name.namespace != XjdfNamespace.uri => (name, ExtensionValue.Text(raw)) }
+      .collect {
+        case (name, raw) if name.namespace.nonEmpty && name.namespace != XjdfNamespace.uri =>
+          (name, ExtensionValue.Text(raw))
+      }
       .toMap
 
   private def hasForeignElementsField: Boolean =

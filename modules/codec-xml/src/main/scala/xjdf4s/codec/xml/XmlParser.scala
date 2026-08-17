@@ -111,8 +111,10 @@ object XmlParser:
           else if attributePrefix == "xmlns" then
             currentScopes = currentScopes.updated(attributeLocal, value)
           else
+            // Per the XML Namespaces spec, unprefixed attributes are in NO namespace - the default
+            // xmlns declaration does not apply to them; only prefixed attributes are namespace-qualified.
             val namespace =
-              if attributePrefix.isEmpty then currentScopes.getOrElse("", "")
+              if attributePrefix.isEmpty then ""
               else currentScopes.getOrElse(attributePrefix, "")
             attributes += (
               (

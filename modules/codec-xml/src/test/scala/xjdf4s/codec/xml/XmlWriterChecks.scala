@@ -21,10 +21,11 @@ object XmlWriterChecks:
     assert(written.contains("xmlns=\"http://www.CIP4.org/JDFSchema_2_0\""))
 
   val writerRoundTrip: Unit =
+    // attributes are unqualified in XML (no namespace), per the Namespaces spec
     val xml = Xml.element(
       qname("Resource"),
-      Vector((qname("ExternalID"), "MIS-1")),
-    )(Xml.element(qname("Part"), Vector((qname("LotID"), "Lot1")))(), Xml.Text("payload"))
+      Vector((QualifiedName("", "ExternalID"), "MIS-1")),
+    )(Xml.element(qname("Part"), Vector((QualifiedName("", "LotID"), "Lot1")))(), Xml.Text("payload"))
     val reparsed = XmlParser.parse(XmlWriter.write(xml)).toOption.get
     assert(reparsed == xml)
 
