@@ -1,91 +1,184 @@
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:37:71
-[error] 37 |        JsonHelpers.vecMember("NetworkHeader", fileSpec.networkHeaders),
-[error]    |                                                                       ^
-[error]    |No given instance of type io.circe.Encoder[xjdf4s.model.NetworkHeader] was found for a context parameter of method vecMember in object JsonHelpers.
-[error]    |I found:
-[error]    |
-[error]    |    io.circe.Encoder.importedEncoder[xjdf4s.model.NetworkHeader](
-[error]    |      /* missing */
-[error]    |        summon[
-[error]    |          io.circe.export.Exported[io.circe.Encoder[xjdf4s.model.NetworkHeader]]]
-[error]    |    )
-[error]    |
-[error]    |But no implicit values were found that match type io.circe.export.Exported[io.circe.Encoder[xjdf4s.model.NetworkHeader]].
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:36:66
-[error] 36 |        JsonHelpers.optMember("Disposition", fileSpec.disposition),
-[error]    |                                                                  ^
-[error]    |No given instance of type io.circe.Encoder[xjdf4s.model.Disposition] was found for a context parameter of method optMember in object JsonHelpers.
-[error]    |I found:
-[error]    |
-[error]    |    io.circe.Encoder.importedEncoder[xjdf4s.model.Disposition](
-[error]    |      /* missing */
-[error]    |        summon[io.circe.export.Exported[io.circe.Encoder[xjdf4s.model.Disposition]]]
-[error]    |      )
-[error]    |
-[error]    |But no implicit values were found that match type io.circe.export.Exported[io.circe.Encoder[xjdf4s.model.Disposition]].
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:57:72
-[error] 57 |      disposition <- JsonHelpers.opt[Disposition](cursor, "Disposition")
-[error]    |                                                                        ^
-[error]    |No given instance of type io.circe.Decoder[xjdf4s.model.Disposition] was found for a context parameter of method opt in object JsonHelpers.
-[error]    |I found:
-[error]    |
-[error]    |    io.circe.Decoder.importedDecoder[xjdf4s.model.Disposition](
-[error]    |      /* missing */
-[error]    |        summon[io.circe.export.Exported[io.circe.Decoder[xjdf4s.model.Disposition]]]
-[error]    |      )
-[error]    |
-[error]    |But no implicit values were found that match type io.circe.export.Exported[io.circe.Decoder[xjdf4s.model.Disposition]].
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:169:34
-[error] 169 |          Vector("Contents" -> (_.contents), "MailingList" -> (_.mailingList), "RemoteURL" -> (_.remoteUrl)),
-[error]     |                                ^^^^^^^^^^
-[error]     |                                value contents is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:169:65
-[error] 169 |          Vector("Contents" -> (_.contents), "MailingList" -> (_.mailingList), "RemoteURL" -> (_.remoteUrl)),
-[error]     |                                                               ^^^^^^^^^^^^^
-[error]     |                              value mailingList is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:169:97
-[error] 169 |          Vector("Contents" -> (_.contents), "MailingList" -> (_.mailingList), "RemoteURL" -> (_.remoteUrl)),
-[error]     |                                                                                               ^^^^^^^^^^^
-[error]     |                                value remoteUrl is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:188:57
-[error] 188 |        fileSpecRoleMembers(Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)), schemas),
-[error]     |                                                       ^^^^^^^^^
-[error]     |                                  value current is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:188:82
-[error] 188 |        fileSpecRoleMembers(Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)), schemas),
-[error]     |                                                                                ^^^^^^^^
-[error]     |                                   value global is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:204:57
-[error] 204 |        fileSpecRoleMembers(Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)), schemas),
-[error]     |                                                       ^^^^^^^^^
-[error]     |                                  value current is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:204:82
-[error] 204 |        fileSpecRoleMembers(Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)), schemas),
-[error]     |                                                                                ^^^^^^^^
-[error]     |                                   value global is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:221:34
-[error] 221 |          Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
-[error]     |                                ^^^^^^^^^^
-[error]     |                                value accepted is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:221:62
-[error] 221 |          Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
-[error]     |                                                            ^^^^^^^^^^
-[error]     |                                 value combined is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:221:90
-[error] 221 |          Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
-[error]     |                                                                                        ^^^^^^^^^^
-[error]     |                                 value rejected is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:221:117
-[error] 221 |          Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
-[error]     |                                                                                                                   ^^^^^^^^^
-[error]     |                                  value unknown is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:241:49
-[error] 241 |        fileSpecRoleMembers(Vector("Image" -> (_.image), "Setup" -> (_.setup)), files),
-[error]     |                                               ^^^^^^^
-[error]     |                                    value image is not a member of Any
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:241:71
-[error] 241 |        fileSpecRoleMembers(Vector("Image" -> (_.image), "Setup" -> (_.setup)), files),
-[error]     |                                                                     ^^^^^^^
-[error]     |                                    value setup is not a member of Any
-[error] 16 errors found
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerivedInstances.scala:411:52
+[error] 411 |given derivedJsonEncoderProduct: Encoder[Product] = JsonDerived.derivedEncoder[Product]
+[error]     |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |No given instance of type xjdf4s.codec.json.JsonFieldCodec[Vector[xjdf4s.model.Intent]] was found.
+[error]     |I found:
+[error]     |
+[error]     |    xjdf4s.codec.json.JsonFieldCodec.vectorFieldCodec[xjdf4s.model.Intent](
+[error]     |      {
+[error]     |        val classTag: scala.reflect.ClassTag[xjdf4s.model.Intent] =
+[error]     |          scala.reflect.ClassTag.apply[xjdf4s.model.Intent](
+[error]     |            classOf[xjdf4s.model.Intent])
+[error]     |        {
+[error]     |          val node:
+[error]     |            (io.circe.Encoder[xjdf4s.model.Intent],
+[error]     |              io.circe.Decoder[xjdf4s.model.Intent])
+[error]     |           =
+[error]     |            {
+[error]     |              val mirror$proxy374:
+[error]     |
+[error]     |                  scala.deriving.Mirror.Product{
+[error]     |                    type MirroredMonoType = xjdf4s.model.Intent;
+[error]     |                      type MirroredType = xjdf4s.model.Intent;
+[error]     |                      type MirroredLabel = ("Intent" : String);
+[error]     |                      type MirroredElemTypes = (xjdf4s.core.Nmtoken,
+[error]     |                        Option[xjdf4s.model.ProductIntent],
+[error]     |                        Option[xjdf4s.core.XjdfString],
+[error]     |                        Option[xjdf4s.core.Nmtoken], xjdf4s.core.Extensions);
+[error]     |                      type MirroredElemLabels = (("name" : String),
+[error]     |                        ("productIntent" : String), ("descriptiveName" : String),
+[error]     |                        ("externalId" : String), ("extensions" : String))
+[error]     |                  }
+[error]     |
+[error]     |               =
+[error]     |                xjdf4s.model.Intent.$asInstanceOf[
+[error]     |
+[error]     |                    scala.deriving.Mirror.Product{
+[error]     |                      type MirroredMonoType = xjdf4s.model.Intent;
+[error]     |                        type MirroredType = xjdf4s.model.Intent;
+[error]     |                        type MirroredLabel = ("Intent" : String);
+[error]     |                        type MirroredElemTypes = (xjdf4s.core.Nmtoken,
+[error]     |                          Option[xjdf4s.model.ProductIntent],
+[error]     |                          Option[xjdf4s.core.XjdfString],
+[error]     |                          Option[xjdf4s.core.Nmtoken], xjdf4s.core.Extensions);
+[error]     |                        type MirroredElemLabels = (("name" : String),
+[error]     |                          ("productIntent" : String), ("descriptiveName" : String),
+[error]     |                          ("externalId" : String), ("extensions" : String))
+[error]     |                    }
+[error]     |
+[error]     |                ]
+[error]     |              Tuple2.apply²[io.circe.Encoder[xjdf4s.model.Intent],
+[error]     |                io.circe.Decoder[xjdf4s.model.Intent]](
+[error]     |                {
+[error]     |                  val labels: mirror$proxy374.MirroredElemLabels =
+[error]     |                    Tuple5.apply³[("name" : String), ("productIntent" : String),
+[error]     |                      ("descriptiveName" : String), ("externalId" : String),
+[error]     |                      ("extensions" : String)]("name", "productIntent",
+[error]     |                      "descriptiveName", "externalId", "extensions"):
+[error]     |                      mirror$proxy374.MirroredElemLabels
+[error]     |                  val codecs: Tuple =
+[error]     |                    {
+[error]     |                      {
+[error]     |                        val x$1:
+[error]     |                          xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken] =
+[error]     |                          xjdf4s.codec.json.JsonFieldCodec.scalarFieldCodec[
+[error]     |                            xjdf4s.core.Nmtoken](
+[error]     |                            xjdf4s.codec.json.JsonScalars.given_Encoder_Nmtoken,
+[error]     |                            xjdf4s.codec.json.JsonScalars.given_Decoder_Nmtoken)
+[error]     |                        {
+[error]     |                          {
+[error]     |                            val x$1²:
+[error]     |
+[error]     |                                xjdf4s.codec.json.JsonFieldCodec[
+[error]     |                                  Option[xjdf4s.model.ProductIntent]]
+[error]     |
+[error]     |                             =
+[error]     |                              scala.compiletime.summonInline[
+[error]     |                                xjdf4s.codec.json.JsonFieldCodec[
+[error]     |                                  Option[xjdf4s.model.ProductIntent]]
+[error]     |                              ]
+[error]     |                            xjdf4s.codec.json.JsonDerived.fieldCodecInstances[
+[error]     |                              (Option[xjdf4s.core.XjdfString],
+[error]     |                                Option[xjdf4s.core.Nmtoken], xjdf4s.core.Extensions)
+[error]     |                              ].*:[
+[error]     |
+[error]     |                                xjdf4s.codec.json.JsonFieldCodec[
+[error]     |                                  Option[xjdf4s.model.ProductIntent]]
+[error]     |                              ,
+[error]     |                            Tuple](x$1²):
+[error]     |                              (xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[error]     |                          }
+[error]     |                        }:Tuple.*:[
+[error]     |                          xjdf4s.codec.json.JsonFieldCodec[xjdf4s.core.Nmtoken],
+[error]     |                          Tuple](x$1):(xjdf4s.codec.json.JsonFieldCodec[?] *: Tuple)
+[error]     |                        }
+[error]     |                    }:Tuple
+[error]     |                  new xjdf4s.codec.json.DerivedJsonEncoder[xjdf4s.model.Intent](
+[error]     |                    mirror$proxy374, labels, codecs,
+[error]     |                    xjdf4s.codec.xml.derivation.Defaults.of(classTag))
+[error]     |                }:io.circe.Encoder[xjdf4s.model.Intent],
+[error]     |                xjdf4s.codec.json.JsonDerived.derivedDecoder[xjdf4s.model.Intent](
+[error]     |                  mirror$proxy374, classTag)
+[error]     |              ):
+[error]     |                Tuple2[io.circe.Encoder[xjdf4s.model.Intent],
+[error]     |                  io.circe.Decoder[xjdf4s.model.Intent]]
+[error]     |            }
+[error]     |          xjdf4s.codec.json.JsonFieldCodec.fromProduct[xjdf4s.model.Intent](
+[error]     |            node._1, node._2, classTag)
+[error]     |        }
+[error]     |      }:xjdf4s.codec.json.JsonFieldCodec[xjdf4s.model.Intent]
+[error]     |    )
+[error]     |
+[error]     |But given instance productFieldCodec in object JsonFieldCodec does not match type xjdf4s.codec.json.JsonFieldCodec[xjdf4s.model.Intent]
+[error]     |
+[error]     |where:    apply  is a method in object ClassTag
+[error]     |          apply² is a method in object Tuple2
+[error]     |          apply³ is a method in object Tuple5
+[error]     |          x$1    is a value in the initializer of value codecs
+[error]     |          x$1²   is a value in the initializer of value codecs
+[error]     |.
+[error]     |---------------------------------------------------------------------------
+[error]     |Inline stack trace
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 267 |      case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
+[error]     |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from JsonDerived.scala:267
+[error] 248 |    val codecs = fieldCodecInstances[mirror.MirroredElemTypes]
+[error]     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]      ---------------------------------------------------------------------------
+[error] one error found
 [error] (codecJson / Compile / compileIncremental) Compilation failed
