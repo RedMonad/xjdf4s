@@ -85,7 +85,11 @@ object BindingIntentCodec:
         coverColor <- XmlDecoders.attributeOf("CoverColor")(Lexical.namedColor).decode(element)
         coverColorDetails <- XmlDecoders.attributeOf("CoverColorDetails")(Lexical.xjdfString).decode(element)
         tabs <- XmlDecoders.optionalChild("Tabs")(summon[XmlElementCodec[Tabs]]).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Tabs")).decode(element)
+        _ <- XmlDecoders
+          .expectChildrenOnly(
+            Set("Tabs", "AdhesiveNote", "EdgeGluing", "HardCoverBinding", "LooseBinding", "SaddleStitching", "SideStitching", "SoftCoverBinding"),
+          )
+          .decode(element)
         details <- binding match
           case BindingSpecification.AdhesiveNote(_) =>
             XmlDecoders.optionalChild("AdhesiveNote")(summon[XmlElementCodec[AdhesiveNoteDetails]]).decode(element)
