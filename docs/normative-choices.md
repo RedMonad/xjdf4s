@@ -62,3 +62,21 @@ The domain model is transport-independent. The following JSON-only normative req
 - JSON `@Name` in-lining exception of `MediaLayers`;
 - XML element-name emission for normative names (`Patch`, `ResourceQuParams`, `StatusQuParams`) and wildcard
   position enforcement (`anyAttribute` only vs. element-capable nodes).
+
+## Validation scope and deferred document-level checks
+
+`ValidatedNode#validate` covers the cross-field SHALL constraints that are local to one node: `Resource` placement and
+timing XOR pairs, `Media`/`MediaIntent` back-side companions, `MediaLayers` front/back boundaries, `Part` range
+ordering and `regExp` metadata, `SignalResource` replacement-window ordering, and document-level ID uniqueness
+(`XJDF`, `XJMF`). The remaining whole-document checks are graph problems and are deferred to the validator/codec
+slice together with their tests:
+
+- IDREF existence and target-type correctness across the full reference graph (the `XsdId`/`XsdIdRef` split makes
+  the graph typeable; walking it needs the codec's node registry);
+- Query payload vs. `Subscription` filter exclusions (`ResourceQuParams`/`StatusQuParams` vs. `Subscription`);
+- product amount contradictions (`@Amount` vs. `@MinAmount`/`@MaxAmount`) and `PartWaste` totals;
+- queue-entry move-target and priority coherence checks beyond the type-level single-target guarantee.
+
+Nothing on this list changes the *representable* data; each item is either already prevented by a type shape or
+becomes rejectable through `validate` once the document traversal layer exists.
+
