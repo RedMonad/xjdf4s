@@ -1,64 +1,111 @@
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:372:58
-[error] 372 |        JsonHelpers.vecMember("BundleItem", item.children),
-[error]     |                                                          ^
-[error]     |No given instance of type io.circe.Encoder[xjdf4s.model.resources.BundleItem] was found for a context parameter of method vecMember in object JsonHelpers.
-[error]     |I found:
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:217:43
+[error] 217 |  given gridSizeFieldCodec: JsonFieldCodec[GridSize] = JsonFieldCodec.from(summon[Encoder[GridSize]], summon[Decoder[GridSize]])
+[error]     |                                           ^^^^^^^^
+[error]     |                                           Not found: type GridSize
 [error]     |
-[error]     |    io.circe.Encoder.importedEncoder[xjdf4s.model.resources.BundleItem](
-[error]     |      /* missing */
-[error]     |        summon[
-[error]     |          io.circe.export.Exported[
-[error]     |            io.circe.Encoder[xjdf4s.model.resources.BundleItem]]
-[error]     |        ]
-[error]     |    )
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:211:41
+[error] 211 |  given xypairFieldCodec: JsonFieldCodec[XYPair] = JsonFieldCodec.from(summon[Encoder[XYPair]], summon[Decoder[XYPair]])
+[error]     |                                         ^^^^^^
+[error]     |                                         Not found: type XYPair
 [error]     |
-[error]     |But no implicit values were found that match type io.circe.export.Exported[io.circe.Encoder[xjdf4s.model.resources.BundleItem]].
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:385:67
-[error] 385 |      children <- JsonHelpers.vec[BundleItem](cursor, "BundleItem")
-[error]     |                                                                   ^
-[error]     |No given instance of type io.circe.Decoder[xjdf4s.model.resources.BundleItem] was found for a context parameter of method vec in object JsonHelpers.
-[error]     |I found:
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:216:42
+[error] 216 |  given shape3dFieldCodec: JsonFieldCodec[Shape3D] = JsonFieldCodec.from(summon[Encoder[Shape3D]], summon[Decoder[Shape3D]])
+[error]     |                                          ^^^^^^^
+[error]     |                                          Not found: type Shape3D
 [error]     |
-[error]     |    io.circe.Decoder.importedDecoder[xjdf4s.model.resources.BundleItem](
-[error]     |      /* missing */
-[error]     |        summon[
-[error]     |          io.circe.export.Exported[
-[error]     |            io.circe.Decoder[xjdf4s.model.resources.BundleItem]]
-[error]     |        ]
-[error]     |    )
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:214:47
+[error] 214 |  given integerRangeFieldCodec: JsonFieldCodec[IntegerRange] =
+[error]     |                                               ^^^^^^^^^^^^
+[error]     |                                          Not found: type IntegerRange
 [error]     |
-[error]     |But no implicit values were found that match type io.circe.export.Exported[io.circe.Decoder[xjdf4s.model.resources.BundleItem]].
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:397:66
-[error] 397 |        JsonHelpers.vecMember("AssemblySection", section.sections),
-[error]     |                                                                  ^
-[error]     |No given instance of type io.circe.Encoder[xjdf4s.model.resources.AssemblySection] was found for a context parameter of method vecMember in object JsonHelpers.
-[error]     |I found:
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:213:44
+[error] 213 |  given rectangleFieldCodec: JsonFieldCodec[Rectangle] = JsonFieldCodec.from(summon[Encoder[Rectangle]], summon[Decoder[Rectangle]])
+[error]     |                                            ^^^^^^^^^
+[error]     |                                            Not found: type Rectangle
 [error]     |
-[error]     |    io.circe.Encoder.importedEncoder[xjdf4s.model.resources.AssemblySection](
-[error]     |      /* missing */
-[error]     |        summon[
-[error]     |          io.circe.export.Exported[
-[error]     |            io.circe.Encoder[xjdf4s.model.resources.AssemblySection]]
-[error]     |        ]
-[error]     |    )
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:218:49
+[error] 218 |  given tileCoordinateFieldCodec: JsonFieldCodec[TileCoordinate] =
+[error]     |                                                 ^^^^^^^^^^^^^^
+[error]     |                                        Not found: type TileCoordinate
 [error]     |
-[error]     |But no implicit values were found that match type io.circe.export.Exported[
-[error]     |  io.circe.Encoder[xjdf4s.model.resources.AssemblySection]].
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonSpecialCodecs.scala:407:77
-[error] 407 |      sections <- JsonHelpers.vec[AssemblySection](cursor, "AssemblySection")
-[error]     |                                                                             ^
-[error]     |No given instance of type io.circe.Decoder[xjdf4s.model.resources.AssemblySection] was found for a context parameter of method vec in object JsonHelpers.
-[error]     |I found:
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:211:86
+[error] 211 |  given xypairFieldCodec: JsonFieldCodec[XYPair] = JsonFieldCodec.from(summon[Encoder[XYPair]], summon[Decoder[XYPair]])
+[error]     |                                                                                      ^^^^^^
+[error]     |                                                Not found: type XYPair
 [error]     |
-[error]     |    io.circe.Decoder.importedDecoder[xjdf4s.model.resources.AssemblySection](
-[error]     |      /* missing */
-[error]     |        summon[
-[error]     |          io.circe.export.Exported[
-[error]     |            io.circe.Decoder[xjdf4s.model.resources.AssemblySection]]
-[error]     |        ]
-[error]     |    )
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:211:111
+[error] 211 |  given xypairFieldCodec: JsonFieldCodec[XYPair] = JsonFieldCodec.from(summon[Encoder[XYPair]], summon[Decoder[XYPair]])
+[error]     |                                                                                                               ^^^^^^
+[error]     |                                                Not found: type XYPair
 [error]     |
-[error]     |But no implicit values were found that match type io.circe.export.Exported[
-[error]     |  io.circe.Decoder[xjdf4s.model.resources.AssemblySection]].
-[error] four errors found
-[error] (codecJson / Compile / compileIncremental) Compilation failed
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:213:92
+[error] 213 |  given rectangleFieldCodec: JsonFieldCodec[Rectangle] = JsonFieldCodec.from(summon[Encoder[Rectangle]], summon[Decoder[Rectangle]])
+[error]     |                                                                                            ^^^^^^^^^
+[error]     |                                             Not found: type Rectangle
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:213:120
+[error] 213 |  given rectangleFieldCodec: JsonFieldCodec[Rectangle] = JsonFieldCodec.from(summon[Encoder[Rectangle]], summon[Decoder[Rectangle]])
+[error]     |                                                                                                                        ^^^^^^^^^
+[error]     |                                             Not found: type Rectangle
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:215:39
+[error] 215 |    JsonFieldCodec.from(summon[Encoder[IntegerRange]], summon[Decoder[IntegerRange]])
+[error]     |                                       ^^^^^^^^^^^^
+[error]     |                                       Not found: type IntegerRange
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:215:70
+[error] 215 |    JsonFieldCodec.from(summon[Encoder[IntegerRange]], summon[Decoder[IntegerRange]])
+[error]     |                                                                      ^^^^^^^^^^^^
+[error]     |                                          Not found: type IntegerRange
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:216:88
+[error] 216 |  given shape3dFieldCodec: JsonFieldCodec[Shape3D] = JsonFieldCodec.from(summon[Encoder[Shape3D]], summon[Decoder[Shape3D]])
+[error]     |                                                                                        ^^^^^^^
+[error]     |                                               Not found: type Shape3D
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:216:114
+[error] 216 |  given shape3dFieldCodec: JsonFieldCodec[Shape3D] = JsonFieldCodec.from(summon[Encoder[Shape3D]], summon[Decoder[Shape3D]])
+[error]     |                                                                                                                  ^^^^^^^
+[error]     |                                               Not found: type Shape3D
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:217:90
+[error] 217 |  given gridSizeFieldCodec: JsonFieldCodec[GridSize] = JsonFieldCodec.from(summon[Encoder[GridSize]], summon[Decoder[GridSize]])
+[error]     |                                                                                          ^^^^^^^^
+[error]     |                                              Not found: type GridSize
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:217:117
+[error] 217 |  given gridSizeFieldCodec: JsonFieldCodec[GridSize] = JsonFieldCodec.from(summon[Encoder[GridSize]], summon[Decoder[GridSize]])
+[error]     |                                                                                                                     ^^^^^^^^
+[error]     |                                              Not found: type GridSize
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:219:39
+[error] 219 |    JsonFieldCodec.from(summon[Encoder[TileCoordinate]], summon[Decoder[TileCoordinate]])
+[error]     |                                       ^^^^^^^^^^^^^^
+[error]     |                                       Not found: type TileCoordinate
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonDerived.scala:219:72
+[error] 219 |    JsonFieldCodec.from(summon[Encoder[TileCoordinate]], summon[Decoder[TileCoordinate]])
+[error]     |                                                                        ^^^^^^^^^^^^^^
+[error]     |                                        Not found: type TileCoordinate
+[error]     |
+[error]     | longer explanation available when compiling with `-explain`
+[error] stack trace is suppressed; run last codecJson / Compile / compileIncremental for the full output
+[error] (codecJson / Compile / compileIncremental) sbt.util.CachedCompileFailure$$anon$1: Compilation failed
+[error] elapsed time: 2 s, cache 100%, 1 cached-failure cache hit, 177 disk cache hits
