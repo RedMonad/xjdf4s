@@ -1,524 +1,130 @@
-[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/main/scala/xjdf4s/codec/xml/domain/DerivedInstances.scala:61:60
-[warn] 61 |given derivedCodecBundleItem: XmlElementCodec[BundleItem] = Derived.derived[BundleItem]
-[warn]    |                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[warn]    |Infinite loop in function body
-[warn]    |{
-[warn]    |  val m$proxy42:
-[warn]    |
-[warn]    |      scala.deriving.Mirror.Product{
-[warn]    |        type MirroredMonoType = xjdf4s.model.resources.BundleItem;
-[warn]    |          type MirroredType = xjdf4s.model.resources.BundleItem;
-[warn]    |          type MirroredLabel = ("BundleItem" : String);
-[warn]    |          type MirroredElemTypes = (Int,
-[warn]    |            Option[xjdf4s.model.resources.BundleType],
-[warn]    |            Option[xjdf4s.core.XsdIdRef], Option[Int],
-[warn]    |            Option[xjdf4s.model.Shape3D], Option[Float], Option[Float],
-[warn]    |            Vector[xjdf4s.model.resources.BundleItem], xjdf4s.core.Extensions);
-[warn]    |          type MirroredElemLabels = (("amount" : String),
-[warn]    |            ("bundleType" : String), ("itemRef" : String),
-[warn]    |            ("totalAmount" : String), ("totalDimensions" : String),
-[warn]    |            ("totalVolume" : String), ("totalWeight" : String),
-[warn]    |            ("children" : String), ("extensions" : String))
-[warn]    |      }
-[warn]    |
-[warn]    |   =
-[warn]    |    xjdf4s.model.resources.BundleItem.$asInstanceOf[
-[warn]    |
-[warn]    |        scala.deriving.Mirror.Product{
-[warn]    |          type MirroredMonoType = xjdf4s.model.resources.BundleItem;
-[warn]    |            type MirroredType = xjdf4s.model.resources.BundleItem;
-[warn]    |            type MirroredLabel = ("BundleItem" : String);
-[warn]    |            type MirroredElemTypes = (Int,
-[warn]    |              Option[xjdf4s.model.resources.BundleType],
-[warn]    |              Option[xjdf4s.core.XsdIdRef], Option[Int],
-[warn]    |              Option[xjdf4s.model.Shape3D], Option[Float], Option[Float],
-[warn]    |              Vector[xjdf4s.model.resources.BundleItem], xjdf4s.core.Extensions)
-[warn]    |              ;
-[warn]    |            type MirroredElemLabels = (("amount" : String),
-[warn]    |              ("bundleType" : String), ("itemRef" : String),
-[warn]    |              ("totalAmount" : String), ("totalDimensions" : String),
-[warn]    |              ("totalVolume" : String), ("totalWeight" : String),
-[warn]    |              ("children" : String), ("extensions" : String))
-[warn]    |        }
-[warn]    |
-[warn]    |    ]
-[warn]    |  val ct$proxy42: scala.reflect.ClassTag[xjdf4s.model.resources.BundleItem] =
-[warn]    |    scala.reflect.ClassTag.apply[xjdf4s.model.resources.BundleItem](
-[warn]    |      classOf[xjdf4s.model.resources.BundleItem])
-[warn]    |  {
-[warn]    |    val labels: m$proxy42.MirroredElemLabels =
-[warn]    |      Tuple9.apply²[("amount" : String), ("bundleType" : String),
-[warn]    |        ("itemRef" : String), ("totalAmount" : String),
-[warn]    |        ("totalDimensions" : String), ("totalVolume" : String),
-[warn]    |        ("totalWeight" : String), ("children" : String), ("extensions" : String)
-[warn]    |        ]("amount", "bundleType", "itemRef", "totalAmount", "totalDimensions",
-[warn]    |        "totalVolume", "totalWeight", "children", "extensions"):
-[warn]    |        m$proxy42.MirroredElemLabels
-[warn]    |    val codecs: Tuple =
-[warn]    |      {
-[warn]    |        {
-[warn]    |          val x$1: xjdf4s.codec.xml.derivation.FieldCodec[Int] =
-[warn]    |            xjdf4s.codec.xml.derivation.FieldCodec.intCodec
-[warn]    |          {
-[warn]    |            val Tuple_this: Tuple =
-[warn]    |              {
-[warn]    |                {
-[warn]    |                  val x$1²:
-[warn]    |
-[warn]    |                      xjdf4s.codec.xml.derivation.FieldCodec[
-[warn]    |                        Option[xjdf4s.model.resources.BundleType]]
-[warn]    |
-[warn]    |                   =
-[warn]    |                    xjdf4s.codec.xml.derivation.FieldCodec.optionCodec[
-[warn]    |                      xjdf4s.model.resources.BundleType](
-[warn]    |                      xjdf4s.codec.xml.derivation.FieldCodec.enumCodec[
-[warn]    |                        xjdf4s.model.resources.BundleType](
-[warn]    |                        scala.reflect.ClassTag.apply[
-[warn]    |                          xjdf4s.model.resources.BundleType](
-[warn]    |                          classOf[xjdf4s.model.resources.BundleType])
-[warn]    |                      )
-[warn]    |                    )
-[warn]    |                  {
-[warn]    |                    val Tuple_this²: Tuple =
-[warn]    |                      {
-[warn]    |                        {
-[warn]    |                          val x$1³:
-[warn]    |
-[warn]    |                              xjdf4s.codec.xml.derivation.FieldCodec[
-[warn]    |                                Option[xjdf4s.core.XsdIdRef]]
-[warn]    |
-[warn]    |                           =
-[warn]    |                            xjdf4s.codec.xml.derivation.FieldCodec.optionCodec[
-[warn]    |                              xjdf4s.core.XsdIdRef](
-[warn]    |                              xjdf4s.codec.xml.derivation.FieldCodec.
-[warn]    |                                xsdIdRefCodec
-[warn]    |                            )
-[warn]    |                          {
-[warn]    |                            val Tuple_this³: Tuple =
-[warn]    |                              {
-[warn]    |                                {
-[warn]    |                                  val x$1⁴:
-[warn]    |
-[warn]    |                                      xjdf4s.codec.xml.derivation.FieldCodec[
-[warn]    |                                        Option[Int]]
-[warn]    |
-[warn]    |                                   =
-[warn]    |                                    xjdf4s.codec.xml.derivation.FieldCodec.
-[warn]    |                                      optionCodec[Int](
-[warn]    |                                      xjdf4s.codec.xml.derivation.FieldCodec.
-[warn]    |                                        intCodec
-[warn]    |                                    )
-[warn]    |                                  {
-[warn]    |                                    val Tuple_this⁴: Tuple =
-[warn]    |                                      {
-[warn]    |                                        {
-[warn]    |                                          val x$1⁵:
-[warn]    |
-[warn]    |                                              xjdf4s.codec.xml.derivation.
-[warn]    |                                                FieldCodec[
-[warn]    |                                                Option[xjdf4s.model.Shape3D]]
-[warn]    |
-[warn]    |                                           =
-[warn]    |                                            xjdf4s.codec.xml.derivation.
-[warn]    |                                              FieldCodec.optionCodec[
-[warn]    |                                              xjdf4s.model.Shape3D](
-[warn]    |                                              xjdf4s.codec.xml.derivation.
-[warn]    |                                                FieldCodec.shape3dCodec
-[warn]    |                                            )
-[warn]    |                                          {
-[warn]    |                                            val Tuple_this⁵: Tuple =
-[warn]    |                                              {
-[warn]    |                                                {
-[warn]    |                                                  val x$1⁶:
-[warn]    |
-[warn]    |                                                      xjdf4s.codec.xml.derivation
-[warn]    |                                                        .FieldCodec[
-[warn]    |                                                        Option[Float]]
-[warn]    |
-[warn]    |                                                   =
-[warn]    |                                                    xjdf4s.codec.xml.derivation.
-[warn]    |                                                      FieldCodec.optionCodec[
-[warn]    |                                                      Float](
-[warn]    |                                                      xjdf4s.codec.xml.derivation
-[warn]    |                                                        .FieldCodec.floatCodec
-[warn]    |                                                    )
-[warn]    |                                                  {
-[warn]    |                                                    val Tuple_this⁶: Tuple =
-[warn]    |                                                      {
-[warn]    |                                                        {
-[warn]    |                                                          val x$1⁷:
-[warn]    |
-[warn]    |                                                              xjdf4s.codec.xml.derivation
-[warn]    |                                                                .FieldCodec[
-[warn]    |                                                                Option[Float]]
-[warn]    |
-[warn]    |                                                           =
-[warn]    |                                                            xjdf4s.codec.xml.derivation
-[warn]    |                                                              .FieldCodec.
-[warn]    |                                                              optionCodec[Float]
-[warn]    |                                                              (
-[warn]    |                                                              xjdf4s.codec.xml.derivation
-[warn]    |                                                                .FieldCodec.
-[warn]    |                                                                floatCodec
-[warn]    |                                                            )
-[warn]    |                                                          {
-[warn]    |                                                            val Tuple_this⁷:
-[warn]    |                                                              Tuple =
-[warn]    |                                                              {
-[warn]    |                                                                {
-[warn]    |                                                                  val x$1⁸:
-[warn]    |
-[warn]    |                                                                      xjdf4s.codec.xml.derivation
-[warn]    |                                                                        .
-[warn]    |                                                                        FieldCodec
-[warn]    |                                                                        [
-[warn]    |                                                                        Vector[
-[warn]    |                                                                          xjdf4s.model.resources
-[warn]    |                                                                            .
-[warn]    |                                                                            BundleItem
-[warn]    |                                                                          ]
-[warn]    |                                                                      ]
-[warn]    |
-[warn]    |                                                                   =
-[warn]    |                                                                    xjdf4s.codec.xml.derivation
-[warn]    |                                                                      .
-[warn]    |                                                                      FieldCodec
-[warn]    |                                                                      .
-[warn]    |                                                                      vectorCodec
-[warn]    |                                                                      [
-[warn]    |
-[warn]    |                                                                        xjdf4s.model.resources
-[warn]    |                                                                          .
-[warn]    |                                                                          BundleItem
-[warn]    |
-[warn]    |                                                                    ](
-[warn]    |                                                                      {
-[warn]    |                                                                        given
-[warn]    |                                                                          val
-[warn]    |                                                                          elementCodec
-[warn]    |                                                                          :
-[warn]    |
-[warn]    |                                                                            xjdf4s.codec.xml
-[warn]    |                                                                              .
-[warn]    |                                                                              XmlElementCodec
-[warn]    |                                                                              [
-[warn]    |                                                                              xjdf4s.model.resources
-[warn]    |                                                                                .
-[warn]    |                                                                                BundleItem
-[warn]    |                                                                              ]
-[warn]    |
-[warn]    |                                                                         =
-[warn]    |                                                                          xjdf4s.codec.xml.domain
-[warn]    |                                                                            .
-[warn]    |                                                                            derivedCodecBundleItem
-[warn]    |                                                                        xjdf4s.codec.xml.derivation
-[warn]    |                                                                          .
-[warn]    |                                                                          FieldCodec
-[warn]    |                                                                          .
-[warn]    |                                                                          element
-[warn]    |                                                                          [
-[warn]    |
-[warn]    |                                                                            xjdf4s.model.resources
-[warn]    |                                                                              .
-[warn]    |                                                                              BundleItem
-[warn]    |
-[warn]    |                                                                        ](
-[warn]    |                                                                          elementCodec
-[warn]    |                                                                          )
-[warn]    |                                                                      }:
-[warn]    |
-[warn]    |                                                                          xjdf4s.codec.xml.derivation
-[warn]    |                                                                            .
-[warn]    |                                                                            FieldCodec
-[warn]    |                                                                            [
-[warn]    |                                                                            xjdf4s.model.resources
-[warn]    |                                                                              .
-[warn]    |                                                                              BundleItem
-[warn]    |                                                                            ]
-[warn]    |
-[warn]    |                                                                    )
-[warn]    |                                                                  {
-[warn]    |                                                                    val
-[warn]    |                                                                      Tuple_this⁸
-[warn]    |                                                                      : Tuple =
-[warn]    |                                                                      {
-[warn]    |                                                                        {
-[warn]    |                                                                          val
-[warn]    |                                                                            x$1⁹
-[warn]    |                                                                            :
-[warn]    |
-[warn]    |                                                                              xjdf4s.codec.xml.derivation
-[warn]    |                                                                                .
-[warn]    |                                                                                FieldCodec
-[warn]    |                                                                                [
-[warn]    |                                                                                xjdf4s.core
-[warn]    |                                                                                  .
-[warn]    |                                                                                  Extensions
-[warn]    |                                                                                ]
-[warn]    |
-[warn]    |                                                                             =
-[warn]    |                                                                            xjdf4s.codec.xml.derivation
-[warn]    |                                                                              .
-[warn]    |                                                                              FieldCodec
-[warn]    |                                                                              .
-[warn]    |                                                                              extensionsCodec
-[warn]    |                                                                          {
-[warn]    |                                                                            val
-[warn]    |                                                                              Tuple_this⁹
-[warn]    |                                                                              :
-[warn]    |
-[warn]    |                                                                                Tuple
-[warn]    |
-[warn]    |                                                                               =
-[warn]    |                                                                              {
-[warn]    |                                                                                EmptyTuple
-[warn]    |                                                                                }
-[warn]    |                                                                                :
-[warn]    |
-[warn]    |                                                                                  Tuple
-[warn]    |
-[warn]    |                                                                            runtime
-[warn]    |                                                                              .
-[warn]    |                                                                              Tuples
-[warn]    |                                                                              .
-[warn]    |                                                                              cons
-[warn]    |                                                                              (
-[warn]    |                                                                              x$1⁹
-[warn]    |                                                                                ,
-[warn]    |                                                                              Tuple_this⁹
-[warn]    |                                                                              ).
-[warn]    |                                                                              asInstanceOf
-[warn]    |                                                                              [
-[warn]    |
-[warn]    |                                                                                xjdf4s.codec.xml.derivation
-[warn]    |                                                                                  .
-[warn]    |                                                                                  FieldCodec
-[warn]    |                                                                                  [
-[warn]    |                                                                                  xjdf4s.core
-[warn]    |                                                                                    .
-[warn]    |                                                                                    Extensions
-[warn]    |                                                                                  ]
-[warn]    |
-[warn]    |                                                                                *:
-[warn]    |
-[warn]    |                                                                                Tuple
-[warn]    |
-[warn]    |                                                                              ]:
-[warn]    |                                                                              (
-[warn]    |                                                                                xjdf4s.codec.xml.derivation
-[warn]    |                                                                                  .
-[warn]    |                                                                                  FieldCodec
-[warn]    |                                                                                  [
-[warn]    |                                                                                  xjdf4s.core
-[warn]    |                                                                                    .
-[warn]    |                                                                                    Extensions
-[warn]    |                                                                                  ]
-[warn]    |
-[warn]    |                                                                                *:
-[warn]    |
-[warn]    |                                                                                Tuple
-[warn]    |                                                                                )
-[warn]    |
-[warn]    |                                                                            }:
-[warn]    |                                                                            (
-[warn]    |                                                                              xjdf4s.codec.xml.derivation
-[warn]    |                                                                                .
-[warn]    |                                                                                FieldCodec
-[warn]    |                                                                                [
-[warn]    |                                                                                ?
-[warn]    |                                                                                ]
-[warn]    |
-[warn]    |                                                                              *:
-[warn]    |
-[warn]    |                                                                              Tuple
-[warn]    |                                                                              )
-[warn]    |                                                                        }
-[warn]    |                                                                      }:Tuple
-[warn]    |                                                                    runtime.
-[warn]    |                                                                      Tuples.
-[warn]    |                                                                      cons(
-[warn]    |                                                                      x$1⁸,
-[warn]    |                                                                      Tuple_this⁸
-[warn]    |                                                                      ).
-[warn]    |                                                                      asInstanceOf
-[warn]    |                                                                      [
-[warn]    |
-[warn]    |                                                                        xjdf4s.codec.xml.derivation
-[warn]    |                                                                          .
-[warn]    |                                                                          FieldCodec
-[warn]    |                                                                          [
-[warn]    |                                                                          Vector
-[warn]    |                                                                            [
-[warn]    |                                                                            xjdf4s.model.resources
-[warn]    |                                                                              .
-[warn]    |                                                                              BundleItem
-[warn]    |                                                                            ]
-[warn]    |                                                                        ]
-[warn]    |                                                                       *: Tuple
-[warn]    |                                                                    ]:
-[warn]    |                                                                      (
-[warn]    |                                                                        xjdf4s.codec.xml.derivation
-[warn]    |                                                                          .
-[warn]    |                                                                          FieldCodec
-[warn]    |                                                                          [
-[warn]    |                                                                          Vector
-[warn]    |                                                                            [
-[warn]    |                                                                            xjdf4s.model.resources
-[warn]    |                                                                              .
-[warn]    |                                                                              BundleItem
-[warn]    |                                                                            ]
-[warn]    |                                                                        ]
-[warn]    |                                                                       *: Tuple)
-[warn]    |                                                                    }:
-[warn]    |                                                                    (
-[warn]    |                                                                      xjdf4s.codec.xml.derivation
-[warn]    |                                                                        .
-[warn]    |                                                                        FieldCodec
-[warn]    |                                                                        [?]
-[warn]    |                                                                     *: Tuple)
-[warn]    |                                                                }
-[warn]    |                                                              }:Tuple
-[warn]    |                                                            runtime.Tuples.cons(
-[warn]    |                                                              x$1⁷, Tuple_this⁷)
-[warn]    |                                                              .asInstanceOf[
-[warn]    |
-[warn]    |                                                                xjdf4s.codec.xml.derivation
-[warn]    |                                                                  .FieldCodec[
-[warn]    |                                                                  Option[Float]]
-[warn]    |                                                                 *: Tuple
-[warn]    |                                                            ]:
-[warn]    |                                                              (
-[warn]    |                                                                xjdf4s.codec.xml.derivation
-[warn]    |                                                                  .FieldCodec[
-[warn]    |                                                                  Option[Float]]
-[warn]    |                                                                 *: Tuple)
-[warn]    |                                                          }:
-[warn]    |                                                            (
-[warn]    |                                                              xjdf4s.codec.xml.derivation
-[warn]    |                                                                .FieldCodec[?]
-[warn]    |                                                             *: Tuple)
-[warn]    |                                                        }
-[warn]    |                                                      }:Tuple
-[warn]    |                                                    runtime.Tuples.cons(x$1⁶,
-[warn]    |                                                      Tuple_this⁶).asInstanceOf[
-[warn]    |
-[warn]    |                                                        xjdf4s.codec.xml.derivation
-[warn]    |                                                          .FieldCodec[
-[warn]    |                                                          Option[Float]]
-[warn]    |                                                       *: Tuple
-[warn]    |                                                    ]:
-[warn]    |                                                      (
-[warn]    |                                                        xjdf4s.codec.xml.derivation
-[warn]    |                                                          .FieldCodec[
-[warn]    |                                                          Option[Float]]
-[warn]    |                                                       *: Tuple)
-[warn]    |                                                  }:
-[warn]    |                                                    (
-[warn]    |                                                      xjdf4s.codec.xml.derivation
-[warn]    |                                                        .FieldCodec[?]
-[warn]    |                                                     *: Tuple)
-[warn]    |                                                }
-[warn]    |                                              }:Tuple
-[warn]    |                                            runtime.Tuples.cons(x$1⁵,
-[warn]    |                                              Tuple_this⁵).asInstanceOf[
-[warn]    |
-[warn]    |                                                xjdf4s.codec.xml.derivation.
-[warn]    |                                                  FieldCodec[
-[warn]    |                                                  Option[xjdf4s.model.Shape3D]]
-[warn]    |                                               *: Tuple
-[warn]    |                                            ]:
-[warn]    |                                              (
-[warn]    |                                                xjdf4s.codec.xml.derivation.
-[warn]    |                                                  FieldCodec[
-[warn]    |                                                  Option[xjdf4s.model.Shape3D]]
-[warn]    |                                               *: Tuple)
-[warn]    |                                          }:
-[warn]    |                                            (
-[warn]    |                                              xjdf4s.codec.xml.derivation.
-[warn]    |                                                FieldCodec[?]
-[warn]    |                                             *: Tuple)
-[warn]    |                                        }
-[warn]    |                                      }:Tuple
-[warn]    |                                    runtime.Tuples.cons(x$1⁴, Tuple_this⁴).
-[warn]    |                                      asInstanceOf[
-[warn]    |
-[warn]    |                                        xjdf4s.codec.xml.derivation.FieldCodec[
-[warn]    |                                          Option[Int]]
-[warn]    |                                       *: Tuple
-[warn]    |                                    ]:
-[warn]    |                                      (
-[warn]    |                                        xjdf4s.codec.xml.derivation.FieldCodec[
-[warn]    |                                          Option[Int]]
-[warn]    |                                       *: Tuple)
-[warn]    |                                  }:
-[warn]    |                                    (xjdf4s.codec.xml.derivation.FieldCodec[?]
-[warn]    |                                      *: Tuple)
-[warn]    |                                }
-[warn]    |                              }:Tuple
-[warn]    |                            runtime.Tuples.cons(x$1³, Tuple_this³).asInstanceOf[
-[warn]    |
-[warn]    |                                xjdf4s.codec.xml.derivation.FieldCodec[
-[warn]    |                                  Option[xjdf4s.core.XsdIdRef]]
-[warn]    |                               *: Tuple
-[warn]    |                            ]:
-[warn]    |                              (
-[warn]    |                                xjdf4s.codec.xml.derivation.FieldCodec[
-[warn]    |                                  Option[xjdf4s.core.XsdIdRef]]
-[warn]    |                               *: Tuple)
-[warn]    |                          }:(xjdf4s.codec.xml.derivation.FieldCodec[?] *: Tuple)
-[warn]    |                          }
-[warn]    |                      }:Tuple
-[warn]    |                    runtime.Tuples.cons(x$1², Tuple_this²).asInstanceOf[
-[warn]    |
-[warn]    |                        xjdf4s.codec.xml.derivation.FieldCodec[
-[warn]    |                          Option[xjdf4s.model.resources.BundleType]]
-[warn]    |                       *: Tuple
-[warn]    |                    ]:
-[warn]    |                      (
-[warn]    |                        xjdf4s.codec.xml.derivation.FieldCodec[
-[warn]    |                          Option[xjdf4s.model.resources.BundleType]]
-[warn]    |                       *: Tuple)
-[warn]    |                  }:(xjdf4s.codec.xml.derivation.FieldCodec[?] *: Tuple)
-[warn]    |                }
-[warn]    |              }:Tuple
-[warn]    |            runtime.Tuples.cons(x$1, Tuple_this).asInstanceOf[
-[warn]    |              xjdf4s.codec.xml.derivation.FieldCodec[Int] *: Tuple]:
-[warn]    |              (xjdf4s.codec.xml.derivation.FieldCodec[Int] *: Tuple)
-[warn]    |          }:(xjdf4s.codec.xml.derivation.FieldCodec[?] *: Tuple)
-[warn]    |        }
-[warn]    |      }:Tuple
-[warn]    |    new
-[warn]    |
-[warn]    |        xjdf4s.codec.xml.derivation.DerivedCodec[
-[warn]    |          xjdf4s.model.resources.BundleItem]
-[warn]    |
-[warn]    |    (m$proxy42, labels, codecs,
-[warn]    |      xjdf4s.codec.xml.derivation.Names.elementName("BundleItem"),
-[warn]    |      xjdf4s.codec.xml.derivation.Defaults.of(ct$proxy42))
-[warn]    |  }:xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.BundleItem]
-[warn]    |}
-[warn]    |
-[warn]    |where:    Tuple_this  is a value in the initializer of value codecs
-[warn]    |          Tuple_this² is a value in the initializer of value Tuple_this
-[warn]    |          Tuple_this³ is a value in the initializer of value Tuple_this²
-[warn]    |          Tuple_this⁴ is a value in the initializer of value Tuple_this³
-[warn]    |          Tuple_this⁵ is a value in the initializer of value Tuple_this⁴
-[warn]    |          Tuple_this⁶ is a value in the initializer of value Tuple_this⁵
-[warn]    |          Tuple_this⁷ is a value in the initializer of value Tuple_this⁶
-[warn]    |          Tuple_this⁸ is a value in the initializer of value Tuple_this⁷
-[warn]    |          Tuple_this⁹ is a value in the initializer of value Tuple_this⁸
-[warn]    |          apply       is a method in object ClassTag
-[warn]    |          apply²      is a method in object Tuple9
-[warn]    |          x$1         is a value in the initializer of value codecs
-[warn]    |          x$1²        is a value in the initializer of value Tuple_this
-[warn]    |          x$1³        is a value in the initializer of value Tuple_this²
-[warn]    |          x$1⁴        is a value in the initializer of value Tuple_this³
-[warn]    |          x$1⁵        is a value in the initializer of value Tuple_this⁴
-[warn]    |          x$1⁶        is a value in the initializer of value Tuple_this⁵
-[warn]    |          x$1⁷        is a value in the initializer of value Tuple_this⁶
-[warn]    |          x$1⁸        is a value in the initializer of value Tuple_this⁷
-[warn]    |          x$1⁹        is a value in the initializer of value Tuple_this⁸
-[error] No warnings can be incurred under -Werror
-[warn] one warning found
-[error] one error found
-[error] (codecXml / Compile / compileIncremental) Compilation failed
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:28:50
+[error] 28 |    assert(roundTrip(MediaIntent(MediaType.Paper)) == MediaIntent(MediaType.Paper))
+[error]    |                                                  ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.MediaIntent] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecMediaIntent in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:29:63
+[error] 29 |    assert(roundTrip(LaminatingIntent(LaminatedSurfaces.Front)) == LaminatingIntent(LaminatedSurfaces.Front))
+[error]    |                                                               ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.LaminatingIntent] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecLaminatingIntent in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:30:74
+[error] 30 |    assert(roundTrip(LayoutIntent(pages = EvenPageCount.from(8).toOption)) == LayoutIntent(pages = EvenPageCount.from(8).toOption))
+[error]    |                                                                          ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.LayoutIntent] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecLayoutIntent in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:32:33
+[error] 32 |    assert(roundTrip(colorIntent) == colorIntent)
+[error]    |                                 ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.ColorIntent] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance colorIntentCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:39:27
+[error] 39 |    assert(roundTrip(value) == value)
+[error]    |                           ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.BindingIntent] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance bindingIntentCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:41:30
+[error] 41 |    assert(roundTrip(stitched) == stitched)
+[error]    |                              ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.BindingIntent] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance bindingIntentCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:49:28
+[error] 49 |    assert(roundTrip(device) == device)
+[error]    |                            ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.Device] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance deviceCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:51:34
+[error] 51 |    assert(roundTrip(verification) == verification)
+[error]    |                                  ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.VerificationResult] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecVerificationResult in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:55:25
+[error] 55 |    assert(roundTrip(tag) == tag)
+[error]    |                         ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.TiffTag] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance tiffTagCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:57:27
+[error] 57 |    assert(roundTrip(patch) == patch)
+[error]    |                           ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.Patch] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance patchCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:60:63
+[error] 60 |    assert(roundTrip(RunList(pages = Some(IntegerRange(0, 9)))) == RunList(pages = Some(IntegerRange(0, 9))))
+[error]    |                                                               ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.RunList] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecRunList in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:61:63
+[error] 61 |    assert(roundTrip(RegisterMark(center = Some(XYPair(1, 2)))) == RegisterMark(center = Some(XYPair(1, 2))))
+[error]    |                                                               ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.RegisterMark] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecRegisterMark in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:63:30
+[error] 63 |    assert(roundTrip(assembly) == assembly)
+[error]    |                              ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.Assembly] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance assemblyCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:65:30
+[error] 65 |    assert(roundTrip(delivery) == delivery)
+[error]    |                              ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.resources.DeliveryParams] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecDeliveryParams in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:73:28
+[error] 73 |    assert(roundTrip(modify) == modify)
+[error]    |                            ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.messaging.ModifyQueueEntryParams] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance modifyQueueEntryParamsCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:75:34
+[error] 75 |    assert(roundTrip(signalStatus) == signalStatus)
+[error]    |                                  ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.messaging.SignalStatus] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance signalStatusCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:79:34
+[error] 79 |    assert(roundTrip(knownDevices) == knownDevices)
+[error]    |                                  ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.messaging.QueryKnownDevices] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecQueryKnownDevices in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:81:34
+[error] 81 |    assert(roundTrip(notification) == notification)
+[error]    |                                  ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.messaging.SignalNotification] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecSignalNotification in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:86:31
+[error] 86 |    assert(roundTrip(knownSubs) == knownSubs)
+[error]    |                               ^
+[error]    |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.messaging.ResponseKnownSubscriptions] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]    |
+[error]    |Note: given instance derivedCodecResponseKnownSubscriptions in
+[error]    |  package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:102:37
+[error] 102 |    val decoded = roundTrip(document)
+[error]     |                                     ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.model.XJDF] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]     |
+[error]     |Note: given instance xjdfCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-xml/src/test/scala/xjdf4s/codec/xml/DerivedRoundTripChecks.scala:109:33
+[error] 109 |    val decoded = roundTrip(xjmf)
+[error]     |                                 ^
+[error]     |No given instance of type xjdf4s.codec.xml.XmlElementCodec[xjdf4s.messaging.XJMF] was found for a context parameter of method roundTrip in object DerivedRoundTripChecks
+[error]     |
+[error]     |Note: given instance xjmfCodec in package xjdf4s.codec.xml.domain was not considered because it was not imported with `import given`.
+[error] stack trace is suppressed; run last codecXml / Test / compileIncremental for the full output
+[error] (codecXml / Test / compileIncremental) sbt.util.CachedCompileFailure$$anon$1: Compilation failed
+[error] elapsed time: 3 s, cache 100%, 1 cached-failure cache hit, 152 disk cache hits
