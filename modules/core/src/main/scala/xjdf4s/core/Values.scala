@@ -1,5 +1,7 @@
 package xjdf4s.core
 
+import cats.{Eq, Hash, Show}
+
 enum Version(val lexical: String) derives CanEqual:
   case V2_0 extends Version("2.0")
   case V2_1 extends Version("2.1")
@@ -52,4 +54,8 @@ final case class Matrix(a: Double, b: Double, c: Double, d: Double, e: Double, f
 
 object Matrix:
   val identity: Matrix = Matrix(1, 0, 0, 1, 0, 0)
+
+  given Eq[Matrix] = Eq.fromUniversalEquals
+  given Show[Matrix] = Show.show(matrix => s"${matrix.a} ${matrix.b} ${matrix.c} ${matrix.d} ${matrix.e} ${matrix.f}")
+  given Hash[Matrix] = Hash.fromUniversalHashCode
 end Matrix

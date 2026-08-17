@@ -15,11 +15,13 @@
 
 ## Карта этапов
 
+> Статус: этапы 01–03 выполнены; этапы 04–08 — план. Детали дизайна — в `docs/`.
+
 | # | Этап | Ключевые средства cats | Модуль(и) | Зависит от |
 |---:|---|---|---|---|
-| 01 | [cats-основы: инстансы и законы типов](01-cats-foundations.md) | `Eq`, `Show`, `Hash`, `Semigroup`, `Monoid`, kittens, `cats-laws` | `core`, `model` | — |
-| 02 | [Валидация на Validated и NonEmptyChain](02-validation-dsl.md) | `Validated`, `ValidatedNel`, `NonEmptyChain`, `Ior`, `Traverse`, `Parallel` | `core`, `model` | 01 |
-| 03 | [DSL конструирования документов на Free](03-free-construction-dsl.md) | `Free`, `FreeApplicative`, `FunctionK`, `State`, `Const`, `Writer`, `Id` | новый `dsl` | 01, 02 |
+| 01 ✅ | [cats-основы: инстансы и законы типов](01-cats-foundations.md) | `Eq`, `Show`, `Hash`, `Semigroup`, `Monoid` | `core`, `model` | — |
+| 02 ✅ | [Валидация на Validated и NonEmptyChain](02-validation-dsl.md) | `Validated`, `ValidatedNel`, `NonEmptyChain`, `Traverse`, `Ior` | `core`, `model` | 01 |
+| 03 ✅ | [DSL конструирования документов на Free](03-free-construction-dsl.md) | `Free`, `FunctionK`, `State`, `Writer` | `dsl` | 01, 02 |
 | 04 | [XML-кодек](04-xml-codec.md) | `Kleisli`, `Either`, `ValidatedNel`, cats-parse | новый `codec-xml` | 01, 02 |
 | 05 | [JSON-кодек и JSON-исключения](05-json-codec.md) | circe, `Kleisli`, `Validated` | новый `codec-json` | 04 |
 | 06 | [XJMF-транспорт: каналы и сессии](06-xjmf-transport.md) | `Free`, `State`, `Chain`, `Writer`, `Eval` | новый `xjmf` | 03 |
@@ -63,10 +65,12 @@
    munit 1.3.5, http4s 0.23.x); актуальные версии смотрите на Maven Central / mvnrepository,
    в песочнице сеть может быть недоступна.
 
-## Текущее состояние (точка старта)
+## Текущее состояние
 
-- 4 модуля: `core`, `model`, `messaging`, `protocol`; сборка и 4 munit-сюита зелёные
+- Этапы 01–03 выполнены: cats-инстансы (core/model), валидация на `ValidatedNel` с путями и
+  предупреждениями, модуль `dsl` с Free-алгеброй и тремя интерпретаторами.
+- Модули: `core`, `model`, `messaging`, `protocol`, `dsl`; сборка и munit-сюиты зелёные
   (`sbt "clean ; compile ; test"`, Scala 3.8.4, sbt 2.0.0, `-Werror`, `-Wunused:all`, `-Yexplicit-nulls`).
 - Модель: 102 стандартных ресурса, 14 product intents, 44 XJMF-сообщения, открытые extension-точки;
   smart-конструкторы для скаляров, `ValidatedNode#validate` для межполевых SHALL-ограничений.
-- Слои DSL, кодеков и транспорта отсутствуют — это и есть содержание дорожной карты.
+- Этапы 04–08 — план.

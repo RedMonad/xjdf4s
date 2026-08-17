@@ -1,5 +1,7 @@
 package xjdf4s.model
 
+import cats.{Eq, Hash, Show}
+
 import xjdf4s.core.*
 
 final case class Certification(
@@ -52,7 +54,20 @@ final case class LaminatingIntent(
   val elementName: QualifiedName = XjdfNames.element("LaminatingIntent")
 
 final case class Shape3D(width: Double, height: Double, depth: Double) derives CanEqual
+
+object Shape3D:
+  given Eq[Shape3D] = Eq.fromUniversalEquals
+  given Show[Shape3D] = Show.show(shape => s"${shape.width} ${shape.height} ${shape.depth}")
+  given Hash[Shape3D] = Hash.fromUniversalHashCode
+end Shape3D
+
 final case class GridSize(columns: Int, rows: Int) derives CanEqual
+
+object GridSize:
+  given Eq[GridSize] = Eq.fromUniversalEquals
+  given Show[GridSize] = Show.show(grid => s"${grid.columns} ${grid.rows}")
+  given Hash[GridSize] = Hash.fromUniversalHashCode
+end GridSize
 
 opaque type EvenPageCount = Int
 object EvenPageCount:

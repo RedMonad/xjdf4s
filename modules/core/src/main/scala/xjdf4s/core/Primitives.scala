@@ -5,6 +5,8 @@ import java.time.OffsetDateTime
 
 import scala.util.Try
 
+import cats.{Eq, Hash, Show}
+
 private def nonBlank(field: String, value: String): Either[ValidationError, String] =
   Either.cond(value.trim.nonEmpty, value, ValidationError.EmptyValue(field))
 
@@ -21,6 +23,10 @@ object Nmtoken:
       )
 
   extension (value: Nmtoken) def value: String = value
+
+  given Eq[Nmtoken] = Eq.by(_.value)
+  given Show[Nmtoken] = Show.show(_.value)
+  given Hash[Nmtoken] = Hash.by(_.value)
 end Nmtoken
 
 opaque type XsdId = String
@@ -36,6 +42,10 @@ object XsdId:
       )
 
   extension (value: XsdId) def value: String = value
+
+  given Eq[XsdId] = Eq.by(_.value)
+  given Show[XsdId] = Show.show(_.value)
+  given Hash[XsdId] = Hash.by(_.value)
 end XsdId
 
 /**
@@ -57,6 +67,10 @@ object XsdIdRef:
       )
 
   extension (value: XsdIdRef) def value: String = value
+
+  given Eq[XsdIdRef] = Eq.by(_.value)
+  given Show[XsdIdRef] = Show.show(_.value)
+  given Hash[XsdIdRef] = Hash.by(_.value)
 end XsdIdRef
 
 opaque type UriRef = URI
@@ -66,6 +80,10 @@ object UriRef:
       ValidationError.InvalidValue("URL", value, "a URI reference")
 
   extension (value: UriRef) def value: URI = value
+
+  given Eq[UriRef] = Eq.fromUniversalEquals
+  given Show[UriRef] = Show.show(_.value.toString)
+  given Hash[UriRef] = Hash.fromUniversalHashCode
 end UriRef
 
 opaque type LanguageTag = String
@@ -80,6 +98,10 @@ object LanguageTag:
     )
 
   extension (value: LanguageTag) def value: String = value
+
+  given Eq[LanguageTag] = Eq.by(_.value)
+  given Show[LanguageTag] = Show.show(_.value)
+  given Hash[LanguageTag] = Hash.by(_.value)
 end LanguageTag
 
 /**
@@ -103,6 +125,10 @@ object XjdfString:
     )
 
   extension (value: XjdfString) def value: String = value
+
+  given Eq[XjdfString] = Eq.by(_.value)
+  given Show[XjdfString] = Show.show(_.value)
+  given Hash[XjdfString] = Hash.by(_.value)
 end XjdfString
 
 opaque type XsdDateTime = String
@@ -121,6 +147,10 @@ object XsdDateTime:
     )
 
   extension (value: XsdDateTime) def value: String = value
+
+  given Eq[XsdDateTime] = Eq.by(_.value)
+  given Show[XsdDateTime] = Show.show(_.value)
+  given Hash[XsdDateTime] = Hash.by(_.value)
 end XsdDateTime
 
 opaque type XsdDuration = String
@@ -137,6 +167,10 @@ object XsdDuration:
     )
 
   extension (value: XsdDuration) def value: String = value
+
+  given Eq[XsdDuration] = Eq.by(_.value)
+  given Show[XsdDuration] = Show.show(_.value)
+  given Hash[XsdDuration] = Hash.by(_.value)
 end XsdDuration
 
 /** The normative 0..100 integer priority used by Disposition, NodeInfo, GangElement and queue entries. */
@@ -150,4 +184,8 @@ object Priority0To100:
     )
 
   extension (value: Priority0To100) def value: Int = value
+
+  given Eq[Priority0To100] = Eq.by(_.value)
+  given Show[Priority0To100] = Show.show(_.value.toString)
+  given Hash[Priority0To100] = Hash.by(_.value)
 end Priority0To100

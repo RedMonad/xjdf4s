@@ -44,6 +44,8 @@ val doc = XJDF(
 - `reference/cats/docs/datatypes/functionk.md` — натуральные преобразования `~>`;
 - `reference/cats/docs/datatypes/state.md`, `datatypes/const.md`, `datatypes/writer.md`,
   `datatypes/id.md` — целевые типы интерпретаторов;
+- **`docs/fp-glossary.md`** — глоссарий FP-понятий этого этапа (Functor/Applicative/Monad, Free,
+  State/Writer, интерпретатор) для читателей без FP-подготовки;
 - теория (по желанию): `reference/category-theory/Part 3 – free-forgetful-adjunctions.md`,
   `Part 3 – f-algebras.md`.
 

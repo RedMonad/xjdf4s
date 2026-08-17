@@ -1,5 +1,7 @@
 package xjdf4s.model
 
+import cats.{Eq, Hash, Show}
+
 import xjdf4s.core.*
 
 enum PreflightLevel derives CanEqual:
@@ -29,6 +31,10 @@ object IntegerRange:
       IntegerRange(first, last),
       ValidationError.InvalidValue("IntegerRange", s"$first $last", "a range whose first value does not exceed its last"),
     )
+
+  given Eq[IntegerRange] = Eq.fromUniversalEquals
+  given Show[IntegerRange] = Show.show(range => s"${range.first} ${range.last}")
+  given Hash[IntegerRange] = Hash.fromUniversalHashCode
 end IntegerRange
 
 final case class ProofItem(
@@ -52,6 +58,13 @@ final case class ContentCheckIntent(
   val elementName: QualifiedName = XjdfNames.element("ContentCheckIntent")
 
 final case class Rectangle(lowerLeft: XYPair, upperRight: XYPair) derives CanEqual
+
+object Rectangle:
+  given Eq[Rectangle] = Eq.fromUniversalEquals
+  given Show[Rectangle] = Show.show(rectangle =>
+    s"${rectangle.lowerLeft.x} ${rectangle.lowerLeft.y} ${rectangle.upperRight.x} ${rectangle.upperRight.y}")
+  given Hash[Rectangle] = Hash.fromUniversalHashCode
+end Rectangle
 
 enum CutDepth derives CanEqual:
   case Full, Partial

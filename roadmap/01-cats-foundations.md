@@ -38,28 +38,22 @@
 
 ## Дизайн
 
-### 1. Зависимости
+### 1. Зависимости (состояние после выполнения)
 
 ```scala
 // build.sbt
+val catsVersion = "2.12.0"
 ThisBuild / libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats-core" % "2.x",          // актуальную 2.x сверь с Maven Central
-  "org.typelevel" %% "kittens"   % "3.x" % Test    // деривация инстансов для case class
+  "org.typelevel" %% "cats-core" % catsVersion,
+  "org.scalameta" %% "munit" % "1.3.5" % Test
 )
 ```
 
-kittens умеет `derives` для cats-инстансов в Scala 3:
-
-```scala
-import cats.derived.*
-import cats.{Eq, Show, Hash}
-
-final case class IntegerRange(first: Int, last: Int) derives Eq, Show, Hash
-```
-
-Политика: **деривация по умолчанию, ручные инстансы там, где семантика важна**.
-Пример ручного инстанса — `Eq` для чисел с плавающей точкой, где точное равенство опасно,
-или `Show` для `ValidationError`, который должен давать стабильные тексты ошибок.
+Этап выполнен без kittens: типов, которым нужны инстансы, немного, поэтому инстансы написаны вручную
+рядом с типами (companions в `core`/`model`). Массовая деривация (kittens `derives`) остаётся за этапом 08,
+где она и окупается. Политика сохраняется: **ручные инстансы там, где семантика важна** — например,
+сравнение чисел с плавающей точкой в кодек-тестах должно идти с допуском (см. «Законы» в
+`docs/fp-glossary.md`), а `Show[ValidationError]` задаёт стабильные тексты ошибок.
 
 ### 2. Инстансы для opaque-типов
 
@@ -108,13 +102,10 @@ given Monoid[Extensions] with
 4. Ручной `Show` для `ValidationError` (все 9 case'ов с человекочитаемым текстом) и `Eq` для него же.
 5. `Monoid[Extensions]` + `Semigroup` для `Map[QualifiedName, ExtensionValue]`; тест
    right-biased слияния и пустоты.
-6. Smoke-законы: подключите `cats-laws` в `Test` и прогоните законы `Eq`/`Hash`/`Monoid` на
-   2–3 представителях (шаблон — `reference/cats/docs/typeclasses/lawtesting.md`):
-
-```scala
-class ExtensionsLaws extends munit.DisciplineSuite:
-  checkAll("Monoid[Extensions]", MonoidTests[Extensions].monoid)
-```
+6. Smoke-законы (выполнено без discipline): ручные проверки законов `Monoid`
+   (left/right identity, ассоциативность, right-biased слияние) и согласованность `Eq`/`Hash`/`Show` —
+   см. `CatsInstanceChecks` в core-тестах. Полный прогон законов через `cats-laws` + discipline
+   запланирован на этапе 08 (шаблон — `reference/cats/docs/typeclasses/lawtesting.md`).
 
 ## Definition of Done
 
@@ -122,7 +113,7 @@ class ExtensionsLaws extends munit.DisciplineSuite:
 - [ ] Инстансы `Eq`/`Show`/`Hash` существуют для всех opaque-типов и малых value-типов.
 - [ ] `Show[ValidationError]` даёт стабильные, читаемые сообщения (покрыт тестом).
 - [ ] `Monoid[Extensions]` покрыт тестами (empty, assoc, right-biased merge).
-- [ ] Smoke-законы (`Eq`, `Monoid`) зелёные через discipline/munit.
+- [x] Ручные smoke-законы (`Monoid` Extensions, `Eq`/`Hash` согласованность) зелёные; discipline — на этапе 08.
 - [ ] Политика импортов зафиксирована в комментарии/PR-описании (по `imports.md`).
 
 ## Риски и альтернативы

@@ -1,5 +1,7 @@
 package xjdf4s.core
 
+import cats.{Eq, Hash, Monoid, Semigroup, Show}
+
 /** The XJDF/XJMF schema target namespace, shared by the standard element names in the model and messaging modules. */
 object XjdfNamespace:
   val uri: String = "http://www.CIP4.org/JDFSchema_2_0"
@@ -21,6 +23,15 @@ object QualifiedName:
         ValidationError.EmptyValue("localName"),
       )
     yield QualifiedName(ns, ln, prefix)
+
+  given Eq[QualifiedName] = Eq.fromUniversalEquals
+
+  given Show[QualifiedName] = Show.show: name =>
+    name.prefix match
+      case Some(prefix) => s"$prefix:${name.localName}"
+      case None         => s"${name.namespace}:${name.localName}"
+
+  given Hash[QualifiedName] = Hash.fromUniversalHashCode
 end QualifiedName
 
 /**
@@ -51,6 +62,10 @@ object ForeignQName:
     def localName: String = name.localName
     def prefix: Option[String] = name.prefix
     def qualifiedName: QualifiedName = name
+
+  given Eq[ForeignQName] = Eq.by(_.qualifiedName)
+  given Show[ForeignQName] = Show.show(name => Show[QualifiedName].show(name.qualifiedName))
+  given Hash[ForeignQName] = Hash.by(_.qualifiedName)
 end ForeignQName
 
 enum ExtensionValue derives CanEqual:
@@ -98,6 +113,21 @@ final case class Extensions(
 
 object Extensions:
   val empty: Extensions = Extensions()
+
+  /** Right-biased merge: on a conflicting attribute key the right-hand side wins; elements are concatenated. */
+  given ExtensionsSemigroup: Semigroup[Extensions] with
+    def combine(left: Extensions, right: Extensions): Extensions =
+      Extensions(
+        attributes = left.attributes ++ right.attributes,
+        elements = left.elements ++ right.elements,
+      )
+  end ExtensionsSemigroup
+
+  given ExtensionsMonoid: Monoid[Extensions] with
+    def empty: Extensions = Extensions.empty
+    def combine(left: Extensions, right: Extensions): Extensions =
+      ExtensionsSemigroup.combine(left, right)
+  end ExtensionsMonoid
 end Extensions
 
 trait XjdfNode

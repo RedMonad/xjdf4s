@@ -67,7 +67,12 @@ class ModelChecksSuite extends munit.FunSuite:
       ConsolidatedAuditChecks.priorityCarriers,
       ConsolidatedAuditChecks.conditionPartContextIsList,
       ConsolidatedAuditChecks.integerProcessIndices,
+      ModelInstanceChecks.valueTypeInstances,
+      ValidationDslChecks.accumulatedDocumentValidation,
+      ValidationDslChecks.pathThreading,
+      ValidationDslChecks.deprecationWarnings,
+      ValidationDslChecks.twoChannelOutcome,
     )
-    assert(results.size == 63)
+    assert(results.size == 68)
   }
 end ModelChecksSuite

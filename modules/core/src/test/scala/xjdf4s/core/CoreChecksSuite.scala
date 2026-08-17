@@ -13,7 +13,11 @@ class CoreChecksSuite extends munit.FunSuite:
       PrimitiveValueChecks.durationRequiresAtLeastOneComponent,
       PrimitiveValueChecks.foreignNamesRejectStandardNamespace,
       PrimitiveValueChecks.extensionContentPreservesOrder,
+      CatsInstanceChecks.extensionMonoidLaws,
+      CatsInstanceChecks.eqShowHashSmoke,
+      ValidationDslCoreChecks.accumulatingVector,
+      ValidationDslCoreChecks.validationOutcome,
     )
-    assert(results.size == 9)
+    assert(results.size == 13)
   }
 end CoreChecksSuite

@@ -1,5 +1,7 @@
 package xjdf4s.model
 
+import cats.{Eq, Hash, Show}
+
 import xjdf4s.core.ValidationError
 
 /**
@@ -183,6 +185,11 @@ object LabColor:
     def lightness: Double = color._1
     def a: Double = color._2
     def b: Double = color._3
+
+  given Eq[LabColor] = Eq.instance: (left, right) =>
+    left.lightness == right.lightness && left.a == right.a && left.b == right.b
+  given Show[LabColor] = Show.show(color => s"${color.lightness} ${color.a} ${color.b}")
+  given Hash[LabColor] = Hash.fromUniversalHashCode
 end LabColor
 
 /**
@@ -211,6 +218,12 @@ object CmykColor:
     def magenta: Double = color._2
     def yellow: Double = color._3
     def black: Double = color._4
+
+  given Eq[CmykColor] = Eq.instance: (left, right) =>
+    left.cyan == right.cyan && left.magenta == right.magenta &&
+      left.yellow == right.yellow && left.black == right.black
+  given Show[CmykColor] = Show.show(color => s"${color.cyan} ${color.magenta} ${color.yellow} ${color.black}")
+  given Hash[CmykColor] = Hash.fromUniversalHashCode
 end CmykColor
 
 /**
@@ -237,4 +250,9 @@ object SrgbColor:
     def red: Double = color._1
     def green: Double = color._2
     def blue: Double = color._3
+
+  given Eq[SrgbColor] = Eq.instance: (left, right) =>
+    left.red == right.red && left.green == right.green && left.blue == right.blue
+  given Show[SrgbColor] = Show.show(color => s"${color.red} ${color.green} ${color.blue}")
+  given Hash[SrgbColor] = Hash.fromUniversalHashCode
 end SrgbColor

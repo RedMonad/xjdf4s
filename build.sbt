@@ -1,4 +1,5 @@
 val scala3Version = "3.8.4"
+val catsVersion = "2.12.0"
 
 scalaVersion := scala3Version
 organization := "io.github.redmonad"
@@ -13,7 +14,10 @@ scalacOptions ++= Seq(
   "-Yexplicit-nulls"
 )
 
-ThisBuild / libraryDependencies += "org.scalameta" %% "munit" % "1.3.5" % Test
+ThisBuild / libraryDependencies ++= Seq(
+  "org.typelevel" %% "cats-core" % catsVersion,
+  "org.scalameta" %% "munit" % "1.3.5" % Test
+)
 
 lazy val core = project
   .in(file("modules/core"))
@@ -34,8 +38,16 @@ lazy val protocol = project
   .dependsOn(model, messaging)
   .settings(name := "xjdf4s-protocol")
 
+lazy val dsl = project
+  .in(file("modules/dsl"))
+  .dependsOn(model)
+  .settings(
+    name := "xjdf4s-dsl",
+    libraryDependencies += "org.typelevel" %% "cats-free" % catsVersion
+  )
+
 lazy val root = rootProject
-  .aggregate(core, model, messaging, protocol)
+  .aggregate(core, model, messaging, protocol, dsl)
   .settings(
     name := "xjdf4s",
     publish / skip := true,
