@@ -1,37 +1,1078 @@
-[info] compiling 26 Scala sources to /Users/black-monad/Projects/xjdf4s/target/out/jvm/scala-3.8.4/xjdf4s-codec-xml/classes ...
-[info] done compiling
-[info] compiling 5 Scala sources to /Users/black-monad/Projects/xjdf4s/target/out/jvm/scala-3.8.4/xjdf4s-codec-json/test-classes ...
-[info] compiling 11 Scala sources to /Users/black-monad/Projects/xjdf4s/target/out/jvm/scala-3.8.4/xjdf4s-codec-xml/test-classes ...
-[info] done compiling
-[info] done compiling
-[success] elapsed time: 9 s, cache 95%, 178 disk cache hits, 8 onsite tasks
-[IJ]testFull
-Test run xjdf4s.core.CoreChecksSuite started
-xjdf4s.core.CoreChecksSuite: finished 0.109s
-Test run xjdf4s.core.CoreChecksSuite finished: 0 failed, 0 ignored, 1 total 0.111s
-[info] Passed: Total 1, Failed 0, Errors 0, Passed 1
-Test run xjdf4s.ProtocolChecksSuite started
-xjdf4s.ProtocolChecksSuite: finished 0.029s
-Test run xjdf4s.ProtocolChecksSuite finished: 0 failed, 0 ignored, 1 total 0.034s
-[info] Passed: Total 1, Failed 0, Errors 0, Passed 1
-Test run xjdf4s.messaging.MessagingChecksSuite started
-xjdf4s.messaging.MessagingChecksSuite: finished 0.061s
-Test run xjdf4s.messaging.MessagingChecksSuite finished: 0 failed, 0 ignored, 1 total 0.067s
-[info] Passed: Total 1, Failed 0, Errors 0, Passed 1
-Test run xjdf4s.dsl.DocDslChecksSuite started
-xjdf4s.dsl.DocDslChecksSuite: finished 0.294s
-Test run xjdf4s.dsl.DocDslChecksSuite finished: 0 failed, 0 ignored, 1 total 0.298s
-[info] Passed: Total 1, Failed 0, Errors 0, Passed 1
-Test run xjdf4s.model.ModelChecksSuite started
-xjdf4s.model.ModelChecksSuite: finished 0.428s
-Test run xjdf4s.model.ModelChecksSuite finished: 0 failed, 0 ignored, 1 total 0.431s
-[info] Passed: Total 1, Failed 0, Errors 0, Passed 1
-Test run xjdf4s.codec.xml.CodecChecksSuite started
-xjdf4s.codec.xml.CodecChecksSuite: finished 0.846s
-Test run xjdf4s.codec.xml.CodecChecksSuite finished: 0 failed, 0 ignored, 1 total 0.848s
-[info] Passed: Total 1, Failed 0, Errors 0, Passed 1
-Test run xjdf4s.codec.json.JsonChecksSuite started
-xjdf4s.codec.json.JsonChecksSuite: finished 0.922s
-Test run xjdf4s.codec.json.JsonChecksSuite finished: 0 failed, 0 ignored, 1 total 0.925s
-[info] Passed: Total 1, Failed 0, Errors 0, Passed 1
-[success] elapsed time: 1 s, cache 96%, 246 disk cache hits, 9 onsite tasks
+[error] -- [E046] Cyclic Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:29:8
+[error] 29 |  given Decoder[ProcessRun] = Decoder.instance(cursor =>
+[error]    |        ^
+[error]    |        Cyclic reference involving val <import>
+[error]    |
+[error]    |         Run with -explain-cyclic for more details.
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E046] Cyclic Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:15:8
+[error] 15 |  given Encoder[ProcessRun] = Encoder.instance(processRun =>
+[error]    |        ^
+[error]    |        Cyclic reference involving val <import>
+[error]    |
+[error]    |         Run with -explain-cyclic for more details.
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E046] Cyclic Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:83:8
+[error] 83 |  given Decoder[AuditPool] = Decoder.instance(cursor =>
+[error]    |        ^
+[error]    |        Cyclic reference involving val <import>
+[error]    |
+[error]    |         Run with -explain-cyclic for more details.
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E046] Cyclic Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:82:8
+[error] 82 |  given Encoder[AuditPool] = Encoder.instance(pool => Json.arr(pool.audits.map(encodeAudit)*))
+[error]    |        ^
+[error]    |        Cyclic reference involving val <import>
+[error]    |
+[error]    |         Run with -explain-cyclic for more details.
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:18:68
+[error] 18 |        Vector(JsonHelpers.member("End", Json.fromString(processRun.end.value))),
+[error]    |                                                         ^^^^^^^^^^^^^^
+[error]    |                                        value end is not a member of Any
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:19:74
+[error] 19 |        Vector(JsonHelpers.member("EndStatus", Json.fromString(processRun.endStatus.toString))),
+[error]    |                                                               ^^^^^^^^^^^^^^^^^^^^
+[error]    |                                  value endStatus is not a member of Any
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:20:70
+[error] 20 |        Vector(JsonHelpers.member("Start", Json.fromString(processRun.start.value))),
+[error]    |                                                           ^^^^^^^^^^^^^^^^
+[error]    |                                      value start is not a member of Any
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:21:53
+[error] 21 |        JsonHelpers.optMember("Duration", processRun.duration),
+[error]    |                                          ^^^^^^^^^^^^^^^^^^^
+[error]    |                                   value duration is not a member of Any
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:22:57
+[error] 22 |        JsonHelpers.optMember("QueueEntryID", processRun.queueEntryId),
+[error]    |                                              ^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |                               value queueEntryId is not a member of Any
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:23:55
+[error] 23 |        JsonHelpers.optMember("ReturnTime", processRun.returnTime),
+[error]    |                                            ^^^^^^^^^^^^^^^^^^^^^
+[error]    |                                 value returnTime is not a member of Any
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:24:59
+[error] 24 |        JsonHelpers.optMember("SubmissionTime", processRun.submissionTime),
+[error]    |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |                             value submissionTime is not a member of Any
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:25:49
+[error] 25 |        JsonHelpers.vecMember("Part", processRun.parts),
+[error]    |                                      ^^^^^^^^^^^^^^^^
+[error]    |                                      value parts is not a member of Any
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonAuditCodecs.scala:82:68
+[error] 82 |  given Encoder[AuditPool] = Encoder.instance(pool => Json.arr(pool.audits.map(encodeAudit)*))
+[error]    |                                                               ^^^^^^^^^^^
+[error]    |                                     value audits is not a member of Any
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:22:56
+[error] 22 |        JsonHelpers.optMember("GlueType", glue.glueType),
+[error]    |                                                        ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.GlueType] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:23:82
+[error] 23 |        JsonHelpers.optMember("GluingPattern", glue.gluingPattern.map(_.toVector)),
+[error]    |                                                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Encoder_Vector in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[Vector[Float]] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:24:70
+[error] 24 |        JsonHelpers.optMember("GluingTechnique", glue.gluingTechnique),
+[error]    |                                                                      ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.GluingTechnique] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:26:66
+[error] 26 |        JsonHelpers.optMember("StartPosition", glue.startPosition),
+[error]    |                                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XYPair in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.XYPair] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:27:72
+[error] 27 |        JsonHelpers.optMember("WorkingDirection", glue.workingDirection),
+[error]    |                                                                        ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Face] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:28:62
+[error] 28 |        JsonHelpers.optMember("WorkingPath", glue.workingPath),
+[error]    |                                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XYPair in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.XYPair] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:21:54
+[error] 21 |        JsonHelpers.optMember("GlueRef", glue.glueRef),
+[error]    |                                                      ^
+[error]    |Ambiguous given instances: both given instance given_Encoder_XsdIdRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdIdRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:36:61
+[error] 36 |      glueRef <- JsonHelpers.opt[XsdIdRef](cursor, "GlueRef")
+[error]    |                                                             ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_XsdIdRef in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.XsdIdRef] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:66:70
+[error] 66 |        JsonHelpers.optMember("Illumination", conditions.illumination),
+[error]    |                                                                      ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:68:62
+[error] 68 |        JsonHelpers.optMember("InkState", conditions.inkState),
+[error]    |                                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.InkState] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:70:80
+[error] 70 |        JsonHelpers.optMember("MeasurementFilter", conditions.measurementFilter),
+[error]    |                                                                                ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.MeasurementFilter] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:71:76
+[error] 71 |        JsonHelpers.optMember("MeasurementMode", conditions.measurementMode),
+[error]    |                                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:73:72
+[error] 73 |        JsonHelpers.optMember("SampleBacking", conditions.sampleBacking),
+[error]    |                                                                        ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.SampleBacking] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:75:64
+[error] 75 |        JsonHelpers.optMember("WhiteBase", conditions.whiteBase),
+[error]    |                                                                ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.WhiteBase] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:65:76
+[error] 65 |        JsonHelpers.optMember("DensityStandard", conditions.densityStandard),
+[error]    |                                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:82:76
+[error] 82 |      densityStandard <- JsonHelpers.opt[Nmtoken](cursor, "DensityStandard")
+[error]    |                                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:116:75
+[error] 116 |        JsonHelpers.optMember("BackCoatingDetail", media.backCoatingDetail),
+[error]     |                                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:118:83
+[error] 118 |        JsonHelpers.optMember("BackISOPaperSubstrate", media.backIsoPaperSubstrate),
+[error]     |                                                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IsoPaperSubstrate] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:119:75
+[error] 119 |        JsonHelpers.optMember("BackLabColorValue", media.backLabColorValue),
+[error]     |                                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_LabColor in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.LabColor] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:120:65
+[error] 120 |        JsonHelpers.optMember("BackSpectrum", media.backSpectrum),
+[error]     |                                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_TransferFunction in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.TransferFunction] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:124:55
+[error] 124 |        JsonHelpers.optMember("Coating", media.coating),
+[error]     |                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.Coating] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:125:67
+[error] 125 |        JsonHelpers.optMember("CoatingDetail", media.coatingDetail),
+[error]     |                                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:127:59
+[error] 127 |        JsonHelpers.optMember("Dimension", media.dimension),
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XYPair in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.XYPair] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:128:51
+[error] 128 |        JsonHelpers.optMember("Flute", media.flute),
+[error]     |                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:129:69
+[error] 129 |        JsonHelpers.optMember("FluteDirection", media.fluteDirection),
+[error]     |                                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.MediaDirection] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:131:69
+[error] 131 |        JsonHelpers.optMember("GrainDirection", media.grainDirection),
+[error]     |                                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.MediaDirection] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:132:65
+[error] 132 |        JsonHelpers.optMember("ImagableSide", media.imagableSide),
+[error]     |                                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.ImagableSide] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:135:75
+[error] 135 |        JsonHelpers.optMember("ISOPaperSubstrate", media.isoPaperSubstrate),
+[error]     |                                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IsoPaperSubstrate] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:136:67
+[error] 136 |        JsonHelpers.optMember("LabColorValue", media.labColorValue),
+[error]     |                                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_LabColor in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.LabColor] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:137:69
+[error] 137 |        JsonHelpers.optMember("MediaColorName", media.mediaColorName),
+[error]     |                                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_NamedColor in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.NamedColor] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:138:83
+[error] 138 |        JsonHelpers.optMember("MediaColorNameDetails", media.mediaColorNameDetails),
+[error]     |                                                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:139:65
+[error] 139 |        JsonHelpers.optMember("MediaQuality", media.mediaQuality),
+[error]     |                                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:142:73
+[error] 142 |        JsonHelpers.optMember("MediaTypeDetails", media.mediaTypeDetails),
+[error]     |                                                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:143:59
+[error] 143 |        JsonHelpers.optMember("MediaUnit", media.mediaUnit),
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.MediaUnit] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:144:55
+[error] 144 |        JsonHelpers.optMember("Opacity", media.opacity),
+[error]     |                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.Opacity] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:148:71
+[error] 148 |        JsonHelpers.optMember("PlateTechnology", media.plateTechnology),
+[error]     |                                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.PlateTechnology] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:149:57
+[error] 149 |        JsonHelpers.optMember("Polarity", media.polarity),
+[error]     |                                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.Polarity] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:150:77
+[error] 150 |        JsonHelpers.optMember("PrintingTechnology", media.printingTechnology),
+[error]     |                                                                             ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:154:63
+[error] 154 |        JsonHelpers.optMember("ShrinkIndex", media.shrinkIndex),
+[error]     |                                                               ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XYPair in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.XYPair] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:155:71
+[error] 155 |        JsonHelpers.optMember("SleeveInterlock", media.sleeveInterlock),
+[error]     |                                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:156:57
+[error] 156 |        JsonHelpers.optMember("Spectrum", media.spectrum),
+[error]     |                                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_TransferFunction in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.TransferFunction] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:157:59
+[error] 157 |        JsonHelpers.optMember("StockType", media.stockType),
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:158:55
+[error] 158 |        JsonHelpers.optMember("Texture", media.texture),
+[error]     |                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:115:63
+[error] 115 |        JsonHelpers.optMember("BackCoating", media.backCoating),
+[error]     |                                                               ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.Coating] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:173:80
+[error] 173 |      backCoatingDetail <- JsonHelpers.opt[Nmtoken](cursor, "BackCoatingDetail")
+[error]     |                                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:306:49
+[error] 306 |        JsonHelpers.optMember("CMYK", color.cmyk),
+[error]     |                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_CmykColor in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.CmykColor] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:307:59
+[error] 307 |        JsonHelpers.optMember("ColorBook", color.colorBook),
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:308:69
+[error] 308 |        JsonHelpers.optMember("ColorBookEntry", color.colorBookEntry),
+[error]     |                                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:309:65
+[error] 309 |        JsonHelpers.optMember("ColorDetails", color.colorDetails),
+[error]     |                                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:310:59
+[error] 310 |        JsonHelpers.optMember("ColorName", color.colorName),
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_NamedColor in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.NamedColor] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:311:59
+[error] 311 |        JsonHelpers.optMember("ColorType", color.colorType),
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.ColorType] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:312:73
+[error] 312 |        JsonHelpers.optMember("ColorTypeDetails", color.colorTypeDetails),
+[error]     |                                                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:315:47
+[error] 315 |        JsonHelpers.optMember("Lab", color.lab),
+[error]     |                                               ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_LabColor in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.LabColor] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:316:69
+[error] 316 |        JsonHelpers.optMember("NeutralDensity", color.neutralDensity),
+[error]     |                                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_NeutralDensity in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.NeutralDensity] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:317:77
+[error] 317 |        JsonHelpers.optMember("PrintingTechnology", color.printingTechnology),
+[error]     |                                                                             ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:318:67
+[error] 318 |        JsonHelpers.optMember("PrintStandard", color.printStandard),
+[error]     |                                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:319:57
+[error] 319 |        JsonHelpers.optMember("Spectrum", color.spectrum),
+[error]     |                                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_TransferFunction in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.TransferFunction] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:320:49
+[error] 320 |        JsonHelpers.optMember("sRGB", color.srgb),
+[error]     |                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_SrgbColor in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.SrgbColor] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:305:71
+[error] 305 |        JsonHelpers.optMember("ActualColorName", color.actualColorName),
+[error]     |                                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:327:79
+[error] 327 |      actualColorName <- JsonHelpers.opt[XjdfString](cursor, "ActualColorName")
+[error]     |                                                                               ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_XjdfString in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.XjdfString] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:382:73
+[error] 382 |        JsonHelpers.optMember("CartonTopFlaps", component.cartonTopFlaps),
+[error]     |                                                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XYPair in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.XYPair] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:384:67
+[error] 384 |        JsonHelpers.vecMember("ContentRefs", component.contentRefs),
+[error]     |                                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdIdRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdIdRef] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:385:65
+[error] 385 |        JsonHelpers.optMember("Dimensions", component.dimensions),
+[error]     |                                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_Shape3D in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.Shape3D] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:387:61
+[error] 387 |        JsonHelpers.optMember("MediaRef", component.mediaRef),
+[error]     |                                                             ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdIdRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdIdRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:389:69
+[error] 389 |        JsonHelpers.optMember("OverfoldSide", component.overfoldSide),
+[error]     |                                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Side] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:390:67
+[error] 390 |        JsonHelpers.optMember("ProductType", component.productType),
+[error]     |                                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:391:81
+[error] 391 |        JsonHelpers.optMember("ProductTypeDetails", component.productTypeDetails),
+[error]     |                                                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:381:65
+[error] 381 |        JsonHelpers.optMember("Automation", component.automation),
+[error]     |                                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.Automation] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:401:73
+[error] 401 |      cartonTopFlaps <- JsonHelpers.opt[XYPair](cursor, "CartonTopFlaps")
+[error]     |                                                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_XYPair in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.XYPair] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:437:64
+[error] 437 |        JsonHelpers.optMember("Manufacturer", tool.manufacturer),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:438:70
+[error] 438 |        JsonHelpers.optMember("ManufacturerURL", tool.manufacturerUrl),
+[error]     |                                                                      ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_UriRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.UriRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:439:64
+[error] 439 |        JsonHelpers.optMember("SerialNumber", tool.serialNumber),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:436:56
+[error] 436 |        JsonHelpers.optMember("ToolType", tool.toolType),
+[error]     |                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:445:62
+[error] 445 |      toolType <- JsonHelpers.opt[Nmtoken](cursor, "ToolType")
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:456:59
+[error] 456 |        JsonHelpers.optMember("ClipPath", runList.clipPath),
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_PdfPath in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.PdfPath] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:457:65
+[error] 457 |        JsonHelpers.vecMember("ContentRefs", runList.contentRefs),
+[error]     |                                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdIdRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdIdRef] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:458:51
+[error] 458 |        JsonHelpers.optMember("Docs", runList.docs),
+[error]     |                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_IntegerRange in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IntegerRange] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:465:61
+[error] 465 |        JsonHelpers.optMember("OrderType", runList.orderType),
+[error]     |                                                             ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.RunListOrderType] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:466:53
+[error] 466 |        JsonHelpers.optMember("Pages", runList.pages),
+[error]     |                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_IntegerRange in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IntegerRange] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:467:51
+[error] 467 |        JsonHelpers.optMember("Sets", runList.sets),
+[error]     |                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_IntegerRange in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IntegerRange] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:468:71
+[error] 468 |        JsonHelpers.optMember("SourceBleedBox", runList.sourceBleedBox),
+[error]     |                                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Rectangle in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.Rectangle] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:469:69
+[error] 469 |        JsonHelpers.optMember("SourceClipBox", runList.sourceClipBox),
+[error]     |                                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Rectangle in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.Rectangle] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:470:71
+[error] 470 |        JsonHelpers.optMember("SourceMediaBox", runList.sourceMediaBox),
+[error]     |                                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Rectangle in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.Rectangle] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:471:69
+[error] 471 |        JsonHelpers.optMember("SourceTrimBox", runList.sourceTrimBox),
+[error]     |                                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Rectangle in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.Rectangle] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:455:63
+[error] 455 |        JsonHelpers.optMember("Automation", runList.automation),
+[error]     |                                                               ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.Automation] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:478:62
+[error] 478 |      clipPath <- JsonHelpers.opt[PdfPath](cursor, "ClipPath")
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_PdfPath in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.PdfPath] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:522:56
+[error] 522 |        JsonHelpers.optMember("MarkName", mark.markName),
+[error]     |                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:523:58
+[error] 523 |        JsonHelpers.vecMember("MarkTypes", mark.markTypes),
+[error]     |                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:524:58
+[error] 524 |        JsonHelpers.vecMember("MarkUsage", mark.markUsage),
+[error]     |                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.MarkUsage] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:526:62
+[error] 526 |        JsonHelpers.vecMember("Separations", mark.separations),
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:527:48
+[error] 527 |        JsonHelpers.optMember("Size", mark.size),
+[error]     |                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XYPair in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.XYPair] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:521:52
+[error] 521 |        JsonHelpers.optMember("Center", mark.center),
+[error]     |                                                    ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XYPair in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.XYPair] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:533:57
+[error] 533 |      center <- JsonHelpers.opt[XYPair](cursor, "Center")
+[error]     |                                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_XYPair in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.XYPair] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:547:72
+[error] 547 |        JsonHelpers.optMember("DescriptiveName", device.descriptiveName),
+[error]     |                                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:548:66
+[error] 548 |        JsonHelpers.vecMember("DeviceClass", device.deviceClasses),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:550:62
+[error] 550 |        JsonHelpers.optMember("DeviceType", device.deviceType),
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:551:64
+[error] 551 |        JsonHelpers.vecMember("ICSVersions", device.icsVersions),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:552:64
+[error] 552 |        JsonHelpers.vecMember("JDFVersions", device.jdfVersions),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_JdfVersion in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.JdfVersion] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:553:78
+[error] 553 |        JsonHelpers.vecMember("KnownLocalizations", device.knownLocalizations),
+[error]     |                                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_LanguageTag in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.LanguageTag] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:554:66
+[error] 554 |        JsonHelpers.optMember("Manufacturer", device.manufacturer),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:555:72
+[error] 555 |        JsonHelpers.optMember("ManufacturerURL", device.manufacturerUrl),
+[error]     |                                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_UriRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.UriRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:557:60
+[error] 557 |        JsonHelpers.vecMember("Packaging", device.packaging),
+[error]     |                                                            ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.DevicePackaging] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:558:72
+[error] 558 |        JsonHelpers.optMember("PresentationURL", device.presentationUrl),
+[error]     |                                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_UriRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.UriRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:559:70
+[error] 559 |        JsonHelpers.optMember("RestApiBaseURL", device.restApiBaseUrl),
+[error]     |                                                                      ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_UriRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.UriRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:560:58
+[error] 560 |        JsonHelpers.optMember("Revision", device.revision),
+[error]     |                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:561:66
+[error] 561 |        JsonHelpers.optMember("SerialNumber", device.serialNumber),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:562:62
+[error] 562 |        JsonHelpers.vecMember("URLSchemes", device.urlSchemes),
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:563:56
+[error] 563 |        JsonHelpers.optMember("XJMFURL", device.xjmfUrl),
+[error]     |                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_UriRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.UriRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:546:66
+[error] 546 |        JsonHelpers.optMember("CostCenterID", device.costCenterId),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMediaCodecs.scala:569:49
+[error] 569 |      deviceId <- cursor.get[Nmtoken]("DeviceID")
+[error]     |                                                 ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of parameter d of method get in class ACursor
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:20:66
+[error] 20 |        JsonHelpers.optMember("AgentVersion", header.agentVersion),
+[error]    |                                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:21:54
+[error] 21 |        JsonHelpers.optMember("Author", header.author),
+[error]    |                                                      ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:22:72
+[error] 22 |        JsonHelpers.optMember("DescriptiveName", header.descriptiveName),
+[error]    |                                                                        ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:24:64
+[error] 24 |        JsonHelpers.vecMember("ICSVersions", header.icsVersions),
+[error]    |                                                                ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:25:46
+[error] 25 |        JsonHelpers.optMember("ID", header.id),
+[error]    |                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XsdId in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdId] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:26:62
+[error] 26 |        JsonHelpers.optMember("PersonalID", header.personalId),
+[error]    |                                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:27:52
+[error] 27 |        JsonHelpers.optMember("refID", header.refId),
+[error]    |                                                    ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:19:60
+[error] 19 |        JsonHelpers.optMember("AgentName", header.agentName),
+[error]    |                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:34:49
+[error] 34 |      deviceId <- cursor.get[Nmtoken]("DeviceID")
+[error]    |                                                 ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of parameter d of method get in class ACursor
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:51:66
+[error] 51 |        JsonHelpers.vecMember("Languages", subscription.languages),
+[error]    |                                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_LanguageTag in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.LanguageTag] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:50:70
+[error] 50 |        JsonHelpers.vecMember("ChannelMode", subscription.channelMode),
+[error]    |                                                                      ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.messaging.ChannelMode] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:59:38
+[error] 59 |      url <- cursor.get[UriRef]("URL")
+[error]    |                                      ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_UriRef in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.UriRef] of parameter d of method get in class ACursor
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:70:52
+[error] 70 |        JsonHelpers.optMember("JobID", params.jobId),
+[error]    |                                                    ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:71:60
+[error] 71 |        JsonHelpers.optMember("JobPartID", params.jobPartId),
+[error]    |                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:72:66
+[error] 72 |        JsonHelpers.optMember("QueueEntryID", params.queueEntryId),
+[error]    |                                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:73:64
+[error] 73 |        JsonHelpers.optMember("ResourceDetails", params.details),
+[error]    |                                                                ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.messaging.ResourceDetails] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:74:66
+[error] 74 |        JsonHelpers.optMember("ResourceName", params.resourceName),
+[error]    |                                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:76:52
+[error] 76 |        JsonHelpers.vecMember("Types", params.types),
+[error]    |                                                    ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:77:51
+[error] 77 |        JsonHelpers.vecMember("Part", params.parts),
+[error]    |                                                   ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Part in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.Part] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:69:62
+[error] 69 |        JsonHelpers.optMember("ExternalID", params.externalId),
+[error]    |                                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:84:66
+[error] 84 |      externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+[error]    |                                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:98:66
+[error] 98 |        JsonHelpers.optMember("CommandResult", info.commandResult),
+[error]    |                                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.CommandResult] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:99:50
+[error] 99 |        JsonHelpers.optMember("JobID", info.jobId),
+[error]    |                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:100:58
+[error] 100 |        JsonHelpers.optMember("JobPartID", info.jobPartId),
+[error]     |                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:101:50
+[error] 101 |        JsonHelpers.optMember("Level", info.level),
+[error]     |                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.ResourceLevel] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:102:56
+[error] 102 |        JsonHelpers.optMember("ModuleID", info.moduleId),
+[error]     |                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:103:64
+[error] 103 |        JsonHelpers.optMember("QueueEntryID", info.queueEntryId),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:104:50
+[error] 104 |        JsonHelpers.optMember("Scope", info.scope),
+[error]     |                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Scope] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:106:50
+[error] 106 |        JsonHelpers.vecMember("Types", info.types),
+[error]     |                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:108:72
+[error] 108 |        Vector(JsonHelpers.member("ResourceSet", info.resourceSet.asJson)),
+[error]     |                                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_ResourceSet in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.ResourceSet] of parameter encoder of method asJson in class EncoderOps
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:114:59
+[error] 114 |      resourceSet <- cursor.get[ResourceSet]("ResourceSet")
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_ResourceSet in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.ResourceSet] of parameter d of method get in class ACursor
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:136:54
+[error] 136 |        JsonHelpers.optMember("EndTime", info.endTime),
+[error]     |                                                      ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdDateTime in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDateTime] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:137:62
+[error] 137 |        JsonHelpers.optMember("HourCounter", info.hourCounter),
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XsdDuration in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDuration] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:138:66
+[error] 138 |        JsonHelpers.optMember("IdleStartTime", info.idleStartTime),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdDateTime in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDateTime] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:139:58
+[error] 139 |        JsonHelpers.vecMember("ModuleIDs", info.moduleIds),
+[error]     |                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:140:62
+[error] 140 |        JsonHelpers.optMember("PowerOnTime", info.powerOnTime),
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdDateTime in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDateTime] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:144:66
+[error] 144 |        JsonHelpers.optMember("StatusDetails", info.statusDetails),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:145:54
+[error] 145 |        JsonHelpers.vecMember("ToolIDs", info.toolIds),
+[error]     |                                                      ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:135:62
+[error] 135 |        JsonHelpers.optMember("CounterUnit", info.counterUnit),
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:153:68
+[error] 153 |      counterUnit <- JsonHelpers.opt[Nmtoken](cursor, "CounterUnit")
+[error]     |                                                                    ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:191:58
+[error] 191 |        JsonHelpers.optMember("JobID", notification.jobId),
+[error]     |                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:192:66
+[error] 192 |        JsonHelpers.optMember("JobPartID", notification.jobPartId),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:193:64
+[error] 193 |        JsonHelpers.optMember("ModuleID", notification.moduleId),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:194:72
+[error] 194 |        JsonHelpers.optMember("QueueEntryID", notification.queueEntryId),
+[error]     |                                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:190:63
+[error] 190 |        JsonHelpers.vecMember("Comment", notification.comments),
+[error]     |                                                               ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Comment in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Comment] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:201:61
+[error] 201 |      comments <- JsonHelpers.vec[Comment](cursor, "Comment")
+[error]     |                                                             ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Comment in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Comment] of a context parameter of method vec in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:214:63
+[error] 214 |        JsonHelpers.vecMember("URLSchemes", service.urlSchemes),
+[error]     |                                                               ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_MessageUrlScheme in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.messaging.MessageUrlScheme] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:212:69
+[error] 212 |        JsonHelpers.vecMember("ResponseModes", service.responseModes),
+[error]     |                                                                     ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.messaging.MessageResponseMode] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:220:48
+[error] 220 |      messageType <- cursor.get[Nmtoken]("Type")
+[error]     |                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of parameter d of method get in class ACursor
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:238:59
+[error] 238 |        JsonHelpers.vecMember("Languages", query.languages),
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_LanguageTag in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.LanguageTag] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:249:68
+[error] 249 |      languages <- JsonHelpers.vec[LanguageTag](cursor, "Languages")
+[error]     |                                                                    ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_LanguageTag in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.LanguageTag] of a context parameter of method vec in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:296:66
+[error] 296 |        JsonHelpers.optMember("ReplaceAfter", signal.replaceAfter),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdDateTime in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDateTime] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:297:68
+[error] 297 |        JsonHelpers.optMember("ReplaceBefore", signal.replaceBefore),
+[error]     |                                                                    ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdDateTime in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDateTime] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:294:64
+[error] 294 |        JsonHelpers.optMember("ChannelMode", signal.channelMode),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.messaging.ChannelMode] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:307:74
+[error] 307 |      replaceAfter <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceAfter")
+[error]     |                                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_XsdDateTime in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.XsdDateTime] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:315:64
+[error] 315 |        JsonHelpers.optMember("ChannelMode", signal.channelMode),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.messaging.ChannelMode] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:332:64
+[error] 332 |        JsonHelpers.optMember("ChannelMode", signal.channelMode),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.messaging.ChannelMode] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:348:74
+[error] 348 |      replaceAfter <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceAfter")
+[error]     |                                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_XsdDateTime in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.XsdDateTime] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:412:54
+[error] 412 |        JsonHelpers.optMember("Version", xjmf.version),
+[error]     |                                                      ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Version] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonMessagingCodecs.scala:421:60
+[error] 421 |      version <- JsonHelpers.opt[Version](cursor, "Version")
+[error]     |                                                            ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Version in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Version] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:26:63
+[error] 26 |        JsonHelpers.optMember("ExternalID", comment.externalId),
+[error]    |                                                               ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:27:59
+[error] 27 |        JsonHelpers.optMember("Language", comment.language),
+[error]    |                                                           ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_LanguageTag in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.LanguageTag] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:28:63
+[error] 28 |        JsonHelpers.optMember("PersonalID", comment.personalId),
+[error]    |                                                               ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:29:61
+[error] 29 |        JsonHelpers.optMember("TimeStamp", comment.timeStamp),
+[error]    |                                                             ^
+[error]    |Ambiguous given instances: both given instance given_Encoder_XsdDateTime in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDateTime] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:30:58
+[error] 30 |        JsonHelpers.optMember("Type", comment.commentType),
+[error]    |                                                          ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:25:55
+[error] 25 |        JsonHelpers.optMember("Author", comment.author),
+[error]    |                                                       ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:37:61
+[error] 37 |      author <- JsonHelpers.opt[XjdfString](cursor, "Author")
+[error]    |                                                             ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_XjdfString in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.XjdfString] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:51:61
+[error] 51 |        JsonHelpers.optMember("DataType", generalId.dataType),
+[error]    |                                                             ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.GeneralId.DataType] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:57:45
+[error] 57 |      usage <- cursor.get[Nmtoken]("IDUsage")
+[error]    |                                             ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of parameter d of method get in class ACursor
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:75:58
+[error] 75 |        JsonHelpers.optMember("BlockName", part.blockName),
+[error]    |                                                          ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:76:62
+[error] 76 |        JsonHelpers.optMember("ContactType", part.contactType),
+[error]    |                                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:77:56
+[error] 77 |        JsonHelpers.optMember("DocIndex", part.docIndex),
+[error]    |                                                        ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_IntegerRange in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IntegerRange] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:78:52
+[error] 78 |        JsonHelpers.optMember("DropID", part.dropId),
+[error]    |                                                    ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:79:56
+[error] 79 |        JsonHelpers.optMember("Location", part.location),
+[error]    |                                                        ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:80:50
+[error] 80 |        JsonHelpers.optMember("LotID", part.lotId),
+[error]    |                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:82:52
+[error] 82 |        JsonHelpers.optMember("Option", part.option),
+[error]    |                                                    ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:83:60
+[error] 83 |        JsonHelpers.optMember("PageNumber", part.pageNumber),
+[error]    |                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_IntegerRange in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IntegerRange] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:84:62
+[error] 84 |        JsonHelpers.optMember("PartVersion", part.partVersion),
+[error]    |                                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:85:62
+[error] 85 |        JsonHelpers.optMember("PreviewType", part.previewType),
+[error]    |                                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.PreviewType] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:86:68
+[error] 86 |        JsonHelpers.optMember("PrintCondition", part.printCondition),
+[error]    |                                                                    ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:87:54
+[error] 87 |        JsonHelpers.optMember("Product", part.product),
+[error]    |                                                      ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:88:62
+[error] 88 |        JsonHelpers.optMember("ProductPart", part.productPart),
+[error]    |                                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:89:76
+[error] 89 |        JsonHelpers.optMember("QualityMeasurement", part.qualityMeasurement),
+[error]    |                                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:90:46
+[error] 90 |        JsonHelpers.optMember("Run", part.run),
+[error]    |                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:91:56
+[error] 91 |        JsonHelpers.optMember("RunIndex", part.runIndex),
+[error]    |                                                        ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_IntegerRange in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IntegerRange] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:92:60
+[error] 92 |        JsonHelpers.optMember("Separation", part.separation),
+[error]    |                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:93:56
+[error] 93 |        JsonHelpers.optMember("SetIndex", part.setIndex),
+[error]    |                                                        ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_IntegerRange in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IntegerRange] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:94:60
+[error] 94 |        JsonHelpers.optMember("SheetIndex", part.sheetIndex),
+[error]    |                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_IntegerRange in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.IntegerRange] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:95:58
+[error] 95 |        JsonHelpers.optMember("SheetName", part.sheetName),
+[error]    |                                                          ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:96:48
+[error] 96 |        JsonHelpers.optMember("Side", part.side),
+[error]    |                                                ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Side] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:97:62
+[error] 97 |        JsonHelpers.optMember("StationName", part.stationName),
+[error]    |                                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:99:74
+[error] 99 |        JsonHelpers.optMember("TransferCurveName", part.transferCurveName),
+[error]    |                                                                          ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.TransferCurveName] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:100:54
+[error] 100 |        JsonHelpers.optMember("WebName", part.webName),
+[error]     |                                                      ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:74:76
+[error] 74 |        JsonHelpers.optMember("BinderySignatureID", part.binderySignatureId),
+[error]    |                                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:106:82
+[error] 106 |      binderySignatureId <- JsonHelpers.opt[Nmtoken](cursor, "BinderySignatureID")
+[error]     |                                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:182:64
+[error] 182 |      moduleIds <- JsonHelpers.vec[Nmtoken](cursor, "ModuleIDs")
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of a context parameter of method vec in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:238:64
+[error] 238 |        JsonHelpers.optMember("CommentURL", resource.commentUrl),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_UriRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.UriRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:239:74
+[error] 239 |        JsonHelpers.optMember("DescriptiveName", resource.descriptiveName),
+[error]     |                                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:240:60
+[error] 240 |        JsonHelpers.optMember("Duration", resource.duration),
+[error]     |                                                            ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XsdDuration in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDuration] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:241:58
+[error] 241 |        JsonHelpers.optMember("Expires", resource.expires),
+[error]     |                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdDateTime in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDateTime] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:242:64
+[error] 242 |        JsonHelpers.optMember("ExternalID", resource.externalId),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:244:48
+[error] 244 |        JsonHelpers.optMember("ID", resource.id),
+[error]     |                                                ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XsdId in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdId] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:245:66
+[error] 245 |        JsonHelpers.optMember("Orientation", resource.orientation),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Orientation] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:247:54
+[error] 247 |        JsonHelpers.optMember("Start", resource.start),
+[error]     |                                                      ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_XsdDateTime in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDateTime] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:248:66
+[error] 248 |        JsonHelpers.optMember("StartOffset", resource.startOffset),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XsdDuration in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdDuration] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:249:56
+[error] 249 |        JsonHelpers.optMember("Status", resource.status),
+[error]     |                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.ResourceAvailability] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:250:72
+[error] 250 |        JsonHelpers.optMember("Transformation", resource.transformation),
+[error]     |                                                                        ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Matrix in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Matrix] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:237:54
+[error] 237 |        JsonHelpers.optMember("Brand", resource.brand),
+[error]     |                                                      ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:268:59
+[error] 268 |      brand <- JsonHelpers.opt[XjdfString](cursor, "Brand")
+[error]     |                                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_XjdfString in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.XjdfString] of a context parameter of method opt in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:311:77
+[error] 311 |        JsonHelpers.optMember("DescriptiveName", resourceSet.descriptiveName),
+[error]     |                                                                             ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:312:51
+[error] 312 |        JsonHelpers.optMember("ID", resourceSet.id),
+[error]     |                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XsdId in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XsdId] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:314:71
+[error] 314 |        JsonHelpers.optMember("ProcessUsage", resourceSet.processUsage),
+[error]     |                                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:315:55
+[error] 315 |        JsonHelpers.optMember("Unit", resourceSet.unit),
+[error]     |                                                       ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:316:57
+[error] 316 |        JsonHelpers.optMember("Usage", resourceSet.usage),
+[error]     |                                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.ResourceUsage] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:310:67
+[error] 310 |        JsonHelpers.optMember("CommentURL", resourceSet.commentUrl),
+[error]     |                                                                   ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_UriRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.UriRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:325:41
+[error] 325 |      name <- cursor.get[Nmtoken]("Name")
+[error]     |                                         ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of parameter d of method get in class ACursor
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:361:64
+[error] 361 |        JsonHelpers.optMember("CommentURL", document.commentUrl),
+[error]     |                                                                ^
+[error]     |Ambiguous given instances: both given instance given_Encoder_UriRef in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.UriRef] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:362:74
+[error] 362 |        JsonHelpers.optMember("DescriptiveName", document.descriptiveName),
+[error]     |                                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_XjdfString in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.XjdfString] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:363:66
+[error] 363 |        JsonHelpers.vecMember("ICSVersions", document.icsVersions),
+[error]     |                                                                  ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method vecMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:365:62
+[error] 365 |        JsonHelpers.optMember("JobPartID", document.jobPartId),
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:366:62
+[error] 366 |        JsonHelpers.optMember("ProjectID", document.projectId),
+[error]     |                                                              ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:367:68
+[error] 367 |        JsonHelpers.optMember("RelatedJobID", document.relatedJobId),
+[error]     |                                                                    ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:368:76
+[error] 368 |        JsonHelpers.optMember("RelatedJobPartID", document.relatedJobPartId),
+[error]     |                                                                            ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:369:76
+[error] 369 |        JsonHelpers.optMember("RelatedProjectID", document.relatedProjectId),
+[error]     |                                                                            ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:371:58
+[error] 371 |        JsonHelpers.optMember("Version", document.version),
+[error]     |                                                          ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_A in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Version] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:360:60
+[error] 360 |        JsonHelpers.optMember("Category", document.category),
+[error]     |                                                            ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.core.Nmtoken] of a context parameter of method optMember in object JsonHelpers
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonNodeCodecs.scala:381:43
+[error] 381 |      jobId <- cursor.get[Nmtoken]("JobID")
+[error]     |                                           ^
+[error]     |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Nmtoken in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.core.Nmtoken] of parameter d of method get in class ACursor
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:29:47
+[error] 29 |      case media: Media         => media.asJson
+[error]    |                                               ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Media in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.Media] of parameter encoder of method asJson in class EncoderOps
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:30:47
+[error] 30 |      case color: Color         => color.asJson
+[error]    |                                               ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Color in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.Color] of parameter encoder of method asJson in class EncoderOps
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:31:51
+[error] 31 |      case component: Component => component.asJson
+[error]    |                                                   ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Component in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.Component] of parameter encoder of method asJson in class EncoderOps
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:32:46
+[error] 32 |      case tool: Tool           => tool.asJson
+[error]    |                                              ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_Tool in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.Tool] of parameter encoder of method asJson in class EncoderOps
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:33:49
+[error] 33 |      case runList: RunList     => runList.asJson
+[error]    |                                                 ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Encoder_RunList in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.RunList] of parameter encoder of method asJson in class EncoderOps
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:34:60
+[error] 34 |      case registerMark: RegisterMark => registerMark.asJson
+[error]    |                                                            ^
+[error]    |Ambiguous given instances: both given instance given_Encoder_RegisterMark in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Encoder[xjdf4s.model.resources.RegisterMark] of parameter encoder of method asJson in class EncoderOps
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:50:43
+[error] 50 |      case "Media"        => json.as[Media].map(identity)
+[error]    |                                           ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_Media in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.resources.Media] of parameter d of method as in class Json
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:51:43
+[error] 51 |      case "Color"        => json.as[Color].map(identity)
+[error]    |                                           ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Color in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.resources.Color] of parameter d of method as in class Json
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:52:47
+[error] 52 |      case "Component"    => json.as[Component].map(identity)
+[error]    |                                               ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_Component in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.resources.Component] of parameter d of method as in class Json
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:53:42
+[error] 53 |      case "Tool"         => json.as[Tool].map(identity)
+[error]    |                                          ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_Tool in package xjdf4s.codec.json and given instance given_Decoder_ProcessRun in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.resources.Tool] of parameter d of method as in class Json
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:54:45
+[error] 54 |      case "RunList"      => json.as[RunList].map(identity)
+[error]    |                                             ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_RunList in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.resources.RunList] of parameter d of method as in class Json
+[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonResources.scala:55:50
+[error] 55 |      case "RegisterMark" => json.as[RegisterMark].map(identity)
+[error]    |                                                  ^
+[error]    |Ambiguous given instances: both given instance given_Decoder_ProcessRun in package xjdf4s.codec.json and given instance given_Decoder_RegisterMark in package xjdf4s.codec.json match type io.circe.Decoder[xjdf4s.model.resources.RegisterMark] of parameter d of method as in class Json
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/codec-json/src/main/scala/xjdf4s/codec/json/JsonScalars.scala:91:6
+[error] 91 |      flat <- points.foldLeft[Either[String, Vector[Float]]](Right(Vector.empty)) {
+[error]    |      ^
+[error]    |Found:    Either[String | io.circe.DecodingFailure, xjdf4s.model.TransferFunction]
+[error]    |Required: Either[io.circe.DecodingFailure, xjdf4s.model.TransferFunction]
+[error]    |
+[error] 92 |        case (acc, List(x, y)) => acc.map(_ ++ Vector(x, y))
+[error] 93 |...
+[error] 96 |    yield function,
+[error]    |
+[error]    | longer explanation available when compiling with `-explain`
+[error] stack trace is suppressed; run last codecJson / Compile / compileIncremental for the full output
+[error] (codecJson / Compile / compileIncremental) sbt.util.CachedCompileFailure$$anon$1: Compilation failed
+[error] elapsed time: 2 s, cache 100%, 1 cached-failure cache hit, 177 disk cache hits
