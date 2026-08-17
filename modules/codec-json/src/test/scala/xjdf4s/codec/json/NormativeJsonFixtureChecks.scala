@@ -71,7 +71,10 @@ object NormativeJsonFixtureChecks:
         |</ResourceSet>""".stripMargin
     val viaXml = XmlParser.parse(xml).flatMap(ResourceSetCodec.decoder.decode).toOption.get
 
-    assert(viaJson == viaXml)
+    assert(
+      viaJson == viaXml,
+      s"JSON/XML mismatch:\nJSON: $viaJson\nXML:  $viaXml",
+    )
     val layers = viaJson.resources.head.specificResource.get.asInstanceOf[Media].mediaLayers.get.layers
     assert(layers.size == 3)
     assert(layers(1).asInstanceOf[MediaLayer.GlueLayer].value.glueType.contains(GlueType.Removable))
