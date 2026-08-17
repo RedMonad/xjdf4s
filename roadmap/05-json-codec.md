@@ -191,10 +191,13 @@ def xmlJsonAgree[A: XmlDecoder: JsonCodec: Eq](value: A): Boolean =
   для скалярных полей и element-name класса для узловых; отсутствующие опциональные члены падают в
   дефолты; неизвестные стандартные члены отклоняются (как в XML).
 - **Генерируемые файлы** (`tools/gen-json-codecs.py`): `JsonDerivedInstances.scala` — по два не-inline given'а
-  (`Encoder`/`Decoder`) на каждый деривируемый case class (280 типов, топологический порядок; самодостаточно-
-  рекурсивные `BundleItem`/`AssemblySection` включены — их per-type givens оставляют рекурсию в рантайме);
+  (`Encoder`/`Decoder`) на каждый деривируемый case class (277 типов, топологический порядок);
   `JsonRegistry.scala` — таблицы диспетчеризации 99 ресурсов / 11 интенций / 42 сообщений. Перегенерация —
   скриптом при росте модели; замыкание «класс содержит спец-класс» вычисляется автоматически.
+  **Урок (и подтверждение правила 04f):** самодостаточно-рекурсивные типы нельзя деривировать даже через
+  per-type givens — given невидим в собственном инициализаторе, и inline-fallback пере-деривирует тип
+  бесконечно (компилятор: «Infinite loop in function body», под `-Werror` — ошибка). `BundleItem`/
+  `AssemblySection` — только ручные кодеки (рекурсия в рантайме), как в XML.
 - **Ручные кодеки спец-форм** (`JsonSpecialCodecs.scala`, зеркалят XML-маппинг): `FileSpec` (плоские члены
   `URL`/`UID`/`FileFormat`+`FileTemplate`), `Disposition` (`MinDuration`/`Until`), `NetworkHeader` (`"Text"`),
   `TiffTag` (`BinaryValue`/`IntegerValue`/`NumberValue`/`StringValue`), `PlacedObject` (`MarkObject`/

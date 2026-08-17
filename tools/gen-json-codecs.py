@@ -28,7 +28,8 @@ JSON_HAND = """Comment GeneralId Part PartWaste PartAmount AmountPool Resource R
 ColorMeasurementConditions Media MediaLayers Color Component Tool RunList RegisterMark Device Header Subscription
 ResourceQuParams ResourceInfo DeviceInfo Notification MessageService QueryKnownMessages QueryResource
 ResponseKnownMessages ResponseResource SignalNotification SignalResource SignalStatus XJMF ProcessRun AuditPool
-Address Company FileSpec Disposition NetworkHeader TiffTag PlacedObject DeliveryFiles DeviceSchemas DeviceInfoSchemas VerificationFiles QualityControlFiles""".split()
+Address Company FileSpec Disposition NetworkHeader TiffTag PlacedObject DeliveryFiles DeviceSchemas
+DeviceInfoSchemas VerificationFiles QualityControlFiles BundleItem AssemblySection""".split()
 
 JSON_SPECIALS = """BindingIntent ColorIntent StickOn CollatingItem LooseBindingParams Assembly
 ModifyQueueEntryParams QueueSubmissionParams""".split()
@@ -36,7 +37,7 @@ ModifyQueueEntryParams QueueSubmissionParams""".split()
 # Types that transitively contain the specials (their codecs must exist first).
 JSON_AFFECTED = ["CommandModifyQueueEntry", "CommandSubmitQueueEntry"]
 
-JSON_ADDITIONS = ["BundleItem", "AssemblySection"]  # self-recursive; derivable thanks to per-type givens
+JSON_ADDITIONS = []  # self-recursive types are hand-coded (XML rule f: the generic derivation would loop)
 
 VALUE_TYPES = """Int Long Float Double Boolean String Vector[Byte] Nmtoken XsdId XsdIdRef XjdfString XsdDateTime
 XsdDuration LanguageTag UriRef Priority0To100 CountryCode XPath PdfPath EvenPageCount CommonFolds QualityScore
@@ -220,11 +221,12 @@ import xjdf4s.model.resources.*
  * resolution (it is kept topologically sorted by field dependencies anyway).
  *
  * Excluded: the JSON hand codecs (slice codecs plus the special forms with payload-enum fields whose JSON
- * mappings live in JsonSpecialCodecs), the specials still waiting for their hand codecs (BindingIntent,
- * ColorIntent, StickOn, CollatingItem, LooseBindingParams, Assembly, ModifyQueueEntryParams,
- * QueueSubmissionParams) and every class that transitively embeds them (computed as a closure, so the inline
- * deriveOrSummon fallback never silently encodes a payload enum as a bare case name). Self-recursive
- * BundleItem/AssemblySection are included: their per-type givens keep the recursion at runtime.
+ * mappings live in JsonSpecialCodecs), the self-recursive BundleItem/AssemblySection (XML rule f: the generic
+ * derivation would recurse infinitely - the given is not visible in its own initializer, so the inline fallback
+ * re-derives the type forever; their hand codecs recurse at runtime instead), the specials still waiting for
+ * their hand codecs (BindingIntent, ColorIntent, StickOn, CollatingItem, LooseBindingParams, Assembly,
+ * ModifyQueueEntryParams, QueueSubmissionParams) and every class that transitively embeds them (computed as a
+ * closure, so the inline deriveOrSummon fallback never silently encodes a payload enum as a bare case name).
  *
  * Regenerate with tools/gen-json-codecs.py when the model grows.
  */
@@ -242,14 +244,9 @@ import xjdf4s.model.resources.*
     with open(OUT_REGISTRY, "w", encoding="utf-8") as out:
         out.write("""package xjdf4s.codec.json
 
-import io.circe.{Decoder, Encoder, Json}
+import io.circe.{Decoder, Json}
 import io.circe.syntax.*
 
-import xjdf4s.codec.json.JsonSpecialCodecs.given
-
-import xjdf4s.codec.json.JsonResources.given
-
-import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*

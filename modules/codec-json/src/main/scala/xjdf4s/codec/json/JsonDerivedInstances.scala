@@ -32,11 +32,12 @@ import xjdf4s.model.resources.*
  * resolution (it is kept topologically sorted by field dependencies anyway).
  *
  * Excluded: the JSON hand codecs (slice codecs plus the special forms with payload-enum fields whose JSON
- * mappings live in JsonSpecialCodecs), the specials still waiting for their hand codecs (BindingIntent,
- * ColorIntent, StickOn, CollatingItem, LooseBindingParams, Assembly, ModifyQueueEntryParams,
- * QueueSubmissionParams) and every class that transitively embeds them (computed as a closure, so the inline
- * deriveOrSummon fallback never silently encodes a payload enum as a bare case name). Self-recursive
- * BundleItem/AssemblySection are included: their per-type givens keep the recursion at runtime.
+ * mappings live in JsonSpecialCodecs), the self-recursive BundleItem/AssemblySection (XML rule f: the generic
+ * derivation would recurse infinitely - the given is not visible in its own initializer, so the inline fallback
+ * re-derives the type forever; their hand codecs recurse at runtime instead), the specials still waiting for
+ * their hand codecs (BindingIntent, ColorIntent, StickOn, CollatingItem, LooseBindingParams, Assembly,
+ * ModifyQueueEntryParams, QueueSubmissionParams) and every class that transitively embeds them (computed as a
+ * closure, so the inline deriveOrSummon fallback never silently encodes a payload enum as a bare case name).
  *
  * Regenerate with tools/gen-json-codecs.py when the model grows.
  */
@@ -52,8 +53,6 @@ given derivedJsonEncoderApprovalPerson: Encoder[ApprovalPerson] = JsonDerived.de
 given derivedJsonDecoderApprovalPerson: Decoder[ApprovalPerson] = JsonDerived.derivedDecoder[ApprovalPerson]
 given derivedJsonEncoderAssemblyItem: Encoder[AssemblyItem] = JsonDerived.derivedEncoder[AssemblyItem]
 given derivedJsonDecoderAssemblyItem: Decoder[AssemblyItem] = JsonDerived.derivedDecoder[AssemblyItem]
-given derivedJsonEncoderAssemblySection: Encoder[AssemblySection] = JsonDerived.derivedEncoder[AssemblySection]
-given derivedJsonDecoderAssemblySection: Decoder[AssemblySection] = JsonDerived.derivedDecoder[AssemblySection]
 given derivedJsonEncoderAutomatedOverPrintParams: Encoder[AutomatedOverPrintParams] = JsonDerived.derivedEncoder[AutomatedOverPrintParams]
 given derivedJsonDecoderAutomatedOverPrintParams: Decoder[AutomatedOverPrintParams] = JsonDerived.derivedDecoder[AutomatedOverPrintParams]
 given derivedJsonEncoderBand: Encoder[Band] = JsonDerived.derivedEncoder[Band]
@@ -90,8 +89,6 @@ given derivedJsonEncoderBoxPackingParams: Encoder[BoxPackingParams] = JsonDerive
 given derivedJsonDecoderBoxPackingParams: Decoder[BoxPackingParams] = JsonDerived.derivedDecoder[BoxPackingParams]
 given derivedJsonEncoderBundle: Encoder[Bundle] = JsonDerived.derivedEncoder[Bundle]
 given derivedJsonDecoderBundle: Decoder[Bundle] = JsonDerived.derivedDecoder[Bundle]
-given derivedJsonEncoderBundleItem: Encoder[BundleItem] = JsonDerived.derivedEncoder[BundleItem]
-given derivedJsonDecoderBundleItem: Decoder[BundleItem] = JsonDerived.derivedDecoder[BundleItem]
 given derivedJsonEncoderBundlingParams: Encoder[BundlingParams] = JsonDerived.derivedEncoder[BundlingParams]
 given derivedJsonDecoderBundlingParams: Decoder[BundlingParams] = JsonDerived.derivedDecoder[BundlingParams]
 given derivedJsonEncoderByteMap: Encoder[ByteMap] = JsonDerived.derivedEncoder[ByteMap]

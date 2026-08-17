@@ -125,7 +125,7 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def elementName: String = inner.elementName
       def encodeField(value: Any): Option[Json] =
         value match
-          case values: NonEmptyVector[?] => Some(Json.arr(values.toVector.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
+          case values: Vector[?] => Some(Json.arr(values.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
           case other                     => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[NonEmptyVector[A]] =
         cursor.downField(memberName).focus match
@@ -143,7 +143,7 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def elementName: String = inner.elementName
       def encodeField(value: Any): Option[Json] =
         value match
-          case values: TwoOrMore[?] => Some(Json.arr(values.toVector.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
+          case values: Vector[?] => Some(Json.arr(values.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
           case other                => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[TwoOrMore[A]] =
         cursor.downField(memberName).focus match
@@ -161,7 +161,7 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def elementName: String = inner.elementName
       def encodeField(value: Any): Option[Json] =
         value match
-          case values: AtMostTwo[?] => Some(Json.arr(values.toVector.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
+          case values: Vector[?] => Some(Json.arr(values.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
           case other                => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[AtMostTwo[A]] =
         cursor.downField(memberName).focus match
@@ -243,10 +243,10 @@ object JsonDerived:
     val simpleName = classTag.runtimeClass.getSimpleName
     ElementNameOverrides.getOrElse(simpleName, Names.elementName(simpleName))
 
-  inline def derivedEncoder[A <: scala.Product](using mirror: Mirror.ProductOf[A], classTag: ClassTag[A]): Encoder[A] =
+  inline def derivedEncoder[A <: scala.Product](using mirror: Mirror.ProductOf[A]): Encoder[A] =
     val labels = constValueTuple[mirror.MirroredElemLabels]
     val codecs = fieldCodecInstances[mirror.MirroredElemTypes]
-    new DerivedJsonEncoder[A](mirror, labels, codecs, Defaults.of(classTag))
+    new DerivedJsonEncoder[A](labels, codecs)
 
   inline def derivedDecoder[A <: scala.Product](using mirror: Mirror.ProductOf[A], classTag: ClassTag[A]): Decoder[A] =
     val labels = constValueTuple[mirror.MirroredElemLabels]
@@ -268,16 +268,14 @@ object JsonDerived:
 end JsonDerived
 
 /**
- * Runtime engine of the derivation. The mirror, the field labels and the field codecs are produced at compile
- * time by [[JsonDerived.derivedEncoder]]/[[JsonDerived.derivedDecoder]]; encoding and decoding are plain
- * runtime loops over the fields. Default values are obtained reflectively from the companion, as on the XML
- * side, so a missing optional member falls back to the declared default.
+ * Runtime engine of the derivation. The field labels and the field codecs are produced at compile time by
+ * [[JsonDerived.derivedEncoder]]/[[JsonDerived.derivedDecoder]]; encoding and decoding are plain runtime loops
+ * over the fields. The decoder additionally takes the mirror (to rebuild the case class) and the reflective
+ * defaults, so a missing optional member falls back to the declared default as on the XML side.
  */
 final class DerivedJsonEncoder[A](
-    mirror: Mirror.ProductOf[A],
     labels: Tuple,
     codecs: Tuple,
-    defaults: Defaults,
 ) extends Encoder[A]:
 
   private val arity: Int = labels.productArity

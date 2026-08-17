@@ -356,6 +356,58 @@ object JsonSpecialCodecs:
     yield Intent(name, productIntent, descriptiveName, externalId, extensions),
   )
 
+  // -- self-recursive types (XML rule f: never derived, always hand-coded) -------
+
+  /** Mirror of the XML BundleItemCodec: the `children` vector recurses through this very codec at runtime. */
+  given Encoder[BundleItem] = Encoder.instance(item =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Amount", Json.fromInt(item.amount))),
+        JsonHelpers.optMember("BundleType", item.bundleType),
+        JsonHelpers.optMember("ItemRef", item.itemRef),
+        JsonHelpers.optMember("TotalAmount", item.totalAmount),
+        JsonHelpers.optMember("TotalDimensions", item.totalDimensions),
+        JsonHelpers.optMember("TotalVolume", item.totalVolume),
+        JsonHelpers.optMember("TotalWeight", item.totalWeight),
+        JsonHelpers.vecMember("BundleItem", item.children),
+      ),
+    ),
+  )
+  given Decoder[BundleItem] = Decoder.instance(cursor =>
+    for
+      amount <- cursor.get[Int]("Amount")
+      bundleType <- JsonHelpers.opt[BundleType](cursor, "BundleType")
+      itemRef <- JsonHelpers.opt[XsdIdRef](cursor, "ItemRef")
+      totalAmount <- JsonHelpers.opt[Int](cursor, "TotalAmount")
+      totalDimensions <- JsonHelpers.opt[Shape3D](cursor, "TotalDimensions")
+      totalVolume <- JsonHelpers.opt[Float](cursor, "TotalVolume")
+      totalWeight <- JsonHelpers.opt[Float](cursor, "TotalWeight")
+      children <- JsonHelpers.vec[BundleItem](cursor, "BundleItem")
+    yield BundleItem(amount, bundleType, itemRef, totalAmount, totalDimensions, totalVolume, totalWeight, children),
+  )
+
+  /** Mirror of the XML AssemblySectionCodec: the `sections` vector recurses through this very codec. */
+  given Encoder[AssemblySection] = Encoder.instance(section =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("BinderySignatureID", Json.fromString(section.binderySignatureId.value))),
+        JsonHelpers.optMember("CommonFolds", section.commonFolds),
+        JsonHelpers.optMember("DescriptiveName", section.descriptiveName),
+        JsonHelpers.optMember("ExternalID", section.externalId),
+        JsonHelpers.vecMember("AssemblySection", section.sections),
+      ),
+    ),
+  )
+  given Decoder[AssemblySection] = Decoder.instance(cursor =>
+    for
+      binderySignatureId <- cursor.get[Nmtoken]("BinderySignatureID")
+      commonFolds <- JsonHelpers.opt[CommonFolds](cursor, "CommonFolds")
+      descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
+      externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+      sections <- JsonHelpers.vec[AssemblySection](cursor, "AssemblySection")
+    yield AssemblySection(binderySignatureId, commonFolds, descriptiveName, externalId, sections),
+  )
+
   // -- TIFF tag ------------------------------------------------------------------
 
   given Encoder[TiffTag] = Encoder.instance(tag =>

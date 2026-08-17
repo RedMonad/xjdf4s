@@ -61,6 +61,14 @@ object JsonDerivedChecks:
     val bundle = BundleItem(amount = 1, children = Vector(BundleItem(amount = 2)))
     assert(roundTrip(bundle) == bundle)
 
+  /** Self-recursive types are hand-coded (XML rule f); both recursion shapes round-trip. */
+  val assemblySection: Unit =
+    val section = AssemblySection(
+      Nmtoken.from("sig-1").toOption.get,
+      sections = Vector(AssemblySection(Nmtoken.from("sig-2").toOption.get)),
+    )
+    assert(roundTrip(section) == section)
+
   val message: Unit =
     val query = QueryStatus(header)
     assert(roundTrip(query) == query)
