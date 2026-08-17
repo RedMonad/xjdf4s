@@ -14,8 +14,34 @@ object JsonNodeCodecs:
 
   // -- simple-content and small nodes -------------------------------------------
 
-  given Encoder[Comment] = Encoder.encodeString.contramap(_.value)
-  given Decoder[Comment] = Decoder.decodeString.map(Comment(_))
+  /**
+   * 9.10.2.5: Comment is the only mixed-content element; its body maps to a JSON string under the "Text" key
+   * (Table 8.14 makes the JSON-only @Text attribute explicit). Attribute members follow the usual naming.
+   */
+  given Encoder[Comment] = Encoder.instance(comment =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Text", Json.fromString(comment.value))),
+        JsonHelpers.optMember("Author", comment.author),
+        JsonHelpers.optMember("ExternalID", comment.externalId),
+        JsonHelpers.optMember("Language", comment.language),
+        JsonHelpers.optMember("PersonalID", comment.personalId),
+        JsonHelpers.optMember("TimeStamp", comment.timeStamp),
+        JsonHelpers.optMember("Type", comment.commentType),
+      ),
+    ),
+  )
+  given Decoder[Comment] = Decoder.instance(cursor =>
+    for
+      value <- cursor.get[String]("Text")
+      author <- JsonHelpers.opt[XjdfString](cursor, "Author")
+      externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+      language <- JsonHelpers.opt[LanguageTag](cursor, "Language")
+      personalId <- JsonHelpers.opt[Nmtoken](cursor, "PersonalID")
+      timeStamp <- JsonHelpers.opt[XsdDateTime](cursor, "TimeStamp")
+      commentType <- JsonHelpers.opt[Nmtoken](cursor, "Type")
+    yield Comment(value, author, externalId, language, personalId, timeStamp, commentType),
+  )
 
   given Encoder[GeneralId] = Encoder.instance(generalId =>
     JsonHelpers.obj(
@@ -326,12 +352,11 @@ object JsonNodeCodecs:
   // -- XJDF root -----------------------------------------------------------------
 
   given Encoder[XJDF] = Encoder.instance(document =>
-    if document.auditPool.nonEmpty then
-      throw new UnsupportedOperationException("AuditPool is not covered by the JSON codec slice yet")
     if document.productList.nonEmpty then
       throw new UnsupportedOperationException("ProductList is not covered by the JSON codec slice yet")
     JsonHelpers.obj(
       JsonHelpers.memberList(
+        document.auditPool.toVector.map(pool => JsonHelpers.member("AuditPool", pool.asJson)),
         JsonHelpers.optMember("Category", document.category),
         JsonHelpers.optMember("CommentURL", document.commentUrl),
         JsonHelpers.optMember("DescriptiveName", document.descriptiveName),
@@ -371,10 +396,11 @@ object JsonNodeCodecs:
       comments <- JsonHelpers.vec[Comment](cursor, "Comment")
       generalIds <- JsonHelpers.vec[GeneralId](cursor, "GeneralID")
       resourceSets <- JsonHelpers.vec[ResourceSet](cursor, "ResourceSet")
+      auditPool <- JsonHelpers.opt[AuditPool](cursor, "AuditPool")
     yield XJDF(
       jobId,
       nonEmptyTypes,
-      None,
+      auditPool,
       comments,
       generalIds,
       None,

@@ -15,6 +15,20 @@
 Ключевая дисциплина этапа: **эффекты живут только здесь** — ни в `model`, ни в `dsl`,
 ни в `xjmf` нет `IO`.
 
+## Нормативные требования транспорта (9.10.3/9.10.4, зафиксировано)
+
+- **POST-only** (9.10.4.1): JSON-команды всегда несут тело — REST-эндпоинты XJDF/XJMF SHALL быть POST.
+- **Таблица эндпоинтов контроллеров** (Table 9.4): `/devices`, `/messages`, `/pipes`,
+  `/queue-entries/request`, `/queue-entries/return`; эндпоинты подписок задаются самим контроллером в
+  `Query/Subscription/@URL`.
+- **Таблица эндпоинтов устройств** (Table 9.5): `/gangs[/force|/subscribe]`, `/devices`,
+  `/messages`, `/subscriptions[/stop]`, `/queue-entries[/modify|/resubmit|/submit]`,
+  `/notifications[/subscribe]`, `/resources[/modify|/subscribe]`, `/devices/shut-down`,
+  `/status[/subscribe]`, `/devices/wake-up`.
+- **multipart/form-data** (9.10.4.2, Example 9.13): `CommandSubmitQueueEntry`/`CommandResubmitQueueEntry`/
+  `CommandReturnQueueEntry` MAY упаковываться как multipart с полем `xjmf` и вложениями `attachment`
+  (файлы ссылаются по `filename` относительным URL).
+
 ## Предпосылки: что читать
 
 - `reference/cats/docs/typeclasses/applicativemonaderror.md` — `MonadError`/`ApplicativeError`

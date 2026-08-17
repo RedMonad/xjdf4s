@@ -73,6 +73,41 @@ object JsonChecks:
     assert(encoded.hcursor.get[String]("Name").toOption.contains("XJDF"))
     assert(encoded.hcursor.get[List[String]]("Types").toOption.contains(List("Product")))
 
+  val transferFunctionPoints: Unit =
+    // Table 9.3: TransferFunction maps to an array of [x, y] point arrays
+    val function = TransferFunction.from(Vector(0.0f, 0.0f, 0.5f, 0.7f, 1.0f, 1.0f)).toOption.get
+    val media = Media(MediaType.Paper, spectrum = Some(function))
+    val decoded = roundTrip(media)
+    assert(decoded.spectrum.contains(function))
+    val points = media.asJson.hcursor.downField("Spectrum").focus.flatMap(_.asArray).get
+    assert(points.size == 3)
+    assert(points.head.asArray.get.size == 2)
+
+  val commentTextMember: Unit =
+    // 9.10.2.5: the Comment body maps to the "Text" member
+    val comment = Comment("hello", author = Some(XjdfString.from("operator").toOption.get))
+    val decoded = roundTrip(comment)
+    assert(decoded == comment)
+    val encoded = comment.asJson
+    assert(encoded.hcursor.get[String]("Text").toOption.contains("hello"))
+    assert(encoded.hcursor.get[String]("Author").toOption.contains("operator"))
+
+  val auditPool: Unit =
+    // Example 9.11: AuditPool is an array of audits with the "Name" discriminator
+    val document = XJDF(
+      jobId,
+      NonEmptyVector.one(process),
+      auditPool = Some(AuditPool(Vector(AuditCreated(header), AuditNotification(header, Notification(Severity.Event))))),
+    )
+    val decoded = roundTrip(document)
+    assert(decoded.auditPool.nonEmpty)
+    assert(decoded.auditPool.get.audits.size == 2)
+    val encoded = document.asJson
+    val pool = encoded.hcursor.downField("AuditPool").focus.flatMap(_.asArray).get
+    assert(pool.size == 2)
+    assert(pool.head.hcursor.get[String]("Name").toOption.contains("AuditCreated"))
+    assert(pool.head.hcursor.downField("Header").focus.nonEmpty)
+
   val messages: Unit =
     val query = QueryResource(header, ResourceQuParams(Scope.Allowed))
     assert(roundTrip(query) == query)

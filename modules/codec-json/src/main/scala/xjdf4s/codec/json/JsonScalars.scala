@@ -77,6 +77,25 @@ object JsonScalars:
   given Decoder[NeutralDensity] =
     Decoder.decodeFloat.emap(value => NeutralDensity.from(value).left.map(_.toString))
 
+  /** Table 9.3: TransferFunction maps to an array of [x, y] point arrays. */
+  given Encoder[TransferFunction] = Encoder.instance(function =>
+    Json.arr(
+      function.pairs.map { case (x, y) =>
+        Json.arr(Json.fromFloat(x).getOrElse(Json.Null), Json.fromFloat(y).getOrElse(Json.Null))
+      }*,
+    ),
+  )
+  given Decoder[TransferFunction] = Decoder.instance(cursor =>
+    for
+      points <- cursor.as[List[List[Float]]]
+      flat <- points.foldLeft[Either[String, Vector[Float]]](Right(Vector.empty)) {
+        case (acc, List(x, y)) => acc.map(_ ++ Vector(x, y))
+        case (_, other)        => Left(s"each TransferFunction point requires exactly two floats, got ${other.size}")
+      }
+      function <- TransferFunction.from(flat).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history))
+    yield function,
+  )
+
   given Encoder[Vector[Float]] =
     Encoder.instance(values => Json.arr(values.map(value => Json.fromFloat(value).getOrElse(Json.Null))*))
   given Decoder[Vector[Float]] = Decoder.instance(cursor => cursor.as[List[Float]].map(_.toVector))

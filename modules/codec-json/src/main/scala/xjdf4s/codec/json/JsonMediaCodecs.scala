@@ -117,7 +117,7 @@ object JsonMediaCodecs:
         JsonHelpers.optMember("BackGlossValue", media.backGlossValue),
         JsonHelpers.optMember("BackISOPaperSubstrate", media.backIsoPaperSubstrate),
         JsonHelpers.optMember("BackLabColorValue", media.backLabColorValue),
-        JsonHelpers.optMember("BackSpectrum", media.backSpectrum.map(_.toVector)),
+        JsonHelpers.optMember("BackSpectrum", media.backSpectrum),
         JsonHelpers.optMember("Brightness", media.brightness),
         JsonHelpers.optMember("CIETint", media.cieTint),
         JsonHelpers.optMember("CIEWhiteness", media.cieWhiteness),
@@ -153,7 +153,7 @@ object JsonMediaCodecs:
         JsonHelpers.optMember("RollDiameter", media.rollDiameter),
         JsonHelpers.optMember("ShrinkIndex", media.shrinkIndex),
         JsonHelpers.optMember("SleeveInterlock", media.sleeveInterlock),
-        JsonHelpers.optMember("Spectrum", media.spectrum.map(_.toVector)),
+        JsonHelpers.optMember("Spectrum", media.spectrum),
         JsonHelpers.optMember("StockType", media.stockType),
         JsonHelpers.optMember("Texture", media.texture),
         JsonHelpers.optMember("Thickness", media.thickness),
@@ -174,7 +174,7 @@ object JsonMediaCodecs:
       backGlossValue <- JsonHelpers.opt[Float](cursor, "BackGlossValue")
       backIsoPaperSubstrate <- JsonHelpers.opt[IsoPaperSubstrate](cursor, "BackISOPaperSubstrate")
       backLabColorValue <- JsonHelpers.opt[LabColor](cursor, "BackLabColorValue")
-      backSpectrum <- JsonHelpers.opt[Vector[Float]](cursor, "BackSpectrum")
+      backSpectrum <- JsonHelpers.opt[TransferFunction](cursor, "BackSpectrum")
       brightness <- JsonHelpers.opt[Float](cursor, "Brightness")
       cieTint <- JsonHelpers.opt[Float](cursor, "CIETint")
       cieWhiteness <- JsonHelpers.opt[Float](cursor, "CIEWhiteness")
@@ -209,17 +209,11 @@ object JsonMediaCodecs:
       rollDiameter <- JsonHelpers.opt[Float](cursor, "RollDiameter")
       shrinkIndex <- JsonHelpers.opt[XYPair](cursor, "ShrinkIndex")
       sleeveInterlock <- JsonHelpers.opt[Nmtoken](cursor, "SleeveInterlock")
-      spectrum <- JsonHelpers.opt[Vector[Float]](cursor, "Spectrum")
+      spectrum <- JsonHelpers.opt[TransferFunction](cursor, "Spectrum")
       stockType <- JsonHelpers.opt[Nmtoken](cursor, "StockType")
       texture <- JsonHelpers.opt[Nmtoken](cursor, "Texture")
       thickness <- JsonHelpers.opt[Float](cursor, "Thickness")
       weight <- JsonHelpers.opt[Float](cursor, "Weight")
-      backSpectrumValue <- backSpectrum match
-        case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
-        case None         => Right(None)
-      spectrumValue <- spectrum match
-        case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
-        case None         => Right(None)
       conditions <- JsonHelpers.opt[ColorMeasurementConditions](cursor, "ColorMeasurementConditions")
       mediaLayers <- JsonHelpers.opt[MediaLayers](cursor, "MediaLayers")
     yield Media(
@@ -232,7 +226,7 @@ object JsonMediaCodecs:
       backGlossValue,
       backIsoPaperSubstrate,
       backLabColorValue,
-      backSpectrumValue,
+      backSpectrum,
       brightness,
       cieTint,
       cieWhiteness,
@@ -267,7 +261,7 @@ object JsonMediaCodecs:
       rollDiameter,
       shrinkIndex,
       sleeveInterlock,
-      spectrumValue,
+      spectrum,
       stockType,
       texture,
       thickness,
@@ -322,7 +316,7 @@ object JsonMediaCodecs:
         JsonHelpers.optMember("NeutralDensity", color.neutralDensity),
         JsonHelpers.optMember("PrintingTechnology", color.printingTechnology),
         JsonHelpers.optMember("PrintStandard", color.printStandard),
-        JsonHelpers.optMember("Spectrum", color.spectrum.map(_.toVector)),
+        JsonHelpers.optMember("Spectrum", color.spectrum),
         JsonHelpers.optMember("sRGB", color.srgb),
         JsonHelpers.optMember("ColorMeasurementConditions", color.colorMeasurementConditions),
       ),
@@ -344,16 +338,13 @@ object JsonMediaCodecs:
       neutralDensity <- JsonHelpers.opt[Float](cursor, "NeutralDensity")
       printingTechnology <- JsonHelpers.opt[Nmtoken](cursor, "PrintingTechnology")
       printStandard <- JsonHelpers.opt[XjdfString](cursor, "PrintStandard")
-      spectrum <- JsonHelpers.opt[Vector[Float]](cursor, "Spectrum")
+      spectrum <- JsonHelpers.opt[TransferFunction](cursor, "Spectrum")
       srgb <- JsonHelpers.opt[Vector[Float]](cursor, "sRGB")
       conditions <- JsonHelpers.opt[ColorMeasurementConditions](cursor, "ColorMeasurementConditions")
       cmykValue <- cmyk match
         case Some(Vector(c, m, y, k)) => CmykColor.from(c, m, y, k).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case Some(_)                  => JsonHelpers.fail(cursor, "CMYK requires exactly four numbers")
         case None                     => Right(None)
-      spectrumValue <- spectrum match
-        case Some(values) => TransferFunction.from(values).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
-        case None         => Right(None)
       srgbValue <- srgb match
         case Some(Vector(r, g, b)) => SrgbColor.from(r, g, b).left.map(error => io.circe.DecodingFailure(error.toString, cursor.history)).map(Some(_))
         case Some(_)               => JsonHelpers.fail(cursor, "sRGB requires exactly three numbers")
@@ -377,7 +368,7 @@ object JsonMediaCodecs:
       printingTechnology,
       printStandard,
       Vector.empty,
-      spectrumValue,
+      spectrum,
       srgbValue,
       conditions,
       Vector.empty,

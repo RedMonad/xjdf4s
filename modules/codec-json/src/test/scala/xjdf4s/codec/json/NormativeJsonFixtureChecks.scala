@@ -79,6 +79,56 @@ object NormativeJsonFixtureChecks:
     assert(layers.size == 3)
     assert(layers(1).asInstanceOf[MediaLayer.GlueLayer].value.glueType.contains(GlueType.Removable))
 
+  val example911AuditPool: Unit =
+    // Example 9.11: an XJDF with AuditPool, encoded in JSON and XML
+    val json = """{
+      |  "AuditPool": [
+      |    {
+      |      "Header": {
+      |        "DeviceID": "CIP4_JDF_Writer_Java",
+      |        "Time": "2024-05-03T18:06:15+02:00"
+      |      },
+      |      "Name": "AuditCreated"
+      |    }
+      |  ],
+      |  "JobID": "Job1",
+      |  "Name": "XJDF",
+      |  "ResourceSet": [
+      |    {
+      |      "Name": "NodeInfo",
+      |      "Resource": [
+      |        {
+      |          "DescriptiveName": "my status",
+      |          "NodeInfo": {
+      |            "Start": "2024-05-03T18:06:15+02:00",
+      |            "Status": "Waiting"
+      |          },
+      |          "Part": [
+      |            {
+      |              "SheetName": "Sheet1"
+      |            }
+      |          ]
+      |        }
+      |      ],
+      |      "Usage": "Input"
+      |    }
+      |  ],
+      |  "Types": [
+      |    "Product"
+      |  ],
+      |  "Version": "2.2"
+      |}""".stripMargin
+    val decoded = parse(json).flatMap(_.as[XJDF]).toOption.get
+    assert(decoded.jobId.value == "Job1")
+    assert(decoded.auditPool.exists(_.audits.size == 1))
+    decoded.auditPool.get.audits.head match
+      case AuditCreated(header) => assert(header.deviceId.value == "CIP4_JDF_Writer_Java")
+      case other => assert(false, s"expected AuditCreated, got $other")
+    // the audit round-trips through our codec with the same Name-discriminator shape
+    val reencoded = decoded.asJson
+    assert(reencoded.hcursor.downField("AuditPool").focus.flatMap(_.asArray).exists(_.size == 1))
+    assert(reencoded.as[XJDF].toOption.contains(decoded))
+
   val example71Xjmf: Unit =
     val json = """{
       |  "Header": {

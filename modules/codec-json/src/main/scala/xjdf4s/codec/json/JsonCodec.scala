@@ -10,3 +10,4 @@ export JsonNodeCodecs.given
 export JsonScalars.given
 export JsonMediaCodecs.given
 export JsonMessagingCodecs.given
+export JsonAuditCodecs.given
