@@ -71,7 +71,7 @@ def validateWithWarnings(resource: Resource): ValidationOutcome =
 /** Whole-document two-channel validation. */
 def validateDocumentWithWarnings(document: XJDF): ValidationOutcome =
   val errors = document.validateAll.toEither match
-    case Left(chain) => chain.toNonEmptyList.toList.toVector
-    case Right(_)    => Vector.empty
+    case Left(nel) => nel.toList.toVector
+    case Right(_)  => Vector.empty
   val warnings = document.resourceSets.flatMap(_.resources).flatMap(resourceWarnings)
   ValidationOutcome(errors, warnings)

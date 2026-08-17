@@ -63,7 +63,7 @@ val attr: String => Kleisli[Either[XmlError, *], Xml.Element, Option[String]] =
 ```
 
 Для декодирования «всех полей сразу» используйте `mapN`-комбинацию `Validated` с
-`NonEmptyChain[XmlError]`, чтобы пользователь получал список всех проблем разом,
+`NonEmptyList[XmlError]` (cats `ValidatedNel`), чтобы пользователь получал список всех проблем разом,
 а не первую встречную.
 
 ### 3. Диспетчер имён для открытых точек

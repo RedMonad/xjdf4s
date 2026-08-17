@@ -56,8 +56,9 @@ assert(Eq[Nmtoken].eqv(a, b))      // инстанс найден в companion N
 
 `Validated[E, A]` = `Valid(a)` или `Invalid(e)` — как `Either`, но с **аккумулирующей** семантикой:
 `Invalid(e1) *> Invalid(e2) = Invalid(e1 ++ e2)`. `ValidatedNel[E, A]` — сокращение для
-`Validated[NonEmptyChain[E], A]`: ошибки собираются в цепочку. См. `datatypes/validated.md`,
-`datatypes/nel.md`, `datatypes/chain.md`.
+`Validated[NonEmptyList[E], A]`: ошибки собираются в непустой список (в cats есть и вариант на
+`NonEmptyChain` — `ValidatedNec`; в xjdf4s используется классический `ValidatedNel`). См.
+`datatypes/validated.md`, `datatypes/nel.md`, `datatypes/chain.md`.
 
 ```scala
 document.validateAll              // ValidatedNel[ValidationError, Unit] — все ошибки документа разом

@@ -1,8 +1,8 @@
-# Этап 02 — Валидация на Validated и NonEmptyChain
+# Этап 02 — Валидация на Validated (NonEmptyList)
 
 | Поле | Значение |
 |---|---|
-| Цель | Превратить `validate: Vector[ValidationError]` в композиционный DSL валидации: аккумуляция ошибок через `ValidatedNel`/`NonEmptyChain`, предупреждения через `Ior`, сквозная валидация документов через `Traverse` |
+| Цель | Превратить `validate: Vector[ValidationError]` в композиционный DSL валидации: аккумуляция ошибок через `ValidatedNel` (NonEmptyList), предупреждения через `Ior`, сквозная валидация документов через `Traverse` |
 | Вход | Этап 01 (cats-core, `Show[ValidationError]`, законы) |
 | Выход | Расширение `core`/`model`: `Validated`-API поверх существующего `ValidatedNode`; документная валидация «сверху вниз» с аккумуляцией |
 | Сложность | Средняя |
@@ -27,8 +27,8 @@
 - `reference/cats/docs/datatypes/validated.md` — обязательно целиком: там и «почему не Either»,
   и синтаксис (`validatedNel`, `toValidatedNel`, `*>`);
 - `reference/cats/docs/datatypes/ior.md` — inclusive-or: и значение, и предупреждения;
-- `reference/cats/docs/datatypes/chain.md`, `datatypes/nel.md` — `NonEmptyChain` как эффективная
-  аккумулирующая структура (`++` за O(1) с двух сторон, в отличие от `NonEmptyList`);
+- `reference/cats/docs/datatypes/nel.md`, `datatypes/chain.md` — структуры аккумуляции ошибок
+  (`ValidatedNel` в cats = `Validated[NonEmptyList[E], A]`; есть и `ValidatedNec` на `NonEmptyChain`);
 - `reference/cats/docs/typeclasses/applicative.md`, `typeclasses/traverse.md` — как пройти по
   коллекциям и «сложить» результаты валидации;
 - `reference/cats/docs/typeclasses/parallel.md` — полезно на этапе 07 (валидация параллельно с IO).
@@ -42,14 +42,14 @@
 
 ```scala
 // core
-import cats.data.{ValidatedNel, NonEmptyChain}
+import cats.data.{NonEmptyList, Validated, ValidatedNel}
 import cats.syntax.all.*
 
 extension (errors: Vector[ValidationError])
   def toValidatedNel: ValidatedNel[ValidationError, Unit] =
-    NonEmptyChain.fromSeq(errors) match
-      case Some(chain) => chain.invalid[Unit]
-      case None        => ().validNel
+    NonEmptyList.fromList(errors.toList) match
+      case Some(nel) => Validated.invalid(nel)
+      case None      => Validated.validNel[ValidationError, Unit](())
 
 extension (node: ValidatedNode)
   def validateNel: ValidatedNel[ValidationError, Unit] = node.validate.toValidatedNel
@@ -68,7 +68,7 @@ def validateAll(resourceSet: ResourceSet): ValidatedNel[ValidationError, Unit] =
 ```
 
 `traverse_` для каждого `Resource` возвращает `Validated`, Applicative `Validated` склеивает
-ошибки всех узлов в один `NonEmptyChain`. Аналогично для `XJDF`: productList, resourceSets, auditPool.
+ошибки всех узлов в один `NonEmptyList`. Аналогично для `XJDF`: productList, resourceSets, auditPool.
 
 ### 3. Ошибка с контекстом
 
@@ -82,7 +82,7 @@ enum ValidationError derives CanEqual:
 
 И `Show[ValidationError]` из этапа 01 печатает цепочку: `ResourceSet[Media] → Resource[0] →
 @Orientation xor @Transformation`. Отдельный `Semigroup` для `ValidationError` не нужен —
-аккумуляция идёт на уровне `NonEmptyChain`.
+аккумуляция идёт на уровне `NonEmptyList`.
 
 ### 4. Предупреждения через двухканальный результат (и Ior)
 
@@ -108,18 +108,18 @@ def validateWithWarnings(resource: Resource): ValidationOutcome =
 
 Там, где нужен именно *тип*, а не запись (например, декодер: «значение получено, но с
 предупреждением»), берите `Ior`: левая часть аккумулируется через `Semigroup`
-(`NonEmptyChain[Warning]`), и `Ior.both(warnings, value)` выражает «и то, и другое»
+(`NonEmptyList[Warning]`), и `Ior.both(warnings, value)` выражает «и то, и другое»
 (`reference/cats/docs/datatypes/ior.md`).
 
 ### 5. Fail-fast вариант
 
 Там, где нужен быстрый отказ (например, валидация до дорогого кодирования), дайте
-`validateEither: Either[NonEmptyChain[ValidationError], Unit]` — перевод `Validated → Either`
+`validateEither: Either[NonEmptyList[ValidationError], Unit]` — перевод `Validated → Either`
 через `.toEither`. Два режима — это осознанный выбор API, а не дублирование.
 
 ## Задачи (пошагово)
 
-1. `NonEmptyChain`-расширения `toValidatedNel`/`validateNel` в `core` + тесты (пустой вектор
+1. `toValidatedNel`/`validateNel`-расширения в `core` + тесты (пустой вектор
    ошибок ⇒ `Valid`, непустой ⇒ `Invalid` с цепочкой).
 2. `traverse_`-валидация: `Resource.validateAll`, `ResourceSet.validateAll`,
    `XJDF.validateAll` — с тестом «три дефектных ресурса ⇒ все три ошибки в результате».
@@ -142,7 +142,7 @@ def validateWithWarnings(resource: Resource): ValidationOutcome =
 
 - **Раздувание модели ошибок.** Не добавляйте case на каждый чих: `InvalidValue` + путь покрывают
   большинство случаев; новые case'ы — только под структурно новые ситуации.
-- **`NonEmptyChain` vs `Vector`.** Переход оправдан только внутри нового API (аккумуляция);
+- **`NonEmptyList` vs `Vector`.** Переход оправдан только внутри нового API (аккумуляция);
   публичный `Vector` не трогаем, чтобы не ломать пользователей.
 - **Валидация всего документа может быть дорогой** на гигабайтных RunList — это не проблема
   этого этапа, но помните: `Traverse`-обход должен оставаться short-circuit'ируемым для

@@ -20,7 +20,7 @@
 | # | Этап | Ключевые средства cats | Модуль(и) | Зависит от |
 |---:|---|---|---|---|
 | 01 ✅ | [cats-основы: инстансы и законы типов](01-cats-foundations.md) | `Eq`, `Show`, `Hash`, `Semigroup`, `Monoid` | `core`, `model` | — |
-| 02 ✅ | [Валидация на Validated и NonEmptyChain](02-validation-dsl.md) | `Validated`, `ValidatedNel`, `NonEmptyChain`, `Traverse`, `Ior` | `core`, `model` | 01 |
+| 02 ✅ | [Валидация на Validated и NonEmptyList](02-validation-dsl.md) | `Validated`, `ValidatedNel` (NonEmptyList), `Traverse`, `Ior` | `core`, `model` | 01 |
 | 03 ✅ | [DSL конструирования документов на Free](03-free-construction-dsl.md) | `Free`, `FunctionK`, `State`, `Writer` | `dsl` | 01, 02 |
 | 04 | [XML-кодек](04-xml-codec.md) | `Kleisli`, `Either`, `ValidatedNel`, cats-parse | новый `codec-xml` | 01, 02 |
 | 05 | [JSON-кодек и JSON-исключения](05-json-codec.md) | circe, `Kleisli`, `Validated` | новый `codec-json` | 04 |

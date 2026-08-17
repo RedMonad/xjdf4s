@@ -23,7 +23,7 @@ object ValidationDslChecks:
         ResourceSet(mediaName, resources = Vector(invalidResource)),
       ),
     )
-    val errors = document.validateAll.toEither.left.toOption.map(_.toNonEmptyList.toList).getOrElse(Nil)
+    val errors = document.validateAll.toEither.left.toOption.map(_.toList).getOrElse(Nil)
     assert(errors.size == 3)
     assert(errors.forall(error => Show[ValidationError].show(error).contains("Resource[")))
 
@@ -33,7 +33,7 @@ object ValidationDslChecks:
       .toEither
       .left
       .toOption
-      .map(_.toNonEmptyList.toList)
+      .map(_.toList)
       .getOrElse(Nil)
     assert(errors.size == 1)
     assert(Show[ValidationError].show(errors.head).contains("ResourceSet[0]"))

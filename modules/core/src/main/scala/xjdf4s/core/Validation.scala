@@ -1,7 +1,7 @@
 package xjdf4s.core
 
 import cats.{Eq, Show}
-import cats.data.{NonEmptyChain, Validated, ValidatedNel}
+import cats.data.{NonEmptyList, Validated, ValidatedNel}
 
 /**
  * Domain validation error vocabulary. Type-level invariants (opaque types, coproducts, cardinality containers) make
@@ -69,14 +69,14 @@ final case class ValidationOutcome(errors: Vector[ValidationError], warnings: Ve
 end ValidationOutcome
 
 extension (errors: Vector[ValidationError])
-  /** Accumulating view: `Invalid` carries every error in a `NonEmptyChain`. */
+  /** Accumulating view: `Invalid` carries every error in a `NonEmptyList` (cats `ValidatedNel`). */
   def toValidatedNel: ValidatedNel[ValidationError, Unit] =
-    NonEmptyChain.fromSeq(errors) match
-      case Some(chain) => Validated.invalidNel(chain)
-      case None        => Validated.validNel[ValidationError, Unit](())
+    NonEmptyList.fromList(errors.toList) match
+      case Some(nel) => Validated.invalid(nel)
+      case None      => Validated.validNel[ValidationError, Unit](())
 
   /** Fail-fast view of the same errors. */
-  def toEitherNel: Either[NonEmptyChain[ValidationError], Unit] =
+  def toEitherNel: Either[NonEmptyList[ValidationError], Unit] =
     toValidatedNel.toEither
 end extension
 
