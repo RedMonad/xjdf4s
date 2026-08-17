@@ -84,8 +84,13 @@ def fields_of(body):
 
 
 def xml_derived_set():
-    text = open(XML_DERIVED, encoding="utf-8").read()
-    return set(re.findall(r"XmlElementCodec\[(\w+)\]", text))
+    # match only real given declarations, so scaladoc mentions like summon[XmlElementCodec[X]] never leak in
+    lines = open(XML_DERIVED, encoding="utf-8").read().splitlines()
+    return set(
+        name
+        for line in lines
+        for name in re.findall(r"^given \w+: XmlElementCodec\[(\w+)\]", line)
+    )
 
 
 def registry_names():

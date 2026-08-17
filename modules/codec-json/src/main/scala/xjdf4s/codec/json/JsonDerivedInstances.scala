@@ -594,5 +594,3 @@ given derivedJsonEncoderWindingParams: Encoder[WindingParams] = JsonDerived.deri
 given derivedJsonDecoderWindingParams: Decoder[WindingParams] = JsonDerived.derivedDecoder[WindingParams]
 given derivedJsonEncoderWrappingParams: Encoder[WrappingParams] = JsonDerived.derivedEncoder[WrappingParams]
 given derivedJsonDecoderWrappingParams: Decoder[WrappingParams] = JsonDerived.derivedDecoder[WrappingParams]
-given derivedJsonEncoderX: Encoder[X] = JsonDerived.derivedEncoder[X]
-given derivedJsonDecoderX: Decoder[X] = JsonDerived.derivedDecoder[X]

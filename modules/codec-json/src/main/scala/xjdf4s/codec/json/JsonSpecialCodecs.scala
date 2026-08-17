@@ -6,6 +6,7 @@ import io.circe.syntax.*
 import xjdf4s.codec.xml.Lexical
 import xjdf4s.core.*
 import xjdf4s.model.*
+import xjdf4s.model.resources.*
 
 /**
  * Hand-written JSON codecs for the special forms whose normative shape is not field-uniform: the payload-enum

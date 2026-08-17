@@ -256,8 +256,8 @@ object JsonScalars:
   given Decoder[QualityScore] = Decoder.decodeInt.emap(value => QualityScore.from(value).left.map(_.toString))
 
   /** `Vector[Byte]` follows the XML hexBinary lexical form; Table 9.3 maps all other types to a string. */
-  given Encoder[Vector[Byte]] = Encoder.encodeString.contramap(Lexical.renderHexBinary)
-  given Decoder[Vector[Byte]] = Decoder.decodeString.emap(value => Lexical.hexBinary(value).left.map(_.toString))
+  given encoderVectorByte: Encoder[Vector[Byte]] = Encoder.encodeString.contramap(Lexical.renderHexBinary)
+  given decoderVectorByte: Decoder[Vector[Byte]] = Decoder.decodeString.emap(value => Lexical.hexBinary(value).left.map(_.toString))
 
   /** FloatList values (`GluingPattern`) map to an array of float per Table 9.3. */
   given Encoder[GluingPattern] = Encoder[Vector[Float]].contramap(_.toVector)
