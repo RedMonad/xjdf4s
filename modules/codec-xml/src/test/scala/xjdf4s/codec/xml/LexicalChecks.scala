@@ -2,6 +2,7 @@ package xjdf4s.codec.xml
 
 import xjdf4s.core.*
 import xjdf4s.model.*
+import xjdf4s.model.resources.*
 
 object LexicalChecks:
   val numbers: Unit =

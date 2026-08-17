@@ -3,7 +3,7 @@ package xjdf4s.codec.xml.domain
 import xjdf4s.codec.xml.*
 import xjdf4s.core.*
 import xjdf4s.messaging.*
-import xjdf4s.model.{Header, Notification}
+import xjdf4s.model.*
 
 object HeaderCodec:
   val decoder: XmlDecoder[Header] =
