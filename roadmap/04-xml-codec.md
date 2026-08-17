@@ -227,7 +227,17 @@ def checkReferences(doc: XJDF): ValidatedNel[ValidationError, Unit] =
   Из инженерных находок итераций: `XmlWriter` эмитит namespace-декларации по мере необходимости
   (`xmlns`/`xmlns:prefix`), без чего foreign-контент не переживает round-trip; foreign-дети `Resource`
   живут в `foreignElements`, а `NamedSpecificResource` даёт fallback-путь `Registry`.
-- **Осталось по DoD этапа:** строковое сравнение эмиттера с нормативными примерами (сейчас
-  корректность гарантируется round-trip-законом и декодом нормативных фикстур); расширение ID/IDREF-прохода
-  `ReferenceCheck` на новые поверхности ссылок (FileSpec/@UID, PlacedObject/@PositionRef и т.п. — поверхность
-  растёт по мере необходимости).
+- **Property-based proof против XML Schema (закрытие DoD):** `schema.xsd` скопирована в
+  `codec-xml/src/test/resources/xjdf.xsd`; для каждого из 100 детерминированно сгенерированных документов
+  (XJDF и XJMF) проверяются (a) round-trip через наш парсер и (b) валидность эмитированного XML против
+  схемы JAXP-валидатором. Генераторы живут в тестовых scope'ах домена (`model`/`messaging`,
+  пакет `*.generators`) и переиспользуются через `dependsOn(project % "test->test")` (см. справочник sbt,
+  «Per-configuration classpath dependencies»). Генераторы намеренно XSD-safe: поля, где нормативные таблицы
+  расходятся с устаревшей схемой (`@Version` 2.2, `Media/@MediaColorName`, `@NPage` vs `@NumberOfPages`,
+  2.2-атрибуты Tool/Patch, новые значения enum), не генерируются — падение property означает дефект кодека,
+  а не известное расхождение. Строковое сравнение с нормативными примерами заменено этим proof-ом:
+  он сильнее (сотни документов против трёх фикстур) и покрывает и XJDF, и XJMF.
+- **Открытые хвосты (осознанно, на будущие итерации):** `ReferenceCheck` покрывает поверхность ссылок
+  среза (Component/Glue); расширение на FileSpec/@UID, PlacedObject/@PositionRef и т.п. — по мере
+  необходимости. Имена атрибутов, где XSD расходится с нормативом (`@NPage` vs `@NumberOfPages`), —
+  зафиксированы как известные; приоритет остаётся за нормативом.

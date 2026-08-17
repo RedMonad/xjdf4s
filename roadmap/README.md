@@ -22,7 +22,7 @@
 | 01 ✅ | [cats-основы: инстансы и законы типов](01-cats-foundations.md) | `Eq`, `Show`, `Hash`, `Semigroup`, `Monoid` | `core`, `model` | — |
 | 02 ✅ | [Валидация на Validated и NonEmptyList](02-validation-dsl.md) | `Validated`, `ValidatedNel` (NonEmptyList), `Traverse`, `Ior` | `core`, `model` | 01 |
 | 03 ✅ | [DSL конструирования документов на Free](03-free-construction-dsl.md) | `Free`, `FunctionK`, `State`, `Writer` | `dsl` | 01, 02 |
-| 04 🚧 | [XML-кодек](04-xml-codec.md) | `Kleisli`, `Either`, `ValidatedNel` | `codec-xml` (ядро + срез покрытия) | 01, 02 |
+| 04 ✅ | [XML-кодек](04-xml-codec.md) | `Kleisli`, `Either`, `ValidatedNel`, деривация, XSD-proof | `codec-xml` (полное покрытие 102/14/44) | 01, 02 |
 | 05 | [JSON-кодек и JSON-исключения](05-json-codec.md) | circe, `Kleisli`, `Validated` | новый `codec-json` | 04 |
 | 06 | [XJMF-транспорт: каналы и сессии](06-xjmf-transport.md) | `Free`, `State`, `Chain`, `Writer`, `Eval` | новый `xjmf` | 03 |
 | 07 | [Эффекты и HTTP-рантайм](07-effects-http-runtime.md) | cats-effect, fs2, http4s (над cats) | новый `http` | 04–06 |
@@ -73,6 +73,8 @@
   (`sbt "clean ; compile ; test"`, Scala 3.8.4, sbt 2.0.0, `-Werror`, `-Wunused:all`, `-Yexplicit-nulls`).
 - Модель: 102 стандартных ресурса, 14 product intents, 44 XJMF-сообщения, открытые extension-точки;
   smart-конструкторы для скаляров, `ValidatedNode#validate` для межполевых SHALL-ограничений.
-- Этап 04 в работе: ядро XML-кодека и вертикальный срез покрытия зелёные (нормативные фикстуры,
-  round-trip, ID/IDREF, wildcards); расширение покрытия узлов продолжается тем же шаблоном.
+- Этап 04 выполнен: полное покрытие XML-кодека (102 ресурса / 14 интенций / 44 сообщения) через
+  typeclass-деривацию, ручные кодеки для особых форм, нормативные фикстуры, round-trip-законы и
+  property-based proof против `schema.xsd` (генераторы в тестовых scope'ах `model`/`messaging`,
+  переиспользуются через `test->test`).
 - Этапы 05–08 — план.

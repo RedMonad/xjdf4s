@@ -238,11 +238,12 @@ object XjdfCodec:
           CodecHelpers.attribute("Types", Some(CodecHelpers.renderNmtokens(document.types.toVector))) ++
           CodecHelpers.attributeOf("Version", document.version, (v: Version) => v.lexical) ++
           CodecHelpers.extensionAttributes(document.extensions)
+      // XSD xs:sequence order: AuditPool?, Comment*, GeneralID*, ProductList?, ResourceSet*
       val children =
-        document.comments.map(CommentCodec.encoder.encode) ++
+        document.auditPool.toVector.map(summon[XmlElementCodec[AuditPool]].encode) ++
+          document.comments.map(CommentCodec.encoder.encode) ++
           document.generalIds.map(GeneralIdCodec.encoder.encode) ++
-          document.resourceSets.map(ResourceSetCodec.encoder.encode) ++
-          document.auditPool.toVector.map(summon[XmlElementCodec[AuditPool]].encode) ++
-          document.productList.toVector.map(summon[XmlElementCodec[ProductList]].encode)
+          document.productList.toVector.map(summon[XmlElementCodec[ProductList]].encode) ++
+          document.resourceSets.map(ResourceSetCodec.encoder.encode)
       Xml.Element(CodecHelpers.qname("XJDF"), attributes, children)
 end XjdfCodec

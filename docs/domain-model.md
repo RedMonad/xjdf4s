@@ -22,7 +22,12 @@ protocol   — union/intersection-типы поверх XJDF + XJMF             
 dsl        — Free-DSL конструирования документов (см. free-dsl.md)              (→ model, cats-free)
 codec-xml  — XML-кодек поверх домена: парсер/писатель, декодеры/энкодеры,
              typeclass-деривация (derivation/), генерируемый Registry 102/14/44,
-             ID/IDREF-проход                                                (→ model, messaging)
+             ID/IDREF-проход, property-based proof против schema.xsd          (→ model, messaging)
+
+Генераторы доменных значений для кодек-тестов живут в тестовых scope'ах `model` и `messaging`
+(пакеты `*.generators`) и переиспользуются нижележащими модулями через `dependsOn(project % "test->test")`
+(справочник sbt, «Per-configuration classpath dependencies»). Генераторы XSD-safe: расхождения
+норматив/XSD не генерируются, поэтому падение property — это дефект кодека.
 ```
 
 Домен (`core`–`protocol`) не тянет эффектов и транспорта: JSON/XML-кодеки, HTTP и `IO` — слои поверх,

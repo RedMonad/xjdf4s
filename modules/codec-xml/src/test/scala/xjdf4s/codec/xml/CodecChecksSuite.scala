@@ -52,7 +52,9 @@ class CodecChecksSuite extends munit.FunSuite:
       DerivedRoundTripChecks.derivedMessages,
       DerivedRoundTripChecks.fullDocument,
       DerivedRoundTripChecks.fullXjmf,
+      SchemaRoundTripPropertyChecks.xjdfDocuments,
+      SchemaRoundTripPropertyChecks.xjmfMessages,
     )
-    assert(results.size == 48)
+    assert(results.size == 50)
   }
 end CodecChecksSuite

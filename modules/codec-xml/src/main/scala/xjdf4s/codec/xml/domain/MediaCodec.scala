@@ -323,12 +323,14 @@ object MediaCodec:
           CodecHelpers.attributeOf("Thickness", media.thickness, CodecHelpers.renderFloat) ++
           CodecHelpers.attributeOf("Weight", media.weight, CodecHelpers.renderFloat) ++
           CodecHelpers.extensionAttributes(media.extensions)
+      // XSD xs:sequence order: Certification*, ColorMeasurementConditions?, HolePattern*, IdentificationField*,
+      // MediaLayers?, TabDimensions?
       val children =
-        media.colorMeasurementConditions.toVector.map(ColorMeasurementConditionsCodec.encoder.encode) ++
-          media.mediaLayers.toVector.map(MediaLayersCodec.encoder.encode) ++
-          media.certifications.map(summon[XmlElementCodec[Certification]].encode) ++
+        media.certifications.map(summon[XmlElementCodec[Certification]].encode) ++
+          media.colorMeasurementConditions.toVector.map(ColorMeasurementConditionsCodec.encoder.encode) ++
           media.holePatterns.map(summon[XmlElementCodec[HolePattern]].encode) ++
           media.identificationFields.map(summon[XmlElementCodec[IdentificationField]].encode) ++
+          media.mediaLayers.toVector.map(MediaLayersCodec.encoder.encode) ++
           media.tabDimensions.toVector.map(summon[XmlElementCodec[TabDimensions]].encode)
       Xml.Element(CodecHelpers.qname("Media"), attributes, children)
 end MediaCodec

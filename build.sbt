@@ -50,7 +50,9 @@ lazy val dsl = project
 
 lazy val codecXml = project
   .in(file("modules/codec-xml"))
-  .dependsOn(model, messaging)
+  // "test->test" makes the domain generators (model and messaging test scopes) available to the codec tests,
+  // per the sbt multi-project guide on per-configuration classpath dependencies.
+  .dependsOn(model % "compile->compile;test->test", messaging % "compile->compile;test->test")
   .settings(name := "xjdf4s-codec-xml")
 
 lazy val root = rootProject
