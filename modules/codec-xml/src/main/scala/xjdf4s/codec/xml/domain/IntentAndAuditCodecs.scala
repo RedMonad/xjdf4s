@@ -645,21 +645,21 @@ object ModifyQueueEntryParamsCodec:
     XmlDecoder.instance: element =>
       for
         op <- XmlDecoders.requiredAttribute("Operation")(operation).decode(element)
-        filter <- XmlDecoders.singleChild("Filter")(summon[XmlElementCodec[QueueFilter]]).decode(element)
-        afterQueueEntryId <- XmlDecoders.attributeOf("AfterQueueEntryID")(Lexical.nmtoken).decode(element)
-        beforeQueueEntryId <- XmlDecoders.attributeOf("BeforeQueueEntryID")(Lexical.nmtoken).decode(element)
+        filter <- XmlDecoders.singleChild("QueueFilter")(summon[XmlElementCodec[QueueFilter]]).decode(element)
+        nextQueueEntryId <- XmlDecoders.attributeOf("NextQueueEntryID")(Lexical.nmtoken).decode(element)
+        prevQueueEntryId <- XmlDecoders.attributeOf("PrevQueueEntryID")(Lexical.nmtoken).decode(element)
         position <- XmlDecoders.attributeOf("Position")(Lexical.int).decode(element)
         priority <- XmlDecoders.attributeOf("Priority")(Lexical.priority).decode(element)
         gangName <- XmlDecoders.attributeOf("GangName")(Lexical.nmtoken).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Filter")).decode(element)
+        _ <- XmlDecoders.expectChildrenOnly(Set("QueueFilter")).decode(element)
         modification <- op match
           case _: QueueModification.Move =>
-            val target = (afterQueueEntryId, beforeQueueEntryId, position, priority) match
-              case (Some(after), _, _, _)   => Some(QueueMoveTarget.After(after))
-              case (_, Some(before), _, _)  => Some(QueueMoveTarget.Before(before))
-              case (_, _, Some(pos), _)     => Some(QueueMoveTarget.Position(pos))
-              case (_, _, _, Some(prio))    => Some(QueueMoveTarget.Priority(prio))
-              case _                        => None
+            val target = (nextQueueEntryId, prevQueueEntryId, position, priority) match
+              case (Some(next), _, _, _)   => Some(QueueMoveTarget.After(next))
+              case (_, Some(prev), _, _)   => Some(QueueMoveTarget.Before(prev))
+              case (_, _, Some(pos), _)    => Some(QueueMoveTarget.Position(pos))
+              case (_, _, _, Some(prio))   => Some(QueueMoveTarget.Priority(prio))
+              case _                       => None
             Right(QueueModification.Move(target))
           case _: QueueModification.SetGang => Right(QueueModification.SetGang(gangName))
           case other                        => Right(other)
@@ -670,9 +670,9 @@ object ModifyQueueEntryParamsCodec:
       val targetAttributes = params.operation match
         case QueueModification.Move(target) =>
           target match
-            case Some(QueueMoveTarget.After(after))   => CodecHelpers.attribute("AfterQueueEntryID", Some(after.value))
-            case Some(QueueMoveTarget.Before(before)) => CodecHelpers.attribute("BeforeQueueEntryID", Some(before.value))
-            case Some(QueueMoveTarget.Position(pos))  => CodecHelpers.attribute("Position", Some(CodecHelpers.renderInt(pos)))
+            case Some(QueueMoveTarget.After(next))   => CodecHelpers.attribute("NextQueueEntryID", Some(next.value))
+            case Some(QueueMoveTarget.Before(prev))  => CodecHelpers.attribute("PrevQueueEntryID", Some(prev.value))
+            case Some(QueueMoveTarget.Position(pos)) => CodecHelpers.attribute("Position", Some(CodecHelpers.renderInt(pos)))
             case Some(QueueMoveTarget.Priority(prio)) => CodecHelpers.attribute("Priority", Some(prio.value.toString))
             case None                                 => Vector.empty
         case QueueModification.SetGang(gangName) =>
@@ -704,14 +704,14 @@ object QueueSubmissionParamsCodec:
         gangName <- XmlDecoders.attributeOf("GangName")(Lexical.nmtoken).decode(element)
         gangPolicy <- XmlDecoders.attributeOf("GangPolicy")(Lexical.enumOf(QueueGangPolicy.values.toVector, _.toString))
           .decode(element)
-        afterQueueEntryId <- XmlDecoders.attributeOf("AfterQueueEntryID")(Lexical.nmtoken).decode(element)
-        beforeQueueEntryId <- XmlDecoders.attributeOf("BeforeQueueEntryID")(Lexical.nmtoken).decode(element)
+        nextQueueEntryId <- XmlDecoders.attributeOf("NextQueueEntryID")(Lexical.nmtoken).decode(element)
+        prevQueueEntryId <- XmlDecoders.attributeOf("PrevQueueEntryID")(Lexical.nmtoken).decode(element)
         priority <- XmlDecoders.attributeOf("Priority")(Lexical.priority).decode(element)
         returnJmf <- XmlDecoders.attributeOf("ReturnJMF")(Lexical.uri).decode(element)
         _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
-        position <- (afterQueueEntryId, beforeQueueEntryId, priority) match
-          case (Some(after), _, _)  => Right(Some(QueueSubmissionPosition.After(after)))
-          case (_, Some(before), _) => Right(Some(QueueSubmissionPosition.Before(before)))
+        position <- (nextQueueEntryId, prevQueueEntryId, priority) match
+          case (Some(next), _, _)   => Right(Some(QueueSubmissionPosition.After(next)))
+          case (_, Some(prev), _)   => Right(Some(QueueSubmissionPosition.Before(prev)))
           case (_, _, Some(prio))   => Right(Some(QueueSubmissionPosition.Priority(prio)))
           case _                    => Right(None)
       yield QueueSubmissionParams(url, activation, gangName, gangPolicy, position, returnJmf, CodecHelpers.decodeExtensionAttributes(element))
@@ -719,8 +719,8 @@ object QueueSubmissionParamsCodec:
   val encoder: XmlEncoder[QueueSubmissionParams] =
     XmlEncoder.instance: params =>
       val positionAttributes = params.position match
-        case Some(QueueSubmissionPosition.After(after))   => CodecHelpers.attribute("AfterQueueEntryID", Some(after.value))
-        case Some(QueueSubmissionPosition.Before(before)) => CodecHelpers.attribute("BeforeQueueEntryID", Some(before.value))
+        case Some(QueueSubmissionPosition.After(next))   => CodecHelpers.attribute("NextQueueEntryID", Some(next.value))
+        case Some(QueueSubmissionPosition.Before(prev))  => CodecHelpers.attribute("PrevQueueEntryID", Some(prev.value))
         case Some(QueueSubmissionPosition.Priority(prio)) => CodecHelpers.attribute("Priority", Some(prio.value.toString))
         case None                                         => Vector.empty
       val attributes =
