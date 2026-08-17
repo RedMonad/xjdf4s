@@ -1,6 +1,6 @@
 package xjdf4s.codec.xml.derivation
 
-import scala.compiletime.{constValue, constValueTuple, summonAll}
+import scala.compiletime.{constValue, constValueTuple, erasedValue, summonInline}
 import scala.deriving.Mirror
 import scala.reflect.ClassTag
 
@@ -30,7 +30,7 @@ object Derived:
    */
   inline def derived[A <: Product](using m: Mirror.ProductOf[A], ct: ClassTag[A]): XmlElementCodec[A] =
     val labels = constValueTuple[m.MirroredElemLabels]
-    val codecs = summonAll[Tuple.Map[m.MirroredElemTypes, FieldCodec]]
+    val codecs = fieldCodecInstances[m.MirroredElemTypes]
     new DerivedCodec[A](
       m,
       labels,
@@ -45,8 +45,19 @@ object Derived:
       ct: ClassTag[A],
   ): XmlElementCodec[A] =
     val labels = constValueTuple[m.MirroredElemLabels]
-    val codecs = summonAll[Tuple.Map[m.MirroredElemTypes, FieldCodec]]
+    val codecs = fieldCodecInstances[m.MirroredElemTypes]
     new DerivedCodec[A](m, labels, codecs, elementName, Defaults.of(ct))
+
+  /**
+   * Canonical per-element instance collection, following the reference documentation on type class derivation:
+   * `scala.compiletime.summonAll` performs its searches in a context where the per-type codec instances of the
+   * call site are not visible, so the tuple is walked with `summonInline` instead — each search is delayed until
+   * the inlining at the call site, where the field codec can be resolved.
+   */
+  private inline def fieldCodecInstances[Elems <: Tuple]: Tuple =
+    inline erasedValue[Elems] match
+      case _: EmptyTuple      => EmptyTuple
+      case _: (elem *: elems) => summonInline[FieldCodec[elem]] *: fieldCodecInstances[elems]
 end Derived
 
 /** Default constructor values of a case class, read reflectively from the companion's `apply$default$N` methods. */

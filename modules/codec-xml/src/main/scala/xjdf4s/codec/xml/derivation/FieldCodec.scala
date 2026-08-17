@@ -182,8 +182,8 @@ object FieldCodec extends LowPriorityFieldCodecs:
 
   /**
    * The `extensions` field of every node is handled specially by the derived codec (foreign attributes and
-   * children), so this instance exists only to satisfy the per-field materialization of `summonAll`; the runtime
-   * never calls it.
+   * children), so this instance exists only to satisfy the per-field materialization of the inline instance
+   * walk; the runtime never calls it.
    */
   given extensionsCodec: FieldCodec[Extensions] =
     new FieldCodec[Extensions]:
@@ -294,7 +294,7 @@ object FieldCodec extends LowPriorityFieldCodecs:
 
   /**
    * Fallback for case classes without a hand-written codec. Deliberately non-inline: `inline given` definitions
-   * are invisible to ordinary implicit search and to `summonAll`, which would break every nested product field.
+   * are invisible to ordinary implicit search, which would break every nested product field.
    * The [[XmlElementCodec]] instances themselves come from the generated non-inline givens in
    * `DerivedInstances` (or from hand codecs), so the whole chain stays in ordinary implicit search.
    */
