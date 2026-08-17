@@ -93,7 +93,7 @@ final class XjdfGenerators(seed: Long):
     Color(
       density = maybe(0.5)(float(0f, 2f)),
       gray = maybe(0.5)(float(0f, 1f)),
-      lab = maybeValue(0.4)(LabColor.from(float(0f, 100f), float(-100f, 100f), float(-100f, 100f))),
+      lab = maybeValue(0.4)(LabColor.from(float(0f, 100f), float(-100f, 100f), float(-100f, 100f)).toOption),
     )
 
   def component(): Component =
