@@ -100,7 +100,7 @@ final class XjdfGenerators(seed: Long):
     Component(
       surfaceCount = maybe(0.5)(int(1, 8)),
       windingResult = maybe(0.4)(int(0, 1)),
-      mediaRef = maybeValue(0.5)(XsdIdRef.from(mediaRefTarget.value)),
+      mediaRef = maybeValue(0.5)(XsdIdRef.from(mediaRefTarget.value).toOption),
     )
 
   def tool(): Tool =
