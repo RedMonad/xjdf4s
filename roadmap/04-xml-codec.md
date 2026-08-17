@@ -179,3 +179,31 @@ def checkReferences(doc: XJDF): ValidatedNel[ValidationError, Unit] =
   атрибутов перед сравнением, фиксируйте это в тест-утилите.
 - **Порядок полей в эмиттере** — держите порядок как в нормативных таблицах; это упрощает
   сравнение и диффы в интеграциях.
+
+---
+
+## Состояние исполнения (первый заход)
+
+Реализовано в модуле `codec-xml` (зависит от `model`, `messaging`):
+
+- **Инфраструктура полностью:** `Xml` (AST), `XmlParser` (позиции ошибок, сущности, CDATA, namespace-скопы,
+  отбрасывание whitespace-only текста), `XmlWriter` (канонический вывод, экранирование, `xmlns` корня),
+  `XmlDecoder`/`XmlEncoder` + комбинаторы (`attribute/attributeOf/requiredAttribute/optionalChild/singleChild/
+  repeatedChild/oneOrMoreChild/expectChildrenOnly`), `Lexical` (все скаляры через smart-конструкторы домена),
+  `ForeignCodec` (lossless foreign-контент), `Registry` (диспетчеризация открытых точек),
+  `ReferenceCheck` (ID/IDREF по покрытой поверхности).
+- **Отклонение от плана:** вместо cats-parse написан зависимый-от-ничего парсер (~230 строк). Причина: версию
+  артефакта нельзя проверить в среде без сети, а ошибка в резолве зависимостей дороже, чем собственный парсер
+  с полным тестовым покрытием. Переход на cats-parse/fs2-data остаётся опцией, если появится потребность в
+  потоковом разборе.
+- **Покрытие узлов (срез):** XJDF, ResourceSet, Dependent, Resource, AmountPool/PartAmount/PartWaste, Part,
+  Comment, GeneralID; ресурсы Color (+DeviceNColor, ColorMeasurementConditions), Component, Device, Media
+  (включая MediaLayers/Glue), Tool; сообщения QueryKnownMessages, QueryResource/ResourceQuParams, ResourceInfo,
+  ResponseResource, SignalResource, ResponseKnownMessages/MessageService, XJMF, Header, Subscription.
+- **Политика неполноты:** стандартное имя без декодера → `UnsupportedElement` (громко, никогда не тихо);
+  энкодеры бросают `UnsupportedOperationException` на непокрытых детях (AuditPool/ProductList/Notification);
+  foreign-ресурсы декодируются lossless в `NamedSpecificResource`; foreign-сообщения пока отклоняются
+  (семейство не выводимо из имени элемента).
+- **Тесты:** нормативные фикстуры Example 7.5 / 8.5 / 7.8, round-trip-закон на покрытых узлах, ID/IDREF,
+  wildcards, негативные случаи. Оставшиеся ~97 ресурсов и ~39 сообщений добавляются тем же шаблоном
+  (объект-кодек + строка в `Registry`).

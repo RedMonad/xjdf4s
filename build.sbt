@@ -46,8 +46,13 @@ lazy val dsl = project
     libraryDependencies += "org.typelevel" %% "cats-free" % catsVersion
   )
 
+lazy val codecXml = project
+  .in(file("modules/codec-xml"))
+  .dependsOn(model, messaging)
+  .settings(name := "xjdf4s-codec-xml")
+
 lazy val root = rootProject
-  .aggregate(core, model, messaging, protocol, dsl)
+  .aggregate(core, model, messaging, protocol, dsl, codecXml)
   .settings(
     name := "xjdf4s",
     publish / skip := true,
