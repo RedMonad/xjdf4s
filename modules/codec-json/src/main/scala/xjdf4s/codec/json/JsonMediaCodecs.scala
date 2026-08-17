@@ -1,6 +1,6 @@
 package xjdf4s.codec.json
 
-import io.circe.{Decoder, Encoder, HCursor, Json}
+import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.*
 
 import xjdf4s.core.*

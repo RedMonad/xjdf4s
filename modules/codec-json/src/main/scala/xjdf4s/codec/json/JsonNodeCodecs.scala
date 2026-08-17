@@ -1,11 +1,10 @@
 package xjdf4s.codec.json
 
-import io.circe.{Decoder, Encoder, HCursor, Json}
+import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.*
 
 import xjdf4s.core.*
 import xjdf4s.model.*
-import xjdf4s.model.resources.*
 
 /**
  * JSON codecs for the document tree. Member names follow the normative JSON convention (attribute names without

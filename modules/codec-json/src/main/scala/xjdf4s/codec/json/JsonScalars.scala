@@ -3,7 +3,6 @@ package xjdf4s.codec.json
 import scala.reflect.ClassTag
 
 import io.circe.{Decoder, Encoder, Json}
-import io.circe.syntax.*
 
 import xjdf4s.core.*
 import xjdf4s.messaging.*
@@ -19,24 +18,24 @@ object JsonScalars:
 
   // -- opaque domain scalars ----------------------------------------------------
 
-  private def stringCodec[A](label: String)(parse: String => Either[ValidationError, A], render: A => String)
+  private def stringCodec[A](parse: String => Either[ValidationError, A], render: A => String)
       : (Encoder[A], Decoder[A]) =
     (Encoder.encodeString.contramap(render), Decoder.decodeString.emap(value => parse(value).left.map(_.toString)))
 
-  given Encoder[Nmtoken] = stringCodec[Nmtoken]("NMTOKEN")(Nmtoken.from, _.value)._1
-  given Decoder[Nmtoken] = stringCodec[Nmtoken]("NMTOKEN")(Nmtoken.from, _.value)._2
-  given Encoder[XsdId] = stringCodec[XsdId]("ID")(XsdId.from, _.value)._1
-  given Decoder[XsdId] = stringCodec[XsdId]("ID")(XsdId.from, _.value)._2
-  given Encoder[XsdIdRef] = stringCodec[XsdIdRef]("IDREF")(XsdIdRef.from, _.value)._1
-  given Decoder[XsdIdRef] = stringCodec[XsdIdRef]("IDREF")(XsdIdRef.from, _.value)._2
-  given Encoder[XjdfString] = stringCodec[XjdfString]("string")(XjdfString.from, _.value)._1
-  given Decoder[XjdfString] = stringCodec[XjdfString]("string")(XjdfString.from, _.value)._2
-  given Encoder[XsdDateTime] = stringCodec[XsdDateTime]("dateTime")(XsdDateTime.from, _.value)._1
-  given Decoder[XsdDateTime] = stringCodec[XsdDateTime]("dateTime")(XsdDateTime.from, _.value)._2
-  given Encoder[XsdDuration] = stringCodec[XsdDuration]("duration")(XsdDuration.from, _.value)._1
-  given Decoder[XsdDuration] = stringCodec[XsdDuration]("duration")(XsdDuration.from, _.value)._2
-  given Encoder[LanguageTag] = stringCodec[LanguageTag]("language")(LanguageTag.from, _.value)._1
-  given Decoder[LanguageTag] = stringCodec[LanguageTag]("language")(LanguageTag.from, _.value)._2
+  given Encoder[Nmtoken] = stringCodec[Nmtoken](Nmtoken.from, _.value)._1
+  given Decoder[Nmtoken] = stringCodec[Nmtoken](Nmtoken.from, _.value)._2
+  given Encoder[XsdId] = stringCodec[XsdId](XsdId.from, _.value)._1
+  given Decoder[XsdId] = stringCodec[XsdId](XsdId.from, _.value)._2
+  given Encoder[XsdIdRef] = stringCodec[XsdIdRef](XsdIdRef.from, _.value)._1
+  given Decoder[XsdIdRef] = stringCodec[XsdIdRef](XsdIdRef.from, _.value)._2
+  given Encoder[XjdfString] = stringCodec[XjdfString](XjdfString.from, _.value)._1
+  given Decoder[XjdfString] = stringCodec[XjdfString](XjdfString.from, _.value)._2
+  given Encoder[XsdDateTime] = stringCodec[XsdDateTime](XsdDateTime.from, _.value)._1
+  given Decoder[XsdDateTime] = stringCodec[XsdDateTime](XsdDateTime.from, _.value)._2
+  given Encoder[XsdDuration] = stringCodec[XsdDuration](XsdDuration.from, _.value)._1
+  given Decoder[XsdDuration] = stringCodec[XsdDuration](XsdDuration.from, _.value)._2
+  given Encoder[LanguageTag] = stringCodec[LanguageTag](LanguageTag.from, _.value)._1
+  given Decoder[LanguageTag] = stringCodec[LanguageTag](LanguageTag.from, _.value)._2
   given Encoder[UriRef] = Encoder.encodeString.contramap[UriRef](_.value.toString)
   given Decoder[UriRef] = Decoder.decodeString.emap(value => UriRef.from(value).left.map(_.toString))
   given Encoder[Priority0To100] = Encoder.encodeInt.contramap(_.value)
@@ -187,7 +186,7 @@ object JsonScalars:
    * lexical forms (Version, JdfVersion, MessageUrlScheme, NamedColor) have specific instances below and win by
    * specificity.
    */
-  given [A <: scala.reflect.Enum](using ct: ClassTag[A]): Encoder[A] =
+  given [A <: scala.reflect.Enum]: Encoder[A] =
     Encoder.encodeString.contramap(_.toString)
 
   given [A <: scala.reflect.Enum](using ct: ClassTag[A]): Decoder[A] =
