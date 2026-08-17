@@ -69,6 +69,11 @@ object JsonDerivedChecks:
     val mediaIntent = MediaIntent(MediaType.Paper)
     assert(roundTrip(mediaIntent) == mediaIntent)
 
+  /** The Product -> Intent -> ProductIntent chain exercises the open-union dispatch of the derived codecs. */
+  val productWithIntent: Unit =
+    val product = Product(intents = Vector(Intent(Nmtoken.from("media-intent").toOption.get, Some(MediaIntent(MediaType.Paper)))))
+    assert(roundTrip(product) == product)
+
   val foreignExtensions: Unit =
     val mediaIntent = MediaIntent(
       MediaType.Paper,

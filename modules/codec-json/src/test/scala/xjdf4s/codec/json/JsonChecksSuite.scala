@@ -28,9 +28,10 @@ class JsonChecksSuite extends munit.FunSuite:
       JsonDerivedChecks.bundleItem,
       JsonDerivedChecks.message,
       JsonDerivedChecks.intent,
+      JsonDerivedChecks.productWithIntent,
       JsonDerivedChecks.foreignExtensions,
       JsonDerivedChecks.registryCoverage,
     )
-    assert(results.size == 26)
+    assert(results.size == 27)
   }
 end JsonChecksSuite

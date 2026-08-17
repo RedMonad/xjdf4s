@@ -317,6 +317,45 @@ object JsonSpecialCodecs:
       case PlacedObjectKind.Content    => Vector(JsonHelpers.member("ContentObject", Json.obj()))
       case PlacedObjectKind.Mark(mark) => Vector(JsonHelpers.member("MarkObject", mark.asJson))
 
+  // -- Intent (open ProductIntent union, dispatched through the registry) --------
+
+  /**
+   * Mirror of the XML IntentCodec: the intent child is dispatched by its element name through [[JsonRegistry]],
+   * so exactly one intent member may be present. The root product-list batch will reuse this codec.
+   */
+  given Encoder[Intent] = Encoder.instance(intent =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Name", Json.fromString(intent.name.value))),
+        JsonHelpers.optMember("DescriptiveName", intent.descriptiveName),
+        JsonHelpers.optMember("ExternalID", intent.externalId),
+        intent.productIntent.toVector.map(value => JsonHelpers.member(JsonRegistry.intentName(value), JsonRegistry.encodeProductIntent(value))),
+        JsonForeign.encodeExtensions(intent.extensions),
+      ),
+    ),
+  )
+  given Decoder[Intent] = Decoder.instance(cursor =>
+    for
+      name <- cursor.get[Nmtoken]("Name")
+      descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
+      externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+      decodedIntents <- JsonRegistry.intentNames.toVector.sorted.foldLeft[Decoder.Result[Vector[ProductIntent]]](Right(Vector.empty)) {
+        (acc, intentName) =>
+          for
+            accumulated <- acc
+            next <- cursor.downField(intentName).focus match
+              case Some(json) => JsonRegistry.decodeProductIntent(intentName, json).map(accumulated :+ _)
+              case None       => Right(accumulated)
+          yield next
+      }
+      productIntent <- decodedIntents match
+        case Vector(single) => Right(Some(single))
+        case Vector()       => Right(None)
+        case other          => JsonHelpers.fail(cursor, s"Intent requires at most one intent member, found ${other.size}")
+      extensions <- JsonForeign.decodeExtensions(cursor)
+    yield Intent(name, productIntent, descriptiveName, externalId, extensions),
+  )
+
   // -- TIFF tag ------------------------------------------------------------------
 
   given Encoder[TiffTag] = Encoder.instance(tag =>
