@@ -1,6 +1,5 @@
 package xjdf4s.codec.xml
 
-import xjdf4s.codec.xml.domain.*
 import xjdf4s.codec.xml.domain.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
