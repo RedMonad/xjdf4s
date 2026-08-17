@@ -15,14 +15,14 @@ import xjdf4s.core.{QualifiedName, XjdfNamespace}
  */
 object XmlParser:
 
+  private final class ParseAbort(val line: Int, val column: Int, val message: String) extends RuntimeException
+
   def parse(input: String): Either[XmlError, Xml.Element] =
     try Right(new Parser(input).parseDocument())
     catch
-      case abort: Parser.Abort => Left(XmlError.Parse(abort.line, abort.column, abort.message))
+      case abort: ParseAbort => Left(XmlError.Parse(abort.line, abort.column, abort.message))
 
   private final class Parser(input: String):
-
-    final class Abort(val line: Int, val column: Int, val message: String) extends RuntimeException
 
     private var position = 0
 
@@ -40,7 +40,7 @@ object XmlParser:
       val prefix = input.substring(0, math.min(position, input.length))
       val line = prefix.count(_ == '\n') + 1
       val column = position - prefix.lastIndexOf('\n')
-      throw new Abort(line, column, message)
+      throw new ParseAbort(line, column, message)
 
     private def peek: Char =
       if position >= input.length then '\u0000' else input.charAt(position)
@@ -203,6 +203,6 @@ object XmlParser:
       else if body.startsWith("#") then
         try body.substring(1).toInt.toChar.toString
         catch case _: NumberFormatException => abort(s"invalid numeric entity reference '&$body;'")
-      else NamedEntities.getOrElse(body, abort(s"unknown entity reference '&$body;'"))
+      else NamedEntities.getOrElse(body, abort(s"unknown entity reference '&$body;'")).toString
   end Parser
 end XmlParser

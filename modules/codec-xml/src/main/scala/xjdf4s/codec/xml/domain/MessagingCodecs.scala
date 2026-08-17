@@ -42,10 +42,10 @@ object HeaderCodec:
           CodecHelpers.attributeOf("Author", header.author, (v: XjdfString) => v.value) ++
           CodecHelpers.attributeOf("DescriptiveName", header.descriptiveName, (v: XjdfString) => v.value) ++
           CodecHelpers.attribute("DeviceID", Some(header.deviceId.value)) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "ICSVersions",
-            Option.when(header.icsVersions.nonEmpty)(CodecHelpers.renderNmtokens(header.icsVersions)),
-          ) ++
+        Option.when(header.icsVersions.nonEmpty)(CodecHelpers.renderNmtokens(header.icsVersions)),
+      ) ++
           CodecHelpers.attributeOf("ID", header.id, (v: XsdId) => v.value) ++
           CodecHelpers.attributeOf("PersonalID", header.personalId, (v: Nmtoken) => v.value) ++
           CodecHelpers.attributeOf("refID", header.refId, (v: Nmtoken) => v.value) ++
@@ -77,11 +77,11 @@ object SubscriptionCodec:
   val encoder: XmlEncoder[Subscription] =
     XmlEncoder.instance: subscription =>
       val attributes =
-        CodecHelpers.attributeOf(
+        CodecHelpers.attribute(
           "ChannelMode",
-          Option.when(subscription.channelMode.nonEmpty)(subscription.channelMode.map(_.toString).mkString(" ")),
-        ) ++
-          CodecHelpers.attributeOf(
+        Option.when(subscription.channelMode.nonEmpty)(subscription.channelMode.map(_.toString).mkString(" ")),
+      ) ++
+          CodecHelpers.attribute(
             "Languages",
             Option.when(subscription.languages.nonEmpty)(CodecHelpers.renderLanguages(subscription.languages)),
           ) ++
@@ -131,7 +131,7 @@ object ResourceQuParamsCodec:
           CodecHelpers.attributeOf("ResourceDetails", params.details, _.toString) ++
           CodecHelpers.attributeOf("ResourceName", params.resourceName, (v: Nmtoken) => v.value) ++
           CodecHelpers.attribute("Scope", Some(params.scope.toString)) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "Types",
             Option.when(params.types.nonEmpty)(CodecHelpers.renderNmtokens(params.types)),
           ) ++
@@ -163,10 +163,10 @@ object QueryResourceCodec:
   val encoder: XmlEncoder[QueryResource] =
     XmlEncoder.instance: query =>
       val attributes =
-        CodecHelpers.attributeOf(
+        CodecHelpers.attribute(
           "Languages",
-          Option.when(query.languages.nonEmpty)(CodecHelpers.renderLanguages(query.languages)),
-        ) ++ CodecHelpers.extensionAttributes(query.extensions)
+        Option.when(query.languages.nonEmpty)(CodecHelpers.renderLanguages(query.languages)),
+      ) ++ CodecHelpers.extensionAttributes(query.extensions)
       val children =
         Vector(HeaderCodec.encoder.encode(query.header), ResourceQuParamsCodec.encoder.encode(query.params)) ++
           query.subscription.toVector.map(SubscriptionCodec.encoder.encode)
@@ -174,19 +174,19 @@ object QueryResourceCodec:
 end QueryResourceCodec
 
 object ResourceInfoCodec:
-  private val commandResult: Lexical.Lex[CommandResult] =
+  private val commandResultLex: Lexical.Lex[CommandResult] =
     Lexical.enumOf(CommandResult.values.toVector, _.toString)
-  private val resourceLevel: Lexical.Lex[ResourceLevel] =
+  private val resourceLevelLex: Lexical.Lex[ResourceLevel] =
     Lexical.enumOf(ResourceLevel.values.toVector, _.toString)
 
   val decoder: XmlDecoder[ResourceInfo] =
     XmlDecoder.instance: element =>
       for
         resourceSet <- XmlDecoders.singleChild("ResourceSet")(ResourceSetCodec.decoder).decode(element)
-        commandResult <- XmlDecoders.attributeOf("CommandResult")(commandResult).decode(element)
+        commandResult <- XmlDecoders.attributeOf("CommandResult")(commandResultLex).decode(element)
         jobId <- XmlDecoders.attributeOf("JobID")(Lexical.nmtoken).decode(element)
         jobPartId <- XmlDecoders.attributeOf("JobPartID")(Lexical.nmtoken).decode(element)
-        level <- XmlDecoders.attributeOf("Level")(resourceLevel).decode(element)
+        level <- XmlDecoders.attributeOf("Level")(resourceLevelLex).decode(element)
         moduleId <- XmlDecoders.attributeOf("ModuleID")(Lexical.nmtoken).decode(element)
         queueEntryId <- XmlDecoders.attributeOf("QueueEntryID")(Lexical.nmtoken).decode(element)
         scope <- XmlDecoders.attributeOf("Scope")(Lexical.scope).decode(element)
@@ -222,10 +222,10 @@ object ResourceInfoCodec:
           CodecHelpers.attributeOf("QueueEntryID", info.queueEntryId, (v: Nmtoken) => v.value) ++
           CodecHelpers.attributeOf("Scope", info.scope, _.toString) ++
           CodecHelpers.attributeOf("Speed", info.speed, CodecHelpers.renderFloat) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "Types",
-            Option.when(info.types.nonEmpty)(CodecHelpers.renderNmtokens(info.types)),
-          ) ++
+        Option.when(info.types.nonEmpty)(CodecHelpers.renderNmtokens(info.types)),
+      ) ++
           CodecHelpers.attributeOf("TotalAmount", info.totalAmount, CodecHelpers.renderFloat) ++
           CodecHelpers.extensionAttributes(info.extensions)
       Xml.Element(
@@ -332,15 +332,15 @@ object MessageServiceCodec:
   val encoder: XmlEncoder[MessageService] =
     XmlEncoder.instance: service =>
       val attributes =
-        CodecHelpers.attributeOf(
+        CodecHelpers.attribute(
           "ResponseModes",
-          Option.when(service.responseModes.nonEmpty)(service.responseModes.map(_.toString).mkString(" ")),
-        ) ++
+        Option.when(service.responseModes.nonEmpty)(service.responseModes.map(_.toString).mkString(" ")),
+      ) ++
           CodecHelpers.attribute("Type", Some(service.messageType.value)) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "URLSchemes",
-            Option.when(service.urlSchemes.nonEmpty)(service.urlSchemes.map(_.lexical).mkString(" ")),
-          ) ++
+        Option.when(service.urlSchemes.nonEmpty)(service.urlSchemes.map(_.lexical).mkString(" ")),
+      ) ++
           CodecHelpers.extensionAttributes(service.extensions)
       Xml.Element(CodecHelpers.qname("MessageService"), attributes, Vector.empty)
 end MessageServiceCodec
@@ -370,7 +370,7 @@ end ResponseKnownMessagesCodec
 /** Notification is not part of the coverage slice: decodes fail loudly instead of silently dropping data. */
 object NotificationCodec:
   val decoder: XmlDecoder[Notification] =
-    XmlDecoder.instance: element => Left(XmlError.UnsupportedElement(element.name.localName))
+    XmlDecoder.instance(element => Left(XmlError.UnsupportedElement(element.name.localName)))
 end NotificationCodec
 
 

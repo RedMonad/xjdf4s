@@ -41,9 +41,9 @@ object GlueCodec:
           CodecHelpers.attributeOf("GlueLineWidth", glue.glueLineWidth, CodecHelpers.renderFloat) ++
           CodecHelpers.attributeOf("GlueRef", glue.glueRef, (v: XsdIdRef) => v.value) ++
           CodecHelpers.attributeOf("GlueType", glue.glueType, _.toString) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "GluingPattern",
-            glue.gluingPattern.map(CodecHelpers.renderFloats),
+            glue.gluingPattern.map(pattern => CodecHelpers.renderFloats(pattern.toVector)),
           ) ++
           CodecHelpers.attributeOf("GluingTechnique", glue.gluingTechnique, _.toString) ++
           CodecHelpers.attributeOf("MeltingTemperature", glue.meltingTemperature, CodecHelpers.renderInt) ++
@@ -272,9 +272,9 @@ object MediaCodec:
           CodecHelpers.attributeOf("BackGlossValue", media.backGlossValue, CodecHelpers.renderFloat) ++
           CodecHelpers.attributeOf("BackISOPaperSubstrate", media.backIsoPaperSubstrate, _.toString) ++
           CodecHelpers.attributeOf("BackLabColorValue", media.backLabColorValue, CodecHelpers.renderLabColor) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "BackSpectrum",
-            media.backSpectrum.map(CodecHelpers.renderFloats),
+            media.backSpectrum.map(spectrum => CodecHelpers.renderFloats(spectrum.toVector)),
           ) ++
           CodecHelpers.attributeOf("Brightness", media.brightness, CodecHelpers.renderFloat) ++
           CodecHelpers.attributeOf("CIETint", media.cieTint, CodecHelpers.renderFloat) ++
@@ -311,7 +311,10 @@ object MediaCodec:
           CodecHelpers.attributeOf("RollDiameter", media.rollDiameter, CodecHelpers.renderFloat) ++
           CodecHelpers.attributeOf("ShrinkIndex", media.shrinkIndex, CodecHelpers.renderXypair) ++
           CodecHelpers.attributeOf("SleeveInterlock", media.sleeveInterlock, (v: Nmtoken) => v.value) ++
-          CodecHelpers.attributeOf("Spectrum", media.spectrum.map(CodecHelpers.renderFloats)) ++
+          CodecHelpers.attribute(
+            "Spectrum",
+            media.spectrum.map(spectrum => CodecHelpers.renderFloats(spectrum.toVector)),
+          ) ++
           CodecHelpers.attributeOf("StockType", media.stockType, (v: Nmtoken) => v.value) ++
           CodecHelpers.attributeOf("Texture", media.texture, (v: Nmtoken) => v.value) ++
           CodecHelpers.attributeOf("Thickness", media.thickness, CodecHelpers.renderFloat) ++

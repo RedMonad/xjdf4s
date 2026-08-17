@@ -154,7 +154,7 @@ object ResourceSetCodec:
   val encoder: XmlEncoder[ResourceSet] =
     XmlEncoder.instance: resourceSet =>
       val attributes =
-        CodecHelpers.attributeOf(
+        CodecHelpers.attribute(
           "CombinedProcessIndex",
           Option.when(resourceSet.combinedProcessIndex.nonEmpty)(CodecHelpers.renderInts(resourceSet.combinedProcessIndex)),
         ) ++
@@ -232,7 +232,7 @@ object XjdfCodec:
         CodecHelpers.attributeOf("Category", document.category, (v: Nmtoken) => v.value) ++
           CodecHelpers.attributeOf("CommentURL", document.commentUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.attributeOf("DescriptiveName", document.descriptiveName, (v: XjdfString) => v.value) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "ICSVersions",
             Option.when(document.icsVersions.nonEmpty)(CodecHelpers.renderNmtokens(document.icsVersions)),
           ) ++

@@ -37,10 +37,19 @@ object Lexical:
   val languageTag: Lex[LanguageTag] = via(LanguageTag.from)
   val uri: Lex[UriRef] = via(UriRef.from)
   val namedColor: Lex[NamedColor] = via(NamedColor.from)
-  val priority: Lex[Priority0To100] = via(Priority0To100.from)
-  val transferFunction: Lex[TransferFunction] = via(TransferFunction.from)
-  val gluingPattern: Lex[GluingPattern] = via(GluingPattern.from)
-  val neutralDensity: Lex[NeutralDensity] = via(NeutralDensity.from)
+  private def renderValidation(error: ValidationError): String = Show[ValidationError].show(error)
+
+  val priority: Lex[Priority0To100] =
+    value => int(value).flatMap(parsed => Priority0To100.from(parsed).left.map(renderValidation))
+
+  val transferFunction: Lex[TransferFunction] =
+    value => floatList(value).flatMap(parsed => TransferFunction.from(parsed).left.map(renderValidation))
+
+  val gluingPattern: Lex[GluingPattern] =
+    value => floatList(value).flatMap(parsed => GluingPattern.from(parsed).left.map(renderValidation))
+
+  val neutralDensity: Lex[NeutralDensity] =
+    value => float(value).flatMap(parsed => NeutralDensity.from(parsed).left.map(renderValidation))
 
   // -- XSD built-ins ----------------------------------------------------------------
 

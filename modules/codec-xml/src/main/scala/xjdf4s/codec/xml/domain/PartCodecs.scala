@@ -109,10 +109,12 @@ object PartWasteCodec:
         moduleIds <- XmlDecoders.attributeOf("ModuleIDs")(Lexical.nmtokens).decode(element)
         wasteDetails <- XmlDecoders.attributeOf("WasteDetails")(Lexical.nmtoken).decode(element)
         origin <- (moduleIds, wasteDetails) match
-          case (Some(modules), Some(details)) if modules.nonEmpty =>
-            Right(WasteOrigin.ModulesAndDetails(NonEmptyVector(modules.head, modules.tail*), details))
-          case (Some(modules), _) if modules.nonEmpty => Right(WasteOrigin.Modules(modules))
-          case (_, Some(details))                     => Right(WasteOrigin.Details(details))
+          case (Some(modules), _) if modules.nonEmpty =>
+            val nonEmpty = NonEmptyVector(modules.head, modules.tail*)
+            wasteDetails match
+              case Some(details) => Right(WasteOrigin.ModulesAndDetails(nonEmpty, details))
+              case None          => Right(WasteOrigin.Modules(nonEmpty))
+          case (_, Some(details)) => Right(WasteOrigin.Details(details))
           case _ =>
             Left(
               XmlError.InvalidAttribute(

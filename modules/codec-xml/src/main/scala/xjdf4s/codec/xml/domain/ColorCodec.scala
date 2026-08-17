@@ -88,11 +88,14 @@ object ColorCodec:
           CodecHelpers.attributeOf("NeutralDensity", color.neutralDensity, (v: NeutralDensity) => v.value.toString) ++
           CodecHelpers.attributeOf("PrintingTechnology", color.printingTechnology, (v: Nmtoken) => v.value) ++
           CodecHelpers.attributeOf("PrintStandard", color.printStandard, (v: XjdfString) => v.value) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "RawName",
             Option.when(color.rawName.nonEmpty)(Lexical.renderHexBinary(color.rawName)),
           ) ++
-          CodecHelpers.attributeOf("Spectrum", color.spectrum.map(CodecHelpers.renderFloats)) ++
+          CodecHelpers.attribute(
+            "Spectrum",
+            color.spectrum.map(spectrum => CodecHelpers.renderFloats(spectrum.toVector)),
+          ) ++
           CodecHelpers.attributeOf("sRGB", color.srgb, CodecHelpers.renderSrgbColor) ++
           CodecHelpers.extensionAttributes(color.extensions)
       val children =

@@ -18,10 +18,12 @@ private[domain] object CodecHelpers:
       .sortBy(pair => (pair._1.namespace, pair._1.localName))
       .map { case (name, value) => (name, ForeignCodec.renderExtensionValue(value)) }
 
-  def decodeExtensionAttributes(element: Xml.Element): Map[QualifiedName, ExtensionValue] =
-    element.attributes
-      .collect { case (name, value) if name.namespace != XjdfNamespace.uri => (name, ExtensionValue.Text(value)) }
-      .toMap
+  def decodeExtensionAttributes(element: Xml.Element): Extensions =
+    Extensions(
+      attributes = element.attributes
+        .collect { case (name, value) if name.namespace != XjdfNamespace.uri => (name, ExtensionValue.Text(value)) }
+        .toMap,
+    )
 
   // -- renders ---------------------------------------------------------------
 

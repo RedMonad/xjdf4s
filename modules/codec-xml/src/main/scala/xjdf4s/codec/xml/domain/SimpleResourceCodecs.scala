@@ -77,7 +77,7 @@ object ComponentCodec:
         CodecHelpers.attributeOf("Automation", component.automation, _.toString) ++
           CodecHelpers.attributeOf("CartonTopFlaps", component.cartonTopFlaps, CodecHelpers.renderXypair) ++
           CodecHelpers.attributeOf("Columns", component.columns, CodecHelpers.renderInt) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "ContentRefs",
             Option.when(component.contentRefs.nonEmpty)(CodecHelpers.renderIdRefs(component.contentRefs)),
           ) ++
@@ -151,39 +151,39 @@ object DeviceCodec:
       val attributes =
         CodecHelpers.attributeOf("CostCenterID", device.costCenterId, (v: Nmtoken) => v.value) ++
           CodecHelpers.attributeOf("DescriptiveName", device.descriptiveName, (v: XjdfString) => v.value) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "DeviceClass",
             Option.when(device.deviceClasses.nonEmpty)(CodecHelpers.renderNmtokens(device.deviceClasses)),
           ) ++
           CodecHelpers.attribute("DeviceID", Some(device.deviceId.value)) ++
           CodecHelpers.attributeOf("DeviceType", device.deviceType, (v: XjdfString) => v.value) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "ICSVersions",
-            Option.when(device.icsVersions.nonEmpty)(CodecHelpers.renderNmtokens(device.icsVersions)),
-          ) ++
-          CodecHelpers.attributeOf(
+        Option.when(device.icsVersions.nonEmpty)(CodecHelpers.renderNmtokens(device.icsVersions)),
+      ) ++
+          CodecHelpers.attribute(
             "JDFVersions",
-            Option.when(device.jdfVersions.nonEmpty)(device.jdfVersions.map(_.lexical).mkString(" ")),
-          ) ++
-          CodecHelpers.attributeOf(
+        Option.when(device.jdfVersions.nonEmpty)(device.jdfVersions.map(_.lexical).mkString(" ")),
+      ) ++
+          CodecHelpers.attribute(
             "KnownLocalizations",
-            Option.when(device.knownLocalizations.nonEmpty)(CodecHelpers.renderLanguages(device.knownLocalizations)),
-          ) ++
+        Option.when(device.knownLocalizations.nonEmpty)(CodecHelpers.renderLanguages(device.knownLocalizations)),
+      ) ++
           CodecHelpers.attributeOf("Manufacturer", device.manufacturer, (v: XjdfString) => v.value) ++
           CodecHelpers.attributeOf("ManufacturerURL", device.manufacturerUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.attributeOf("MaxRunSpeed", device.maxRunSpeed, CodecHelpers.renderFloat) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "Packaging",
-            Option.when(device.packaging.nonEmpty)(device.packaging.map(_.toString).mkString(" ")),
-          ) ++
+        Option.when(device.packaging.nonEmpty)(device.packaging.map(_.toString).mkString(" ")),
+      ) ++
           CodecHelpers.attributeOf("PresentationURL", device.presentationUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.attributeOf("RestApiBaseURL", device.restApiBaseUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.attributeOf("Revision", device.revision, (v: XjdfString) => v.value) ++
           CodecHelpers.attributeOf("SerialNumber", device.serialNumber, (v: XjdfString) => v.value) ++
-          CodecHelpers.attributeOf(
+          CodecHelpers.attribute(
             "URLSchemes",
-            Option.when(device.urlSchemes.nonEmpty)(CodecHelpers.renderNmtokens(device.urlSchemes)),
-          ) ++
+        Option.when(device.urlSchemes.nonEmpty)(CodecHelpers.renderNmtokens(device.urlSchemes)),
+      ) ++
           CodecHelpers.attributeOf("XJMFURL", device.xjmfUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.extensionAttributes(device.extensions)
       Xml.Element(CodecHelpers.qname("Device"), attributes, Vector.empty)
