@@ -205,9 +205,12 @@ def checkReferences(doc: XJDF): ValidatedNel[ValidationError, Unit] =
   значений, энамов и контейнеров + универсальный `Derived.derived[A <: Product]` (Mirror + summonAll +
   рефлексивные default-значения `apply$default$N`). Инженерные правила деривации, выявленные компилятором:
   (1) inline-given невидимы для implicit search/summonAll — `derived` это inline-def, а на каждый тип
-  генерируется обычный given (`DerivedInstances.scala`); (2) порядок given'ов в файле значим — список
-  топологически отсортирован по зависимостям полей (givens позже в файле не видны из ранних). Ручными
-  остались только семантически особые формы:
+  генерируется обычный given; (2) порядок given'ов в одном scope значим — список топологически
+  отсортирован по зависимостям полей; (3) лексические/пакетные given, чей RHS — inline-деривация, не
+  находятся поиском внутри другой inline-экспансии: generated-кодеки живут членами `DerivedInstances`
+  и экспортируются из компаньона `XmlElementCodec` (`export DerivedInstances.given`) — компаньонный
+  implicit scope работает в любом контексте поиска (каноническая стратегия `derives` из справочника).
+  Ручными остались только семантически особые формы:
   копродукты-в-атрибуты (FileLocation, DispositionTime, BindingSpecification, ColorSurfaces,
   QueueModification, AssemblyPlan, PlacedObjectKind, TiffTagValue), FileSpec-роли (`@ResourceUsage`),
   Audit-семейство, BindingIntent/ColorIntent/StickOn/CollatingItem/LooseBindingParams/Assembly/PlacedObject/
