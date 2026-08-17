@@ -1,6 +1,7 @@
 package xjdf4s.codec.xml.domain
 
 import xjdf4s.codec.xml.*
+import xjdf4s.codec.xml.derivation.*
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
@@ -241,10 +242,10 @@ object ResponseResourceCodec:
       for
         header <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
         returnCode <- XmlDecoders.attributeOf("ReturnCode")(Lexical.int).decode(element)
-        _ <- XmlDecoders.optionalChild("Notification")(NotificationCodec.decoder).decode(element)
+        notification <- XmlDecoders.optionalChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
         resourceInfo <- XmlDecoders.repeatedChild("ResourceInfo")(ResourceInfoCodec.decoder).decode(element)
         _ <- XmlDecoders.expectChildrenOnly(Set("Header", "Notification", "ResourceInfo")).decode(element)
-      yield ResponseResource(header, resourceInfo, returnCode, None, CodecHelpers.decodeExtensionAttributes(element))
+      yield ResponseResource(header, resourceInfo, returnCode, notification, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[ResponseResource] =
     XmlEncoder.instance: response =>
@@ -253,6 +254,7 @@ object ResponseResourceCodec:
           CodecHelpers.extensionAttributes(response.extensions)
       val children =
         Vector(HeaderCodec.encoder.encode(response.header)) ++
+          response.notification.toVector.map(summon[XmlElementCodec[Notification]].encode) ++
           response.resourceInfo.map(ResourceInfoCodec.encoder.encode)
       Xml.Element(CodecHelpers.qname("ResponseResource"), attributes, children)
 end ResponseResourceCodec
@@ -351,10 +353,10 @@ object ResponseKnownMessagesCodec:
       for
         header <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
         returnCode <- XmlDecoders.attributeOf("ReturnCode")(Lexical.int).decode(element)
-        _ <- XmlDecoders.optionalChild("Notification")(NotificationCodec.decoder).decode(element)
+        notification <- XmlDecoders.optionalChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
         services <- XmlDecoders.repeatedChild("MessageService")(MessageServiceCodec.decoder).decode(element)
         _ <- XmlDecoders.expectChildrenOnly(Set("Header", "Notification", "MessageService")).decode(element)
-      yield ResponseKnownMessages(header, services, returnCode, None, CodecHelpers.decodeExtensionAttributes(element))
+      yield ResponseKnownMessages(header, services, returnCode, notification, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[ResponseKnownMessages] =
     XmlEncoder.instance: response =>
@@ -363,15 +365,12 @@ object ResponseKnownMessagesCodec:
           CodecHelpers.extensionAttributes(response.extensions)
       val children =
         Vector(HeaderCodec.encoder.encode(response.header)) ++
+          response.notification.toVector.map(summon[XmlElementCodec[Notification]].encode) ++
           response.services.map(MessageServiceCodec.encoder.encode)
       Xml.Element(CodecHelpers.qname("ResponseKnownMessages"), attributes, children)
 end ResponseKnownMessagesCodec
 
-/** Notification is not part of the coverage slice: decodes fail loudly instead of silently dropping data. */
-object NotificationCodec:
-  val decoder: XmlDecoder[Notification] =
-    XmlDecoder.instance(element => Left(XmlError.UnsupportedElement(element.name.localName)))
-end NotificationCodec
+
 
 
 object XjmfCodec:

@@ -200,17 +200,26 @@ def checkReferences(doc: XJDF): ValidatedNel[ValidationError, Unit] =
   Comment, GeneralID; ресурсы Color (+DeviceNColor, ColorMeasurementConditions), Component, Device, Media
   (включая MediaLayers/Glue), Tool; сообщения QueryKnownMessages, QueryResource/ResourceQuParams, ResourceInfo,
   ResponseResource, SignalResource, ResponseKnownMessages/MessageService, XJMF, Header, Subscription.
-- **Политика неполноты:** стандартное имя без декодера → `UnsupportedElement` (громко, никогда не тихо);
-  энкодеры бросают `UnsupportedOperationException` на непокрытых детях (AuditPool/ProductList/Notification);
-  foreign-ресурсы декодируются lossless в `NamedSpecificResource`; foreign-сообщения пока отклоняются
-  (семейство не выводимо из имени элемента).
-- **Тесты:** нормативные фикстуры Example 7.5 / 8.5 / 7.8, round-trip-закон на покрытых узлах, ID/IDREF,
-  wildcards, негативные случаи. Оставшиеся ~97 ресурсов и ~39 сообщений добавляются тем же шаблоном
-  (объект-кодек + строка в `Registry`).
+- **Покрытие полное (второй заход):** все 102 ресурса, 14 product intents и 44 сообщения покрыты. Вместо
+  «объект-кодек на каждый узел» реализована typeclass-деривация (`derivation/`): `FieldCodec` для скаляров,
+  значений, энамов и контейнеров + универсальный `Derived.derived[A <: Product]` (Mirror + summonAll +
+  рефлексивные default-значения `apply$default$N`). Ручными остались только семантически особые формы:
+  копродукты-в-атрибуты (FileLocation, DispositionTime, BindingSpecification, ColorSurfaces,
+  QueueModification, AssemblyPlan, PlacedObjectKind, TiffTagValue), FileSpec-роли (`@ResourceUsage`),
+  Audit-семейство, BindingIntent/ColorIntent/StickOn/CollatingItem/LooseBindingParams/Assembly/PlacedObject/
+  ModifyQueueEntryParams/QueueSubmissionParams/SignalStatus, TIFFtag и Patch. `Registry` генерируется из
+  union-типов модели (102/14/44) и покрыт тестом полноты.
+- **Политика неполноты осталась честной:** неизвестное стандартное имя → `UnsupportedElement`; foreign-ресурсы
+  и foreign-интенции — lossless в named-носители; foreign-сообщения отклоняются (семейство не выводимо из
+  имени элемента).
+- **Тесты:** нормативные фикстуры Example 7.5 / 8.5 / 7.8, round-trip-закон на ручных и деривированных узлах
+  (включая полный XJDF с AuditPool/ProductList и XJMF), покрытие реестра 102/14/44, ID/IDREF, wildcards,
+  негативные случаи.
 - **Рубеж:** `sbt "clean ; compile ; test"` зелёный, все 6 сюитов проходят (35 проверок кодеков).
   Из инженерных находок итераций: `XmlWriter` эмитит namespace-декларации по мере необходимости
   (`xmlns`/`xmlns:prefix`), без чего foreign-контент не переживает round-trip; foreign-дети `Resource`
   живут в `foreignElements`, а `NamedSpecificResource` даёт fallback-путь `Registry`.
-- **Осталось по DoD этапа:** расширение покрытия узлов до 102 ресурсов / 44 сообщений; строковое
-  сравнение эмиттера с нормативными примерами (пока проверяется только round-trip); документные
-  проверки за пределами кодековой поверхности (AuditPool/ProductList/Notification) после их кодеков.
+- **Осталось по DoD этапа:** строковое сравнение эмиттера с нормативными примерами (сейчас
+  корректность гарантируется round-trip-законом и декодом нормативных фикстур); расширение ID/IDREF-прохода
+  `ReferenceCheck` на новые поверхности ссылок (FileSpec/@UID, PlacedObject/@PositionRef и т.п. — поверхность
+  растёт по мере необходимости).

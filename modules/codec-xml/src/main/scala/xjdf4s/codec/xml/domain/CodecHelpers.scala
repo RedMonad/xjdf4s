@@ -35,6 +35,9 @@ private[domain] object CodecHelpers:
   def renderXypair(value: XYPair): String = s"${value.x} ${value.y}"
   def renderTile(value: TileCoordinate): String = s"${value.x} ${value.y}"
   def renderShape3d(value: Shape3D): String = s"${value.width} ${value.height} ${value.depth}"
+  def renderGridSize(value: GridSize): String = s"${value.columns} ${value.rows}"
+  def renderRectangle(value: Rectangle): String =
+    s"${value.lowerLeft.x} ${value.lowerLeft.y} ${value.upperRight.x} ${value.upperRight.y}"
   def renderMatrix(value: Matrix): String =
     s"${value.a} ${value.b} ${value.c} ${value.d} ${value.e} ${value.f}"
   def renderRange(value: IntegerRange): String = s"${value.first} ${value.last}"

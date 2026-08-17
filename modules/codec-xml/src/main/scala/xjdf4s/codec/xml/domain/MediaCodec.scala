@@ -1,6 +1,7 @@
 package xjdf4s.codec.xml.domain
 
 import xjdf4s.codec.xml.*
+import xjdf4s.codec.xml.derivation.*
 import xjdf4s.core.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
@@ -140,15 +141,9 @@ object ColorMeasurementConditionsCodec:
 end ColorMeasurementConditionsCodec
 
 object MediaCodec:
-  private val UnsupportedChildren = Set("Certification", "HolePattern", "IdentificationField", "TabDimensions")
-
   val decoder: XmlDecoder[Media] =
     XmlDecoder.instance: element =>
-      val unsupported = element.childElements.find(child => UnsupportedChildren.contains(child.name.localName))
       for
-        _ <- unsupported match
-          case Some(child) => Left(XmlError.UnsupportedElement(child.name.localName))
-          case None        => Right(())
         mediaType <- XmlDecoders.requiredAttribute("MediaType")(Lexical.mediaType).decode(element)
         backBrightness <- XmlDecoders.attributeOf("BackBrightness")(Lexical.float).decode(element)
         backCieTint <- XmlDecoders.attributeOf("BackCIETint")(Lexical.float).decode(element)
@@ -201,7 +196,16 @@ object MediaCodec:
         conditions <- XmlDecoders.optionalChild("ColorMeasurementConditions")(ColorMeasurementConditionsCodec.decoder)
           .decode(element)
         mediaLayers <- XmlDecoders.optionalChild("MediaLayers")(MediaLayersCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("ColorMeasurementConditions", "MediaLayers")).decode(element)
+        certifications <- XmlDecoders.repeatedChild("Certification")(summon[XmlElementCodec[Certification]])
+          .decode(element)
+        holePatterns <- XmlDecoders.repeatedChild("HolePattern")(summon[XmlElementCodec[HolePattern]]).decode(element)
+        identificationFields <- XmlDecoders
+          .repeatedChild("IdentificationField")(summon[XmlElementCodec[IdentificationField]])
+          .decode(element)
+        tabDimensions <- XmlDecoders.optionalChild("TabDimensions")(summon[XmlElementCodec[TabDimensions]]).decode(element)
+        _ <- XmlDecoders
+          .expectChildrenOnly(Set("ColorMeasurementConditions", "MediaLayers", "Certification", "HolePattern", "IdentificationField", "TabDimensions"))
+          .decode(element)
       yield Media(
         mediaType,
         backBrightness,
@@ -252,12 +256,12 @@ object MediaCodec:
         texture,
         thickness,
         weight,
-        Vector.empty,
+        certifications,
         conditions,
-        Vector.empty,
-        Vector.empty,
+        holePatterns,
+        identificationFields,
         mediaLayers,
-        None,
+        tabDimensions,
         CodecHelpers.decodeExtensionAttributes(element),
       )
 
@@ -322,6 +326,10 @@ object MediaCodec:
           CodecHelpers.extensionAttributes(media.extensions)
       val children =
         media.colorMeasurementConditions.toVector.map(ColorMeasurementConditionsCodec.encoder.encode) ++
-          media.mediaLayers.toVector.map(MediaLayersCodec.encoder.encode)
+          media.mediaLayers.toVector.map(MediaLayersCodec.encoder.encode) ++
+          media.certifications.map(summon[XmlElementCodec[Certification]].encode) ++
+          media.holePatterns.map(summon[XmlElementCodec[HolePattern]].encode) ++
+          media.identificationFields.map(summon[XmlElementCodec[IdentificationField]].encode) ++
+          media.tabDimensions.toVector.map(summon[XmlElementCodec[TabDimensions]].encode)
       Xml.Element(CodecHelpers.qname("Media"), attributes, children)
 end MediaCodec

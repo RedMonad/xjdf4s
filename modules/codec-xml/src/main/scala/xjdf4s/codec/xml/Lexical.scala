@@ -3,6 +3,7 @@ package xjdf4s.codec.xml
 import cats.Show
 
 import xjdf4s.core.*
+import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
@@ -50,6 +51,8 @@ object Lexical:
 
   val neutralDensity: Lex[NeutralDensity] =
     value => float(value).flatMap(parsed => NeutralDensity.from(parsed).left.map(renderValidation))
+
+  val pdfPath: Lex[PdfPath] = via(PdfPath.from)
 
   // -- XSD built-ins ----------------------------------------------------------------
 
@@ -111,6 +114,28 @@ object Lexical:
   val xsdIdRefs: Lex[Vector[XsdIdRef]] = list(xsdIdRef)
 
   // -- fixed-length products -------------------------------------------------------
+
+  val gridSize: Lex[GridSize] =
+    value =>
+      tokens(value) match
+        case Vector(columns, rows) =>
+          for
+            c <- int(columns)
+            r <- int(rows)
+          yield GridSize(c, r)
+        case other => Left(s"'$value' must contain exactly two integers, got ${other.size}")
+
+  val rectangle: Lex[Rectangle] =
+    value =>
+      tokens(value) match
+        case Vector(x1, y1, x2, y2) =>
+          for
+            xx1 <- double(x1)
+            yy1 <- double(y1)
+            xx2 <- double(x2)
+            yy2 <- double(y2)
+          yield Rectangle(XYPair(xx1, yy1), XYPair(xx2, yy2))
+        case other => Left(s"'$value' must contain exactly four numbers, got ${other.size}")
 
   val integerRange: Lex[IntegerRange] =
     value =>
@@ -212,6 +237,9 @@ object Lexical:
 
   /** Device/@JDFVersions: the union of JDF versions (1.0-1.8) and XJDF versions (2.x). */
   val jdfVersion: Lex[JdfVersion] = enumOf(JdfVersion.values.toVector, _.lexical)
+  val holePatternCatalog: Lex[HolePatternCatalog] = enumOf(HolePatternCatalog.values.toVector, _.lexical)
+  val screeningType: Lex[ScreeningType] = enumOf(ScreeningType.values.toVector, _.lexical)
+  val messageUrlScheme: Lex[MessageUrlScheme] = enumOf(MessageUrlScheme.values.toVector, _.lexical)
 
   val orientation: Lex[Orientation] = enumOf(Orientation.values.toVector, _.toString)
   val resourceAvailability: Lex[ResourceAvailability] = enumOf(ResourceAvailability.values.toVector, _.toString)

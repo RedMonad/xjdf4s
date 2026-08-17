@@ -20,6 +20,21 @@ trait XmlEncoder[A]:
   def encode(value: A): Xml.Element
 end XmlEncoder
 
+/** A codec that reads and writes XML elements, carrying its element name for derived field dispatch. */
+trait XmlElementCodec[A] extends XmlDecoder[A],
+      XmlEncoder[A]:
+  def elementName: String
+end XmlElementCodec
+
+object XmlElementCodec:
+  def instance[A](name: String)(decodeFunction: Xml.Element => Either[XmlError, A], encodeFunction: A => Xml.Element)
+      : XmlElementCodec[A] =
+    new XmlElementCodec[A]:
+      def elementName: String = name
+      def decode(element: Xml.Element): Either[XmlError, A] = decodeFunction(element)
+      def encode(value: A): Xml.Element = encodeFunction(value)
+end XmlElementCodec
+
 object XmlEncoder:
   def instance[A](encodeFunction: A => Xml.Element): XmlEncoder[A] =
     new XmlEncoder[A]:

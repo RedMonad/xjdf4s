@@ -1,6 +1,7 @@
 package xjdf4s.codec.xml.domain
 
 import xjdf4s.codec.xml.*
+import xjdf4s.codec.xml.derivation.*
 import xjdf4s.core.*
 import xjdf4s.model.*
 
@@ -175,16 +176,11 @@ object ResourceSetCodec:
 end ResourceSetCodec
 
 object XjdfCodec:
-  private val KnownChildren = Set("Comment", "GeneralID", "ResourceSet")
-  private val UnsupportedChildren = Set("AuditPool", "ProductList")
+  private val KnownChildren = Set("AuditPool", "Comment", "GeneralID", "ProductList", "ResourceSet")
 
   val decoder: XmlDecoder[XJDF] =
     XmlDecoder.instance: element =>
-      val unsupported = element.childElements.find(child => UnsupportedChildren.contains(child.name.localName))
       for
-        _ <- unsupported match
-          case Some(child) => Left(XmlError.UnsupportedElement(child.name.localName))
-          case None        => Right(())
         category <- XmlDecoders.attributeOf("Category")(Lexical.nmtoken).decode(element)
         commentUrl <- XmlDecoders.attributeOf("CommentURL")(Lexical.uri).decode(element)
         descriptiveName <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
@@ -200,14 +196,16 @@ object XjdfCodec:
         comments <- XmlDecoders.repeatedChild("Comment")(CommentCodec.decoder).decode(element)
         generalIds <- XmlDecoders.repeatedChild("GeneralID")(GeneralIdCodec.decoder).decode(element)
         resourceSets <- XmlDecoders.repeatedChild("ResourceSet")(ResourceSetCodec.decoder).decode(element)
+        auditPool <- XmlDecoders.optionalChild("AuditPool")(summon[XmlElementCodec[AuditPool]]).decode(element)
+        productList <- XmlDecoders.optionalChild("ProductList")(summon[XmlElementCodec[ProductList]]).decode(element)
         _ <- XmlDecoders.expectChildrenOnly(KnownChildren).decode(element)
       yield XJDF(
         jobId,
         NonEmptyVector(types.head, types.tail*),
-        None,
+        auditPool,
         comments,
         generalIds,
-        None,
+        productList,
         resourceSets,
         category,
         commentUrl,
@@ -224,10 +222,6 @@ object XjdfCodec:
 
   val encoder: XmlEncoder[XJDF] =
     XmlEncoder.instance: document =>
-      if document.auditPool.nonEmpty then
-        throw new UnsupportedOperationException("XJDF/@AuditPool is not covered by this codec slice yet")
-      if document.productList.nonEmpty then
-        throw new UnsupportedOperationException("XJDF/ProductList is not covered by this codec slice yet")
       val attributes =
         CodecHelpers.attributeOf("Category", document.category, (v: Nmtoken) => v.value) ++
           CodecHelpers.attributeOf("CommentURL", document.commentUrl, (v: UriRef) => v.value.toString) ++
@@ -248,6 +242,8 @@ object XjdfCodec:
       val children =
         document.comments.map(CommentCodec.encoder.encode) ++
           document.generalIds.map(GeneralIdCodec.encoder.encode) ++
-          document.resourceSets.map(ResourceSetCodec.encoder.encode)
+          document.resourceSets.map(ResourceSetCodec.encoder.encode) ++
+          document.auditPool.toVector.map(summon[XmlElementCodec[AuditPool]].encode) ++
+          document.productList.toVector.map(summon[XmlElementCodec[ProductList]].encode)
       Xml.Element(CodecHelpers.qname("XJDF"), attributes, children)
 end XjdfCodec

@@ -1,6 +1,7 @@
 package xjdf4s.codec.xml.domain
 
 import xjdf4s.codec.xml.*
+import xjdf4s.codec.xml.derivation.*
 import xjdf4s.core.*
 import xjdf4s.model.resources.*
 
@@ -12,13 +13,16 @@ object ToolCodec:
         manufacturer <- XmlDecoders.attributeOf("Manufacturer")(Lexical.xjdfString).decode(element)
         manufacturerUrl <- XmlDecoders.attributeOf("ManufacturerURL")(Lexical.uri).decode(element)
         serialNumber <- XmlDecoders.attributeOf("SerialNumber")(Lexical.xjdfString).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        identificationFields <- XmlDecoders
+          .repeatedChild("IdentificationField")(summon[XmlElementCodec[IdentificationField]])
+          .decode(element)
+        _ <- XmlDecoders.expectChildrenOnly(Set("IdentificationField")).decode(element)
       yield Tool(
         toolType,
         manufacturer,
         manufacturerUrl,
         serialNumber,
-        Vector.empty,
+        identificationFields,
         CodecHelpers.decodeExtensionAttributes(element),
       )
 
@@ -30,7 +34,8 @@ object ToolCodec:
           CodecHelpers.attributeOf("ManufacturerURL", tool.manufacturerUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.attributeOf("SerialNumber", tool.serialNumber, (v: XjdfString) => v.value) ++
           CodecHelpers.extensionAttributes(tool.extensions)
-      Xml.Element(CodecHelpers.qname("Tool"), attributes, Vector.empty)
+      val children = tool.identificationFields.map(summon[XmlElementCodec[IdentificationField]].encode)
+      Xml.Element(CodecHelpers.qname("Tool"), attributes, children)
 end ToolCodec
 
 object ComponentCodec:
@@ -51,7 +56,10 @@ object ComponentCodec:
         readerPageCount <- XmlDecoders.attributeOf("ReaderPageCount")(Lexical.int).decode(element)
         surfaceCount <- XmlDecoders.attributeOf("SurfaceCount")(Lexical.int).decode(element)
         windingResult <- XmlDecoders.attributeOf("WindingResult")(Lexical.int).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        identificationFields <- XmlDecoders
+          .repeatedChild("IdentificationField")(summon[XmlElementCodec[IdentificationField]])
+          .decode(element)
+        _ <- XmlDecoders.expectChildrenOnly(Set("IdentificationField")).decode(element)
       yield Component(
         automation,
         cartonTopFlaps,
@@ -67,7 +75,7 @@ object ComponentCodec:
         readerPageCount,
         surfaceCount,
         windingResult,
-        Vector.empty,
+        identificationFields,
         CodecHelpers.decodeExtensionAttributes(element),
       )
 
@@ -92,7 +100,8 @@ object ComponentCodec:
           CodecHelpers.attributeOf("SurfaceCount", component.surfaceCount, CodecHelpers.renderInt) ++
           CodecHelpers.attributeOf("WindingResult", component.windingResult, CodecHelpers.renderInt) ++
           CodecHelpers.extensionAttributes(component.extensions)
-      Xml.Element(CodecHelpers.qname("Component"), attributes, Vector.empty)
+      val children = component.identificationFields.map(summon[XmlElementCodec[IdentificationField]].encode)
+      Xml.Element(CodecHelpers.qname("Component"), attributes, children)
 end ComponentCodec
 
 object DeviceCodec:
@@ -117,9 +126,16 @@ object DeviceCodec:
         serialNumber <- XmlDecoders.attributeOf("SerialNumber")(Lexical.xjdfString).decode(element)
         urlSchemes <- XmlDecoders.attributeOf("URLSchemes")(Lexical.nmtokens).decode(element)
         xjmfUrl <- XmlDecoders.attributeOf("XJMFURL")(Lexical.uri).decode(element)
-        _ <- element.childElements.headOption match
-          case Some(child) => Left(XmlError.UnsupportedElement(child.name.localName))
-          case None        => Right(())
+        fileSpecChildren = element.childElements.filter(_.name.localName == "FileSpec")
+        schemas <- summon[FieldCodec[DeviceSchemas]].decodeElements(fileSpecChildren)
+        iconList <- XmlDecoders.optionalChild("IconList")(summon[XmlElementCodec[IconList]]).decode(element)
+        identificationFields <- XmlDecoders
+          .repeatedChild("IdentificationField")(summon[XmlElementCodec[IdentificationField]])
+          .decode(element)
+        modules <- XmlDecoders.repeatedChild("Module")(summon[XmlElementCodec[DeviceModule]]).decode(element)
+        _ <- XmlDecoders
+          .expectChildrenOnly(Set("FileSpec", "IconList", "IdentificationField", "Module"))
+          .decode(element)
       yield Device(
         deviceId,
         costCenterId,
@@ -139,10 +155,10 @@ object DeviceCodec:
         serialNumber,
         urlSchemes.getOrElse(Vector.empty),
         xjmfUrl,
-        DeviceSchemas(),
-        None,
-        Vector.empty,
-        Vector.empty,
+        schemas,
+        iconList,
+        identificationFields,
+        modules,
         CodecHelpers.decodeExtensionAttributes(element),
       )
 
@@ -186,5 +202,10 @@ object DeviceCodec:
       ) ++
           CodecHelpers.attributeOf("XJMFURL", device.xjmfUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.extensionAttributes(device.extensions)
-      Xml.Element(CodecHelpers.qname("Device"), attributes, Vector.empty)
+      val children =
+        summon[FieldCodec[DeviceSchemas]].encodeElements(device.schemas) ++
+          device.iconList.toVector.map(summon[XmlElementCodec[IconList]].encode) ++
+          device.identificationFields.map(summon[XmlElementCodec[IdentificationField]].encode) ++
+          device.modules.map(summon[XmlElementCodec[DeviceModule]].encode)
+      Xml.Element(CodecHelpers.qname("Device"), attributes, children)
 end DeviceCodec

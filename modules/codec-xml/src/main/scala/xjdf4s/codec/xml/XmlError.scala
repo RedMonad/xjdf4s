@@ -15,6 +15,9 @@ enum XmlError derives CanEqual:
 
   /** A standard XJDF name where a foreign-namespace name is required. */
   case ForeignNameExpected(element: String)
+
+  /** Two mutually exclusive attribute forms were both supplied. */
+  case ConflictingFields(element: String, fields: String)
 end XmlError
 
 object XmlError:
@@ -33,5 +36,7 @@ object XmlError:
       s"<$element>: standard XJDF element not covered by this codec slice yet"
     case XmlError.ForeignNameExpected(element) =>
       s"<$element>: standard XJDF name where a foreign name is required"
+    case XmlError.ConflictingFields(element, fields) =>
+      s"<$element>: mutually exclusive fields: $fields"
   }
 end XmlError
