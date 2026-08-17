@@ -400,6 +400,47 @@ end LooseBindingParamsCodec
 
 // -- Assembly: the plan coproduct maps to @BinderySignatureIDs and AssemblySection children -----------
 
+/**
+ * AssemblySection is the only self-recursive case class of the model; its codec is hand-written because the
+ * generic derivation would recurse indefinitely while materializing the `sections` field.
+ */
+object AssemblySectionCodec:
+  def decoder: XmlDecoder[AssemblySection] =
+    XmlDecoder.instance: element =>
+      for
+        binderySignatureId <- XmlDecoders.requiredAttribute("BinderySignatureID")(Lexical.nmtoken).decode(element)
+        commonFolds <- XmlDecoders.attributeOf("CommonFolds")(Lexical.commonFolds).decode(element)
+        descriptiveName <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
+        externalId <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
+        sections <- XmlDecoders.repeatedChild("AssemblySection")(decoder).decode(element)
+        _ <- XmlDecoders.expectChildrenOnly(Set("AssemblySection")).decode(element)
+      yield AssemblySection(
+        binderySignatureId,
+        commonFolds,
+        descriptiveName,
+        externalId,
+        sections,
+        CodecHelpers.decodeExtensionAttributes(element),
+      )
+
+  val encoder: XmlEncoder[AssemblySection] =
+    XmlEncoder.instance: section =>
+      val attributes =
+        CodecHelpers.attributeOf("CommonFolds", section.commonFolds, (v: CommonFolds) => v.value.toString) ++
+          CodecHelpers.attributeOf("DescriptiveName", section.descriptiveName, (v: XjdfString) => v.value) ++
+          CodecHelpers.attributeOf("ExternalID", section.externalId, (v: Nmtoken) => v.value) ++
+          CodecHelpers.attribute("BinderySignatureID", Some(section.binderySignatureId.value)) ++
+          CodecHelpers.extensionAttributes(section.extensions)
+      Xml.Element(CodecHelpers.qname("AssemblySection"), attributes, section.sections.map(encoder.encode))
+end AssemblySectionCodec
+
+given assemblySectionCodec: XmlElementCodec[AssemblySection] = XmlElementCodec.instance("AssemblySection")(
+  AssemblySectionCodec.decoder.decode,
+  AssemblySectionCodec.encoder.encode,
+)
+given assemblySectionField: FieldCodec[AssemblySection] =
+  FieldCodec.element(summon[XmlElementCodec[AssemblySection]])
+
 object AssemblyCodec:
   val decoder: XmlDecoder[Assembly] =
     XmlDecoder.instance: element =>

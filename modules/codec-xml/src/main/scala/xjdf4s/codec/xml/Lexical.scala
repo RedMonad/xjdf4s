@@ -54,6 +54,8 @@ object Lexical:
 
   val pdfPath: Lex[PdfPath] = via(PdfPath.from)
   val foldCatalog: Lex[FoldCatalog] = via(FoldCatalog.from)
+  val commonFolds: Lex[CommonFolds] =
+    value => int(value).flatMap(parsed => CommonFolds.from(parsed).left.map(renderValidation))
 
   // -- XSD built-ins ----------------------------------------------------------------
 

@@ -1,5 +1,6 @@
 package xjdf4s.codec.xml.derivation
 
+import scala.deriving.Mirror
 import scala.reflect.ClassTag
 
 import xjdf4s.codec.xml.*
@@ -290,7 +291,13 @@ object FieldCodec extends LowPriorityFieldCodecs:
       def encodeElements(value: AtMostTwo[A]): Vector[Xml.Element] = vectorCodec.encodeElements(value.toVector)
   end atMostTwoCodec
 
-  // -- nodes: any Product with an XmlElementCodec becomes an element field ---------
+  // -- nodes: derived products become element fields ----------------------------------
 
-  given productCodec[A <: Product](using codec: XmlElementCodec[A]): FieldCodec[A] = element(codec)
+  /**
+   * Fallback for case classes that have no hand-written codec. Explicitly invokes the inline [[Derived.derived]]
+   * instead of searching for `XmlElementCodec[A]`: the compiler does not allow a recursive inline-given expansion
+   * through implicit search, so nested products are derived through a direct inline call.
+   */
+  inline given productCodec[A <: Product](using m: Mirror.ProductOf[A], ct: ClassTag[A]): FieldCodec[A] =
+    FieldCodec.element(Derived.derived[A])
 end FieldCodec
