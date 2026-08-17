@@ -203,7 +203,11 @@ def checkReferences(doc: XJDF): ValidatedNel[ValidationError, Unit] =
 - **Покрытие полное (второй заход):** все 102 ресурса, 14 product intents и 44 сообщения покрыты. Вместо
   «объект-кодек на каждый узел» реализована typeclass-деривация (`derivation/`): `FieldCodec` для скаляров,
   значений, энамов и контейнеров + универсальный `Derived.derived[A <: Product]` (Mirror + summonAll +
-  рефлексивные default-значения `apply$default$N`). Ручными остались только семантически особые формы:
+  рефлексивные default-значения `apply$default$N`). Инженерные правила деривации, выявленные компилятором:
+  (1) inline-given невидимы для implicit search/summonAll — `derived` это inline-def, а на каждый тип
+  генерируется обычный given (`DerivedInstances.scala`); (2) порядок given'ов в файле значим — список
+  топологически отсортирован по зависимостям полей (givens позже в файле не видны из ранних). Ручными
+  остались только семантически особые формы:
   копродукты-в-атрибуты (FileLocation, DispositionTime, BindingSpecification, ColorSurfaces,
   QueueModification, AssemblyPlan, PlacedObjectKind, TiffTagValue), FileSpec-роли (`@ResourceUsage`),
   Audit-семейство, BindingIntent/ColorIntent/StickOn/CollatingItem/LooseBindingParams/Assembly/PlacedObject/
