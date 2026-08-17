@@ -7,7 +7,7 @@ import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.{Schema, SchemaFactory}
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.NonFatal
-import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
+import org.xml.sax.{ErrorHandler, SAXParseException}
 
 /**
  * Validates emitted XML against the checked-in XJDF schema (`src/test/resources/xjdf.xsd`, a copy of the XSD
