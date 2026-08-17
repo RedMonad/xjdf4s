@@ -15,6 +15,9 @@ import xjdf4s.model.resources.*
 
 // -- element-name overrides for detail types (normative names differ from class names) ----------
 
+/** Table 6.36: the Device children are `Module*` elements, while the model class is `DeviceModule`. */
+given deviceModuleCodec: XmlElementCodec[DeviceModule] = Derived.derivedNamed[DeviceModule]("Module")
+
 given adhesiveNoteDetailsCodec: XmlElementCodec[AdhesiveNoteDetails] = Derived.derivedNamed[AdhesiveNoteDetails]("AdhesiveNote")
 given edgeGluingDetailsCodec: XmlElementCodec[EdgeGluingDetails] = Derived.derivedNamed[EdgeGluingDetails]("EdgeGluing")
 given hardCoverBindingDetailsCodec: XmlElementCodec[HardCoverBindingDetails] = Derived.derivedNamed[HardCoverBindingDetails]("HardCoverBinding")

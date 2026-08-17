@@ -21,9 +21,9 @@ import xjdf4s.model.resources.*
  * resolved by the canonical deriveOrSummon fallback in `FieldCodec.productCodec`, so the list order no longer
  * affects resolution (it is kept topologically sorted by field dependencies anyway).
  *
- * Excluded: hand codecs (including the self-recursive AssemblySection and BundleItem), attribute-only value
- * types, the Audit family (dispatched through AuditCodec) and the foreign fallback message carriers.
- * Regenerate from the model case-class list when the model grows.
+ * Excluded: hand codecs (including self-recursive AssemblySection/BundleItem and name overrides such as
+ * DeviceModule -> Module), attribute-only value types, the Audit family (dispatched through AuditCodec) and
+ * the foreign fallback message carriers. Regenerate from the model case-class list when the model grows.
  */
 given derivedCodecActivity: XmlElementCodec[Activity] = Derived.derived[Activity]
 given derivedCodecAddress: XmlElementCodec[Address] = Derived.derived[Address]
@@ -138,7 +138,6 @@ given derivedCodecEvent: XmlElementCodec[Event] = Derived.derived[Event]
 given derivedCodecGangSource: XmlElementCodec[GangSource] = Derived.derived[GangSource]
 given derivedCodecJobPhase: XmlElementCodec[JobPhase] = Derived.derived[JobPhase]
 given derivedCodecDeviceInfo: XmlElementCodec[DeviceInfo] = Derived.derived[DeviceInfo]
-given derivedCodecDeviceModule: XmlElementCodec[DeviceModule] = Derived.derived[DeviceModule]
 given derivedCodecDeviceNColor: XmlElementCodec[DeviceNColor] = Derived.derived[DeviceNColor]
 given derivedCodecDieStation: XmlElementCodec[DieStation] = Derived.derived[DieStation]
 given derivedCodecRuleLength: XmlElementCodec[RuleLength] = Derived.derived[RuleLength]
