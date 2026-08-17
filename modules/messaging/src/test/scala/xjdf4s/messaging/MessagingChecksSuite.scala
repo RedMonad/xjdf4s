@@ -2,7 +2,7 @@ package xjdf4s.messaging
 
 /** Discovered munit suite that forces all eager checks of the messaging module (MD-08). */
 class MessagingChecksSuite extends munit.FunSuite:
-  test("all messaging checks pass"):
+  test("all messaging checks pass") {
     val results: Vector[Unit] = Vector(
       ConcreteMessageChecks.statusMessages,
       ConcreteMessageChecks.resourceCommand,
@@ -27,4 +27,5 @@ class MessagingChecksSuite extends munit.FunSuite:
       ChannelAndResourceQueryChecks.subscriptionInfoCarriesLanguages,
     )
     assert(results.size == 21)
+  }
 end MessagingChecksSuite

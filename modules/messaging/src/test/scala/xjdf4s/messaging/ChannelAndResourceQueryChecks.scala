@@ -1,7 +1,7 @@
 package xjdf4s.messaging
 
 import xjdf4s.core.*
-import xjdf4s.model.Header
+import xjdf4s.model.{Header, Notification}
 
 /** Regression checks for CR-01 and the 2.2 XJMF field additions (HI-02). */
 object ChannelAndResourceQueryChecks:

@@ -2,7 +2,7 @@ package xjdf4s.model
 
 /** Discovered munit suite that forces all eager checks of the model module (MD-08). */
 class ModelChecksSuite extends munit.FunSuite:
-  test("all model checks pass"):
+  test("all model checks pass") {
     val results: Vector[Unit] = Vector(
       AdditionalResourceChecks.recursiveAssembly,
       AdditionalResourceChecks.recursiveBundle,
@@ -69,4 +69,5 @@ class ModelChecksSuite extends munit.FunSuite:
       ConsolidatedAuditChecks.integerProcessIndices,
     )
     assert(results.size == 63)
+  }
 end ModelChecksSuite

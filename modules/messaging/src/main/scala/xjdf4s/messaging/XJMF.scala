@@ -22,7 +22,7 @@ final case class XJMF(
       .map(_.header.id)
       .collect { case Some(id) => id }
       .groupBy(identity)
+      .iterator
       .collect { case (_, occurrences) if occurrences.size > 1 => ValidationError.DuplicateId(occurrences.head.value) }
-      .values
       .toVector
 end XJMF

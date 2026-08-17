@@ -38,8 +38,8 @@ final case class XJDF(
       set.id.toVector.map(_.value) ++ set.resources.flatMap(resource => resource.id.toVector.map(_.value))
     val duplicateIds = resourceIds
       .groupBy(identity)
+      .iterator
       .collect { case (_, occurrences) if occurrences.size > 1 => ValidationError.DuplicateId(occurrences.head) }
-      .values
       .toVector
     companionErrors ++ duplicateIds
 end XJDF

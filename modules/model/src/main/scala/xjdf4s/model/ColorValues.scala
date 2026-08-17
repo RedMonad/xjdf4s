@@ -170,31 +170,27 @@ end NamedColor
  * CIE Lab color (Appendix A.1): three values in the sequence `L a b`. `L` is restricted to `[0..100]`; `a` and `b`
  * are unbounded. Values are normalized to D50 illumination at a 2-degree observer angle.
  */
-opaque type LabColor = LabColor.Repr
+opaque type LabColor = (Double, Double, Double)
 object LabColor:
-  private final case class Repr(lightness: Double, a: Double, b: Double)
-
   def from(lightness: Double, a: Double, b: Double): Either[ValidationError, LabColor] =
     Either.cond(
       lightness >= 0.0 && lightness <= 100.0,
-      Repr(lightness, a, b),
+      (lightness, a, b),
       ValidationError.ValueOutOfBounds("LabColor/@L", lightness.toString, "[0..100]"),
     )
 
   extension (color: LabColor)
-    def lightness: Double = color.lightness
-    def a: Double = color.a
-    def b: Double = color.b
+    def lightness: Double = color._1
+    def a: Double = color._2
+    def b: Double = color._3
 end LabColor
 
 /**
  * CMYK color (Appendix A.1): four values in the sequence `C M Y K`, each in the range `[0..1.0]`, where `0.0`
  * specifies no ink and `1.0` specifies full ink.
  */
-opaque type CmykColor = CmykColor.Repr
+opaque type CmykColor = (Double, Double, Double, Double)
 object CmykColor:
-  private final case class Repr(cyan: Double, magenta: Double, yellow: Double, black: Double)
-
   private def inRange(name: String, component: Double): Either[ValidationError, Unit] =
     Either.cond(
       component >= 0.0 && component <= 1.0,
@@ -208,23 +204,21 @@ object CmykColor:
       _ <- inRange("M", magenta)
       _ <- inRange("Y", yellow)
       _ <- inRange("K", black)
-    yield Repr(cyan, magenta, yellow, black)
+    yield (cyan, magenta, yellow, black)
 
   extension (color: CmykColor)
-    def cyan: Double = color.cyan
-    def magenta: Double = color.magenta
-    def yellow: Double = color.yellow
-    def black: Double = color.black
+    def cyan: Double = color._1
+    def magenta: Double = color._2
+    def yellow: Double = color._3
+    def black: Double = color._4
 end CmykColor
 
 /**
  * sRGB color: three components in the sequence `R G B`, each in the valid sRGB range `[0..1.0]`. The XSD restricts
  * only the list length; the component range is the normative sRGB value space and is enforced here as a refinement.
  */
-opaque type SrgbColor = SrgbColor.Repr
+opaque type SrgbColor = (Double, Double, Double)
 object SrgbColor:
-  private final case class Repr(red: Double, green: Double, blue: Double)
-
   private def inRange(name: String, component: Double): Either[ValidationError, Unit] =
     Either.cond(
       component >= 0.0 && component <= 1.0,
@@ -237,10 +231,10 @@ object SrgbColor:
       _ <- inRange("R", red)
       _ <- inRange("G", green)
       _ <- inRange("B", blue)
-    yield Repr(red, green, blue)
+    yield (red, green, blue)
 
   extension (color: SrgbColor)
-    def red: Double = color.red
-    def green: Double = color.green
-    def blue: Double = color.blue
+    def red: Double = color._1
+    def green: Double = color._2
+    def blue: Double = color._3
 end SrgbColor

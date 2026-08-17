@@ -13,7 +13,7 @@ scalacOptions ++= Seq(
   "-Yexplicit-nulls"
 )
 
-ThisBuild / libraryDependencies += "org.scalameta" %% "munit" % "1.2.0" % Test
+ThisBuild / libraryDependencies += "org.scalameta" %% "munit" % "1.1.1" % Test
 
 lazy val core = project
   .in(file("modules/core"))
