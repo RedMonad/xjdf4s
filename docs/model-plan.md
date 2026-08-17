@@ -39,10 +39,12 @@ python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSche
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}ResponseKnownMessages' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}SignalQueueStatus' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}CommandSubmitQueueEntry' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
+python3 reference/xjdf/tool/xsdq.py bundle 'element:{http://www.CIP4.org/JDFSchema_2_0}FileSpec' --depth 2 --scala --compact --index reference/xjdf/tool/xsd-index.json
 ```
 
-The index reports 365 elements, 366 complex types and 228 simple types. `SpecificResource` alone has 100 derived
-complex types, so implementation is staged while keeping the public algebra extensible. The checked-in schema's `Version`
+The index reports 365 elements, 366 complex types and 228 simple types. All 100 `SpecificResource` descendants and all 44
+concrete XJMF messages are now represented; the public algebra remains extensible at normative extension points. The
+checked-in schema's `Version`
 facet lists `2.0` and `2.1`, while the normative 2.2 prose requires `2.2`; the domain enum deliberately accepts all three
 and records this source discrepancy rather than silently dropping the current specification value. Two further index/schema
 mismatches are resolved in favor of normative tables: `Part/@BlockName` is modelled as `NMTOKEN` rather than the indexed
@@ -72,8 +74,9 @@ normative `NMTOKEN` and closed update-method types instead of indexed `float` an
 
 - **Slice 1 (implemented):** common scalar vocabulary, extensions, XJDF/XJMF roots, Product/ProductList, Intent envelope,
   ResourceSet/Resource, partition keys, headers and abstract message families.
-- **Slice 2 (implemented):** the five closed audit variants, status/resource/notification subelements, process-run data and
-  amount/partition constraints. Remaining generic `FileSpec` children belong to the broader subelement slice.
+- **Slice 2 (implemented):** the five closed audit variants, status/resource/notification subelements, process-run data,
+  amount/partition constraints, and a typed `FileSpec` graph including mutually exclusive locations, disposition, and
+  network headers.
 - **Slice 3 (implemented):** all 14 schema-defined chapter-4 ProductIntent descendants and their direct child algebras.
   `ProductIntent` remains open only because section 3.5.4 explicitly permits extension intents; `StandardProductIntent`
   exposes the complete closed union supplied by XJDF 2.2.

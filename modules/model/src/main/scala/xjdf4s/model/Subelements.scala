@@ -146,22 +146,52 @@ enum OverwritePolicy derives CanEqual:
   case Overwrite, RenameNew, RenameOld, NewVersion, OperatorIntervention, Abort
 end OverwritePolicy
 
+enum DispositionAction derives CanEqual:
+  case Archive, Delete
+end DispositionAction
+
+enum DispositionTime:
+  case AfterProcess(minimumDuration: XsdDuration)
+  case At(until: XsdDateTime)
+end DispositionTime
+
+final case class Disposition(
+    action: Option[DispositionAction] = None,
+    time: Option[DispositionTime] = None,
+    extraDuration: Option[XsdDuration] = None,
+    priority: Option[Int] = None,
+    extensions: Extensions = Extensions.empty,
+) extends XjdfNode,
+      Extensible
+
+final case class NetworkHeader(
+    name: String,
+    value: String,
+    extensions: Extensions = Extensions.empty,
+) extends XjdfNode,
+      Extensible
+
+enum FileLocation:
+  case Url(value: UriRef)
+  case Uid(value: Nmtoken)
+  case Sequence(format: String, template: NonEmptyVector[Nmtoken])
+  case Pipe
+end FileLocation
+
 final case class FileSpec(
+    location: FileLocation = FileLocation.Pipe,
     checkSum: Option[Vector[Byte]] = None,
     encoding: Option[Nmtoken] = None,
-    fileFormat: Option[String] = None,
     fileSize: Option[Long] = None,
-    fileTemplate: Vector[Nmtoken] = Vector.empty,
     mimeType: Option[String] = None,
+    numberOfPages: Option[Int] = None,
     overwritePolicy: Option[OverwritePolicy] = None,
     password: Option[String] = None,
     resourceUsage: Option[Nmtoken] = None,
     searchDepth: Option[Int] = None,
-    uid: Option[Nmtoken] = None,
-    url: Option[UriRef] = None,
     userFileName: Option[String] = None,
-    disposition: Option[ExtensionElement] = None,
-    networkHeaders: Vector[ExtensionElement] = Vector.empty,
+    disposition: Option[Disposition] = None,
+    networkHeaders: Vector[NetworkHeader] = Vector.empty,
     extensions: Extensions = Extensions.empty,
 ) extends XjdfNode,
       Extensible
