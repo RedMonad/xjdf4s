@@ -7,6 +7,7 @@ import org.http4s.{MediaTypeMismatch, Method, Request}
 import org.http4s.headers.`Content-Type`
 
 import xjdf4s.codec.json.given
+import xjdf4s.codec.json.JsonRootCodecs.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.{Header, Notification, XJDF}
@@ -30,32 +31,32 @@ object XjdfEntityChecks:
     XJMF(header, NonEmptyVector.one(SignalNotification(header, Notification(Severity.Event))), Some(Version.V2_2))
 
   val xmlRoundTrip: Unit =
-    val request = Request[IO](Method.POST).withEntity(document)(XjdfEntities.xjdfXmlEncoder)
+    val request = Request[IO](Method.POST).withEntity(document)(using XjdfEntities.xjdfXmlEncoder)
     val contentType = request.headers.get[`Content-Type`].map(_.mediaType).get
     assert(contentType.mainType == XjdfMediaTypes.xjdfXml.mainType)
     assert(contentType.subType == XjdfMediaTypes.xjdfXml.subType)
-    val decoded = request.decodeWith(XjdfEntities.xjdfXmlDecoder, strict = false).unsafeRunSync()
+    val decoded = request.as[XJDF](using XjdfEntities.xjdfXmlDecoder).unsafeRunSync()
     assert(decoded == document)
 
   val jsonRoundTrip: Unit =
-    val request = Request[IO](Method.POST).withEntity(document)(XjdfEntities.xjdfJsonEncoder)
-    val decoded = request.decodeWith(XjdfEntities.xjdfJsonDecoder, strict = false).unsafeRunSync()
+    val request = Request[IO](Method.POST).withEntity(document)(using XjdfEntities.xjdfJsonEncoder)
+    val decoded = request.as[XJDF](using XjdfEntities.xjdfJsonDecoder).unsafeRunSync()
     assert(decoded == document)
 
   val xjmfRoundTrip: Unit =
-    val xmlRequest = Request[IO](Method.POST).withEntity(envelope)(XjdfEntities.xjmfXmlEncoder)
-    assert(xmlRequest.decodeWith(XjdfEntities.xjmfXmlDecoder, strict = false).unsafeRunSync() == envelope)
-    val jsonRequest = Request[IO](Method.POST).withEntity(envelope)(XjdfEntities.xjmfJsonEncoder)
-    assert(jsonRequest.decodeWith(XjdfEntities.xjmfJsonDecoder, strict = false).unsafeRunSync() == envelope)
+    val xmlRequest = Request[IO](Method.POST).withEntity(envelope)(using XjdfEntities.xjmfXmlEncoder)
+    assert(xmlRequest.as[XJMF](using XjdfEntities.xjmfXmlDecoder).unsafeRunSync() == envelope)
+    val jsonRequest = Request[IO](Method.POST).withEntity(envelope)(using XjdfEntities.xjmfJsonEncoder)
+    assert(jsonRequest.as[XJMF](using XjdfEntities.xjmfJsonDecoder).unsafeRunSync() == envelope)
 
   /** Definition of Done: a decoder rejects a body whose Content-Type is the wrong representation. */
   val rejectsWrongMimeType: Unit =
-    val xmlBody = Request[IO](Method.POST).withEntity(document)(XjdfEntities.xjdfXmlEncoder)
-    xmlBody.decodeWith(XjdfEntities.xjdfJsonDecoder, strict = false).attempt.unsafeRunSync() match
+    val xmlBody = Request[IO](Method.POST).withEntity(document)(using XjdfEntities.xjdfXmlEncoder)
+    xmlBody.as[XJDF](using XjdfEntities.xjdfJsonDecoder).attempt.unsafeRunSync() match
       case Left(_: MediaTypeMismatch) => ()
       case other                      => assert(false, s"expected MediaTypeMismatch, got $other")
-    val jsonBody = Request[IO](Method.POST).withEntity(document)(XjdfEntities.xjdfJsonEncoder)
-    jsonBody.decodeWith(XjdfEntities.xjdfXmlDecoder, strict = false).attempt.unsafeRunSync() match
+    val jsonBody = Request[IO](Method.POST).withEntity(document)(using XjdfEntities.xjdfJsonEncoder)
+    jsonBody.as[XJDF](using XjdfEntities.xjdfXmlDecoder).attempt.unsafeRunSync() match
       case Left(_: MediaTypeMismatch) => ()
       case other                      => assert(false, s"expected MediaTypeMismatch, got $other")
 
@@ -64,7 +65,7 @@ object XjdfEntityChecks:
     val query = QueryStatus(header, subscription = Some(Subscription(url, channelMode = Vector(ChannelMode.Reliable))))
     val encoder = XjdfEntities.jsonEntityEncoder[QueryStatus](XjdfMediaTypes.xjmfJson)
     val decoder = XjdfEntities.jsonEntityDecoder[QueryStatus](XjdfMediaTypes.xjmfJson)
-    val request = Request[IO](Method.POST).withEntity(query)(encoder)
-    val decoded = request.decodeWith(decoder, strict = false).unsafeRunSync()
+    val request = Request[IO](Method.POST).withEntity(query)(using encoder)
+    val decoded = request.as[QueryStatus](using decoder).unsafeRunSync()
     assert(decoded == query)
 end XjdfEntityChecks

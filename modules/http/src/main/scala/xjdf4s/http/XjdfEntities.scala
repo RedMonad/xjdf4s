@@ -2,18 +2,20 @@ package xjdf4s.http
 
 import cats.data.EitherT
 import cats.effect.IO
-import fs2.Stream
+import fs2.Chunk
 
 import io.circe.{DecodingFailure, Json}
 import io.circe.syntax.*
 
 import org.http4s.headers.`Content-Type`
-import org.http4s.{EntityDecoder, EntityEncoder, Headers, MalformedMessageBodyFailure, MediaTypeMismatch}
+import org.http4s.{EntityDecoder, EntityEncoder, MalformedMessageBodyFailure, MediaTypeMismatch, MediaTypeMissing}
 
 import java.nio.charset.StandardCharsets
 
 import xjdf4s.codec.json.given
-import xjdf4s.codec.xml.{XjdfCodec, XjmfCodec, Xml, XmlError, XmlParser, XmlWriter}
+import xjdf4s.codec.json.JsonRootCodecs.given
+import xjdf4s.codec.xml.domain.{XjdfCodec, XjmfCodec}
+import xjdf4s.codec.xml.{Xml, XmlError, XmlParser, XmlWriter}
 import xjdf4s.messaging.XJMF
 import xjdf4s.model.XJDF
 
@@ -23,9 +25,9 @@ import xjdf4s.model.XJDF
  *
  *  1. The codecs are named values, not givens: both representations (XML and JSON) exist for the same domain
  *     type, so a given instance would be ambiguous; endpoints pick their representation explicitly.
- *  2. Decoding is strict about the media type: http4s only uses a decoder's declared types when *chaining*
- *     decoders and ignores them otherwise, so each decoder verifies the request Content-Type itself and fails
- *     with `MediaTypeMismatch` — the Definition-of-Done requirement that wrong MIME types are rejected.
+ *  2. Decoding is strict about the media type: the message-level `as` decodes with strict = false, so each
+ *     decoder verifies the request Content-Type itself and fails with `MediaTypeMismatch` — the
+ *     Definition-of-Done requirement that wrong MIME types are rejected.
  */
 object XjdfEntities:
 
@@ -44,8 +46,10 @@ object XjdfEntities:
               if contentType.mediaType.mainType == mediaType.mainType &&
                 contentType.mediaType.subType == mediaType.subType =>
             media.as[String].map(text => decode(text))
-          case other =>
-            IO.pure(Left(MediaTypeMismatch(mediaType, other.map(_.mediaType)): Either[org.http4s.DecodeFailure, A]))
+          case Some(contentType) =>
+            IO.pure(Left(MediaTypeMismatch(contentType.mediaType, Set(mediaType)): Either[org.http4s.DecodeFailure, A]))
+          case None =>
+            IO.pure(Left(MediaTypeMissing(Set(mediaType)): Either[org.http4s.DecodeFailure, A]))
       EitherT(result)
     }
 
@@ -68,16 +72,16 @@ object XjdfEntities:
   // -- XJDF ----------------------------------------------------------------------
 
   val xjdfXmlEncoder: EntityEncoder[IO, XJDF] =
-    EntityEncoder.encodeBy[IO, XJDF](Headers(`Content-Type`(XjdfMediaTypes.xjdfXmlUtf8))) { xjdf =>
-      Stream.emits(utf8(XmlWriter.write(XjdfCodec.encoder.encode(xjdf)))).covary[IO]
+    EntityEncoder.simple[IO, XJDF](`Content-Type`(XjdfMediaTypes.xjdfXmlUtf8)) { xjdf =>
+      Chunk.array(utf8(XmlWriter.write(XjdfCodec.encoder.encode(xjdf))))
     }
 
   val xjdfXmlDecoder: EntityDecoder[IO, XJDF] =
     strictDecodeBy(XjdfMediaTypes.xjdfXml)(xmlBody(XjdfCodec.decoder.decode))
 
   val xjdfJsonEncoder: EntityEncoder[IO, XJDF] =
-    EntityEncoder.encodeBy[IO, XJDF](Headers(`Content-Type`(XjdfMediaTypes.xjdfJson))) { xjdf =>
-      Stream.emits(utf8(xjdf.asJson.noSpaces)).covary[IO]
+    EntityEncoder.simple[IO, XJDF](`Content-Type`(XjdfMediaTypes.xjdfJson)) { xjdf =>
+      Chunk.array(utf8(xjdf.asJson.noSpaces))
     }
 
   val xjdfJsonDecoder: EntityDecoder[IO, XJDF] =
@@ -86,16 +90,16 @@ object XjdfEntities:
   // -- XJMF ----------------------------------------------------------------------
 
   val xjmfXmlEncoder: EntityEncoder[IO, XJMF] =
-    EntityEncoder.encodeBy[IO, XJMF](Headers(`Content-Type`(XjdfMediaTypes.xjmfXmlUtf8))) { xjmf =>
-      Stream.emits(utf8(XmlWriter.write(XjmfCodec.encoder.encode(xjmf)))).covary[IO]
+    EntityEncoder.simple[IO, XJMF](`Content-Type`(XjdfMediaTypes.xjmfXmlUtf8)) { xjmf =>
+      Chunk.array(utf8(XmlWriter.write(XjmfCodec.encoder.encode(xjmf))))
     }
 
   val xjmfXmlDecoder: EntityDecoder[IO, XJMF] =
     strictDecodeBy(XjdfMediaTypes.xjmfXml)(xmlBody(XjmfCodec.decoder.decode))
 
   val xjmfJsonEncoder: EntityEncoder[IO, XJMF] =
-    EntityEncoder.encodeBy[IO, XJMF](Headers(`Content-Type`(XjdfMediaTypes.xjmfJson))) { xjmf =>
-      Stream.emits(utf8(xjmf.asJson.noSpaces)).covary[IO]
+    EntityEncoder.simple[IO, XJMF](`Content-Type`(XjdfMediaTypes.xjmfJson)) { xjmf =>
+      Chunk.array(utf8(xjmf.asJson.noSpaces))
     }
 
   val xjmfJsonDecoder: EntityDecoder[IO, XJMF] =
@@ -105,8 +109,8 @@ object XjdfEntities:
 
   /** A single XJMF message element as a JSON body: the element name is implied by the endpoint. */
   def jsonEntityEncoder[A](mediaType: org.http4s.MediaType)(using encoder: io.circe.Encoder[A]): EntityEncoder[IO, A] =
-    EntityEncoder.encodeBy[IO, A](Headers(`Content-Type`(mediaType))) { value =>
-      Stream.emits(utf8(value.asJson.noSpaces)).covary[IO]
+    EntityEncoder.simple[IO, A](`Content-Type`(mediaType)) { value =>
+      Chunk.array(utf8(value.asJson.noSpaces))
     }
 
   /** The strict counterpart of [[jsonEntityEncoder]]. */

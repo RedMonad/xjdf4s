@@ -4,7 +4,8 @@ import cats.effect.IO
 import fs2.Stream
 import fs2.text
 
-import org.http4s.{Client, Method, Request}
+import org.http4s.client.Client
+import org.http4s.{Method, Request}
 import org.http4s.implicits.*
 
 import xjdf4s.codec.json.given
@@ -20,14 +21,14 @@ object XjdfClient:
 
   /** POST /submit: sends the XJDF document (XML) and returns the submit receipt. */
   def submit(client: Client[IO], document: XJDF): IO[ResponseSubmitQueueEntry] =
-    val request = Request[IO](Method.POST, uri"/submit").withEntity(document)(XjdfEntities.xjdfXmlEncoder)
-    client.expect[ResponseSubmitQueueEntry](request)(XjdfMessageEntities.responseSubmitQueueEntryDecoder)
+    val request = Request[IO](Method.POST, uri"/submit").withEntity(document)(using XjdfEntities.xjdfXmlEncoder)
+    client.expect[ResponseSubmitQueueEntry](request)(using XjdfMessageEntities.responseSubmitQueueEntryDecoder)
 
   /** POST /status/subscribe: opens a persistent status channel and returns the initial response (9.6.2). */
   def subscribeStatus(client: Client[IO], query: QueryStatus): IO[ResponseStatus] =
     val request =
-      Request[IO](Method.POST, uri"/status/subscribe").withEntity(query)(XjdfMessageEntities.queryStatusEncoder)
-    client.expect[ResponseStatus](request)(XjdfMessageEntities.responseStatusDecoder)
+      Request[IO](Method.POST, uri"/status/subscribe").withEntity(query)(using XjdfMessageEntities.queryStatusEncoder)
+    client.expect[ResponseStatus](request)(using XjdfMessageEntities.responseStatusDecoder)
 
   /**
    * GET /channels/{id}/signals: the subscription stream, one JSON XJMF envelope per line (the vendor framing

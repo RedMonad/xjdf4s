@@ -3,7 +3,8 @@ package xjdf4s.http
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 
-import org.http4s.{Client, Method, Request, Status}
+import org.http4s.client.Client
+import org.http4s.{Method, Request, Status}
 import org.http4s.implicits.*
 
 import xjdf4s.core.*
@@ -92,8 +93,8 @@ object XjdfServerChecks:
                   Header(deviceId, time, id = Some(XsdId.from("C1").toOption.get)),
                   StopPersistentChannelParams(channelId = Some(channelId)),
                 ),
-              )(XjdfMessageEntities.commandStopPersistentChannelEncoder),
-            )(XjdfMessageEntities.responseStopPersistentChannelEncoder)
+              )(using XjdfMessageEntities.commandStopPersistentChannelEncoder),
+            )(using XjdfMessageEntities.responseStopPersistentChannelEncoder)
             streamStatus <- client.status(Request[IO](Method.GET, uri"/channels" / channelId.value / "signals"))
           yield (response, streamStatus)
         }

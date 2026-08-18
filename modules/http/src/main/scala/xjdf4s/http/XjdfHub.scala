@@ -2,13 +2,14 @@ package xjdf4s.http
 
 import cats.data.Chain
 import cats.effect.{IO, Ref}
+import cats.syntax.all.*
 import fs2.Stream
 import fs2.concurrent.Topic
 
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.XJDF
-import xjdf4s.xjmf.{TransportEvent, XjdfState, XjmfInterpreters, XjmfOp}
+import xjdf4s.xjmf.{TransportEvent, XjmfState, XjmfInterpreters, XjmfOp}
 
 /**
  * In-memory bridge between the stage 06 channel machine and the network: every persistent channel is an fs2

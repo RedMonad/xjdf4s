@@ -2,6 +2,7 @@ package xjdf4s.http
 
 import cats.~>
 import cats.data.Chain
+import cats.syntax.all.*
 import cats.effect.{Deferred, IO, Ref}
 
 import scala.concurrent.duration.FiniteDuration
@@ -9,7 +10,7 @@ import scala.concurrent.duration.FiniteDuration
 import xjdf4s.dsl.{DocInterpreters, DocOp}
 import xjdf4s.messaging.*
 import xjdf4s.model.XJDF
-import xjdf4s.xjmf.{TransportEvent, XjdfState, XjmfInterpreters, XjmfOp}
+import xjdf4s.xjmf.{TransportEvent, XjmfState, XjmfInterpreters, XjmfOp}
 
 /**
  * The effectful interpreters of stage 07 — the only place `IO` lives. The stage 03 and 06 algebras are NOT
@@ -25,7 +26,7 @@ object XjdfIoInterpreters:
    * production, a recording ref in tests); `AwaitResponse` waits on a `Deferred` with `awaitTimeout` and frees
    * its registration on timeout, completion or cancellation.
    */
-  final class Transport private (
+  final class Transport(
       state: Ref[IO, XjmfState],
       waits: Ref[IO, Map[String, Deferred[IO, Response]]],
       send: Signal => IO[Unit],
@@ -57,21 +58,21 @@ object XjdfIoInterpreters:
             for
               current <- state.get
               found = current.responses.collectFirst {
-                case (answeredId, response) if answeredId == await.answeredId.value => response
+                case (answeredId, stored) if answeredId == await.answeredId.value => stored
               }
-              result <- found match
-                case Some(response) => IO.pure(Some(response))
-                case None =>
-                  Deferred[IO, Response].flatMap { deferred =>
-                    waits.update(_ + (await.answeredId.value -> deferred)) *>
-                      deferred.get
-                        .map(Some(_))
-                        .timeoutTo(awaitTimeout, IO.pure(None))
-                        .guarantee(waits.update(_ - await.answeredId.value))
-                  }
+              result <- found.fold(awaitNewResponse(await.answeredId.value))(stored => IO.pure(Some(stored)))
             yield result
-          case _: XjmfOp.Channels =>
+          case XjmfOp.Channels =>
             state.get.map(current => XjmfInterpreters.transition(op, current)._3)
+
+    private def awaitNewResponse(responseId: String): IO[Option[Response]] =
+      Deferred[IO, Response].flatMap { deferred =>
+        waits.update(_ + (responseId -> deferred)) *>
+          deferred.get
+            .map(Some(_))
+            .timeoutTo(awaitTimeout, IO.pure(None))
+            .guarantee(waits.update(_ - responseId))
+      }
 
     private def runTransition[A](operation: XjmfOp[A]): IO[Chain[TransportEvent]] =
       state.modify { current =>
@@ -103,5 +104,7 @@ object XjdfIoInterpreters:
   /** `DocOp ~> IO`: the effectful document builder — the stage 03 step logic, folded into a `Ref`. */
   def document(ref: Ref[IO, XJDF]): DocOp ~> IO = new (DocOp ~> IO):
     def apply[A](op: DocOp[A]): IO[A] =
-      ref.update(current => DocInterpreters.buildDocument(op).runS(current).value)
+      // DocOp's GADT has no case whose result type is anything but Unit (the stage 03 functor instance relies
+      // on the same fact), so the IO[Unit] state update is safely an IO[A].
+      ref.update(current => DocInterpreters.buildDocument(op).runS(current).value).asInstanceOf[IO[A]]
 end XjdfIoInterpreters
