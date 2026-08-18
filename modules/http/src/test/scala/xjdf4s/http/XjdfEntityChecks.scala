@@ -7,7 +7,6 @@ import org.http4s.{DecodeFailure, EntityDecoder, MediaTypeMismatch, Method, Requ
 import org.http4s.headers.`Content-Type`
 
 import xjdf4s.codec.json.given
-import xjdf4s.codec.json.JsonRootCodecs.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.{Header, Notification, XJDF}
