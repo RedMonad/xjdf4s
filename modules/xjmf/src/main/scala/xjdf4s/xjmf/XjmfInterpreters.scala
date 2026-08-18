@@ -29,8 +29,9 @@ object XjmfInterpreters:
   /**
    * The core transition: computes the next state (without the trace), the trace events and the result. It is
    * the single point where the protocol rules of 9.6 live — the interpreters only decide where the events go.
+   * Public so that the stage 07 HTTP runtime can reuse the very same state machine as its in-memory core.
    */
-  private[xjmf] def transition[A](op: XjmfOp[A], state: XjmfState): (XjmfState, Chain[TransportEvent], A) =
+  def transition[A](op: XjmfOp[A], state: XjmfState): (XjmfState, Chain[TransportEvent], A) =
     op match
       case XjmfOp.OpenChannel(subscription, channelId, messageType) =>
         // 9.6.3: a Subscription of the same type to the same URL SHALL replace the existing subscription;

@@ -8,7 +8,7 @@ import io.circe.{DecodingFailure, Json}
 import io.circe.syntax.*
 
 import org.http4s.headers.`Content-Type`
-import org.http4s.{EntityDecoder, EntityEncoder, Headers, MalformedMessageBodyFailure, Media, MediaTypeMismatch}
+import org.http4s.{EntityDecoder, EntityEncoder, Headers, MalformedMessageBodyFailure, MediaTypeMismatch}
 
 import java.nio.charset.StandardCharsets
 

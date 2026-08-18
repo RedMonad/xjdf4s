@@ -9,7 +9,13 @@ class HttpChecksSuite extends munit.FunSuite:
       XjdfEntityChecks.xjmfRoundTrip,
       XjdfEntityChecks.rejectsWrongMimeType,
       XjdfEntityChecks.messageEntityRoundTrip,
+      XjdfServerChecks.endToEndDemo,
+      XjdfServerChecks.stopChannel,
+      XjdfServerChecks.bodyLimit,
+      XjdfIoChecks.transportTimeout,
+      XjdfIoChecks.awaitCancellation,
+      XjdfIoChecks.documentInterpreter,
     )
-    assert(results.size == 5)
+    assert(results.size == 11)
   }
 end HttpChecksSuite
