@@ -1,267 +1,43 @@
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfClient.scala:7:19
-[error] 7 |import org.http4s.{Client, Method, Request}
-[error]   |                   ^^^^^^
-[error]   |                   value Client is not a member of org.http4s
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfClient.scala:22:21
-[error] 22 |  def submit(client: Client[IO], document: XJDF): IO[ResponseSubmitQueueEntry] =
-[error]    |                     ^^^^^^
-[error]    | Not found: type Client - did you mean Comment.type? or perhaps Comment?
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:50:42
+[error] 50 |            IO.pure(Left(MediaTypeMismatch(contentType.mediaType, Set(mediaType)): Either[org.http4s.DecodeFailure, A]))
+[error]    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |                         Found:    org.http4s.MediaTypeMismatch
+[error]    |                         Required: Either[org.http4s.DecodeFailure, A]
 [error]    |
 [error]    | longer explanation available when compiling with `-explain`
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfClient.scala:27:30
-[error] 27 |  def subscribeStatus(client: Client[IO], query: QueryStatus): IO[ResponseStatus] =
-[error]    |                              ^^^^^^
-[error]    |                          Not found: type Client - did you mean Comment?
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:52:41
+[error] 52 |            IO.pure(Left(MediaTypeMissing(Set(mediaType)): Either[org.http4s.DecodeFailure, A]))
+[error]    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |                         Found:    org.http4s.MediaTypeMissing
+[error]    |                         Required: Either[org.http4s.DecodeFailure, A]
 [error]    |
 [error]    | longer explanation available when compiling with `-explain`
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfClient.scala:36:22
-[error] 36 |  def signals(client: Client[IO], channelId: Nmtoken): Stream[IO, XJMF] =
-[error]    |                      ^^^^^^
-[error]    |                      Not found: type Client - did you mean Comment?
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:45:54
+[error] 45 |          xjdf <- request.as[XJDF](using XjdfEntities.xjdfXmlDecoder)
+[error]    |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |          Found:    (xjdf4s.http.XjdfEntities.xjdfXmlDecoder :
+[error]    |            org.http4s.EntityDecoder[cats.effect.IO, xjdf4s.model.XJDF])
+[error]    |          Required: cats.MonadThrow[cats.effect.IO]
 [error]    |
 [error]    | longer explanation available when compiling with `-explain`
-[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfClient.scala:23:91
-[warn] 23 |    val request = Request[IO](Method.POST, uri"/submit").withEntity(document)(XjdfEntities.xjdfXmlEncoder)
-[warn]    |                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[warn]    |Implicit parameters should be provided with a `using` clause.
-[warn]    |This code can be rewritten automatically under -rewrite -source 3.7-migration.
-[warn]    |To disable the warning, please use the following option:
-[warn]    |  "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s"
-[warn] -- Warning: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfClient.scala:29:93
-[warn] 29 |      Request[IO](Method.POST, uri"/status/subscribe").withEntity(query)(XjdfMessageEntities.queryStatusEncoder)
-[warn]    |                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[warn]    |Implicit parameters should be provided with a `using` clause.
-[warn]    |This code can be rewritten automatically under -rewrite -source 3.7-migration.
-[warn]    |To disable the warning, please use the following option:
-[warn]    |  "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s"
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:16:25
-[error] 16 |import xjdf4s.codec.xml.{XjdfCodec, XjmfCodec, Xml, XmlError, XmlParser, XmlWriter}
-[error]    |                         ^^^^^^^^^
-[error]    |                     value XjdfCodec is not a member of xjdf4s.codec.xml
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:16:36
-[error] 16 |import xjdf4s.codec.xml.{XjdfCodec, XjmfCodec, Xml, XmlError, XmlParser, XmlWriter}
-[error]    |                                    ^^^^^^^^^
-[error]    |                     value XjmfCodec is not a member of xjdf4s.codec.xml
-[info] done compiling
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:48:63
-[error] 48 |            IO.pure(Left(MediaTypeMismatch(mediaType, other.map(_.mediaType)): Either[org.http4s.DecodeFailure, A]))
-[error]    |                                                      ^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                                  Found:    Option[org.http4s.MediaType]
-[error]    |                                  Required: Set[org.http4s.MediaRange]
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:56:69
+[error] 56 |          query <- request.as[QueryStatus](using XjdfMessageEntities.queryStatusDecoder)
+[error]    |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |Found:    (xjdf4s.http.XjdfMessageEntities.queryStatusDecoder :
+[error]    |  org.http4s.EntityDecoder[cats.effect.IO, xjdf4s.messaging.QueryStatus])
+[error]    |Required: cats.MonadThrow[cats.effect.IO]
 [error]    |
 [error]    | longer explanation available when compiling with `-explain`
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:72:40
-[error] 72 |      Stream.emits(utf8(XmlWriter.write(XjdfCodec.encoder.encode(xjdf)))).covary[IO]
-[error]    |                                        ^^^^^^^^^
-[error]    |                                        Not found: XjdfCodec
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:76:51
-[error] 76 |    strictDecodeBy(XjdfMediaTypes.xjdfXml)(xmlBody(XjdfCodec.decoder.decode))
-[error]    |                                                   ^^^^^^^^^
-[error]    |                                                   Not found: XjdfCodec
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:80:35
-[error] 80 |      Stream.emits(utf8(xjdf.asJson.noSpaces)).covary[IO]
-[error]    |                                   ^
-[error]    |No given instance of type io.circe.Encoder[xjdf4s.model.XJDF] was found for parameter encoder of method asJson in class EncoderOps.
-[error]    |I found:
-[error]    |
-[error]    |    io.circe.Encoder.importedEncoder[xjdf4s.model.XJDF](
-[error]    |      /* missing */
-[error]    |        summon[io.circe.export.Exported[io.circe.Encoder[xjdf4s.model.XJDF]]]
-[error]    |    )
-[error]    |
-[error]    |But no implicit values were found that match type io.circe.export.Exported[io.circe.Encoder[xjdf4s.model.XJDF]].
-[error] -- [E172] Type Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:84:74
-[error] 84 |    strictDecodeBy(XjdfMediaTypes.xjdfJson)(jsonBody(json => json.as[XJDF]))
-[error]    |                                                                          ^
-[error]    |No given instance of type io.circe.Decoder[xjdf4s.model.XJDF] was found for parameter d of method as in class Json.
-[error]    |I found:
-[error]    |
-[error]    |    io.circe.Decoder.importedDecoder[xjdf4s.model.XJDF](
-[error]    |      /* missing */
-[error]    |        summon[io.circe.export.Exported[io.circe.Decoder[xjdf4s.model.XJDF]]]
-[error]    |    )
-[error]    |
-[error]    |But no implicit values were found that match type io.circe.export.Exported[io.circe.Decoder[xjdf4s.model.XJDF]].
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:90:40
-[error] 90 |      Stream.emits(utf8(XmlWriter.write(XjmfCodec.encoder.encode(xjmf)))).covary[IO]
-[error]    |                                        ^^^^^^^^^
-[error]    |                                        Not found: XjmfCodec
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:94:51
-[error] 94 |    strictDecodeBy(XjdfMediaTypes.xjmfXml)(xmlBody(XjmfCodec.decoder.decode))
-[error]    |                                                   ^^^^^^^^^
-[error]    |                                                   Not found: XjmfCodec
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:98:53
-[error] 98 |      Stream.emits(utf8(xjmf.asJson.noSpaces)).covary[IO]
-[error]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |      Found:    fs2.Stream[cats.effect.IO, Byte]
-[error]    |      Required: org.http4s.Entity[cats.effect.IO]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:109:54
-[error] 109 |      Stream.emits(utf8(value.asJson.noSpaces)).covary[IO]
-[error]     |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |      Found:    fs2.Stream[cats.effect.IO, Byte]
-[error]     |      Required: org.http4s.Entity[cats.effect.IO]
-[error]     |
-[error]     | longer explanation available when compiling with `-explain`
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfHub.scala:11:36
-[error] 11 |import xjdf4s.xjmf.{TransportEvent, XjdfState, XjmfInterpreters, XjmfOp}
-[error]    |                                    ^^^^^^^^^
-[error]    |value XjdfState is not a member of xjdf4s.xjmf - did you mean xjmf.XjmfState?
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfHub.scala:22:26
-[error] 22 |      state <- Ref.of[IO, XjmfState](XjmfState.empty)
-[error]    |                          ^^^^^^^^^
-[error]    |                          Not found: type XjmfState
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfHub.scala:22:37
-[error] 22 |      state <- Ref.of[IO, XjmfState](XjmfState.empty)
-[error]    |                                     ^^^^^^^^^
-[error]    |                                     Not found: XjmfState
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfHub.scala:29:19
-[error] 29 |    state: Ref[IO, XjmfState],
-[error]    |                   ^^^^^^^^^
-[error]    |                   Not found: type XjmfState
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfHub.scala:35:23
-[error] 35 |  def currentState: IO[XjmfState] = state.get
-[error]    |                       ^^^^^^^^^
-[error]    |                       Not found: type XjmfState
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfIoInterpreters.scala:12:36
-[error] 12 |import xjdf4s.xjmf.{TransportEvent, XjdfState, XjmfInterpreters, XjmfOp}
-[error]    |                                    ^^^^^^^^^
-[error]    |value XjdfState is not a member of xjdf4s.xjmf - did you mean xjmf.XjmfState?
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfIoInterpreters.scala:29:21
-[error] 29 |      state: Ref[IO, XjmfState],
-[error]    |                     ^^^^^^^^^
-[error]    |                     Not found: type XjmfState
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfIoInterpreters.scala:63:52
-[error] 63 |                case Some(response) => IO.pure(Some(response))
-[error]    |                                                    ^^^^^^^^
-[error]    |                                                    Not found: response
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfIoInterpreters.scala:73:25
-[error] 73 |          case _: XjmfOp.Channels =>
-[error]    |                  ^^^^^^^^^^^^^^^
-[error]    |              type Channels is not a member of object xjdf4s.xjmf.XjmfOp
-[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfIoInterpreters.scala:95:21
-[error] 95 |      state: Ref[IO, XjmfState],
-[error]    |                     ^^^^^^^^^
-[error]    |                     Not found: type XjmfState
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E173] Reference Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfIoInterpreters.scala:100:10
-[error] 100 |      new Transport(state, waits, send, awaitTimeout)
-[error]     |          ^^^^^^^^^
-[error]     |constructor Transport cannot be accessed as a member of xjdf4s.http.XjdfIoInterpreters.Transport from object XjdfIoInterpreters.
-[error]     |  private constructor Transport can only be accessed from class Transport in object XjdfIoInterpreters.
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfIoInterpreters.scala:106:16
-[error] 106 |      ref.update(current => DocInterpreters.buildDocument(op).runS(current).value)
-[error]     |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]     |      Found:    cats.effect.IO[Unit]
-[error]     |      Required: cats.effect.IO[A]
-[error]     |
-[error]     | longer explanation available when compiling with `-explain`
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfMediaTypes.scala:18:39
-[error] 18 |  val xjdfXmlUtf8: MediaType = xjdfXml.withCharset(Charset.`UTF-8`)
-[error]    |                               ^^^^^^^^^^^^^^^^^^^
-[error]    |               value withCharset is not a member of org.http4s.MediaType
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfMediaTypes.scala:19:39
-[error] 19 |  val xjmfXmlUtf8: MediaType = xjmfXml.withCharset(Charset.`UTF-8`)
-[error]    |                               ^^^^^^^^^^^^^^^^^^^
-[error]    |               value withCharset is not a member of org.http4s.MediaType
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:33:61
-[error] 33 |      stream.map(xjmf => xjmf.asJson.noSpaces + "\n").through(text.utf8.encode)
-[error]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |      Found:    fs2.Stream[cats.effect.IO, Byte]
-[error]    |      Required: org.http4s.Entity[cats.effect.IO]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:41:18
-[error] 41 |          xjdf <- request.decodeWith(XjdfEntities.xjdfXmlDecoder, strict = false)
-[error]    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |value flatMap is not a member of (xjdf4s.model.XJDF => cats.effect.IO[org.http4s.Response[cats.effect.IO]]) =>
-[error]    |  cats.effect.IO[org.http4s.Response[cats.effect.IO]], but could be made available as an extension method.
-[error]    |
-[error]    |One of the following imports might fix the problem:
-[error]    |
-[error]    |  import cats.implicits.toFlatMapOps
-[error]    |  import cats.FlatMap.ops.toAllFlatMapOps
-[error]    |  import cats.Monad.ops.toAllMonadOps
-[error]    |  import cats.syntax.all.toFlatMapOps
-[error]    |  import cats.syntax.flatMap.toFlatMapOps
-[error]    |  import cats.FlatMap.nonInheritedOps.toFlatMapOps
-[error]    |
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:50:19
-[error] 50 |          query <- request.decodeWith(XjdfMessageEntities.queryStatusDecoder, strict = false)
-[error]    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |value flatMap is not a member of (xjdf4s.messaging.QueryStatus =>
-[error]    |  cats.effect.IO[org.http4s.Response[cats.effect.IO]]) =>
-[error]    |  cats.effect.IO[org.http4s.Response[cats.effect.IO]], but could be made available as an extension method.
-[error]    |
-[error]    |One of the following imports might fix the problem:
-[error]    |
-[error]    |  import cats.implicits.toFlatMapOps
-[error]    |  import cats.FlatMap.ops.toAllFlatMapOps
-[error]    |  import cats.Monad.ops.toAllMonadOps
-[error]    |  import cats.syntax.all.toFlatMapOps
-[error]    |  import cats.syntax.flatMap.toFlatMapOps
-[error]    |  import cats.FlatMap.nonInheritedOps.toFlatMapOps
-[error]    |
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:63:75
-[error] 63 |              case Some(stream) => Ok(stream.map(hub.envelope))(XjdfServer.xjmfJsonLinesEncoder)
-[error]    |                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                Found:    (xjdf4s.http.XjdfServer.xjmfJsonLinesEncoder :
-[error]    |                  org.http4s.EntityEncoder[cats.effect.IO,
-[error]    |                    fs2.Stream[cats.effect.IO, xjdf4s.messaging.XJMF]]
-[error]    |                )
-[error]    |                Required: cats.Applicative[cats.effect.IO]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:69:21
-[error] 69 |          command <- request.decodeWith(XjdfMessageEntities.commandStopPersistentChannelDecoder, strict = false)
-[error]    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |value flatMap is not a member of (xjdf4s.messaging.CommandStopPersistentChannel =>
-[error]    |  cats.effect.IO[org.http4s.Response[cats.effect.IO]]) =>
-[error]    |  cats.effect.IO[org.http4s.Response[cats.effect.IO]], but could be made available as an extension method.
-[error]    |
-[error]    |One of the following imports might fix the problem:
-[error]    |
-[error]    |  import cats.implicits.toFlatMapOps
-[error]    |  import cats.FlatMap.ops.toAllFlatMapOps
-[error]    |  import cats.Monad.ops.toAllMonadOps
-[error]    |  import cats.syntax.all.toFlatMapOps
-[error]    |  import cats.syntax.flatMap.toFlatMapOps
-[error]    |  import cats.FlatMap.nonInheritedOps.toFlatMapOps
-[error]    |
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:85:30
-[error] 85 |        )(XjdfMessageEntities.responseKnownDevicesEncoder)
-[error]    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |Found:    (xjdf4s.http.XjdfMessageEntities.responseKnownDevicesEncoder :
-[error]    |  org.http4s.EntityEncoder[cats.effect.IO, xjdf4s.messaging.ResponseKnownDevices
-[error]    |    ]
+[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:75:88
+[error] 75 |          command <- request.as[CommandStopPersistentChannel](using XjdfMessageEntities.commandStopPersistentChannelDecoder)
+[error]    |                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |Found:    (xjdf4s.http.XjdfMessageEntities.commandStopPersistentChannelDecoder :
+[error]    |  org.http4s.EntityDecoder[cats.effect.IO,
+[error]    |    xjdf4s.messaging.CommandStopPersistentChannel]
 [error]    |)
-[error]    |Required: cats.Applicative[cats.effect.IO]
+[error]    |Required: cats.MonadThrow[cats.effect.IO]
 [error]    |
 [error]    | longer explanation available when compiling with `-explain`
-[error] No warnings can be incurred under -Werror
-[warn] two warnings found
-[error] 36 errors found
+[error] 5 errors found
 [error] (http / Compile / compileIncremental) Compilation failed
-[error] elapsed time: 13 s, cache 96%, 215 disk cache hits, 7 onsite tasks
+[error] elapsed time: 4 s, cache 99%, 221 disk cache hits, 1 onsite task
