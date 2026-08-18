@@ -67,7 +67,8 @@ object XjdfServerChecks:
         outcome match
           case cats.effect.kernel.Outcome.Succeeded(value) => value
           case cats.effect.kernel.Outcome.Errored(error)  => IO.raiseError(error)
-          case cats.effect.kernel.Outcome.Canceled()      => IO.canceled
+          // self-cancel, typed: the continuation is unreachable because the cancellation raises on evaluation
+          case cats.effect.kernel.Outcome.Canceled()      => IO.canceled.flatMap(_ => IO.never[A])
     }
 
   /** Diagnostic stage: submit over HTTP alone (Client.fromHttpApp with a finite body). */
