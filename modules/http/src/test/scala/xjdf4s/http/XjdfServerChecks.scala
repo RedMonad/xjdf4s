@@ -9,6 +9,7 @@ import org.http4s.{MediaType, Method, Request, Status}
 import org.http4s.client.Client
 import org.http4s.headers.`Content-Type`
 import org.http4s.implicits.*
+import org.http4s.server.middleware.EntityLimiter
 
 import xjdf4s.core.*
 import xjdf4s.messaging.*
@@ -191,13 +192,20 @@ object XjdfServerChecks:
     assert(stopResponse.returnCode.contains(0))
     assert(streamStatus == Status.NotFound)
 
-  /** Task 6: the EntityLimiter middleware rejects oversized bodies with 413. */
+  /** Task 6: the EntityLimiter middleware raises EntityTooLarge once a body over the limit is actually read. */
   def bodyLimit(): Unit =
-    val run: IO[Status] =
+    val run: IO[Unit] =
       for
         hub <- XjdfHub.create
         limited = XjdfServer.limitedApp(hub, limit = 64)
-        status <- limited.run(Request[IO](Method.POST, uri"/submit").withEntity("x" * 1024)).map(_.status)
-      yield status
-    assert(run.unsafeRunSync() == Status.PayloadTooLarge)
+        // the XJDF media type lets the strict decoder start reading the body, so the limiter trips on it
+        request = Request[IO](Method.POST, uri"/submit")
+          .withContentType(`Content-Type`(XjdfMediaTypes.xjdfXml))
+          .withEntity("x" * 1024)
+        _ <- limited.run(request).void
+      yield ()
+    // in http4s 0.23 the middleware raises EntityTooLarge (it does not fabricate a 413 response itself)
+    run.attempt.unsafeRunSync() match
+      case Left(_: EntityLimiter.EntityTooLarge) => ()
+      case other                                => assert(false, s"expected EntityTooLarge, got $other")
 end XjdfServerChecks
