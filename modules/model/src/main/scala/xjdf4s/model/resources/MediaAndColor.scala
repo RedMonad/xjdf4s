@@ -5,19 +5,15 @@ import xjdf4s.model.*
 
 enum InkState derives CanEqual:
   case Dry, Wet
-end InkState
 
 enum MeasurementFilter derives CanEqual:
   case None, Pol, UV
-end MeasurementFilter
 
 enum SampleBacking derives CanEqual:
   case Black, Substrate, White
-end SampleBacking
 
 enum WhiteBase derives CanEqual:
   case Absolute, Substrate
-end WhiteBase
 
 final case class ColorMeasurementConditions(
     aperture: Option[Float] = None,
@@ -38,7 +34,6 @@ final case class ColorMeasurementConditions(
 
 enum TabCollationOrder derives CanEqual:
   case Forward, Reverse
-end TabCollationOrder
 
 final case class TabDimensions(
     tabEdge: Option[BindingEdge] = None,
@@ -53,27 +48,22 @@ final case class TabDimensions(
 
 enum ImagableSide derives CanEqual:
   case Front, Back, Both, Neither
-end ImagableSide
 
 enum MediaUnit derives CanEqual:
   case Continuous, Roll, Sheet
-end MediaUnit
 
 enum PlateTechnology derives CanEqual:
   case FlexoAnalogSolvent, FlexoAnalogThermal, FlexoDigitalSolvent, FlexoDigitalThermal
   case FlexoDirectEngraving, InkJet, Thermal, UV, Visible
-end PlateTechnology
 
 /** One ordered entry of a MediaLayers sequence: either a glue layer or a media layer (section 8.28). */
 enum MediaLayer derives CanEqual:
   case GlueLayer(value: Glue)
   case MediaLayer(value: Media)
-end MediaLayer
 
-/**
- * Section 8.28: an ordered list of `Glue* | Media*` subelements. The order SHALL precisely describe the order of the
- * individual layers; the first and the last layer SHALL be `Media` layers (front and back of the composite). The JSON
- * `@Name` exception for in-lined layers is a codec concern and is not part of the domain representation.
+/** Section 8.28: an ordered list of `Glue* | Media*` subelements. The order SHALL precisely describe the order of the
+ *  individual layers; the first and the last layer SHALL be `Media` layers (front and back of the composite). The JSON
+ *  `@Name` exception for in-lined layers is a codec concern and is not part of the domain representation.
  */
 final case class MediaLayers(
     layers: Vector[MediaLayer],
@@ -90,10 +80,10 @@ final case class MediaLayers(
       if layers.nonEmpty then
         val frontErrors = layers.head match
           case _: MediaLayer.MediaLayer => Vector.empty
-          case _: MediaLayer.GlueLayer  => Vector(ValidationError.InvalidValue("MediaLayers/first", "Glue", "Media"))
+          case _: MediaLayer.GlueLayer => Vector(ValidationError.InvalidValue("MediaLayers/first", "Glue", "Media"))
         val backErrors = layers.last match
           case _: MediaLayer.MediaLayer => Vector.empty
-          case _: MediaLayer.GlueLayer  => Vector(ValidationError.InvalidValue("MediaLayers/last", "Glue", "Media"))
+          case _: MediaLayer.GlueLayer => Vector(ValidationError.InvalidValue("MediaLayers/last", "Glue", "Media"))
         frontErrors ++ backErrors
       else Vector.empty
     emptyErrors ++ boundaryErrors
@@ -170,7 +160,6 @@ end Media
 
 enum ColorType derives CanEqual:
   case DieLine, Normal, Opaque, OpaqueIgnore, Primer, Transparent
-end ColorType
 
 final case class DeviceNColor(
     colorList: Vector[Float],

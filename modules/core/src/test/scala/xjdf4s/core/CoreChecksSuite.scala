@@ -20,4 +20,3 @@ class CoreChecksSuite extends munit.FunSuite:
     )
     assert(results.size == 13)
   }
-end CoreChecksSuite

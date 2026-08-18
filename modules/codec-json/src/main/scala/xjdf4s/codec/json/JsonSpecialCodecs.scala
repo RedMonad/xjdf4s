@@ -2,22 +2,20 @@ package xjdf4s.codec.json
 
 import io.circe.{Decoder, Encoder, HCursor, Json}
 import io.circe.syntax.*
-
 import xjdf4s.codec.xml.Lexical
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Hand-written JSON codecs for the special forms whose normative shape is not field-uniform: the payload-enum
- * location of `FileSpec` (URL/UID/FileFormat+FileTemplate), the `Disposition` time pair (MinDuration/Until),
- * the simple-content `NetworkHeader` (text under the `"Text"` member, like the Comment exception) and the
- * TIFF tag value variants (BinaryValue/IntegerValue/NumberValue/StringValue). The flat member sets mirror the
- * XML hand codecs so the XML and JSON encodings stay interchangeable.
+/** Hand-written JSON codecs for the special forms whose normative shape is not field-uniform: the payload-enum
+ *  location of `FileSpec` (URL/UID/FileFormat+FileTemplate), the `Disposition` time pair (MinDuration/Until),
+ *  the simple-content `NetworkHeader` (text under the `"Text"` member, like the Comment exception) and the
+ *  TIFF tag value variants (BinaryValue/IntegerValue/NumberValue/StringValue). The flat member sets mirror the
+ *  XML hand codecs so the XML and JSON encodings stay interchangeable.
  *
- * Members are ordered by dependency: a given is in scope only from its definition point onward, so the
- * self-contained codecs (NetworkHeader, Disposition) precede the FileSpec codecs that use them.
+ *  Members are ordered by dependency: a given is in scope only from its definition point onward, so the
+ *  self-contained codecs (NetworkHeader, Disposition) precede the FileSpec codecs that use them.
  */
 object JsonSpecialCodecs:
 
@@ -33,7 +31,7 @@ object JsonSpecialCodecs:
   )
   given Decoder[NetworkHeader] = Decoder.instance(cursor =>
     for
-      name <- cursor.get[XjdfString]("Name")
+      name  <- cursor.get[XjdfString]("Name")
       value <- cursor.get[XjdfString]("Text")
     yield NetworkHeader(name, value),
   )
@@ -45,7 +43,10 @@ object JsonSpecialCodecs:
       JsonHelpers.memberList(
         JsonHelpers.optMember("Action", disposition.action),
         JsonHelpers.optMember("ExtraDuration", disposition.extraDuration),
-        JsonHelpers.optMember("MinDuration", disposition.time.collect { case DispositionTime.AfterProcess(duration) => duration }),
+        JsonHelpers.optMember(
+          "MinDuration",
+          disposition.time.collect { case DispositionTime.AfterProcess(duration) => duration }
+        ),
         JsonHelpers.optMember("Until", disposition.time.collect { case DispositionTime.At(until) => until }),
         JsonHelpers.optMember("Priority", disposition.priority),
       ),
@@ -53,16 +54,16 @@ object JsonSpecialCodecs:
   )
   given Decoder[Disposition] = Decoder.instance(cursor =>
     for
-      action <- JsonHelpers.opt[DispositionAction](cursor, "Action")
+      action        <- JsonHelpers.opt[DispositionAction](cursor, "Action")
       extraDuration <- JsonHelpers.opt[XsdDuration](cursor, "ExtraDuration")
-      minDuration <- JsonHelpers.opt[XsdDuration](cursor, "MinDuration")
-      until <- JsonHelpers.opt[XsdDateTime](cursor, "Until")
-      priority <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
-      time <- (minDuration, until) match
+      minDuration   <- JsonHelpers.opt[XsdDuration](cursor, "MinDuration")
+      until         <- JsonHelpers.opt[XsdDateTime](cursor, "Until")
+      priority      <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
+      time          <- (minDuration, until) match
         case (Some(duration), None) => Right(Some(DispositionTime.AfterProcess(duration)))
-        case (None, Some(at))       => Right(Some(DispositionTime.At(at)))
-        case (None, None)           => Right(None)
-        case _                      => JsonHelpers.fail(cursor, "MinDuration/Until are mutually exclusive")
+        case (None, Some(at)) => Right(Some(DispositionTime.At(at)))
+        case (None, None) => Right(None)
+        case _ => JsonHelpers.fail(cursor, "MinDuration/Until are mutually exclusive")
     yield Disposition(action, time, extraDuration, priority),
   )
 
@@ -89,29 +90,29 @@ object JsonSpecialCodecs:
   )
   given Decoder[FileSpec] = Decoder.instance(cursor =>
     for
-      checkSum <- JsonHelpers.opt[Vector[Byte]](cursor, "CheckSum")
-      encoding <- JsonHelpers.opt[Nmtoken](cursor, "Encoding")
-      fileSize <- JsonHelpers.opt[Long](cursor, "FileSize")
-      mimeType <- JsonHelpers.opt[XjdfString](cursor, "MIMEType")
-      numberOfPages <- JsonHelpers.opt[Int](cursor, "NPage")
+      checkSum        <- JsonHelpers.opt[Vector[Byte]](cursor, "CheckSum")
+      encoding        <- JsonHelpers.opt[Nmtoken](cursor, "Encoding")
+      fileSize        <- JsonHelpers.opt[Long](cursor, "FileSize")
+      mimeType        <- JsonHelpers.opt[XjdfString](cursor, "MIMEType")
+      numberOfPages   <- JsonHelpers.opt[Int](cursor, "NPage")
       overwritePolicy <- JsonHelpers.opt[OverwritePolicy](cursor, "OverwritePolicy")
-      password <- JsonHelpers.opt[XjdfString](cursor, "Password")
-      resourceUsage <- JsonHelpers.opt[Nmtoken](cursor, "ResourceUsage")
-      searchDepth <- JsonHelpers.opt[Int](cursor, "SearchDepth")
-      userFileName <- JsonHelpers.opt[XjdfString](cursor, "UserFileName")
-      url <- JsonHelpers.opt[UriRef](cursor, "URL")
-      uid <- JsonHelpers.opt[Nmtoken](cursor, "UID")
-      fileFormat <- JsonHelpers.opt[XjdfString](cursor, "FileFormat")
-      fileTemplate <- JsonHelpers.vec[Nmtoken](cursor, "FileTemplate")
-      disposition <- JsonHelpers.opt[Disposition](cursor, "Disposition")
-      networkHeaders <- JsonHelpers.vec[NetworkHeader](cursor, "NetworkHeader")
-      location <- (url, uid, fileFormat, fileTemplate) match
+      password        <- JsonHelpers.opt[XjdfString](cursor, "Password")
+      resourceUsage   <- JsonHelpers.opt[Nmtoken](cursor, "ResourceUsage")
+      searchDepth     <- JsonHelpers.opt[Int](cursor, "SearchDepth")
+      userFileName    <- JsonHelpers.opt[XjdfString](cursor, "UserFileName")
+      url             <- JsonHelpers.opt[UriRef](cursor, "URL")
+      uid             <- JsonHelpers.opt[Nmtoken](cursor, "UID")
+      fileFormat      <- JsonHelpers.opt[XjdfString](cursor, "FileFormat")
+      fileTemplate    <- JsonHelpers.vec[Nmtoken](cursor, "FileTemplate")
+      disposition     <- JsonHelpers.opt[Disposition](cursor, "Disposition")
+      networkHeaders  <- JsonHelpers.vec[NetworkHeader](cursor, "NetworkHeader")
+      location        <- (url, uid, fileFormat, fileTemplate) match
         case (Some(value), None, None, template) if template.isEmpty => Right(FileLocation.Url(value))
         case (None, Some(value), None, template) if template.isEmpty => Right(FileLocation.Uid(value))
         case (None, None, Some(format), template) =>
           NonEmptyVector.from(template) match
             case Right(nonEmpty) => Right(FileLocation.Sequence(format, nonEmpty))
-            case Left(_)         => JsonHelpers.fail(cursor, "FileTemplate must not be empty")
+            case Left(_) => JsonHelpers.fail(cursor, "FileTemplate must not be empty")
         case (None, None, None, template) if template.isEmpty => Right(FileLocation.Pipe)
         case _ => JsonHelpers.fail(cursor, "URL/UID/FileFormat+FileTemplate are mutually exclusive")
     yield FileSpec(
@@ -144,11 +145,13 @@ object JsonSpecialCodecs:
 
   // -- FileSpec role wrappers (DeviceSchemas, DeliveryFiles, ...) -----------------
 
-  /**
-   * The XML codec represents these wrappers as FileSpec children selected by their `@ResourceUsage` role; the
-   * JSON mapping keeps the same role names as members holding the FileSpec object.
+  /** The XML codec represents these wrappers as FileSpec children selected by their `@ResourceUsage` role; the
+   *  JSON mapping keeps the same role names as members holding the FileSpec object.
    */
-  private def fileSpecRoleMembers[A](roles: Vector[(String, A => Option[FileSpec])], wrapper: A): Vector[(String, Json)] =
+  private def fileSpecRoleMembers[A](
+      roles: Vector[(String, A => Option[FileSpec])],
+      wrapper: A
+  ): Vector[(String, Json)] =
     roles.flatMap { case (role, getter) => getter(wrapper).toVector.map(spec => JsonHelpers.member(role, spec.asJson)) }
 
   private def fileSpecRoleDecoder[A](
@@ -159,10 +162,10 @@ object JsonSpecialCodecs:
       roles.foldLeft[Decoder.Result[Vector[(String, FileSpec)]]](Right(Vector.empty)) { (acc, role) =>
         for
           pairs <- acc
-          next <- JsonHelpers.opt[FileSpec](cursor, role._1)
+          next  <- JsonHelpers.opt[FileSpec](cursor, role._1)
         yield next match
           case Some(spec) => pairs :+ (role._1, spec)
-          case None       => pairs
+          case None => pairs
       }.map(build),
     )
 
@@ -222,14 +225,24 @@ object JsonSpecialCodecs:
     JsonHelpers.obj(
       JsonHelpers.memberList(
         fileSpecRoleMembers[VerificationFiles](
-          Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
+          Vector(
+            "Accepted" -> (_.accepted),
+            "Combined" -> (_.combined),
+            "Rejected" -> (_.rejected),
+            "Unknown" -> (_.unknown)
+          ),
           files,
         ),
       ),
     ),
   )
   given Decoder[VerificationFiles] = fileSpecRoleDecoder[VerificationFiles](
-    Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
+    Vector(
+      "Accepted" -> (_.accepted),
+      "Combined" -> (_.combined),
+      "Rejected" -> (_.rejected),
+      "Unknown" -> (_.unknown)
+    ),
     pairs =>
       VerificationFiles(
         pairs.find(_._1 == "Accepted").map(_._2),
@@ -276,25 +289,25 @@ object JsonSpecialCodecs:
   given Decoder[PlacedObject] = Decoder.instance(cursor =>
     val hasContentObject = cursor.downField("ContentObject").focus
     for
-      ctm <- cursor.get[Matrix]("CTM")
-      anchor <- JsonHelpers.opt[Anchor](cursor, "Anchor")
-      clipBox <- JsonHelpers.opt[Rectangle](cursor, "ClipBox")
-      clipPath <- JsonHelpers.opt[PdfPath](cursor, "ClipPath")
+      ctm                 <- cursor.get[Matrix]("CTM")
+      anchor              <- JsonHelpers.opt[Anchor](cursor, "Anchor")
+      clipBox             <- JsonHelpers.opt[Rectangle](cursor, "ClipBox")
+      clipPath            <- JsonHelpers.opt[PdfPath](cursor, "ClipPath")
       halfTonePhaseOrigin <- JsonHelpers.opt[XYPair](cursor, "HalfTonePhaseOrigin")
-      id <- JsonHelpers.opt[XsdId](cursor, "ID")
-      order <- JsonHelpers.opt[Int](cursor, "Order")
-      positionRef <- JsonHelpers.opt[XsdIdRef](cursor, "PositionRef")
-      sourceClipPath <- JsonHelpers.opt[PdfPath](cursor, "SourceClipPath")
-      trimCtm <- JsonHelpers.opt[Matrix](cursor, "TrimCTM")
-      trimSize <- JsonHelpers.opt[XYPair](cursor, "TrimSize")
-      markObject <- JsonHelpers.opt[MarkObject](cursor, "MarkObject")
-      pageActivation <- JsonHelpers.opt[PageActivation](cursor, "PageActivation")
-      pageCondition <- JsonHelpers.opt[PageCondition](cursor, "PageCondition")
-      kind <- (markObject, hasContentObject) match
+      id                  <- JsonHelpers.opt[XsdId](cursor, "ID")
+      order               <- JsonHelpers.opt[Int](cursor, "Order")
+      positionRef         <- JsonHelpers.opt[XsdIdRef](cursor, "PositionRef")
+      sourceClipPath      <- JsonHelpers.opt[PdfPath](cursor, "SourceClipPath")
+      trimCtm             <- JsonHelpers.opt[Matrix](cursor, "TrimCTM")
+      trimSize            <- JsonHelpers.opt[XYPair](cursor, "TrimSize")
+      markObject          <- JsonHelpers.opt[MarkObject](cursor, "MarkObject")
+      pageActivation      <- JsonHelpers.opt[PageActivation](cursor, "PageActivation")
+      pageCondition       <- JsonHelpers.opt[PageCondition](cursor, "PageCondition")
+      kind                <- (markObject, hasContentObject) match
         case (Some(mark), None) => Right(PlacedObjectKind.Mark(mark))
-        case (None, Some(_))    => Right(PlacedObjectKind.Content)
-        case (None, None)       => JsonHelpers.fail(cursor, "ContentObject or MarkObject is required")
-        case _                  => JsonHelpers.fail(cursor, "ContentObject/MarkObject are mutually exclusive")
+        case (None, Some(_)) => Right(PlacedObjectKind.Content)
+        case (None, None) => JsonHelpers.fail(cursor, "ContentObject or MarkObject is required")
+        case _ => JsonHelpers.fail(cursor, "ContentObject/MarkObject are mutually exclusive")
     yield PlacedObject(
       ctm,
       kind,
@@ -315,15 +328,14 @@ object JsonSpecialCodecs:
 
   private def kindMembers(kind: PlacedObjectKind): Vector[(String, Json)] =
     kind match
-      case PlacedObjectKind.Content    => Vector(JsonHelpers.member("ContentObject", Json.obj()))
+      case PlacedObjectKind.Content => Vector(JsonHelpers.member("ContentObject", Json.obj()))
       case PlacedObjectKind.Mark(mark) => Vector(JsonHelpers.member("MarkObject", mark.asJson))
 
   // -- Intent (open ProductIntent union, dispatched through the registry) --------
 
-  /**
-   * Mirror of the XML IntentCodec: the intent child is dispatched by its member name through [[JsonRegistry]],
-   * so exactly one intent member may be present; a foreign-namespace member becomes a NamedProductIntent via
-   * [[JsonForeign]]. The root product-list batch reuses this codec.
+  /** Mirror of the XML IntentCodec: the intent child is dispatched by its member name through [[JsonRegistry]],
+   *  so exactly one intent member may be present; a foreign-namespace member becomes a NamedProductIntent via
+   *  [[JsonForeign]]. The root product-list batch reuses this codec.
    */
   given Encoder[Intent] = Encoder.instance(intent =>
     JsonHelpers.obj(
@@ -340,7 +352,8 @@ object JsonSpecialCodecs:
                 content = named.extensions.elements.map(ExtensionContent.Element(_)),
               ),
             )
-          case standard => Vector(JsonHelpers.member(JsonRegistry.intentName(standard), JsonRegistry.encodeProductIntent(standard)))
+          case standard =>
+            Vector(JsonHelpers.member(JsonRegistry.intentName(standard), JsonRegistry.encodeProductIntent(standard)))
         },
         JsonForeign.encodeExtensions(intent.extensions),
       ),
@@ -348,54 +361,57 @@ object JsonSpecialCodecs:
   )
   given Decoder[Intent] = Decoder.instance(cursor =>
     for
-      name <- cursor.get[Nmtoken]("Name")
+      name            <- cursor.get[Nmtoken]("Name")
       descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
-      externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
-      standardIntents <- JsonRegistry.intentNames.toVector.sorted.foldLeft[Decoder.Result[Vector[ProductIntent]]](Right(Vector.empty)) {
-        (acc, intentName) =>
-          for
-            accumulated <- acc
-            next <- cursor.downField(intentName).focus match
-              case Some(json) => JsonRegistry.decodeProductIntent(intentName, json).map(accumulated :+ _)
-              case None       => Right(accumulated)
-          yield next
-      }
+      externalId      <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+      standardIntents <-
+        JsonRegistry.intentNames.toVector.sorted.foldLeft[Decoder.Result[Vector[ProductIntent]]](Right(Vector.empty)) {
+          (acc, intentName) =>
+            for
+              accumulated <- acc
+              next        <- cursor.downField(intentName).focus match
+                case Some(json) => JsonRegistry.decodeProductIntent(intentName, json).map(accumulated :+ _)
+                case None => Right(accumulated)
+            yield next
+        }
       foreignIntents <- JsonForeign.decodeForeignElement(cursor)
-      productIntent <- (standardIntents, foreignIntents) match
+      productIntent  <- (standardIntents, foreignIntents) match
         case (Vector(single), None) => Right(Some(single))
         case (Vector(), Some(element)) =>
-          Right(Some(NamedProductIntent(element.name, Extensions(element.attributes, element.content.collect { case ExtensionContent.Element(node) => node }))))
+          Right(Some(NamedProductIntent(
+            element.name,
+            Extensions(element.attributes, element.content.collect { case ExtensionContent.Element(node) => node })
+          )))
         case (Vector(), None) => Right(None)
-        case _                => JsonHelpers.fail(cursor, "Intent requires at most one intent member")
+        case _ => JsonHelpers.fail(cursor, "Intent requires at most one intent member")
       extensions <- JsonForeign.decodeExtensions(cursor)
     yield Intent(name, productIntent, descriptiveName, externalId, extensions),
   )
 
   // -- self-recursive types (XML rule f: never derived; recursion is explicit, never implicit) -------
 
-  /**
-   * BundleItem is self-recursive (`children: Vector[BundleItem]`, Table 6.23). A given is not visible in its
-   * own initializer, so the recursive steps cannot go through implicit search - they reference the codec of
-   * this helper object explicitly, mirroring the XML BundleItemCodec (the closure defers the self-reference to
-   * call time, when the instance is already initialized).
+  /** BundleItem is self-recursive (`children: Vector[BundleItem]`, Table 6.23). A given is not visible in its
+   *  own initializer, so the recursive steps cannot go through implicit search - they reference the codec of
+   *  this helper object explicitly, mirroring the XML BundleItemCodec (the closure defers the self-reference to
+   *  call time, when the instance is already initialized).
    */
   private object BundleItemJson:
     val decoder: Decoder[BundleItem] = Decoder.instance(cursor =>
       for
-        amount <- cursor.get[Int]("Amount")
-        bundleType <- JsonHelpers.opt[BundleType](cursor, "BundleType")
-        itemRef <- JsonHelpers.opt[XsdIdRef](cursor, "ItemRef")
-        totalAmount <- JsonHelpers.opt[Int](cursor, "TotalAmount")
+        amount          <- cursor.get[Int]("Amount")
+        bundleType      <- JsonHelpers.opt[BundleType](cursor, "BundleType")
+        itemRef         <- JsonHelpers.opt[XsdIdRef](cursor, "ItemRef")
+        totalAmount     <- JsonHelpers.opt[Int](cursor, "TotalAmount")
         totalDimensions <- JsonHelpers.opt[Shape3D](cursor, "TotalDimensions")
-        totalVolume <- JsonHelpers.opt[Float](cursor, "TotalVolume")
-        totalWeight <- JsonHelpers.opt[Float](cursor, "TotalWeight")
-        children <- cursor.downField("BundleItem").focus match
+        totalVolume     <- JsonHelpers.opt[Float](cursor, "TotalVolume")
+        totalWeight     <- JsonHelpers.opt[Float](cursor, "TotalWeight")
+        children        <- cursor.downField("BundleItem").focus match
           case Some(json) =>
             json.as[List[Json]].flatMap {
               _.foldLeft[Decoder.Result[Vector[BundleItem]]](Right(Vector.empty)) { (acc, item) =>
                 for
                   accumulated <- acc
-                  child <- decoder.decodeJson(item)
+                  child       <- decoder.decodeJson(item)
                 yield accumulated :+ child
               }
             }
@@ -427,16 +443,16 @@ object JsonSpecialCodecs:
     val decoder: Decoder[AssemblySection] = Decoder.instance(cursor =>
       for
         binderySignatureId <- cursor.get[Nmtoken]("BinderySignatureID")
-        commonFolds <- JsonHelpers.opt[CommonFolds](cursor, "CommonFolds")
-        descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
-        externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
-        sections <- cursor.downField("AssemblySection").focus match
+        commonFolds        <- JsonHelpers.opt[CommonFolds](cursor, "CommonFolds")
+        descriptiveName    <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
+        externalId         <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+        sections           <- cursor.downField("AssemblySection").focus match
           case Some(json) =>
             json.as[List[Json]].flatMap {
               _.foldLeft[Decoder.Result[Vector[AssemblySection]]](Right(Vector.empty)) { (acc, item) =>
                 for
                   accumulated <- acc
-                  section <- decoder.decodeJson(item)
+                  section     <- decoder.decodeJson(item)
                 yield accumulated :+ section
               }
             }
@@ -476,17 +492,17 @@ object JsonSpecialCodecs:
   )
   given Decoder[StickOn] = Decoder.instance(cursor =>
     for
-      childRef <- cursor.get[XsdIdRef]("ChildRef")
-      face <- JsonHelpers.opt[Face](cursor, "Face")
-      folio <- JsonHelpers.opt[Int](cursor, "Folio")
+      childRef    <- cursor.get[XsdIdRef]("ChildRef")
+      face        <- JsonHelpers.opt[Face](cursor, "Face")
+      folio       <- JsonHelpers.opt[Int](cursor, "Folio")
       orientation <- JsonHelpers.opt[Orientation](cursor, "Orientation")
-      position <- JsonHelpers.opt[XYPair](cursor, "Position")
-      glue <- JsonHelpers.opt[Glue](cursor, "Glue")
-      location <- (face, folio) match
+      position    <- JsonHelpers.opt[XYPair](cursor, "Position")
+      glue        <- JsonHelpers.opt[Glue](cursor, "Glue")
+      location    <- (face, folio) match
         case (Some(f), None) => Right(Some(ProductLocation.OnFace(f)))
         case (None, Some(p)) => Right(Some(ProductLocation.OnFolio(p)))
-        case (None, None)    => Right(None)
-        case _               => JsonHelpers.fail(cursor, "Face/Folio are mutually exclusive")
+        case (None, None) => Right(None)
+        case _ => JsonHelpers.fail(cursor, "Face/Folio are mutually exclusive")
     yield StickOn(childRef, location, orientation, position, glue),
   )
 
@@ -497,24 +513,30 @@ object JsonSpecialCodecs:
       JsonHelpers.memberList(
         JsonHelpers.optMember("Amount", item.amount),
         JsonHelpers.optMember("ComponentRef", item.componentRef),
-        JsonHelpers.optMember("Orientation", item.placement.collect { case CollatingPlacement.ByOrientation(orientation) => orientation }),
-        JsonHelpers.optMember("Transformation", item.placement.collect { case CollatingPlacement.ByTransformation(transformation) => transformation }),
+        JsonHelpers.optMember(
+          "Orientation",
+          item.placement.collect { case CollatingPlacement.ByOrientation(orientation) => orientation }
+        ),
+        JsonHelpers.optMember(
+          "Transformation",
+          item.placement.collect { case CollatingPlacement.ByTransformation(transformation) => transformation }
+        ),
         JsonHelpers.optMember("TransformationContext", item.transformationContext),
       ),
     ),
   )
   given Decoder[CollatingItem] = Decoder.instance(cursor =>
     for
-      amount <- JsonHelpers.opt[Int](cursor, "Amount")
-      componentRef <- JsonHelpers.opt[XsdIdRef](cursor, "ComponentRef")
-      orientation <- JsonHelpers.opt[Orientation](cursor, "Orientation")
-      transformation <- JsonHelpers.opt[Matrix](cursor, "Transformation")
+      amount                <- JsonHelpers.opt[Int](cursor, "Amount")
+      componentRef          <- JsonHelpers.opt[XsdIdRef](cursor, "ComponentRef")
+      orientation           <- JsonHelpers.opt[Orientation](cursor, "Orientation")
+      transformation        <- JsonHelpers.opt[Matrix](cursor, "Transformation")
       transformationContext <- JsonHelpers.opt[TransformationContext](cursor, "TransformationContext")
-      placement <- (orientation, transformation) match
+      placement             <- (orientation, transformation) match
         case (Some(o), None) => Right(Some(CollatingPlacement.ByOrientation(o)))
         case (None, Some(t)) => Right(Some(CollatingPlacement.ByTransformation(t)))
-        case (None, None)    => Right(None)
-        case _               => JsonHelpers.fail(cursor, "Orientation/Transformation are mutually exclusive")
+        case (None, None) => Right(None)
+        case _ => JsonHelpers.fail(cursor, "Orientation/Transformation are mutually exclusive")
     yield CollatingItem(amount, componentRef, placement, transformationContext),
   )
 
@@ -556,20 +578,35 @@ object JsonSpecialCodecs:
   )
   given Decoder[LooseBindingParams] = Decoder.instance(cursor =>
     for
-      bindingType <- cursor.get[String]("BindingType")
+      bindingType   <- cursor.get[String]("BindingType")
       coverMaterial <- JsonHelpers.opt[Nmtoken](cursor, "CoverMaterial")
-      holePatterns <- JsonHelpers.vec[HolePattern](cursor, "HolePattern")
-      binding <- bindingType match
+      holePatterns  <- JsonHelpers.vec[HolePattern](cursor, "HolePattern")
+      binding       <- bindingType match
         case "ChannelBinding" =>
-          JsonHelpers.opt[ChannelBindingProductionDetails](cursor, "ChannelBindingDetails").map(ProductionLooseBinding.Channel(_))
+          JsonHelpers.opt[ChannelBindingProductionDetails](
+            cursor,
+            "ChannelBindingDetails"
+          ).map(ProductionLooseBinding.Channel(_))
         case "CoilBinding" =>
-          JsonHelpers.opt[CoilBindingProductionDetails](cursor, "CoilBindingDetails").map(ProductionLooseBinding.Coil(_))
+          JsonHelpers.opt[CoilBindingProductionDetails](
+            cursor,
+            "CoilBindingDetails"
+          ).map(ProductionLooseBinding.Coil(_))
         case "CombBinding" =>
-          JsonHelpers.opt[CombBindingProductionDetails](cursor, "CombBindingDetails").map(ProductionLooseBinding.Comb(_))
+          JsonHelpers.opt[CombBindingProductionDetails](
+            cursor,
+            "CombBindingDetails"
+          ).map(ProductionLooseBinding.Comb(_))
         case "RingBinding" =>
-          JsonHelpers.opt[RingBindingProductionDetails](cursor, "RingBindingDetails").map(ProductionLooseBinding.Ring(_))
+          JsonHelpers.opt[RingBindingProductionDetails](
+            cursor,
+            "RingBindingDetails"
+          ).map(ProductionLooseBinding.Ring(_))
         case "StripBinding" =>
-          JsonHelpers.opt[StripBindingProductionDetails](cursor, "StripBindingDetails").map(ProductionLooseBinding.Strip(_))
+          JsonHelpers.opt[StripBindingProductionDetails](
+            cursor,
+            "StripBindingDetails"
+          ).map(ProductionLooseBinding.Strip(_))
         case other => JsonHelpers.fail(cursor, s"unknown LooseBindingParams BindingType '$other'")
     yield LooseBindingParams(binding, coverMaterial, holePatterns),
   )
@@ -593,12 +630,12 @@ object JsonSpecialCodecs:
   given Decoder[Assembly] = Decoder.instance(cursor =>
     for
       binderySignatureIds <- JsonHelpers.vec[Nmtoken](cursor, "BinderySignatureIDs")
-      sections <- JsonHelpers.vec[AssemblySection](cursor, "AssemblySection")
-      plan <-
+      sections            <- JsonHelpers.vec[AssemblySection](cursor, "AssemblySection")
+      plan                <-
         if sections.nonEmpty then
           NonEmptyVector.from(sections) match
             case Right(nonEmpty) => Right(AssemblyPlan.Listed(nonEmpty))
-            case Left(_)         => JsonHelpers.fail(cursor, "AssemblySection must not be empty")
+            case Left(_) => JsonHelpers.fail(cursor, "AssemblySection must not be empty")
         else if binderySignatureIds.nonEmpty then Right(AssemblyPlan.Collecting(binderySignatureIds))
         else Right(AssemblyPlan.None)
     yield Assembly(plan),
@@ -667,7 +704,9 @@ object JsonSpecialCodecs:
         JsonHelpers.optMember("BindingColorDetails", intent.bindingColorDetails),
         JsonHelpers.optMember("BindingOrder", intent.bindingOrder),
         JsonHelpers.optMember("BindingSide", intent.bindingSide),
-        JsonHelpers.vecMemberOf("ChildRefs", intent.childRefs.toVector.flatMap(_.toVector))(ref => Json.fromString(ref.value)),
+        JsonHelpers.vecMemberOf("ChildRefs", intent.childRefs.toVector.flatMap(_.toVector))(ref =>
+          Json.fromString(ref.value)
+        ),
         JsonHelpers.optMember("CoverColor", intent.coverColor),
         JsonHelpers.optMember("CoverColorDetails", intent.coverColorDetails),
         Vector(JsonHelpers.member("BindingType", Json.fromString(bindingTypeName(intent.binding)))),
@@ -678,18 +717,18 @@ object JsonSpecialCodecs:
   )
   given Decoder[BindingIntent] = Decoder.instance(cursor =>
     for
-      bindingType <- cursor.get[String]("BindingType")
-      backCoverColor <- JsonHelpers.opt[NamedColor](cursor, "BackCoverColor")
+      bindingType           <- cursor.get[String]("BindingType")
+      backCoverColor        <- JsonHelpers.opt[NamedColor](cursor, "BackCoverColor")
       backCoverColorDetails <- JsonHelpers.opt[XjdfString](cursor, "BackCoverColorDetails")
-      bindingColor <- JsonHelpers.opt[NamedColor](cursor, "BindingColor")
-      bindingColorDetails <- JsonHelpers.opt[XjdfString](cursor, "BindingColorDetails")
-      bindingOrder <- JsonHelpers.opt[BindingOrder](cursor, "BindingOrder")
-      bindingSide <- JsonHelpers.opt[BindingEdge](cursor, "BindingSide")
-      childRefs <- JsonHelpers.vec[XsdIdRef](cursor, "ChildRefs")
-      coverColor <- JsonHelpers.opt[NamedColor](cursor, "CoverColor")
-      coverColorDetails <- JsonHelpers.opt[XjdfString](cursor, "CoverColorDetails")
-      tabs <- JsonHelpers.opt[Tabs](cursor, "Tabs")
-      binding <- decodeBindingDetails(bindingType, cursor)
+      bindingColor          <- JsonHelpers.opt[NamedColor](cursor, "BindingColor")
+      bindingColorDetails   <- JsonHelpers.opt[XjdfString](cursor, "BindingColorDetails")
+      bindingOrder          <- JsonHelpers.opt[BindingOrder](cursor, "BindingOrder")
+      bindingSide           <- JsonHelpers.opt[BindingEdge](cursor, "BindingSide")
+      childRefs             <- JsonHelpers.vec[XsdIdRef](cursor, "ChildRefs")
+      coverColor            <- JsonHelpers.opt[NamedColor](cursor, "CoverColor")
+      coverColorDetails     <- JsonHelpers.opt[XjdfString](cursor, "CoverColorDetails")
+      tabs                  <- JsonHelpers.opt[Tabs](cursor, "Tabs")
+      binding               <- decodeBindingDetails(bindingType, cursor)
     yield BindingIntent(
       binding,
       backCoverColor,
@@ -747,11 +786,16 @@ object JsonSpecialCodecs:
     JsonHelpers.obj(
       JsonHelpers.memberList(
         intent.surfaces match
-          case ColorSurfaces.Unprinted    => Vector.empty
-          case ColorSurfaces.Front(front) => Vector(JsonHelpers.member("SurfaceColor", Json.arr(surfaceColorMember(Side.Front, front))))
-          case ColorSurfaces.Back(back)   => Vector(JsonHelpers.member("SurfaceColor", Json.arr(surfaceColorMember(Side.Back, back))))
+          case ColorSurfaces.Unprinted => Vector.empty
+          case ColorSurfaces.Front(front) =>
+            Vector(JsonHelpers.member("SurfaceColor", Json.arr(surfaceColorMember(Side.Front, front))))
+          case ColorSurfaces.Back(back) =>
+            Vector(JsonHelpers.member("SurfaceColor", Json.arr(surfaceColorMember(Side.Back, back))))
           case ColorSurfaces.Both(front, back) =>
-            Vector(JsonHelpers.member("SurfaceColor", Json.arr(surfaceColorMember(Side.Front, front), surfaceColorMember(Side.Back, back)))),
+            Vector(JsonHelpers.member(
+              "SurfaceColor",
+              Json.arr(surfaceColorMember(Side.Front, front), surfaceColorMember(Side.Back, back))
+            )),
       ),
     ),
   )
@@ -759,19 +803,19 @@ object JsonSpecialCodecs:
     for
       items <- cursor.downField("SurfaceColor").focus match
         case Some(json) => json.as[List[Json]]
-        case None       => Right(List.empty)
+        case None => Right(List.empty)
       pairs <- items.foldLeft[Decoder.Result[Vector[(Side, SurfaceColor)]]](Right(Vector.empty)) { (acc, item) =>
         for
           accumulated <- acc
-          side <- item.hcursor.get[Side]("Surface")
-          color <- item.mapObject(_.remove("Surface")).as[SurfaceColor]
+          side        <- item.hcursor.get[Side]("Surface")
+          color       <- item.mapObject(_.remove("Surface")).as[SurfaceColor]
         yield accumulated :+ (side, color)
       }
       surfaces <- pairs match
         case Vector((Side.Front, front), (Side.Back, back)) => Right(ColorSurfaces.Both(front, back))
-        case Vector((Side.Front, front))                    => Right(ColorSurfaces.Front(front))
-        case Vector((Side.Back, back))                      => Right(ColorSurfaces.Back(back))
-        case Vector()                                       => Right(ColorSurfaces.Unprinted)
+        case Vector((Side.Front, front)) => Right(ColorSurfaces.Front(front))
+        case Vector((Side.Back, back)) => Right(ColorSurfaces.Back(back))
+        case Vector() => Right(ColorSurfaces.Unprinted)
         case _ => JsonHelpers.fail(cursor, "one front and one back SurfaceColor at most")
     yield ColorIntent(surfaces),
   )
@@ -800,8 +844,10 @@ object JsonSpecialCodecs:
         params.operation match
           case QueueModification.Move(target) =>
             target.toVector.flatMap {
-              case QueueMoveTarget.After(next)   => Vector(JsonHelpers.member("NextQueueEntryID", Json.fromString(next.value)))
-              case QueueMoveTarget.Before(prev)  => Vector(JsonHelpers.member("PrevQueueEntryID", Json.fromString(prev.value)))
+              case QueueMoveTarget.After(next) =>
+                Vector(JsonHelpers.member("NextQueueEntryID", Json.fromString(next.value)))
+              case QueueMoveTarget.Before(prev) =>
+                Vector(JsonHelpers.member("PrevQueueEntryID", Json.fromString(prev.value)))
               case QueueMoveTarget.Position(pos) => Vector(JsonHelpers.member("Position", Json.fromInt(pos)))
               case QueueMoveTarget.Priority(prio) => Vector(JsonHelpers.member("Priority", Json.fromInt(prio.value)))
             }
@@ -813,30 +859,30 @@ object JsonSpecialCodecs:
   )
   given Decoder[ModifyQueueEntryParams] = Decoder.instance(cursor =>
     for
-      operation <- cursor.get[String]("Operation")
-      filter <- cursor.get[QueueFilter]("QueueFilter")
+      operation        <- cursor.get[String]("Operation")
+      filter           <- cursor.get[QueueFilter]("QueueFilter")
       nextQueueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "NextQueueEntryID")
       prevQueueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "PrevQueueEntryID")
-      position <- JsonHelpers.opt[Int](cursor, "Position")
-      priority <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
-      gangName <- JsonHelpers.opt[Nmtoken](cursor, "GangName")
-      modification <- operation match
+      position         <- JsonHelpers.opt[Int](cursor, "Position")
+      priority         <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
+      gangName         <- JsonHelpers.opt[Nmtoken](cursor, "GangName")
+      modification     <- operation match
         case "Move" =>
           val target = (nextQueueEntryId, prevQueueEntryId, position, priority) match
-            case (Some(next), _, _, _)  => Some(QueueMoveTarget.After(next))
-            case (_, Some(prev), _, _)  => Some(QueueMoveTarget.Before(prev))
-            case (_, _, Some(pos), _)   => Some(QueueMoveTarget.Position(pos))
-            case (_, _, _, Some(prio))  => Some(QueueMoveTarget.Priority(prio))
-            case _                      => None
+            case (Some(next), _, _, _) => Some(QueueMoveTarget.After(next))
+            case (_, Some(prev), _, _) => Some(QueueMoveTarget.Before(prev))
+            case (_, _, Some(pos), _) => Some(QueueMoveTarget.Position(pos))
+            case (_, _, _, Some(prio)) => Some(QueueMoveTarget.Priority(prio))
+            case _ => None
           Right(QueueModification.Move(target))
         case "SetGang" => Right(QueueModification.SetGang(gangName))
-        case "Abort"   => Right(QueueModification.Abort)
+        case "Abort" => Right(QueueModification.Abort)
         case "Complete" => Right(QueueModification.Complete)
-        case "Hold"    => Right(QueueModification.Hold)
-        case "Remove"  => Right(QueueModification.Remove)
-        case "Resume"  => Right(QueueModification.Resume)
+        case "Hold" => Right(QueueModification.Hold)
+        case "Remove" => Right(QueueModification.Remove)
+        case "Resume" => Right(QueueModification.Resume)
         case "Suspend" => Right(QueueModification.Suspend)
-        case other     => JsonHelpers.fail(cursor, s"unknown Operation '$other'")
+        case other => JsonHelpers.fail(cursor, s"unknown Operation '$other'")
     yield ModifyQueueEntryParams(modification, filter),
   )
 
@@ -850,9 +896,12 @@ object JsonSpecialCodecs:
         JsonHelpers.optMember("GangName", params.gangName),
         JsonHelpers.optMember("GangPolicy", params.gangPolicy),
         params.position.toVector.flatMap {
-          case QueueSubmissionPosition.After(next)   => Vector(JsonHelpers.member("NextQueueEntryID", Json.fromString(next.value)))
-          case QueueSubmissionPosition.Before(prev)  => Vector(JsonHelpers.member("PrevQueueEntryID", Json.fromString(prev.value)))
-          case QueueSubmissionPosition.Priority(prio) => Vector(JsonHelpers.member("Priority", Json.fromInt(prio.value)))
+          case QueueSubmissionPosition.After(next) =>
+            Vector(JsonHelpers.member("NextQueueEntryID", Json.fromString(next.value)))
+          case QueueSubmissionPosition.Before(prev) =>
+            Vector(JsonHelpers.member("PrevQueueEntryID", Json.fromString(prev.value)))
+          case QueueSubmissionPosition.Priority(prio) =>
+            Vector(JsonHelpers.member("Priority", Json.fromInt(prio.value)))
         },
         JsonHelpers.optMember("ReturnJMF", params.returnJmf),
       ),
@@ -860,19 +909,19 @@ object JsonSpecialCodecs:
   )
   given Decoder[QueueSubmissionParams] = Decoder.instance(cursor =>
     for
-      url <- cursor.get[UriRef]("URL")
-      activation <- JsonHelpers.opt[QueueActivation](cursor, "Activation")
-      gangName <- JsonHelpers.opt[Nmtoken](cursor, "GangName")
-      gangPolicy <- JsonHelpers.opt[QueueGangPolicy](cursor, "GangPolicy")
+      url              <- cursor.get[UriRef]("URL")
+      activation       <- JsonHelpers.opt[QueueActivation](cursor, "Activation")
+      gangName         <- JsonHelpers.opt[Nmtoken](cursor, "GangName")
+      gangPolicy       <- JsonHelpers.opt[QueueGangPolicy](cursor, "GangPolicy")
       nextQueueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "NextQueueEntryID")
       prevQueueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "PrevQueueEntryID")
-      priority <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
-      returnJmf <- JsonHelpers.opt[UriRef](cursor, "ReturnJMF")
-      position <- (nextQueueEntryId, prevQueueEntryId, priority) match
+      priority         <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
+      returnJmf        <- JsonHelpers.opt[UriRef](cursor, "ReturnJMF")
+      position         <- (nextQueueEntryId, prevQueueEntryId, priority) match
         case (Some(next), _, _) => Right(Some(QueueSubmissionPosition.After(next)))
         case (_, Some(prev), _) => Right(Some(QueueSubmissionPosition.Before(prev)))
         case (_, _, Some(prio)) => Right(Some(QueueSubmissionPosition.Priority(prio)))
-        case _                  => Right(None)
+        case _ => Right(None)
     yield QueueSubmissionParams(url, activation, gangName, gangPolicy, position, returnJmf),
   )
 
@@ -890,12 +939,12 @@ object JsonSpecialCodecs:
   given Decoder[TiffTag] = Decoder.instance(cursor =>
     for
       tagNumber <- cursor.get[Int]("TagNumber")
-      tagType <- cursor.get[Int]("TagType")
-      binary <- JsonHelpers.opt[Vector[Byte]](cursor, "BinaryValue")
-      integers <- JsonHelpers.vec[Int](cursor, "IntegerValue")
-      numbers <- JsonHelpers.vec[Float](cursor, "NumberValue")
-      text <- JsonHelpers.opt[XjdfString](cursor, "StringValue")
-      value <- (binary, integers, numbers, text) match
+      tagType   <- cursor.get[Int]("TagType")
+      binary    <- JsonHelpers.opt[Vector[Byte]](cursor, "BinaryValue")
+      integers  <- JsonHelpers.vec[Int](cursor, "IntegerValue")
+      numbers   <- JsonHelpers.vec[Float](cursor, "NumberValue")
+      text      <- JsonHelpers.opt[XjdfString](cursor, "StringValue")
+      value     <- (binary, integers, numbers, text) match
         case (Some(bytes), ints, nums, None) if ints.isEmpty && nums.isEmpty =>
           Right(Some(TiffTagValue.Binary(bytes)))
         case (None, ints, nums, None) if ints.nonEmpty && nums.isEmpty =>
@@ -916,7 +965,10 @@ object JsonSpecialCodecs:
       case Some(TiffTagValue.Integers(ints)) =>
         Vector(JsonHelpers.member("IntegerValue", Json.arr(ints.map(Json.fromInt)*)))
       case Some(TiffTagValue.Numbers(numbers)) =>
-        Vector(JsonHelpers.member("NumberValue", Json.arr(numbers.map(number => Json.fromFloat(number).getOrElse(Json.Null))*)))
+        Vector(JsonHelpers.member(
+          "NumberValue",
+          Json.arr(numbers.map(number => Json.fromFloat(number).getOrElse(Json.Null))*)
+        ))
       case Some(TiffTagValue.Text(text)) =>
         Vector(JsonHelpers.member("StringValue", Json.fromString(text)))
       case None => Vector.empty

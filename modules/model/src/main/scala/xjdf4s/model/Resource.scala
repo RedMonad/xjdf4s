@@ -6,7 +6,6 @@ import xjdf4s.core.*
 trait SpecificResource extends XjdfNode,
       Extensible:
   def elementName: QualifiedName
-end SpecificResource
 
 /** Typed resources completed in the foundational resource slice. */
 type FoundationalSpecificResource =
@@ -63,10 +62,9 @@ type StandardSpecificResource =
 /** Compatibility name retained from the incremental construction phase. */
 type TypedSpecificResource = StandardSpecificResource
 
-/**
- * Lossless carrier for ICS and foreign-namespace resources outside the standard XJDF resource union. The
- * constructor takes a [[ForeignQName]], so a standard XJDF resource name can never be smuggled through the generic
- * fallback; the trait accessor re-exposes the name as a plain `QualifiedName`.
+/** Lossless carrier for ICS and foreign-namespace resources outside the standard XJDF resource union. The
+ *  constructor takes a [[ForeignQName]], so a standard XJDF resource name can never be smuggled through the generic
+ *  fallback; the trait accessor re-exposes the name as a plain `QualifiedName`.
  */
 final case class NamedSpecificResource(
     foreignName: ForeignQName,
@@ -78,7 +76,6 @@ enum WasteOrigin:
   case Modules(moduleIds: NonEmptyVector[Nmtoken])
   case Details(wasteDetails: Nmtoken)
   case ModulesAndDetails(moduleIds: NonEmptyVector[Nmtoken], wasteDetails: Nmtoken)
-end WasteOrigin
 
 /** `WasteOrigin` makes the table 6.5 at-least-one-of constraint unrepresentable as an invalid state. */
 final case class PartWaste(

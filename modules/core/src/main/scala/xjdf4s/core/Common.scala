@@ -21,11 +21,8 @@ final case class GeneralId(
       Extensible
 
 object GeneralId:
-  /**
-   * The normative Table A.14 vocabulary. `NamedFeature` is the standard gray-box mechanism for process presets and
-   * pairs a value item with a name item. The `xs:` prefixes are lexical codec details and do not change the value set.
+  /** The normative Table A.14 vocabulary. `NamedFeature` is the standard gray-box mechanism for process presets and
+   *  pairs a value item with a name item. The `xs:` prefixes are lexical codec details and do not change the value set.
    */
   enum DataType derives CanEqual:
     case Boolean, DateTime, Duration, Float, Integer, NamedFeature, Nmtoken, String
-  end DataType
-end GeneralId

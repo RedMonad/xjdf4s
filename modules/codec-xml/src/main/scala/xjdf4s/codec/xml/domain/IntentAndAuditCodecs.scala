@@ -8,9 +8,8 @@ import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Hand codecs for nodes whose XML shape cannot be produced by the generic derivation: coproducts that map to
- * attribute sets or children, context-dependent element names, and the closed Audit family.
+/** Hand codecs for nodes whose XML shape cannot be produced by the generic derivation: coproducts that map to
+ *  attribute sets or children, context-dependent element names, and the closed Audit family.
  */
 
 // -- element-name overrides for detail types (normative names differ from class names) ----------
@@ -18,17 +17,27 @@ import xjdf4s.model.resources.*
 /** Table 6.36: the Device children are `Module*` elements, while the model class is `DeviceModule`. */
 given deviceModuleCodec: XmlElementCodec[DeviceModule] = Derived.derivedNamed[DeviceModule]("Module")
 
-given adhesiveNoteDetailsCodec: XmlElementCodec[AdhesiveNoteDetails] = Derived.derivedNamed[AdhesiveNoteDetails]("AdhesiveNote")
+given adhesiveNoteDetailsCodec: XmlElementCodec[AdhesiveNoteDetails] =
+  Derived.derivedNamed[AdhesiveNoteDetails]("AdhesiveNote")
 given edgeGluingDetailsCodec: XmlElementCodec[EdgeGluingDetails] = Derived.derivedNamed[EdgeGluingDetails]("EdgeGluing")
-given hardCoverBindingDetailsCodec: XmlElementCodec[HardCoverBindingDetails] = Derived.derivedNamed[HardCoverBindingDetails]("HardCoverBinding")
-given softCoverBindingDetailsCodec: XmlElementCodec[SoftCoverBindingDetails] = Derived.derivedNamed[SoftCoverBindingDetails]("SoftCoverBinding")
-given looseBindingDetailsCodec: XmlElementCodec[LooseBindingDetails] = Derived.derivedNamed[LooseBindingDetails]("LooseBinding")
-given coilLooseBindingDetailsCodec: XmlElementCodec[CoilLooseBindingDetails] = Derived.derivedNamed[CoilLooseBindingDetails]("LooseBinding")
-given combLooseBindingDetailsCodec: XmlElementCodec[CombLooseBindingDetails] = Derived.derivedNamed[CombLooseBindingDetails]("LooseBinding")
-given ringLooseBindingDetailsCodec: XmlElementCodec[RingLooseBindingDetails] = Derived.derivedNamed[RingLooseBindingDetails]("LooseBinding")
-given coilBindingDetailsCodec: XmlElementCodec[CoilBindingDetails] = Derived.derivedNamed[CoilBindingDetails]("CoilBinding")
-given combBindingDetailsCodec: XmlElementCodec[CombBindingDetails] = Derived.derivedNamed[CombBindingDetails]("CombBinding")
-given ringBindingDetailsCodec: XmlElementCodec[RingBindingDetails] = Derived.derivedNamed[RingBindingDetails]("RingBinding")
+given hardCoverBindingDetailsCodec: XmlElementCodec[HardCoverBindingDetails] =
+  Derived.derivedNamed[HardCoverBindingDetails]("HardCoverBinding")
+given softCoverBindingDetailsCodec: XmlElementCodec[SoftCoverBindingDetails] =
+  Derived.derivedNamed[SoftCoverBindingDetails]("SoftCoverBinding")
+given looseBindingDetailsCodec: XmlElementCodec[LooseBindingDetails] =
+  Derived.derivedNamed[LooseBindingDetails]("LooseBinding")
+given coilLooseBindingDetailsCodec: XmlElementCodec[CoilLooseBindingDetails] =
+  Derived.derivedNamed[CoilLooseBindingDetails]("LooseBinding")
+given combLooseBindingDetailsCodec: XmlElementCodec[CombLooseBindingDetails] =
+  Derived.derivedNamed[CombLooseBindingDetails]("LooseBinding")
+given ringLooseBindingDetailsCodec: XmlElementCodec[RingLooseBindingDetails] =
+  Derived.derivedNamed[RingLooseBindingDetails]("LooseBinding")
+given coilBindingDetailsCodec: XmlElementCodec[CoilBindingDetails] =
+  Derived.derivedNamed[CoilBindingDetails]("CoilBinding")
+given combBindingDetailsCodec: XmlElementCodec[CombBindingDetails] =
+  Derived.derivedNamed[CombBindingDetails]("CombBinding")
+given ringBindingDetailsCodec: XmlElementCodec[RingBindingDetails] =
+  Derived.derivedNamed[RingBindingDetails]("RingBinding")
 given channelBindingProductionDetailsCodec: XmlElementCodec[ChannelBindingProductionDetails] =
   Derived.derivedNamed[ChannelBindingProductionDetails]("ChannelBindingDetails")
 given coilBindingProductionDetailsCodec: XmlElementCodec[CoilBindingProductionDetails] =
@@ -75,22 +84,32 @@ object BindingIntentCodec:
   val decoder: XmlDecoder[BindingIntent] =
     XmlDecoder.instance: element =>
       for
-        binding <- XmlDecoders.requiredAttribute("BindingType")(bindingType).decode(element)
-        backCoverColor <- XmlDecoders.attributeOf("BackCoverColor")(Lexical.namedColor).decode(element)
+        binding               <- XmlDecoders.requiredAttribute("BindingType")(bindingType).decode(element)
+        backCoverColor        <- XmlDecoders.attributeOf("BackCoverColor")(Lexical.namedColor).decode(element)
         backCoverColorDetails <- XmlDecoders.attributeOf("BackCoverColorDetails")(Lexical.xjdfString).decode(element)
-        bindingColor <- XmlDecoders.attributeOf("BindingColor")(Lexical.namedColor).decode(element)
-        bindingColorDetails <- XmlDecoders.attributeOf("BindingColorDetails")(Lexical.xjdfString).decode(element)
-        bindingOrder <- XmlDecoders.attributeOf("BindingOrder")(Lexical.enumOf(BindingOrder.values.toVector, _.toString))
-          .decode(element)
+        bindingColor          <- XmlDecoders.attributeOf("BindingColor")(Lexical.namedColor).decode(element)
+        bindingColorDetails   <- XmlDecoders.attributeOf("BindingColorDetails")(Lexical.xjdfString).decode(element)
+        bindingOrder          <-
+          XmlDecoders.attributeOf("BindingOrder")(Lexical.enumOf(BindingOrder.values.toVector, _.toString))
+            .decode(element)
         bindingSide <- XmlDecoders.attributeOf("BindingSide")(Lexical.enumOf(BindingEdge.values.toVector, _.toString))
           .decode(element)
-        childRefs <- XmlDecoders.attributeOf("ChildRefs")(Lexical.xsdIdRefs).decode(element)
-        coverColor <- XmlDecoders.attributeOf("CoverColor")(Lexical.namedColor).decode(element)
+        childRefs         <- XmlDecoders.attributeOf("ChildRefs")(Lexical.xsdIdRefs).decode(element)
+        coverColor        <- XmlDecoders.attributeOf("CoverColor")(Lexical.namedColor).decode(element)
         coverColorDetails <- XmlDecoders.attributeOf("CoverColorDetails")(Lexical.xjdfString).decode(element)
-        tabs <- XmlDecoders.optionalChild("Tabs")(summon[XmlElementCodec[Tabs]]).decode(element)
-        _ <- XmlDecoders
+        tabs              <- XmlDecoders.optionalChild("Tabs")(summon[XmlElementCodec[Tabs]]).decode(element)
+        _                 <- XmlDecoders
           .expectChildrenOnly(
-            Set("Tabs", "AdhesiveNote", "EdgeGluing", "HardCoverBinding", "LooseBinding", "SaddleStitching", "SideStitching", "SoftCoverBinding"),
+            Set(
+              "Tabs",
+              "AdhesiveNote",
+              "EdgeGluing",
+              "HardCoverBinding",
+              "LooseBinding",
+              "SaddleStitching",
+              "SideStitching",
+              "SoftCoverBinding"
+            ),
           )
           .decode(element)
         details <- binding match
@@ -109,7 +128,9 @@ object BindingIntentCodec:
             XmlDecoders.optionalChild("EdgeGluing")(summon[XmlElementCodec[EdgeGluingDetails]]).decode(element)
               .map(BindingSpecification.EdgeGluing(_))
           case BindingSpecification.HardCover(_) =>
-            XmlDecoders.optionalChild("HardCoverBinding")(summon[XmlElementCodec[HardCoverBindingDetails]]).decode(element)
+            XmlDecoders.optionalChild("HardCoverBinding")(
+              summon[XmlElementCodec[HardCoverBindingDetails]]
+            ).decode(element)
               .map(BindingSpecification.HardCover(_))
           case BindingSpecification.LooseBinding(_) =>
             plainDetails("LooseBinding").decode(element).map(BindingSpecification.LooseBinding(_))
@@ -121,7 +142,9 @@ object BindingIntentCodec:
           case BindingSpecification.SideStitch(_) =>
             StitchingCodec.optional("SideStitching").decode(element).map(BindingSpecification.SideStitch(_))
           case BindingSpecification.SoftCover(_) =>
-            XmlDecoders.optionalChild("SoftCoverBinding")(summon[XmlElementCodec[SoftCoverBindingDetails]]).decode(element)
+            XmlDecoders.optionalChild("SoftCoverBinding")(
+              summon[XmlElementCodec[SoftCoverBindingDetails]]
+            ).decode(element)
               .map(BindingSpecification.SoftCover(_))
           case BindingSpecification.StripBinding(_) =>
             plainDetails("LooseBinding").decode(element).map(BindingSpecification.StripBinding(_))
@@ -188,7 +211,9 @@ object BindingIntentCodec:
           CodecHelpers.attributeOf("CoverColorDetails", intent.coverColorDetails, (v: XjdfString) => v.value) ++
           CodecHelpers.attribute(
             "BindingType",
-            Some(bindingTypes.find(_._1.productPrefix == intent.binding.productPrefix).map(_._2).getOrElse(intent.binding.productPrefix)),
+            Some(bindingTypes.find(
+              _._1.productPrefix == intent.binding.productPrefix
+            ).map(_._2).getOrElse(intent.binding.productPrefix)),
           ) ++
           CodecHelpers.extensionAttributes(intent.extensions)
       val children =
@@ -205,10 +230,11 @@ object StitchingCodec:
           case None => Right(None)
           case Some(child) =>
             for
-              stapleShape <- XmlDecoders.attributeOf("StapleShape")(Lexical.enumOf(StapleShape.values.toVector, _.toString))
-                .decode(child)
+              stapleShape <-
+                XmlDecoders.attributeOf("StapleShape")(Lexical.enumOf(StapleShape.values.toVector, _.toString))
+                  .decode(child)
               stitchNumber <- XmlDecoders.attributeOf("StitchNumber")(Lexical.int).decode(child)
-              _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(child)
+              _            <- XmlDecoders.expectChildrenOnly(Set.empty).decode(child)
             yield Some(StitchingDetails(stapleShape, stitchNumber, CodecHelpers.decodeExtensionAttributes(child)))
 
   def encode(name: String)(details: StitchingDetails): Xml.Element =
@@ -231,12 +257,12 @@ object ColorIntentCodec:
       for
         _ <- unexpected match
           case Some(child) => Left(XmlError.UnexpectedElement("ColorIntent", child.name.localName))
-          case None        => Right(())
+          case None => Right(())
         decoded <- surfaceColors.foldLeft[Either[XmlError, Vector[(Side, SurfaceColor)]]](Right(Vector.empty)) {
           (acc, child) =>
             for
               pairs <- acc
-              side <- surface(child.attribute("Surface").getOrElse(""))
+              side  <- surface(child.attribute("Surface").getOrElse(""))
                 .left
                 .map(message => XmlError.InvalidAttribute("SurfaceColor", "Surface", "", message))
               color <- summon[XmlElementCodec[SurfaceColor]].decode(child)
@@ -244,9 +270,9 @@ object ColorIntentCodec:
         }
         surfaces <- decoded match
           case Vector((Side.Front, front), (Side.Back, back)) => Right(ColorSurfaces.Both(front, back))
-          case Vector((Side.Front, front))                    => Right(ColorSurfaces.Front(front))
-          case Vector((Side.Back, back))                      => Right(ColorSurfaces.Back(back))
-          case Vector()                                       => Right(ColorSurfaces.Unprinted)
+          case Vector((Side.Front, front)) => Right(ColorSurfaces.Front(front))
+          case Vector((Side.Back, back)) => Right(ColorSurfaces.Back(back))
+          case Vector() => Right(ColorSurfaces.Unprinted)
           case _ => Left(XmlError.InvalidAttribute("ColorIntent", "SurfaceColor", "", "one front and one back surface"))
       yield ColorIntent(surfaces, CodecHelpers.decodeExtensionAttributes(element))
 
@@ -256,10 +282,10 @@ object ColorIntentCodec:
         val encoded = summon[XmlElementCodec[SurfaceColor]].encode(value)
         encoded.copy(attributes = encoded.attributes :+ (CodecHelpers.qname("Surface"), side.toString))
       val children = intent.surfaces match
-        case ColorSurfaces.Unprinted      => Vector.empty
-        case ColorSurfaces.Front(front)   => Vector(surfaceColor(Side.Front, front))
-        case ColorSurfaces.Back(back)     => Vector(surfaceColor(Side.Back, back))
-        case ColorSurfaces.Both(f, b)     => Vector(surfaceColor(Side.Front, f), surfaceColor(Side.Back, b))
+        case ColorSurfaces.Unprinted => Vector.empty
+        case ColorSurfaces.Front(front) => Vector(surfaceColor(Side.Front, front))
+        case ColorSurfaces.Back(back) => Vector(surfaceColor(Side.Back, back))
+        case ColorSurfaces.Both(f, b) => Vector(surfaceColor(Side.Front, f), surfaceColor(Side.Back, b))
       Xml.Element(
         CodecHelpers.qname("ColorIntent"),
         CodecHelpers.extensionAttributes(intent.extensions),
@@ -273,26 +299,27 @@ object StickOnCodec:
   val decoder: XmlDecoder[StickOn] =
     XmlDecoder.instance: element =>
       for
-        childRef <- XmlDecoders.requiredAttribute("ChildRef")(Lexical.xsdIdRef).decode(element)
-        face <- XmlDecoders.attributeOf("Face")(Lexical.face).decode(element)
-        folio <- XmlDecoders.attributeOf("Folio")(Lexical.int).decode(element)
+        childRef    <- XmlDecoders.requiredAttribute("ChildRef")(Lexical.xsdIdRef).decode(element)
+        face        <- XmlDecoders.attributeOf("Face")(Lexical.face).decode(element)
+        folio       <- XmlDecoders.attributeOf("Folio")(Lexical.int).decode(element)
         orientation <- XmlDecoders.attributeOf("Orientation")(Lexical.orientation).decode(element)
-        position <- XmlDecoders.attributeOf("Position")(Lexical.xypair).decode(element)
-        glue <- XmlDecoders.optionalChild("Glue")(GlueCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Glue")).decode(element)
-        location <- (face, folio) match
-          case (Some(f), None)  => Right(Some(ProductLocation.OnFace(f)))
-          case (None, Some(p))  => Right(Some(ProductLocation.OnFolio(p)))
-          case (None, None)     => Right(None)
-          case _                => Left(XmlError.ConflictingFields("StickOn", "Face/Folio"))
+        position    <- XmlDecoders.attributeOf("Position")(Lexical.xypair).decode(element)
+        glue        <- XmlDecoders.optionalChild("Glue")(GlueCodec.decoder).decode(element)
+        _           <- XmlDecoders.expectChildrenOnly(Set("Glue")).decode(element)
+        location    <- (face, folio) match
+          case (Some(f), None) => Right(Some(ProductLocation.OnFace(f)))
+          case (None, Some(p)) => Right(Some(ProductLocation.OnFolio(p)))
+          case (None, None) => Right(None)
+          case _ => Left(XmlError.ConflictingFields("StickOn", "Face/Folio"))
       yield StickOn(childRef, location, orientation, position, glue, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[StickOn] =
     XmlEncoder.instance: stickOn =>
       val locationAttributes = stickOn.location match
         case Some(ProductLocation.OnFace(face)) => CodecHelpers.attribute("Face", Some(face.toString))
-        case Some(ProductLocation.OnFolio(folio)) => CodecHelpers.attribute("Folio", Some(CodecHelpers.renderInt(folio)))
-        case None                                 => Vector.empty
+        case Some(ProductLocation.OnFolio(folio)) =>
+          CodecHelpers.attribute("Folio", Some(CodecHelpers.renderInt(folio)))
+        case None => Vector.empty
       val attributes =
         locationAttributes ++
           CodecHelpers.attributeOf("Orientation", stickOn.orientation, _.toString) ++
@@ -312,20 +339,26 @@ object CollatingItemCodec:
   val decoder: XmlDecoder[CollatingItem] =
     XmlDecoder.instance: element =>
       for
-        amount <- XmlDecoders.attributeOf("Amount")(Lexical.int).decode(element)
-        componentRef <- XmlDecoders.attributeOf("ComponentRef")(Lexical.xsdIdRef).decode(element)
-        orientation <- XmlDecoders.attributeOf("Orientation")(Lexical.orientation).decode(element)
-        transformation <- XmlDecoders.attributeOf("Transformation")(Lexical.matrix).decode(element)
+        amount                <- XmlDecoders.attributeOf("Amount")(Lexical.int).decode(element)
+        componentRef          <- XmlDecoders.attributeOf("ComponentRef")(Lexical.xsdIdRef).decode(element)
+        orientation           <- XmlDecoders.attributeOf("Orientation")(Lexical.orientation).decode(element)
+        transformation        <- XmlDecoders.attributeOf("Transformation")(Lexical.matrix).decode(element)
         transformationContext <- XmlDecoders
           .attributeOf("TransformationContext")(Lexical.enumOf(TransformationContext.values.toVector, _.toString))
           .decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        _         <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
         placement <- (orientation, transformation) match
           case (Some(o), None) => Right(Some(CollatingPlacement.ByOrientation(o)))
           case (None, Some(t)) => Right(Some(CollatingPlacement.ByTransformation(t)))
-          case (None, None)    => Right(None)
+          case (None, None) => Right(None)
           case _ => Left(XmlError.ConflictingFields("CollatingItem", "Orientation/Transformation"))
-      yield CollatingItem(amount, componentRef, placement, transformationContext, CodecHelpers.decodeExtensionAttributes(element))
+      yield CollatingItem(
+        amount,
+        componentRef,
+        placement,
+        transformationContext,
+        CodecHelpers.decodeExtensionAttributes(element)
+      )
 
   val encoder: XmlEncoder[CollatingItem] =
     XmlEncoder.instance: item =>
@@ -364,10 +397,10 @@ object LooseBindingParamsCodec:
   val decoder: XmlDecoder[LooseBindingParams] =
     XmlDecoder.instance: element =>
       for
-        binding <- XmlDecoders.requiredAttribute("BindingType")(bindingType).decode(element)
+        binding       <- XmlDecoders.requiredAttribute("BindingType")(bindingType).decode(element)
         coverMaterial <- XmlDecoders.attributeOf("CoverMaterial")(Lexical.nmtoken).decode(element)
-        holePatterns <- XmlDecoders.repeatedChild("HolePattern")(summon[XmlElementCodec[HolePattern]]).decode(element)
-        details <- binding match
+        holePatterns  <- XmlDecoders.repeatedChild("HolePattern")(summon[XmlElementCodec[HolePattern]]).decode(element)
+        details       <- binding match
           case ProductionLooseBinding.Channel(_) =>
             XmlDecoders.optionalChild("ChannelBindingDetails")(summon[XmlElementCodec[ChannelBindingProductionDetails]])
               .decode(element).map(ProductionLooseBinding.Channel(_))
@@ -402,7 +435,9 @@ object LooseBindingParamsCodec:
         CodecHelpers.attributeOf("CoverMaterial", params.coverMaterial, (v: Nmtoken) => v.value) ++
           CodecHelpers.attribute(
             "BindingType",
-            Some(bindingTypes.find(_._1.productPrefix == params.binding.productPrefix).map(_._2).getOrElse(params.binding.productPrefix)),
+            Some(bindingTypes.find(
+              _._1.productPrefix == params.binding.productPrefix
+            ).map(_._2).getOrElse(params.binding.productPrefix)),
           ) ++
           CodecHelpers.extensionAttributes(params.extensions)
       val children =
@@ -412,20 +447,19 @@ end LooseBindingParamsCodec
 
 // -- Assembly: the plan coproduct maps to @BinderySignatureIDs and AssemblySection children -----------
 
-/**
- * AssemblySection is the only self-recursive case class of the model; its codec is hand-written because the
- * generic derivation would recurse indefinitely while materializing the `sections` field.
+/** AssemblySection is the only self-recursive case class of the model; its codec is hand-written because the
+ *  generic derivation would recurse indefinitely while materializing the `sections` field.
  */
 object AssemblySectionCodec:
   def decoder: XmlDecoder[AssemblySection] =
     XmlDecoder.instance: element =>
       for
         binderySignatureId <- XmlDecoders.requiredAttribute("BinderySignatureID")(Lexical.nmtoken).decode(element)
-        commonFolds <- XmlDecoders.attributeOf("CommonFolds")(Lexical.commonFolds).decode(element)
-        descriptiveName <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
-        externalId <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
-        sections <- XmlDecoders.repeatedChild("AssemblySection")(decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("AssemblySection")).decode(element)
+        commonFolds        <- XmlDecoders.attributeOf("CommonFolds")(Lexical.commonFolds).decode(element)
+        descriptiveName    <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
+        externalId         <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
+        sections           <- XmlDecoders.repeatedChild("AssemblySection")(decoder).decode(element)
+        _                  <- XmlDecoders.expectChildrenOnly(Set("AssemblySection")).decode(element)
       yield AssemblySection(
         binderySignatureId,
         commonFolds,
@@ -453,10 +487,9 @@ given assemblySectionCodec: XmlElementCodec[AssemblySection] = XmlElementCodec.i
 given assemblySectionField: FieldCodec[AssemblySection] =
   FieldCodec.element(summon[XmlElementCodec[AssemblySection]])
 
-/**
- * BundleItem is the second self-recursive case class of the model (`children: Vector[BundleItem]`, Table 6.23);
- * its codec is hand-written for the same reason as AssemblySection: the generic derivation would recurse
- * indefinitely while materializing the `children` field.
+/** BundleItem is the second self-recursive case class of the model (`children: Vector[BundleItem]`, Table 6.23);
+ *  its codec is hand-written for the same reason as AssemblySection: the generic derivation would recurse
+ *  indefinitely while materializing the `children` field.
  */
 object BundleItemCodec:
   private val bundleType: Lexical.Lex[BundleType] = Lexical.enumOf(BundleType.values.toVector, _.toString)
@@ -464,15 +497,15 @@ object BundleItemCodec:
   def decoder: XmlDecoder[BundleItem] =
     XmlDecoder.instance: element =>
       for
-        amount <- XmlDecoders.requiredAttribute("Amount")(Lexical.int).decode(element)
-        bundleType <- XmlDecoders.attributeOf("BundleType")(bundleType).decode(element)
-        itemRef <- XmlDecoders.attributeOf("ItemRef")(Lexical.xsdIdRef).decode(element)
-        totalAmount <- XmlDecoders.attributeOf("TotalAmount")(Lexical.int).decode(element)
+        amount          <- XmlDecoders.requiredAttribute("Amount")(Lexical.int).decode(element)
+        bundleType      <- XmlDecoders.attributeOf("BundleType")(bundleType).decode(element)
+        itemRef         <- XmlDecoders.attributeOf("ItemRef")(Lexical.xsdIdRef).decode(element)
+        totalAmount     <- XmlDecoders.attributeOf("TotalAmount")(Lexical.int).decode(element)
         totalDimensions <- XmlDecoders.attributeOf("TotalDimensions")(Lexical.shape3d).decode(element)
-        totalVolume <- XmlDecoders.attributeOf("TotalVolume")(Lexical.float).decode(element)
-        totalWeight <- XmlDecoders.attributeOf("TotalWeight")(Lexical.float).decode(element)
-        children <- XmlDecoders.repeatedChild("BundleItem")(decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("BundleItem")).decode(element)
+        totalVolume     <- XmlDecoders.attributeOf("TotalVolume")(Lexical.float).decode(element)
+        totalWeight     <- XmlDecoders.attributeOf("TotalWeight")(Lexical.float).decode(element)
+        children        <- XmlDecoders.repeatedChild("BundleItem")(decoder).decode(element)
+        _               <- XmlDecoders.expectChildrenOnly(Set("BundleItem")).decode(element)
       yield BundleItem(
         amount,
         bundleType,
@@ -511,28 +544,35 @@ object AssemblyCodec:
     XmlDecoder.instance: element =>
       for
         binderySignatureIds <- XmlDecoders.attributeOf("BinderySignatureIDs")(Lexical.nmtokens).decode(element)
-        sections <- XmlDecoders.repeatedChild("AssemblySection")(summon[XmlElementCodec[AssemblySection]]).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("AssemblySection")).decode(element)
+        sections            <-
+          XmlDecoders.repeatedChild("AssemblySection")(summon[XmlElementCodec[AssemblySection]]).decode(element)
+        _    <- XmlDecoders.expectChildrenOnly(Set("AssemblySection")).decode(element)
         plan <- (binderySignatureIds, sections) match
           case (_, sections) if sections.nonEmpty =>
             NonEmptyVector.from(sections) match
               case Right(nonEmpty) => Right(AssemblyPlan.Listed(nonEmpty))
-              case Left(_)         => Left(XmlError.MissingElement("Assembly", "AssemblySection"))
+              case Left(_) => Left(XmlError.MissingElement("Assembly", "AssemblySection"))
           case (Some(ids), _) if ids.nonEmpty => Right(AssemblyPlan.Collecting(ids))
-          case _                              => Right(AssemblyPlan.None)
+          case _ => Right(AssemblyPlan.None)
       yield Assembly(plan, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[Assembly] =
     XmlEncoder.instance: assembly =>
       val (idsAttribute, sectionChildren) = assembly.plan match
-        case AssemblyPlan.Collecting(ids) => (CodecHelpers.attribute(
-          "BinderySignatureIDs",
-          Option.when(ids.nonEmpty)(CodecHelpers.renderNmtokens(ids)),
-        ), Vector.empty[Xml.Element])
-        case AssemblyPlan.Gathering(ids) => (CodecHelpers.attribute(
-          "BinderySignatureIDs",
-          Option.when(ids.nonEmpty)(CodecHelpers.renderNmtokens(ids)),
-        ), Vector.empty[Xml.Element])
+        case AssemblyPlan.Collecting(ids) => (
+            CodecHelpers.attribute(
+              "BinderySignatureIDs",
+              Option.when(ids.nonEmpty)(CodecHelpers.renderNmtokens(ids)),
+            ),
+            Vector.empty[Xml.Element]
+          )
+        case AssemblyPlan.Gathering(ids) => (
+            CodecHelpers.attribute(
+              "BinderySignatureIDs",
+              Option.when(ids.nonEmpty)(CodecHelpers.renderNmtokens(ids)),
+            ),
+            Vector.empty[Xml.Element]
+          )
         case AssemblyPlan.Listed(sections) =>
           (Vector.empty, sections.toVector.map(summon[XmlElementCodec[AssemblySection]].encode))
         case AssemblyPlan.None => (Vector.empty, Vector.empty)
@@ -549,27 +589,29 @@ object PlacedObjectCodec:
   val decoder: XmlDecoder[PlacedObject] =
     XmlDecoder.instance: element =>
       for
-        ctm <- XmlDecoders.requiredAttribute("CTM")(Lexical.matrix).decode(element)
-        anchor <- XmlDecoders.attributeOf("Anchor")(Lexical.enumOf(Anchor.values.toVector, _.toString)).decode(element)
+        ctm     <- XmlDecoders.requiredAttribute("CTM")(Lexical.matrix).decode(element)
+        anchor  <- XmlDecoders.attributeOf("Anchor")(Lexical.enumOf(Anchor.values.toVector, _.toString)).decode(element)
         clipBox <- XmlDecoders.attributeOf("ClipBox")(Lexical.rectangle).decode(element)
-        clipPath <- XmlDecoders.attributeOf("ClipPath")(Lexical.pdfPath).decode(element)
+        clipPath            <- XmlDecoders.attributeOf("ClipPath")(Lexical.pdfPath).decode(element)
         halfTonePhaseOrigin <- XmlDecoders.attributeOf("HalfTonePhaseOrigin")(Lexical.xypair).decode(element)
-        id <- XmlDecoders.attributeOf("ID")(Lexical.xsdId).decode(element)
-        order <- XmlDecoders.attributeOf("Order")(Lexical.int).decode(element)
-        positionRef <- XmlDecoders.attributeOf("PositionRef")(Lexical.xsdIdRef).decode(element)
-        sourceClipPath <- XmlDecoders.attributeOf("SourceClipPath")(Lexical.pdfPath).decode(element)
-        trimCtm <- XmlDecoders.attributeOf("TrimCTM")(Lexical.matrix).decode(element)
-        trimSize <- XmlDecoders.attributeOf("TrimSize")(Lexical.xypair).decode(element)
-        markObject <- XmlDecoders.optionalChild("MarkObject")(summon[XmlElementCodec[MarkObject]]).decode(element)
+        id                  <- XmlDecoders.attributeOf("ID")(Lexical.xsdId).decode(element)
+        order               <- XmlDecoders.attributeOf("Order")(Lexical.int).decode(element)
+        positionRef         <- XmlDecoders.attributeOf("PositionRef")(Lexical.xsdIdRef).decode(element)
+        sourceClipPath      <- XmlDecoders.attributeOf("SourceClipPath")(Lexical.pdfPath).decode(element)
+        trimCtm             <- XmlDecoders.attributeOf("TrimCTM")(Lexical.matrix).decode(element)
+        trimSize            <- XmlDecoders.attributeOf("TrimSize")(Lexical.xypair).decode(element)
+        markObject       <- XmlDecoders.optionalChild("MarkObject")(summon[XmlElementCodec[MarkObject]]).decode(element)
         hasContentObject <- XmlDecoders.optionalChild("ContentObject")(ContentObjectCodec.decoder).decode(element)
-        pageActivation <- XmlDecoders.optionalChild("PageActivation")(summon[XmlElementCodec[PageActivation]]).decode(element)
-        pageCondition <- XmlDecoders.optionalChild("PageCondition")(summon[XmlElementCodec[PageCondition]]).decode(element)
+        pageActivation   <-
+          XmlDecoders.optionalChild("PageActivation")(summon[XmlElementCodec[PageActivation]]).decode(element)
+        pageCondition <-
+          XmlDecoders.optionalChild("PageCondition")(summon[XmlElementCodec[PageCondition]]).decode(element)
         _ <- XmlDecoders.expectChildrenOnly(Set("MarkObject", "ContentObject", "PageActivation", "PageCondition"))
           .decode(element)
         kind <- (markObject, hasContentObject) match
           case (Some(mark), None) => Right(PlacedObjectKind.Mark(mark))
-          case (None, Some(_))    => Right(PlacedObjectKind.Content)
-          case (None, None)       => Left(XmlError.MissingElement("PlacedObject", "ContentObject or MarkObject"))
+          case (None, Some(_)) => Right(PlacedObjectKind.Content)
+          case (None, None) => Left(XmlError.MissingElement("PlacedObject", "ContentObject or MarkObject"))
           case _ => Left(XmlError.ConflictingFields("PlacedObject", "ContentObject/MarkObject"))
       yield PlacedObject(
         ctm,
@@ -592,8 +634,9 @@ object PlacedObjectCodec:
   val encoder: XmlEncoder[PlacedObject] =
     XmlEncoder.instance: placed =>
       val kindChildren = placed.kind match
-        case PlacedObjectKind.Content     => Vector(Xml.Element(CodecHelpers.qname("ContentObject"), Vector.empty, Vector.empty))
-        case PlacedObjectKind.Mark(mark)  => Vector(summon[XmlElementCodec[MarkObject]].encode(mark))
+        case PlacedObjectKind.Content =>
+          Vector(Xml.Element(CodecHelpers.qname("ContentObject"), Vector.empty, Vector.empty))
+        case PlacedObjectKind.Mark(mark) => Vector(summon[XmlElementCodec[MarkObject]].encode(mark))
       val attributes =
         CodecHelpers.attributeOf("Anchor", placed.anchor, _.toString) ++
           CodecHelpers.attributeOf("ClipBox", placed.clipBox, CodecHelpers.renderRectangle) ++
@@ -618,7 +661,6 @@ object ContentObjectCodec:
   val decoder: XmlDecoder[Unit] =
     XmlDecoder.instance: element =>
       XmlDecoders.expectChildrenOnly(Set.empty).decode(element).map(_ => ())
-end ContentObjectCodec
 
 // -- ModifyQueueEntryParams: the Move/SetGang payload maps to attributes ------------------------------
 
@@ -644,25 +686,25 @@ object ModifyQueueEntryParamsCodec:
   val decoder: XmlDecoder[ModifyQueueEntryParams] =
     XmlDecoder.instance: element =>
       for
-        op <- XmlDecoders.requiredAttribute("Operation")(operation).decode(element)
-        filter <- XmlDecoders.singleChild("QueueFilter")(summon[XmlElementCodec[QueueFilter]]).decode(element)
+        op               <- XmlDecoders.requiredAttribute("Operation")(operation).decode(element)
+        filter           <- XmlDecoders.singleChild("QueueFilter")(summon[XmlElementCodec[QueueFilter]]).decode(element)
         nextQueueEntryId <- XmlDecoders.attributeOf("NextQueueEntryID")(Lexical.nmtoken).decode(element)
         prevQueueEntryId <- XmlDecoders.attributeOf("PrevQueueEntryID")(Lexical.nmtoken).decode(element)
-        position <- XmlDecoders.attributeOf("Position")(Lexical.int).decode(element)
-        priority <- XmlDecoders.attributeOf("Priority")(Lexical.priority).decode(element)
-        gangName <- XmlDecoders.attributeOf("GangName")(Lexical.nmtoken).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("QueueFilter")).decode(element)
-        modification <- op match
+        position         <- XmlDecoders.attributeOf("Position")(Lexical.int).decode(element)
+        priority         <- XmlDecoders.attributeOf("Priority")(Lexical.priority).decode(element)
+        gangName         <- XmlDecoders.attributeOf("GangName")(Lexical.nmtoken).decode(element)
+        _                <- XmlDecoders.expectChildrenOnly(Set("QueueFilter")).decode(element)
+        modification     <- op match
           case _: QueueModification.Move =>
             val target = (nextQueueEntryId, prevQueueEntryId, position, priority) match
-              case (Some(next), _, _, _)   => Some(QueueMoveTarget.After(next))
-              case (_, Some(prev), _, _)   => Some(QueueMoveTarget.Before(prev))
-              case (_, _, Some(pos), _)    => Some(QueueMoveTarget.Position(pos))
-              case (_, _, _, Some(prio))   => Some(QueueMoveTarget.Priority(prio))
-              case _                       => None
+              case (Some(next), _, _, _) => Some(QueueMoveTarget.After(next))
+              case (_, Some(prev), _, _) => Some(QueueMoveTarget.Before(prev))
+              case (_, _, Some(pos), _) => Some(QueueMoveTarget.Position(pos))
+              case (_, _, _, Some(prio)) => Some(QueueMoveTarget.Priority(prio))
+              case _ => None
             Right(QueueModification.Move(target))
           case _: QueueModification.SetGang => Right(QueueModification.SetGang(gangName))
-          case other                        => Right(other)
+          case other => Right(other)
       yield ModifyQueueEntryParams(modification, filter, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[ModifyQueueEntryParams] =
@@ -670,11 +712,12 @@ object ModifyQueueEntryParamsCodec:
       val targetAttributes = params.operation match
         case QueueModification.Move(target) =>
           target match
-            case Some(QueueMoveTarget.After(next))   => CodecHelpers.attribute("NextQueueEntryID", Some(next.value))
-            case Some(QueueMoveTarget.Before(prev))  => CodecHelpers.attribute("PrevQueueEntryID", Some(prev.value))
-            case Some(QueueMoveTarget.Position(pos)) => CodecHelpers.attribute("Position", Some(CodecHelpers.renderInt(pos)))
+            case Some(QueueMoveTarget.After(next)) => CodecHelpers.attribute("NextQueueEntryID", Some(next.value))
+            case Some(QueueMoveTarget.Before(prev)) => CodecHelpers.attribute("PrevQueueEntryID", Some(prev.value))
+            case Some(QueueMoveTarget.Position(pos)) =>
+              CodecHelpers.attribute("Position", Some(CodecHelpers.renderInt(pos)))
             case Some(QueueMoveTarget.Priority(prio)) => CodecHelpers.attribute("Priority", Some(prio.value.toString))
-            case None                                 => Vector.empty
+            case None => Vector.empty
         case QueueModification.SetGang(gangName) =>
           CodecHelpers.attributeOf("GangName", gangName, (v: Nmtoken) => v.value)
         case _ => Vector.empty
@@ -682,7 +725,9 @@ object ModifyQueueEntryParamsCodec:
         targetAttributes ++
           CodecHelpers.attribute(
             "Operation",
-            Some(operations.find(_._1.productPrefix == params.operation.productPrefix).map(_._2).getOrElse(params.operation.productPrefix)),
+            Some(operations.find(
+              _._1.productPrefix == params.operation.productPrefix
+            ).map(_._2).getOrElse(params.operation.productPrefix)),
           ) ++
           CodecHelpers.extensionAttributes(params.extensions)
       Xml.Element(
@@ -698,31 +743,40 @@ object QueueSubmissionParamsCodec:
   val decoder: XmlDecoder[QueueSubmissionParams] =
     XmlDecoder.instance: element =>
       for
-        url <- XmlDecoders.requiredAttribute("URL")(Lexical.uri).decode(element)
+        url        <- XmlDecoders.requiredAttribute("URL")(Lexical.uri).decode(element)
         activation <- XmlDecoders.attributeOf("Activation")(Lexical.enumOf(QueueActivation.values.toVector, _.toString))
           .decode(element)
-        gangName <- XmlDecoders.attributeOf("GangName")(Lexical.nmtoken).decode(element)
+        gangName   <- XmlDecoders.attributeOf("GangName")(Lexical.nmtoken).decode(element)
         gangPolicy <- XmlDecoders.attributeOf("GangPolicy")(Lexical.enumOf(QueueGangPolicy.values.toVector, _.toString))
           .decode(element)
         nextQueueEntryId <- XmlDecoders.attributeOf("NextQueueEntryID")(Lexical.nmtoken).decode(element)
         prevQueueEntryId <- XmlDecoders.attributeOf("PrevQueueEntryID")(Lexical.nmtoken).decode(element)
-        priority <- XmlDecoders.attributeOf("Priority")(Lexical.priority).decode(element)
-        returnJmf <- XmlDecoders.attributeOf("ReturnJMF")(Lexical.uri).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
-        position <- (nextQueueEntryId, prevQueueEntryId, priority) match
-          case (Some(next), _, _)   => Right(Some(QueueSubmissionPosition.After(next)))
-          case (_, Some(prev), _)   => Right(Some(QueueSubmissionPosition.Before(prev)))
-          case (_, _, Some(prio))   => Right(Some(QueueSubmissionPosition.Priority(prio)))
-          case _                    => Right(None)
-      yield QueueSubmissionParams(url, activation, gangName, gangPolicy, position, returnJmf, CodecHelpers.decodeExtensionAttributes(element))
+        priority         <- XmlDecoders.attributeOf("Priority")(Lexical.priority).decode(element)
+        returnJmf        <- XmlDecoders.attributeOf("ReturnJMF")(Lexical.uri).decode(element)
+        _                <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        position         <- (nextQueueEntryId, prevQueueEntryId, priority) match
+          case (Some(next), _, _) => Right(Some(QueueSubmissionPosition.After(next)))
+          case (_, Some(prev), _) => Right(Some(QueueSubmissionPosition.Before(prev)))
+          case (_, _, Some(prio)) => Right(Some(QueueSubmissionPosition.Priority(prio)))
+          case _ => Right(None)
+      yield QueueSubmissionParams(
+        url,
+        activation,
+        gangName,
+        gangPolicy,
+        position,
+        returnJmf,
+        CodecHelpers.decodeExtensionAttributes(element)
+      )
 
   val encoder: XmlEncoder[QueueSubmissionParams] =
     XmlEncoder.instance: params =>
       val positionAttributes = params.position match
-        case Some(QueueSubmissionPosition.After(next))   => CodecHelpers.attribute("NextQueueEntryID", Some(next.value))
-        case Some(QueueSubmissionPosition.Before(prev))  => CodecHelpers.attribute("PrevQueueEntryID", Some(prev.value))
-        case Some(QueueSubmissionPosition.Priority(prio)) => CodecHelpers.attribute("Priority", Some(prio.value.toString))
-        case None                                         => Vector.empty
+        case Some(QueueSubmissionPosition.After(next)) => CodecHelpers.attribute("NextQueueEntryID", Some(next.value))
+        case Some(QueueSubmissionPosition.Before(prev)) => CodecHelpers.attribute("PrevQueueEntryID", Some(prev.value))
+        case Some(QueueSubmissionPosition.Priority(prio)) =>
+          CodecHelpers.attribute("Priority", Some(prio.value.toString))
+        case None => Vector.empty
       val attributes =
         CodecHelpers.attributeOf("Activation", params.activation, _.toString) ++
           CodecHelpers.attributeOf("GangName", params.gangName, (v: Nmtoken) => v.value) ++
@@ -740,16 +794,16 @@ object SignalStatusCodec:
   val decoder: XmlDecoder[SignalStatus] =
     XmlDecoder.instance: element =>
       for
-        header <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
-        deviceInfo <- XmlDecoders.singleChild("DeviceInfo")(summon[XmlElementCodec[DeviceInfo]]).decode(element)
-        replaceAfter <- XmlDecoders.attributeOf("ReplaceAfter")(Lexical.dateTime).decode(element)
+        header        <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
+        deviceInfo    <- XmlDecoders.singleChild("DeviceInfo")(summon[XmlElementCodec[DeviceInfo]]).decode(element)
+        replaceAfter  <- XmlDecoders.attributeOf("ReplaceAfter")(Lexical.dateTime).decode(element)
         replaceBefore <- XmlDecoders.attributeOf("ReplaceBefore")(Lexical.dateTime).decode(element)
-        channelMode <- XmlDecoders.attributeOf("ChannelMode")(Lexical.enumOf(ChannelMode.values.toVector, _.toString))
+        channelMode   <- XmlDecoders.attributeOf("ChannelMode")(Lexical.enumOf(ChannelMode.values.toVector, _.toString))
           .decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Header", "DeviceInfo")).decode(element)
+        _           <- XmlDecoders.expectChildrenOnly(Set("Header", "DeviceInfo")).decode(element)
         replacement <- (replaceAfter, replaceBefore) match
           case (Some(after), Some(before)) => Right(Some(StatusReplacementWindow(after, before)))
-          case (None, None)                => Right(None)
+          case (None, None) => Right(None)
           case _ => Left(XmlError.ConflictingFields("SignalStatus", "ReplaceAfter/ReplaceBefore"))
       yield SignalStatus(header, deviceInfo, replacement, channelMode, CodecHelpers.decodeExtensionAttributes(element))
 
@@ -767,7 +821,10 @@ object SignalStatusCodec:
       Xml.Element(
         CodecHelpers.qname("SignalStatus"),
         attributes,
-        Vector(HeaderCodec.encoder.encode(signal.header), summon[XmlElementCodec[DeviceInfo]].encode(signal.deviceInfo)),
+        Vector(
+          HeaderCodec.encoder.encode(signal.header),
+          summon[XmlElementCodec[DeviceInfo]].encode(signal.deviceInfo)
+        ),
       )
 end SignalStatusCodec
 
@@ -786,29 +843,30 @@ object AuditCodec:
         yield AuditCreated(h, CodecHelpers.decodeExtensionAttributes(element))
       case "AuditNotification" =>
         for
-          h <- header
+          h            <- header
           notification <- XmlDecoders.singleChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
-          _ <- XmlDecoders.expectChildrenOnly(Set("Header", "Notification")).decode(element)
+          _            <- XmlDecoders.expectChildrenOnly(Set("Header", "Notification")).decode(element)
         yield AuditNotification(h, notification, CodecHelpers.decodeExtensionAttributes(element))
       case "AuditProcessRun" =>
         for
-          h <- header
+          h          <- header
           processRun <- XmlDecoders.singleChild("ProcessRun")(summon[XmlElementCodec[ProcessRun]]).decode(element)
-          _ <- XmlDecoders.expectChildrenOnly(Set("Header", "ProcessRun")).decode(element)
+          _          <- XmlDecoders.expectChildrenOnly(Set("Header", "ProcessRun")).decode(element)
         yield AuditProcessRun(h, processRun, CodecHelpers.decodeExtensionAttributes(element))
       case "AuditResource" =>
         for
-          h <- header
+          h            <- header
           resourceInfo <- XmlDecoders.singleChild("ResourceInfo")(ResourceInfoCodec.decoder).decode(element)
-          _ <- XmlDecoders.expectChildrenOnly(Set("Header", "ResourceInfo")).decode(element)
+          _            <- XmlDecoders.expectChildrenOnly(Set("Header", "ResourceInfo")).decode(element)
         yield AuditResource(h, resourceInfo, CodecHelpers.decodeExtensionAttributes(element))
       case "AuditStatus" =>
         for
-          h <- header
+          h          <- header
           deviceInfo <- XmlDecoders.singleChild("DeviceInfo")(summon[XmlElementCodec[DeviceInfo]]).decode(element)
-          _ <- XmlDecoders.expectChildrenOnly(Set("Header", "DeviceInfo")).decode(element)
+          _          <- XmlDecoders.expectChildrenOnly(Set("Header", "DeviceInfo")).decode(element)
         yield AuditStatus(h, deviceInfo, CodecHelpers.decodeExtensionAttributes(element))
       case other => Left(XmlError.UnexpectedElement("AuditPool", other))
+  end decodeOne
 
   private[domain] def encodeOne(audit: Audit): Xml.Element =
     val (name, header, payload, extensions) = audit match
@@ -837,7 +895,6 @@ object AuditCodec:
       def decodeElements(children: Vector[Xml.Element]): Either[XmlError, Audit] =
         Left(XmlError.UnexpectedElement("AuditPool", children.headOption.map(_.name.localName).getOrElse("")))
       def encodeElements(value: Audit): Vector[Xml.Element] = Vector(encodeOne(value))
-  end field
 
 end AuditCodec
 
@@ -850,7 +907,7 @@ given auditVectorField: FieldCodec[Vector[Audit]] =
     def decodeElements(children: Vector[Xml.Element]): Either[XmlError, Vector[Audit]] =
       children.foldLeft[Either[XmlError, Vector[Audit]]](Right(Vector.empty)) { (acc, child) =>
         for
-          audits <- acc
+          audits  <- acc
           decoded <- AuditCodec.decodeOne(child)
         yield audits :+ decoded
       }
@@ -868,12 +925,16 @@ given namedSpecificResourceCodec: XmlElementCodec[NamedSpecificResource] = XmlEl
       .left
       .map(_ => XmlError.ForeignNameExpected(element.name.localName))
       .flatMap: name =>
-        ForeignCodec.decodeForeignElement(element).map(extension => NamedSpecificResource(name, Extensions(elements = Vector(extension)))),
+        ForeignCodec.decodeForeignElement(element).map(extension =>
+          NamedSpecificResource(name, Extensions(elements = Vector(extension)))
+        ),
   named =>
     named.extensions.elements match
       case Vector(single) => ForeignCodec.encodeForeignElement(single)
       case _ =>
-        throw new UnsupportedOperationException("NamedSpecificResource without exactly one foreign element cannot be encoded"),
+        throw new UnsupportedOperationException(
+          "NamedSpecificResource without exactly one foreign element cannot be encoded"
+        ),
 )
 
 given namedProductIntentCodec: XmlElementCodec[NamedProductIntent] = XmlElementCodec.instance("")(
@@ -884,12 +945,15 @@ given namedProductIntentCodec: XmlElementCodec[NamedProductIntent] = XmlElementC
       .map(_ => XmlError.ForeignNameExpected(element.name.localName))
       .flatMap: name =>
         ForeignCodec.decodeForeignElement(element).map(extension =>
-          NamedProductIntent(name, Extensions(elements = Vector(extension)))),
+          NamedProductIntent(name, Extensions(elements = Vector(extension)))
+        ),
   intent =>
     intent.extensions.elements match
       case Vector(single) => ForeignCodec.encodeForeignElement(single)
       case _ =>
-        throw new UnsupportedOperationException("NamedProductIntent without exactly one foreign element cannot be encoded"),
+        throw new UnsupportedOperationException(
+          "NamedProductIntent without exactly one foreign element cannot be encoded"
+        ),
 )
 
 // -- Intent dispatch -------------------------------------------------------------------------------
@@ -898,11 +962,11 @@ object IntentCodec:
   val decoder: XmlDecoder[Intent] =
     XmlDecoder.instance: element =>
       for
-        name <- XmlDecoders.requiredAttribute("Name")(Lexical.nmtoken).decode(element)
+        name            <- XmlDecoders.requiredAttribute("Name")(Lexical.nmtoken).decode(element)
         descriptiveName <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
-        externalId <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
-        child <- element.childElements match
-          case Vector()      => Right(None)
+        externalId      <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
+        child           <- element.childElements match
+          case Vector() => Right(None)
           case Vector(single) => Right(Some(single))
           case _ => Left(XmlError.UnexpectedElement("Intent", element.childElements(1).name.localName))
         productIntent <- child match

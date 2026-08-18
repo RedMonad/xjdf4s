@@ -2,13 +2,12 @@ package xjdf4s.codec.xml
 
 import xjdf4s.core.*
 
-/**
- * Lossless support for foreign-namespace content: `ExtensionElement`/`ExtensionContent` decode and encode.
+/** Lossless support for foreign-namespace content: `ExtensionElement`/`ExtensionContent` decode and encode.
  *
- * Known limitations, by design of the XML tree: comments and processing instructions are not represented by the
- * parser (they are dropped), so `ExtensionContent.Comment`/`ProcessingInstruction` cannot be *emitted* by this
- * writer and fail loudly instead of being corrupted; attribute values of foreign elements decode to
- * `ExtensionValue.Text` (the lexical type is not recoverable from XML).
+ *  Known limitations, by design of the XML tree: comments and processing instructions are not represented by the
+ *  parser (they are dropped), so `ExtensionContent.Comment`/`ProcessingInstruction` cannot be *emitted* by this
+ *  writer and fail loudly instead of being corrupted; attribute values of foreign elements decode to
+ *  `ExtensionValue.Text` (the lexical type is not recoverable from XML).
  */
 object ForeignCodec:
 
@@ -38,7 +37,7 @@ object ForeignCodec:
 
   def encodeExtensionContent(content: ExtensionContent): Xml =
     content match
-      case ExtensionContent.Text(value)   => Xml.Text(value)
+      case ExtensionContent.Text(value) => Xml.Text(value)
       case ExtensionContent.Element(node) => encodeForeignElement(node)
       case ExtensionContent.Comment(value) =>
         throw new UnsupportedOperationException(
@@ -52,16 +51,16 @@ object ForeignCodec:
   def renderExtensionValue(value: ExtensionValue): String =
     value match
       case ExtensionValue.Text(text) => text
-      case ExtensionValue.Number(n)  => n.toString
+      case ExtensionValue.Number(n) => n.toString
       case ExtensionValue.Bool(flag) => flag.toString
-      case ExtensionValue.Null       => "null"
+      case ExtensionValue.Null => "null"
 
   private def decodeChildren(element: Xml.Element): Either[XmlError, Vector[ExtensionContent]] =
     element.children.foldLeft[Either[XmlError, Vector[ExtensionContent]]](Right(Vector.empty)) { (acc, child) =>
       for
         contents <- acc
-        content <- child match
-          case Xml.Text(value)           => Right(ExtensionContent.Text(value))
+        content  <- child match
+          case Xml.Text(value) => Right(ExtensionContent.Text(value))
           case childElement: Xml.Element => decodeForeignElement(childElement).map(ExtensionContent.Element(_))
       yield contents :+ content
     }
@@ -69,5 +68,5 @@ object ForeignCodec:
   private def renderName(name: QualifiedName): String =
     name.prefix match
       case Some(prefix) => s"$prefix:${name.localName}"
-      case None         => name.localName
+      case None => name.localName
 end ForeignCodec

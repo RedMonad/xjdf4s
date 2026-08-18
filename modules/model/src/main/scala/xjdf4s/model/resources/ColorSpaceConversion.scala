@@ -5,20 +5,16 @@ import xjdf4s.model.*
 
 enum IccProfileUsage derives CanEqual:
   case UsePDL, UseSupplied
-end IccProfileUsage
 
 enum ColorConversionOperation derives CanEqual:
   case Convert, Tag, Untag
-end ColorConversionOperation
 
 enum RenderingIntent derives CanEqual:
   case AbsoluteColorimetric, ColorSpaceDependent, Perceptual, RelativeColorimetric, Saturation
-end RenderingIntent
 
 enum SourceColorSpace derives CanEqual:
   case All, CalGray, Calibrated, CalRGB, CIEBased, CMYK, DeviceCMYK, DeviceGray, DeviceN, DeviceRGB
   case DevIndep, Gray, ICCBased, ICCCMYK, ICCGray, ICCLAB, ICCRGB, Lab, RGB, Separation, YUV
-end SourceColorSpace
 
 final case class ColorConversionProfiles(
     deviceLink: Option[FileSpec] = None,

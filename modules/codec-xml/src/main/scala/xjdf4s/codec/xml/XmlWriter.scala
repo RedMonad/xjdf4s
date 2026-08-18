@@ -2,11 +2,10 @@ package xjdf4s.codec.xml
 
 import xjdf4s.core.QualifiedName
 
-/**
- * Canonical, compact XML writer: no pretty-printing, deterministic attribute order, proper escaping. Namespace
- * declarations (`xmlns`, `xmlns:prefix`) are emitted where they are needed — an element that introduces a prefix
- * or an unprefixed namespace not bound by its ancestors declares it itself, so foreign content stays well-formed
- * and round-trips.
+/** Canonical, compact XML writer: no pretty-printing, deterministic attribute order, proper escaping. Namespace
+ *  declarations (`xmlns`, `xmlns:prefix`) are emitted where they are needed — an element that introduces a prefix
+ *  or an unprefixed namespace not bound by its ancestors declares it itself, so foreign content stays well-formed
+ *  and round-trips.
  */
 object XmlWriter:
 
@@ -55,7 +54,7 @@ object XmlWriter:
   private def renderName(name: QualifiedName): String =
     name.prefix match
       case Some(prefix) => s"$prefix:${name.localName}"
-      case None         => name.localName
+      case None => name.localName
 
   private def escapeText(value: String): String =
     value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")

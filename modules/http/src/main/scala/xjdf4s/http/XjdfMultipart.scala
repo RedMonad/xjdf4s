@@ -1,24 +1,20 @@
 package xjdf4s.http
 
+import java.nio.charset.StandardCharsets
+
 import cats.effect.IO
 import cats.syntax.all.*
 import fs2.Stream
-
 import io.circe.syntax.*
-
 import org.http4s.multipart.{Multipart, Multiparts, Part}
-
-import java.nio.charset.StandardCharsets
-
 import xjdf4s.codec.json.given
 import xjdf4s.messaging.XJMF
 
-/**
- * 9.10.4.2 (Example 9.13): JSON XJMFs with a CommandSubmitQueueEntry, CommandResubmitQueueEntry or
- * CommandReturnQueueEntry MAY be packaged as multipart/form-data. The XJMF goes into the "xjmf" field and the
- * referenced XJDF plus any additional files go into "attachment" parts, referenced by the part filename as a
- * relative URL. This helper packages and unpacks exactly that shape; it is transport-agnostic (the parts are
- * `Multipart[IO]` values - the HTTP layer attaches them to requests or reads them from request bodies).
+/** 9.10.4.2 (Example 9.13): JSON XJMFs with a CommandSubmitQueueEntry, CommandResubmitQueueEntry or
+ *  CommandReturnQueueEntry MAY be packaged as multipart/form-data. The XJMF goes into the "xjmf" field and the
+ *  referenced XJDF plus any additional files go into "attachment" parts, referenced by the part filename as a
+ *  relative URL. This helper packages and unpacks exactly that shape; it is transport-agnostic (the parts are
+ *  `Multipart[IO]` values - the HTTP layer attaches them to requests or reads them from request bodies).
  */
 object XjdfMultipart:
 
@@ -44,7 +40,10 @@ object XjdfMultipart:
       xjmfText <- multipart.parts
         .find(_.name.contains("xjmf"))
         .toRight(new IllegalArgumentException("multipart submission without an 'xjmf' field"))
-        .fold(IO.raiseError[String], part => part.body.compile.toVector.map(bytes => new String(bytes.toArray, StandardCharsets.UTF_8)))
+        .fold(
+          IO.raiseError[String],
+          part => part.body.compile.toVector.map(bytes => new String(bytes.toArray, StandardCharsets.UTF_8))
+        )
       xjmf <- IO.fromEither(
         io.circe.parser
           .parse(xjmfText)

@@ -14,34 +14,34 @@ object ResourceCodec:
       val foreignChildren = element.childElements.filter(_.name.namespace != XjdfNamespace.uri)
       for
         amountPool <- XmlDecoders.optionalChild("AmountPool")(AmountPoolCodec.decoder).decode(element)
-        comments <- XmlDecoders.repeatedChild("Comment")(CommentCodec.decoder).decode(element)
+        comments   <- XmlDecoders.repeatedChild("Comment")(CommentCodec.decoder).decode(element)
         generalIds <- XmlDecoders.repeatedChild("GeneralID")(GeneralIdCodec.decoder).decode(element)
-        parts <- XmlDecoders.repeatedChild("Part")(PartCodec.decoder).decode(element)
-        specific <- specificCandidates match
-          case Vector()      => Right(None)
+        parts      <- XmlDecoders.repeatedChild("Part")(PartCodec.decoder).decode(element)
+        specific   <- specificCandidates match
+          case Vector() => Right(None)
           case Vector(single) => Registry.decodeSpecificResource(single).map(Some(_))
-          case _             => Left(XmlError.UnexpectedElement("Resource", specificCandidates(1).name.localName))
+          case _ => Left(XmlError.UnexpectedElement("Resource", specificCandidates(1).name.localName))
         foreign <- foreignChildren.foldLeft[Either[XmlError, Vector[ExtensionElement]]](Right(Vector.empty)) {
           (acc, child) =>
             for
               elements <- acc
-              decoded <- ForeignCodec.decodeForeignElement(child)
+              decoded  <- ForeignCodec.decodeForeignElement(child)
             yield elements :+ decoded
         }
-        brand <- XmlDecoders.attributeOf("Brand")(Lexical.xjdfString).decode(element)
-        commentUrl <- XmlDecoders.attributeOf("CommentURL")(Lexical.uri).decode(element)
+        brand           <- XmlDecoders.attributeOf("Brand")(Lexical.xjdfString).decode(element)
+        commentUrl      <- XmlDecoders.attributeOf("CommentURL")(Lexical.uri).decode(element)
         descriptiveName <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
-        duration <- XmlDecoders.attributeOf("Duration")(Lexical.duration).decode(element)
-        expires <- XmlDecoders.attributeOf("Expires")(Lexical.dateTime).decode(element)
-        externalId <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
-        grossWeight <- XmlDecoders.attributeOf("GrossWeight")(Lexical.float).decode(element)
-        id <- XmlDecoders.attributeOf("ID")(Lexical.xsdId).decode(element)
-        orientation <- XmlDecoders.attributeOf("Orientation")(Lexical.orientation).decode(element)
-        resourceWeight <- XmlDecoders.attributeOf("ResourceWeight")(Lexical.float).decode(element)
-        start <- XmlDecoders.attributeOf("Start")(Lexical.dateTime).decode(element)
-        startOffset <- XmlDecoders.attributeOf("StartOffset")(Lexical.duration).decode(element)
-        status <- XmlDecoders.attributeOf("Status")(Lexical.resourceAvailability).decode(element)
-        transformation <- XmlDecoders.attributeOf("Transformation")(Lexical.matrix).decode(element)
+        duration        <- XmlDecoders.attributeOf("Duration")(Lexical.duration).decode(element)
+        expires         <- XmlDecoders.attributeOf("Expires")(Lexical.dateTime).decode(element)
+        externalId      <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
+        grossWeight     <- XmlDecoders.attributeOf("GrossWeight")(Lexical.float).decode(element)
+        id              <- XmlDecoders.attributeOf("ID")(Lexical.xsdId).decode(element)
+        orientation     <- XmlDecoders.attributeOf("Orientation")(Lexical.orientation).decode(element)
+        resourceWeight  <- XmlDecoders.attributeOf("ResourceWeight")(Lexical.float).decode(element)
+        start           <- XmlDecoders.attributeOf("Start")(Lexical.dateTime).decode(element)
+        startOffset     <- XmlDecoders.attributeOf("StartOffset")(Lexical.duration).decode(element)
+        status          <- XmlDecoders.attributeOf("Status")(Lexical.resourceAvailability).decode(element)
+        transformation  <- XmlDecoders.attributeOf("Transformation")(Lexical.matrix).decode(element)
       yield Resource(
         amountPool,
         comments,
@@ -98,12 +98,12 @@ object DependentCodec:
   val decoder: XmlDecoder[Dependent] =
     XmlDecoder.instance: element =>
       for
-        jobId <- XmlDecoders.requiredAttribute("JobID")(Lexical.nmtoken).decode(element)
-        jobPartId <- XmlDecoders.attributeOf("JobPartID")(Lexical.nmtoken).decode(element)
-        pipeId <- XmlDecoders.attributeOf("PipeID")(Lexical.nmtoken).decode(element)
+        jobId        <- XmlDecoders.requiredAttribute("JobID")(Lexical.nmtoken).decode(element)
+        jobPartId    <- XmlDecoders.attributeOf("JobPartID")(Lexical.nmtoken).decode(element)
+        pipeId       <- XmlDecoders.attributeOf("PipeID")(Lexical.nmtoken).decode(element)
         pipeProtocol <- XmlDecoders.attributeOf("PipeProtocol")(Lexical.nmtoken).decode(element)
-        xjmfUrl <- XmlDecoders.attributeOf("XJMFURL")(Lexical.uri).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        xjmfUrl      <- XmlDecoders.attributeOf("XJMFURL")(Lexical.uri).decode(element)
+        _            <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield Dependent(jobId, jobPartId, pipeId, pipeProtocol, xjmfUrl, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[Dependent] =
@@ -122,18 +122,18 @@ object ResourceSetCodec:
   val decoder: XmlDecoder[ResourceSet] =
     XmlDecoder.instance: element =>
       for
-        name <- XmlDecoders.requiredAttribute("Name")(Lexical.nmtoken).decode(element)
+        name                 <- XmlDecoders.requiredAttribute("Name")(Lexical.nmtoken).decode(element)
         combinedProcessIndex <- XmlDecoders.attributeOf("CombinedProcessIndex")(Lexical.intList).decode(element)
-        commentUrl <- XmlDecoders.attributeOf("CommentURL")(Lexical.uri).decode(element)
-        descriptiveName <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
-        id <- XmlDecoders.attributeOf("ID")(Lexical.xsdId).decode(element)
-        processUsage <- XmlDecoders.attributeOf("ProcessUsage")(Lexical.nmtoken).decode(element)
-        unit <- XmlDecoders.attributeOf("Unit")(Lexical.nmtoken).decode(element)
-        usage <- XmlDecoders.attributeOf("Usage")(Lexical.resourceUsage).decode(element)
-        comments <- XmlDecoders.repeatedChild("Comment")(CommentCodec.decoder).decode(element)
-        dependents <- XmlDecoders.repeatedChild("Dependent")(DependentCodec.decoder).decode(element)
-        generalIds <- XmlDecoders.repeatedChild("GeneralID")(GeneralIdCodec.decoder).decode(element)
-        resources <- XmlDecoders.repeatedChild("Resource")(ResourceCodec.decoder).decode(element)
+        commentUrl           <- XmlDecoders.attributeOf("CommentURL")(Lexical.uri).decode(element)
+        descriptiveName      <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
+        id                   <- XmlDecoders.attributeOf("ID")(Lexical.xsdId).decode(element)
+        processUsage         <- XmlDecoders.attributeOf("ProcessUsage")(Lexical.nmtoken).decode(element)
+        unit                 <- XmlDecoders.attributeOf("Unit")(Lexical.nmtoken).decode(element)
+        usage                <- XmlDecoders.attributeOf("Usage")(Lexical.resourceUsage).decode(element)
+        comments             <- XmlDecoders.repeatedChild("Comment")(CommentCodec.decoder).decode(element)
+        dependents           <- XmlDecoders.repeatedChild("Dependent")(DependentCodec.decoder).decode(element)
+        generalIds           <- XmlDecoders.repeatedChild("GeneralID")(GeneralIdCodec.decoder).decode(element)
+        resources            <- XmlDecoders.repeatedChild("Resource")(ResourceCodec.decoder).decode(element)
         _ <- XmlDecoders.expectChildrenOnly(Set("Comment", "Dependent", "GeneralID", "Resource")).decode(element)
       yield ResourceSet(
         name,
@@ -156,7 +156,9 @@ object ResourceSetCodec:
       val attributes =
         CodecHelpers.attribute(
           "CombinedProcessIndex",
-          Option.when(resourceSet.combinedProcessIndex.nonEmpty)(CodecHelpers.renderInts(resourceSet.combinedProcessIndex)),
+          Option.when(
+            resourceSet.combinedProcessIndex.nonEmpty
+          )(CodecHelpers.renderInts(resourceSet.combinedProcessIndex)),
         ) ++
           CodecHelpers.attributeOf("CommentURL", resourceSet.commentUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.attributeOf("DescriptiveName", resourceSet.descriptiveName, (v: XjdfString) => v.value) ++
@@ -180,24 +182,24 @@ object XjdfCodec:
   val decoder: XmlDecoder[XJDF] =
     XmlDecoder.instance: element =>
       for
-        category <- XmlDecoders.attributeOf("Category")(Lexical.nmtoken).decode(element)
-        commentUrl <- XmlDecoders.attributeOf("CommentURL")(Lexical.uri).decode(element)
-        descriptiveName <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
-        icsVersions <- XmlDecoders.attributeOf("ICSVersions")(Lexical.nmtokens).decode(element)
-        jobId <- XmlDecoders.requiredAttribute("JobID")(Lexical.nmtoken).decode(element)
-        jobPartId <- XmlDecoders.attributeOf("JobPartID")(Lexical.nmtoken).decode(element)
-        projectId <- XmlDecoders.attributeOf("ProjectID")(Lexical.nmtoken).decode(element)
-        relatedJobId <- XmlDecoders.attributeOf("RelatedJobID")(Lexical.nmtoken).decode(element)
+        category         <- XmlDecoders.attributeOf("Category")(Lexical.nmtoken).decode(element)
+        commentUrl       <- XmlDecoders.attributeOf("CommentURL")(Lexical.uri).decode(element)
+        descriptiveName  <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
+        icsVersions      <- XmlDecoders.attributeOf("ICSVersions")(Lexical.nmtokens).decode(element)
+        jobId            <- XmlDecoders.requiredAttribute("JobID")(Lexical.nmtoken).decode(element)
+        jobPartId        <- XmlDecoders.attributeOf("JobPartID")(Lexical.nmtoken).decode(element)
+        projectId        <- XmlDecoders.attributeOf("ProjectID")(Lexical.nmtoken).decode(element)
+        relatedJobId     <- XmlDecoders.attributeOf("RelatedJobID")(Lexical.nmtoken).decode(element)
         relatedJobPartId <- XmlDecoders.attributeOf("RelatedJobPartID")(Lexical.nmtoken).decode(element)
         relatedProjectId <- XmlDecoders.attributeOf("RelatedProjectID")(Lexical.nmtoken).decode(element)
-        types <- XmlDecoders.requiredAttribute("Types")(Lexical.nmtokens).decode(element)
-        version <- XmlDecoders.attributeOf("Version")(Lexical.version).decode(element)
-        comments <- XmlDecoders.repeatedChild("Comment")(CommentCodec.decoder).decode(element)
-        generalIds <- XmlDecoders.repeatedChild("GeneralID")(GeneralIdCodec.decoder).decode(element)
-        resourceSets <- XmlDecoders.repeatedChild("ResourceSet")(ResourceSetCodec.decoder).decode(element)
-        auditPool <- XmlDecoders.optionalChild("AuditPool")(summon[XmlElementCodec[AuditPool]]).decode(element)
+        types            <- XmlDecoders.requiredAttribute("Types")(Lexical.nmtokens).decode(element)
+        version          <- XmlDecoders.attributeOf("Version")(Lexical.version).decode(element)
+        comments         <- XmlDecoders.repeatedChild("Comment")(CommentCodec.decoder).decode(element)
+        generalIds       <- XmlDecoders.repeatedChild("GeneralID")(GeneralIdCodec.decoder).decode(element)
+        resourceSets     <- XmlDecoders.repeatedChild("ResourceSet")(ResourceSetCodec.decoder).decode(element)
+        auditPool        <- XmlDecoders.optionalChild("AuditPool")(summon[XmlElementCodec[AuditPool]]).decode(element)
         productList <- XmlDecoders.optionalChild("ProductList")(summon[XmlElementCodec[ProductList]]).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(KnownChildren).decode(element)
+        _           <- XmlDecoders.expectChildrenOnly(KnownChildren).decode(element)
       yield XJDF(
         jobId,
         NonEmptyVector(types.head, types.tail*),

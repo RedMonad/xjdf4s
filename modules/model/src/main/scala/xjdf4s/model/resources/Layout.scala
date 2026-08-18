@@ -3,7 +3,6 @@ package xjdf4s.model.resources
 import xjdf4s.core.*
 import xjdf4s.model.*
 
-
 final case class MarkObject(
     contentRef: Option[XsdIdRef] = None,
     colorControlStrips: Vector[ColorControlStrip] = Vector.empty,
@@ -17,7 +16,6 @@ final case class MarkObject(
 enum PlacedObjectKind:
   case Content
   case Mark(value: MarkObject)
-end PlacedObjectKind
 
 final case class PageActivation(
     conditions: NonEmptyVector[Condition],

@@ -5,11 +5,9 @@ import xjdf4s.model.*
 
 enum TransferFunctionHandling derives CanEqual:
   case Preserve, Remove, Apply
-end TransferFunctionHandling
 
 enum UnderColorHandling derives CanEqual:
   case Preserve, Remove
-end UnderColorHandling
 
 final case class AdvancedPdfParams(
     allowPsxObjects: Option[Boolean] = None,
@@ -44,7 +42,6 @@ final case class FontParams(
 
 enum PdfXTrapped derives CanEqual:
   case Unknown, False, True
-end PdfXTrapped
 
 final case class PdfXParams(
     bleedBoxToTrimBoxOffset: Option[Rectangle] = None,
@@ -61,11 +58,9 @@ final case class PdfXParams(
 
 enum PdfAutoRotatePages derives CanEqual:
   case None, All, PageByPage
-end PdfAutoRotatePages
 
 enum PdfBinding derives CanEqual:
   case Left, Right
-end PdfBinding
 
 final case class ThinPdfParams(
     filePerPage: Option[Boolean] = None,
@@ -99,11 +94,9 @@ final case class PdfCreationDetails(
 
 enum IncludeResources derives CanEqual:
   case IncludeNever, IncludeOncePerDoc, IncludeOncePerPage
-end IncludeResources
 
 enum PostScriptOutputType derives CanEqual:
   case EPS, PostScript
-end PostScriptOutputType
 
 final case class PostScriptCreationDetails(
     binaryOk: Option[Boolean] = None,

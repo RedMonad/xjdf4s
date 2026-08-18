@@ -4,23 +4,21 @@ import cats.data.Chain
 import cats.effect.{IO, Ref, Resource}
 import fs2.Stream
 import fs2.concurrent.Topic
-
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.XJDF
-import xjdf4s.xjmf.{TransportEvent, XjmfState, XjmfInterpreters, XjmfOp}
+import xjdf4s.xjmf.{TransportEvent, XjmfInterpreters, XjmfOp, XjmfState}
 
-/**
- * In-memory bridge between the stage 06 channel machine and the network: every persistent channel is an fs2
- * `Topic` of signals, and every transition runs through the stage 06 core, so the channel machine remains the
- * single source of protocol truth. The HTTP layer never re-implements 9.6.
+/** In-memory bridge between the stage 06 channel machine and the network: every persistent channel is an fs2
+ *  `Topic` of signals, and every transition runs through the stage 06 core, so the channel machine remains the
+ *  single source of protocol truth. The HTTP layer never re-implements 9.6.
  */
 object XjdfHub:
 
   def create: IO[XjdfHub] =
     for
-      state <- Ref.of[IO, XjmfState](XjmfState.empty)
-      topics <- Ref.of[IO, Map[Nmtoken, Topic[IO, Signal]]](Map.empty)
+      state     <- Ref.of[IO, XjmfState](XjmfState.empty)
+      topics    <- Ref.of[IO, Map[Nmtoken, Topic[IO, Signal]]](Map.empty)
       submitted <- Ref.of[IO, Vector[XJDF]](Vector.empty)
     yield new XjdfHub(state, topics, submitted)
 end XjdfHub
@@ -42,8 +40,8 @@ final class XjdfHub private (
   def openChannel(subscription: Subscription, channelId: Nmtoken, messageType: Nmtoken): IO[Unit] =
     for
       topic <- Topic[IO, Signal]
-      _ <- topics.update(_ + (channelId -> topic))
-      _ <- runOp(XjmfOp.OpenChannel(subscription, channelId, messageType))
+      _     <- topics.update(_ + (channelId -> topic))
+      _     <- runOp(XjmfOp.OpenChannel(subscription, channelId, messageType))
     yield ()
 
   /** 9.6.6: closes the channel and releases its topic (the stage 06 entry stays visible as Closed). */
@@ -53,22 +51,21 @@ final class XjdfHub private (
       _ <- topics.get.flatMap {
         _.get(channelId) match
           case Some(topic) => topic.close.void
-          case None        => IO.unit
+          case None => IO.unit
       }
       _ <- topics.update(_ - channelId)
       _ <- runOp(XjmfOp.CloseChannel(channelId))
     yield ()
 
-  /**
-   * A signal arrives: it is routed and journaled by the stage 06 core (replacement windows included), then
-   * published to the channel topic. Unrouted signals only produce their stage 06 event.
+  /** A signal arrives: it is routed and journaled by the stage 06 core (replacement windows included), then
+   *  published to the channel topic. Unrouted signals only produce their stage 06 event.
    */
   def publish(signal: Signal): IO[Unit] =
     for
       events <- runOp(XjmfOp.Deliver(signal))
       delivered = events.exists {
         case TransportEvent.SignalDelivered(_, _) => true
-        case _                                    => false
+        case _ => false
       }
       _ <-
         if delivered then
@@ -77,7 +74,7 @@ final class XjdfHub private (
               topics.get.flatMap {
                 _.get(channelId) match
                   case Some(topic) => topic.publish1(signal).void
-                  case None        => IO.unit
+                  case None => IO.unit
               }
             case None => IO.unit
         else IO.unit
@@ -87,26 +84,24 @@ final class XjdfHub private (
   def signals(channelId: Nmtoken): IO[Option[Stream[IO, Signal]]] =
     topics.get.map(_.get(channelId).map(_.subscribe(16)))
 
-  /**
-   * The deterministic subscription primitive: fs2's `subscribeAwait` Resource completes only after the
-   * subscriber is registered in the topic, so a producer that publishes after the resource acquisition can
-   * never race the registration (`publish1` would otherwise drop the element). Prefer this over
-   * [[awaitingSubscriber]] in tests and local producers.
+  /** The deterministic subscription primitive: fs2's `subscribeAwait` Resource completes only after the
+   *  subscriber is registered in the topic, so a producer that publishes after the resource acquisition can
+   *  never race the registration (`publish1` would otherwise drop the element). Prefer this over
+   *  [[awaitingSubscriber]] in tests and local producers.
    */
   def subscribeAwait(channelId: Nmtoken): IO[Option[Resource[IO, Stream[IO, Signal]]]] =
     topics.get.map(_.get(channelId).map(_.subscribeAwait(16)))
 
-  /**
-   * The pull-based delivery handshake: completes when at least one subscriber is attached to the channel's
-   * topic (fs2's own subscriber count). `publish1` DROPS an element published while nobody is subscribed, so a
-   * producer racing a `subscribe`-based stream must await this before the first publish; for deterministic
-   * tests prefer [[subscribeAwait]], whose acquisition already guarantees the registration.
+  /** The pull-based delivery handshake: completes when at least one subscriber is attached to the channel's
+   *  topic (fs2's own subscriber count). `publish1` DROPS an element published while nobody is subscribed, so a
+   *  producer racing a `subscribe`-based stream must await this before the first publish; for deterministic
+   *  tests prefer [[subscribeAwait]], whose acquisition already guarantees the registration.
    */
   def awaitingSubscriber(channelId: Nmtoken): IO[Unit] =
     topics.get.flatMap {
       _.get(channelId) match
         case Some(topic) => topic.subscribers.exists(_ > 0).compile.drain
-        case None        => IO.unit
+        case None => IO.unit
     }
 
   /** The subscription handshake for the `/status/subscribe` endpoint: opens the channel and answers (9.6.2). */
@@ -116,7 +111,7 @@ final class XjdfHub private (
         Nmtoken.from(queryId.value) match
           case Right(channelId) =>
             for
-              _ <- openChannel(subscription, channelId, StatusMessageType)
+              _        <- openChannel(subscription, channelId, StatusMessageType)
               response <- IO.pure(
                 ResponseStatus(
                   XjdfHttp.responseHeader(query.header.deviceId, channelId, s"r-${queryId.value}"),

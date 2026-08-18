@@ -2,24 +2,21 @@ package xjdf4s.http
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-
 import org.http4s.{MediaType, Method, Request, Status}
 import org.http4s.client.Client
 import org.http4s.headers.`Content-Type`
 import org.http4s.implicits.*
 import org.http4s.server.middleware.EntityLimiter
-
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.{DeviceInfo, Header, XJDF}
 
-/**
- * The stage 07 scenarios, without sockets (per the stage risk note): the finite request/response pairs go
- * through `Client.fromHttpApp`, while the subscription stream is consumed over the hub's deterministic
- * `subscribeAwait` resource - its acquisition completes only after the subscriber is registered, so no signal
- * can be dropped by a publish race, and no cross-fiber timing is involved. The infinite stream is kept away
- * from `Client.fromHttpApp` because its body finalizer drains a channel that only closes when the stream ends
- * (see the framesOf note in XjdfClient).
+/** The stage 07 scenarios, without sockets (per the stage risk note): the finite request/response pairs go
+ *  through `Client.fromHttpApp`, while the subscription stream is consumed over the hub's deterministic
+ *  `subscribeAwait` resource - its acquisition completes only after the subscriber is registered, so no signal
+ *  can be dropped by a publish race, and no cross-fiber timing is involved. The infinite stream is kept away
+ *  from `Client.fromHttpApp` because its body finalizer drains a channel that only closes when the stream ends
+ *  (see the framesOf note in XjdfClient).
  */
 object XjdfServerChecks:
 
@@ -83,19 +80,19 @@ object XjdfServerChecks:
     val secondSignal = signal("S2")
     val run: IO[Vector[XJMF]] =
       for
-        hub <- XjdfHub.create
-        _ <- hub.openChannel(subscription, channelId, messageType)
+        hub      <- XjdfHub.create
+        _        <- hub.openChannel(subscription, channelId, messageType)
         resource <- hub.subscribeAwait(channelId)
-        frames <- resource match
+        frames   <- resource match
           case Some(resource) =>
-              resource.use { stream =>
-                for
-                  fiber <- stream.map(hub.envelope).take(2).compile.toVector.start
-                  _ <- hub.publish(firstSignal)
-                  _ <- hub.publish(secondSignal)
-                  delivered <- fiber.joinWithNever
-                yield delivered
-              }
+            resource.use { stream =>
+              for
+                fiber     <- stream.map(hub.envelope).take(2).compile.toVector.start
+                _         <- hub.publish(firstSignal)
+                _         <- hub.publish(secondSignal)
+                delivered <- fiber.joinWithNever
+              yield delivered
+            }
           case None => IO.raiseError(new AssertionError(s"channel '$channelId' was not opened"))
       yield frames
     val frames = run.unsafeRunSync()
@@ -110,19 +107,19 @@ object XjdfServerChecks:
       for
         hub <- XjdfHub.create
         client = Client.fromHttpApp(XjdfServer.app(hub))
-        receipt <- XjdfClient.submit(client, document)
+        receipt  <- XjdfClient.submit(client, document)
         response <- XjdfClient.subscribeStatus(client, statusQuery)
         resource <- hub.subscribeAwait(channelId)
-        frames <- resource match
+        frames   <- resource match
           case Some(resource) =>
-              resource.use { stream =>
-                for
-                  fiber <- stream.map(hub.envelope).take(2).compile.toVector.start
-                  _ <- hub.publish(firstSignal)
-                  _ <- hub.publish(secondSignal)
-                  delivered <- fiber.joinWithNever
-                yield delivered
-              }
+            resource.use { stream =>
+              for
+                fiber     <- stream.map(hub.envelope).take(2).compile.toVector.start
+                _         <- hub.publish(firstSignal)
+                _         <- hub.publish(secondSignal)
+                delivered <- fiber.joinWithNever
+              yield delivered
+            }
           case None => IO.raiseError(new AssertionError(s"channel '$channelId' was not opened"))
       yield (receipt, response, frames)
     val (receipt, response, frames) = run.unsafeRunSync()
@@ -136,14 +133,16 @@ object XjdfServerChecks:
   def streamRoute(): Unit =
     val run: IO[(Status, Option[MediaType])] =
       for
-        hub <- XjdfHub.create
-        _ <- hub.openChannel(subscription, channelId, messageType)
+        hub      <- XjdfHub.create
+        _        <- hub.openChannel(subscription, channelId, messageType)
         response <- XjdfServer.app(hub).run(Request[IO](Method.GET, uri"/channels" / channelId.value / "signals"))
       yield (response.status, response.headers.get[`Content-Type`].map(_.mediaType))
     val (status, mediaType) = run.unsafeRunSync()
     assert(status == Status.Ok)
     assert(
-      mediaType.exists(mt => mt.mainType == XjdfMediaTypes.xjmfJson.mainType && mt.subType == XjdfMediaTypes.xjmfJson.subType),
+      mediaType.exists(mt =>
+        mt.mainType == XjdfMediaTypes.xjmfJson.mainType && mt.subType == XjdfMediaTypes.xjmfJson.subType
+      ),
       s"media type: $mediaType",
     )
 
@@ -153,7 +152,7 @@ object XjdfServerChecks:
       for
         hub <- XjdfHub.create
         client = Client.fromHttpApp(XjdfServer.app(hub))
-        _ <- XjdfClient.subscribeStatus(client, statusQuery)
+        _            <- XjdfClient.subscribeStatus(client, statusQuery)
         stopResponse <- client.expect[ResponseStopPersistentChannel](
           Request[IO](Method.POST, uri"/subscriptions/stop").withEntity(
             CommandStopPersistentChannel(
@@ -183,5 +182,5 @@ object XjdfServerChecks:
     // in http4s 0.23 the middleware raises EntityTooLarge (it does not fabricate a 413 response itself)
     run.attempt.unsafeRunSync() match
       case Left(_: EntityLimiter.EntityTooLarge) => ()
-      case other                                => assert(false, s"expected EntityTooLarge, got $other")
+      case other => assert(false, s"expected EntityTooLarge, got $other")
 end XjdfServerChecks

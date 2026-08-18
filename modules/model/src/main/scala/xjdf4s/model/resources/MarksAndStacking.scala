@@ -5,7 +5,6 @@ import xjdf4s.model.*
 
 enum KnockoutSource derives CanEqual:
   case ClipPath, SourceClipPath, TrimBox
-end KnockoutSource
 
 final case class MarkColor(name: XjdfString, tint: Float) derives CanEqual
 
@@ -47,12 +46,10 @@ final case class DensityMeasuringField(
 
 enum PatchUsage derives CanEqual:
   case Color, Ignore, Image, Technical
-end PatchUsage
 
 /** `Patch/@SpotType` (Table 8.10, New in XJDF 2.2): how the patch colorant is produced. */
 enum SpotType derives CanEqual:
   case Emulated, Spot
-end SpotType
 
 final case class SeparationTint(name: Nmtoken, tint: Float) derives CanEqual
 
@@ -90,7 +87,6 @@ final case class ColorControlStrip(
 enum CutMarkType derives CanEqual:
   case CrossCutMark, TopVerticalCutMark, BottomVerticalCutMark, LeftHorizontalCutMark, RightHorizontalCutMark
   case LowerLeftCutMark, UpperLeftCutMark, LowerRightCutMark, UpperRightCutMark
-end CutMarkType
 
 final case class CutMark(markType: CutMarkType, position: XYPair) derives CanEqual
 
@@ -111,7 +107,6 @@ final case class ScavengerArea(
 
 enum MarkFitPolicy derives CanEqual:
   case NoRepeat, RepeatToFill, RepeatUnclipped, StretchToFit, UndistortedScaleToFit
-end MarkFitPolicy
 
 final case class StripMark(
     absoluteHeight: Option[Float] = None,
@@ -143,11 +138,9 @@ final case class StripMark(
 
 enum InsertSheetType derives CanEqual:
   case AccountingSheet, ErrorSheet, JobSheet, SeparatorSheet
-end InsertSheetType
 
 enum InsertSheetUsage derives CanEqual:
   case Header, Interleaved, InterleavedBefore, OnError, Slip, SlipCopy, Trailer
-end InsertSheetUsage
 
 final case class InsertSheet(
     sheetType: InsertSheetType,
@@ -162,7 +155,6 @@ final case class InsertSheet(
 
 enum DisjointingDirection derives CanEqual:
   case Alternate, Left, None, Right
-end DisjointingDirection
 
 final case class Disjointing(
     amount: Option[Int] = None,
@@ -176,7 +168,6 @@ final case class Disjointing(
 
 enum PreStackMethod derives CanEqual:
   case All, First, None
-end PreStackMethod
 
 final case class StackingParams(
     bundleType: Option[BundleType] = None,

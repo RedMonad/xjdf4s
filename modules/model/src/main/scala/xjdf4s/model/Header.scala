@@ -19,4 +19,3 @@ final case class Header(
 
 trait HasHeader:
   def header: Header
-end HasHeader

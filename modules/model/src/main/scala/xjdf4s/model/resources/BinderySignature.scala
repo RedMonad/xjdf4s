@@ -5,23 +5,18 @@ import xjdf4s.model.*
 
 enum BinderySignatureType derives CanEqual:
   case Fold, Grid, Die
-end BinderySignatureType
 
 enum Bottling derives CanEqual:
   case All, Last, None
-end Bottling
 
 enum OverfoldSide derives CanEqual:
   case Back, BackHalf, Front, FrontHalf
-end OverfoldSide
 
 enum CellMask derives CanEqual:
   case BleedBox, DieCut, None, PDL, SourceBleedBox, SourceTrimBox, TrimBox
-end CellMask
 
 enum CellOrientation derives CanEqual:
   case Down, Left, Right, Up
-end CellOrientation
 
 final case class MultiPageFold(
     binderySignatureId: Nmtoken,
@@ -30,11 +25,10 @@ final case class MultiPageFold(
 ) extends XjdfNode,
       Extensible
 
-/**
- * The Table 8.15 `Condition` element, shared by `Layout` (PageActivation, PageCondition, SheetActivation) and
- * `BinderySignature` (CellCondition). `@PartContext` is a normative `NMTOKENS` list of partition keys that reset the
- * Part context; modelling it as a list makes multi-key resets such as `PartContext="DocIndex SetIndex"`
- * representable. The two former isomorphic clones (`LayoutCondition`, `CellConditionTerm`) are unified here.
+/** The Table 8.15 `Condition` element, shared by `Layout` (PageActivation, PageCondition, SheetActivation) and
+ *  `BinderySignature` (CellCondition). `@PartContext` is a normative `NMTOKENS` list of partition keys that reset the
+ *  Part context; modelling it as a list makes multi-key resets such as `PartContext="DocIndex SetIndex"`
+ *  representable. The two former isomorphic clones (`LayoutCondition`, `CellConditionTerm`) are unified here.
  */
 final case class Condition(
     parts: NonEmptyVector[Part],

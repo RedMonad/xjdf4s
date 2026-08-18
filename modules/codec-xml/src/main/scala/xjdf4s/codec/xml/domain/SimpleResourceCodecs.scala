@@ -9,10 +9,10 @@ object ToolCodec:
   val decoder: XmlDecoder[Tool] =
     XmlDecoder.instance: element =>
       for
-        toolType <- XmlDecoders.attributeOf("ToolType")(Lexical.nmtoken).decode(element)
-        manufacturer <- XmlDecoders.attributeOf("Manufacturer")(Lexical.xjdfString).decode(element)
-        manufacturerUrl <- XmlDecoders.attributeOf("ManufacturerURL")(Lexical.uri).decode(element)
-        serialNumber <- XmlDecoders.attributeOf("SerialNumber")(Lexical.xjdfString).decode(element)
+        toolType             <- XmlDecoders.attributeOf("ToolType")(Lexical.nmtoken).decode(element)
+        manufacturer         <- XmlDecoders.attributeOf("Manufacturer")(Lexical.xjdfString).decode(element)
+        manufacturerUrl      <- XmlDecoders.attributeOf("ManufacturerURL")(Lexical.uri).decode(element)
+        serialNumber         <- XmlDecoders.attributeOf("SerialNumber")(Lexical.xjdfString).decode(element)
         identificationFields <- XmlDecoders
           .repeatedChild("IdentificationField")(summon[XmlElementCodec[IdentificationField]])
           .decode(element)
@@ -42,20 +42,20 @@ object ComponentCodec:
   val decoder: XmlDecoder[Component] =
     XmlDecoder.instance: element =>
       for
-        automation <- XmlDecoders.attributeOf("Automation")(Lexical.automation).decode(element)
-        cartonTopFlaps <- XmlDecoders.attributeOf("CartonTopFlaps")(Lexical.xypair).decode(element)
-        columns <- XmlDecoders.attributeOf("Columns")(Lexical.int).decode(element)
-        contentRefs <- XmlDecoders.attributeOf("ContentRefs")(Lexical.xsdIdRefs).decode(element)
-        dimensions <- XmlDecoders.attributeOf("Dimensions")(Lexical.shape3d).decode(element)
-        maxHeat <- XmlDecoders.attributeOf("MaxHeat")(Lexical.float).decode(element)
-        mediaRef <- XmlDecoders.attributeOf("MediaRef")(Lexical.xsdIdRef).decode(element)
-        overfold <- XmlDecoders.attributeOf("Overfold")(Lexical.float).decode(element)
-        overfoldSide <- XmlDecoders.attributeOf("OverfoldSide")(Lexical.side).decode(element)
-        productType <- XmlDecoders.attributeOf("ProductType")(Lexical.nmtoken).decode(element)
-        productTypeDetails <- XmlDecoders.attributeOf("ProductTypeDetails")(Lexical.xjdfString).decode(element)
-        readerPageCount <- XmlDecoders.attributeOf("ReaderPageCount")(Lexical.int).decode(element)
-        surfaceCount <- XmlDecoders.attributeOf("SurfaceCount")(Lexical.int).decode(element)
-        windingResult <- XmlDecoders.attributeOf("WindingResult")(Lexical.int).decode(element)
+        automation           <- XmlDecoders.attributeOf("Automation")(Lexical.automation).decode(element)
+        cartonTopFlaps       <- XmlDecoders.attributeOf("CartonTopFlaps")(Lexical.xypair).decode(element)
+        columns              <- XmlDecoders.attributeOf("Columns")(Lexical.int).decode(element)
+        contentRefs          <- XmlDecoders.attributeOf("ContentRefs")(Lexical.xsdIdRefs).decode(element)
+        dimensions           <- XmlDecoders.attributeOf("Dimensions")(Lexical.shape3d).decode(element)
+        maxHeat              <- XmlDecoders.attributeOf("MaxHeat")(Lexical.float).decode(element)
+        mediaRef             <- XmlDecoders.attributeOf("MediaRef")(Lexical.xsdIdRef).decode(element)
+        overfold             <- XmlDecoders.attributeOf("Overfold")(Lexical.float).decode(element)
+        overfoldSide         <- XmlDecoders.attributeOf("OverfoldSide")(Lexical.side).decode(element)
+        productType          <- XmlDecoders.attributeOf("ProductType")(Lexical.nmtoken).decode(element)
+        productTypeDetails   <- XmlDecoders.attributeOf("ProductTypeDetails")(Lexical.xjdfString).decode(element)
+        readerPageCount      <- XmlDecoders.attributeOf("ReaderPageCount")(Lexical.int).decode(element)
+        surfaceCount         <- XmlDecoders.attributeOf("SurfaceCount")(Lexical.int).decode(element)
+        windingResult        <- XmlDecoders.attributeOf("WindingResult")(Lexical.int).decode(element)
         identificationFields <- XmlDecoders
           .repeatedChild("IdentificationField")(summon[XmlElementCodec[IdentificationField]])
           .decode(element)
@@ -108,32 +108,32 @@ object DeviceCodec:
   val decoder: XmlDecoder[Device] =
     XmlDecoder.instance: element =>
       for
-        deviceId <- XmlDecoders.requiredAttribute("DeviceID")(Lexical.nmtoken).decode(element)
-        costCenterId <- XmlDecoders.attributeOf("CostCenterID")(Lexical.nmtoken).decode(element)
-        descriptiveName <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
-        deviceClasses <- XmlDecoders.attributeOf("DeviceClass")(Lexical.nmtokens).decode(element)
-        deviceType <- XmlDecoders.attributeOf("DeviceType")(Lexical.xjdfString).decode(element)
-        icsVersions <- XmlDecoders.attributeOf("ICSVersions")(Lexical.nmtokens).decode(element)
-        jdfVersions <- XmlDecoders.attributeOf("JDFVersions")(Lexical.list(Lexical.jdfVersion)).decode(element)
+        deviceId           <- XmlDecoders.requiredAttribute("DeviceID")(Lexical.nmtoken).decode(element)
+        costCenterId       <- XmlDecoders.attributeOf("CostCenterID")(Lexical.nmtoken).decode(element)
+        descriptiveName    <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
+        deviceClasses      <- XmlDecoders.attributeOf("DeviceClass")(Lexical.nmtokens).decode(element)
+        deviceType         <- XmlDecoders.attributeOf("DeviceType")(Lexical.xjdfString).decode(element)
+        icsVersions        <- XmlDecoders.attributeOf("ICSVersions")(Lexical.nmtokens).decode(element)
+        jdfVersions        <- XmlDecoders.attributeOf("JDFVersions")(Lexical.list(Lexical.jdfVersion)).decode(element)
         knownLocalizations <- XmlDecoders.attributeOf("KnownLocalizations")(Lexical.languages).decode(element)
-        manufacturer <- XmlDecoders.attributeOf("Manufacturer")(Lexical.xjdfString).decode(element)
-        manufacturerUrl <- XmlDecoders.attributeOf("ManufacturerURL")(Lexical.uri).decode(element)
-        maxRunSpeed <- XmlDecoders.attributeOf("MaxRunSpeed")(Lexical.float).decode(element)
-        packaging <- XmlDecoders.attributeOf("Packaging")(Lexical.list(Lexical.devicePackaging)).decode(element)
+        manufacturer       <- XmlDecoders.attributeOf("Manufacturer")(Lexical.xjdfString).decode(element)
+        manufacturerUrl    <- XmlDecoders.attributeOf("ManufacturerURL")(Lexical.uri).decode(element)
+        maxRunSpeed        <- XmlDecoders.attributeOf("MaxRunSpeed")(Lexical.float).decode(element)
+        packaging       <- XmlDecoders.attributeOf("Packaging")(Lexical.list(Lexical.devicePackaging)).decode(element)
         presentationUrl <- XmlDecoders.attributeOf("PresentationURL")(Lexical.uri).decode(element)
-        restApiBaseUrl <- XmlDecoders.attributeOf("RestApiBaseURL")(Lexical.uri).decode(element)
-        revision <- XmlDecoders.attributeOf("Revision")(Lexical.xjdfString).decode(element)
-        serialNumber <- XmlDecoders.attributeOf("SerialNumber")(Lexical.xjdfString).decode(element)
-        urlSchemes <- XmlDecoders.attributeOf("URLSchemes")(Lexical.nmtokens).decode(element)
-        xjmfUrl <- XmlDecoders.attributeOf("XJMFURL")(Lexical.uri).decode(element)
+        restApiBaseUrl  <- XmlDecoders.attributeOf("RestApiBaseURL")(Lexical.uri).decode(element)
+        revision        <- XmlDecoders.attributeOf("Revision")(Lexical.xjdfString).decode(element)
+        serialNumber    <- XmlDecoders.attributeOf("SerialNumber")(Lexical.xjdfString).decode(element)
+        urlSchemes      <- XmlDecoders.attributeOf("URLSchemes")(Lexical.nmtokens).decode(element)
+        xjmfUrl         <- XmlDecoders.attributeOf("XJMFURL")(Lexical.uri).decode(element)
         fileSpecChildren = element.childElements.filter(_.name.localName == "FileSpec")
-        schemas <- summon[FieldCodec[DeviceSchemas]].decodeElements(fileSpecChildren)
-        iconList <- XmlDecoders.optionalChild("IconList")(summon[XmlElementCodec[IconList]]).decode(element)
+        schemas              <- summon[FieldCodec[DeviceSchemas]].decodeElements(fileSpecChildren)
+        iconList             <- XmlDecoders.optionalChild("IconList")(summon[XmlElementCodec[IconList]]).decode(element)
         identificationFields <- XmlDecoders
           .repeatedChild("IdentificationField")(summon[XmlElementCodec[IdentificationField]])
           .decode(element)
         modules <- XmlDecoders.repeatedChild("Module")(summon[XmlElementCodec[DeviceModule]]).decode(element)
-        _ <- XmlDecoders
+        _       <- XmlDecoders
           .expectChildrenOnly(Set("FileSpec", "IconList", "IdentificationField", "Module"))
           .decode(element)
       yield Device(
@@ -175,31 +175,31 @@ object DeviceCodec:
           CodecHelpers.attributeOf("DeviceType", device.deviceType, (v: XjdfString) => v.value) ++
           CodecHelpers.attribute(
             "ICSVersions",
-        Option.when(device.icsVersions.nonEmpty)(CodecHelpers.renderNmtokens(device.icsVersions)),
-      ) ++
+            Option.when(device.icsVersions.nonEmpty)(CodecHelpers.renderNmtokens(device.icsVersions)),
+          ) ++
           CodecHelpers.attribute(
             "JDFVersions",
-        Option.when(device.jdfVersions.nonEmpty)(device.jdfVersions.map(_.lexical).mkString(" ")),
-      ) ++
+            Option.when(device.jdfVersions.nonEmpty)(device.jdfVersions.map(_.lexical).mkString(" ")),
+          ) ++
           CodecHelpers.attribute(
             "KnownLocalizations",
-        Option.when(device.knownLocalizations.nonEmpty)(CodecHelpers.renderLanguages(device.knownLocalizations)),
-      ) ++
+            Option.when(device.knownLocalizations.nonEmpty)(CodecHelpers.renderLanguages(device.knownLocalizations)),
+          ) ++
           CodecHelpers.attributeOf("Manufacturer", device.manufacturer, (v: XjdfString) => v.value) ++
           CodecHelpers.attributeOf("ManufacturerURL", device.manufacturerUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.attributeOf("MaxRunSpeed", device.maxRunSpeed, CodecHelpers.renderFloat) ++
           CodecHelpers.attribute(
             "Packaging",
-        Option.when(device.packaging.nonEmpty)(device.packaging.map(_.toString).mkString(" ")),
-      ) ++
+            Option.when(device.packaging.nonEmpty)(device.packaging.map(_.toString).mkString(" ")),
+          ) ++
           CodecHelpers.attributeOf("PresentationURL", device.presentationUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.attributeOf("RestApiBaseURL", device.restApiBaseUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.attributeOf("Revision", device.revision, (v: XjdfString) => v.value) ++
           CodecHelpers.attributeOf("SerialNumber", device.serialNumber, (v: XjdfString) => v.value) ++
           CodecHelpers.attribute(
             "URLSchemes",
-        Option.when(device.urlSchemes.nonEmpty)(CodecHelpers.renderNmtokens(device.urlSchemes)),
-      ) ++
+            Option.when(device.urlSchemes.nonEmpty)(CodecHelpers.renderNmtokens(device.urlSchemes)),
+          ) ++
           CodecHelpers.attributeOf("XJMFURL", device.xjmfUrl, (v: UriRef) => v.value.toString) ++
           CodecHelpers.extensionAttributes(device.extensions)
       val children =

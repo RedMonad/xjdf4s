@@ -57,4 +57,3 @@ class CodecChecksSuite extends munit.FunSuite:
     )
     assert(results.size == 50)
   }
-end CodecChecksSuite

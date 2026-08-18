@@ -1,16 +1,14 @@
 package xjdf4s.codec.xml
 
 import cats.Show
-
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Attribute-value parsers for every scalar type used by the codec. Each parser maps a raw attribute string to a
- * domain value or a human-readable failure; the decoder combinators (XmlDecoders) attach the element/attribute context.
- * Domain smart constructors are reused, so the lexical space stays in sync with the model invariants.
+/** Attribute-value parsers for every scalar type used by the codec. Each parser maps a raw attribute string to a
+ *  domain value or a human-readable failure; the decoder combinators (XmlDecoders) attach the element/attribute context.
+ *  Domain smart constructors are reused, so the lexical space stays in sync with the model invariants.
  */
 object Lexical:
   type Lex[A] = String => Either[String, A]
@@ -68,25 +66,25 @@ object Lexical:
   val float: Lex[Float] =
     value =>
       value.trim.toUpperCase match
-        case "INF"  => Right(Float.PositiveInfinity)
+        case "INF" => Right(Float.PositiveInfinity)
         case "-INF" => Right(Float.NegativeInfinity)
-        case "NAN"  => Right(Float.NaN)
-        case other  => other.toFloatOption.toRight(s"'$value' is not a float")
+        case "NAN" => Right(Float.NaN)
+        case other => other.toFloatOption.toRight(s"'$value' is not a float")
 
   val double: Lex[Double] =
     value =>
       value.trim.toUpperCase match
-        case "INF"  => Right(Double.PositiveInfinity)
+        case "INF" => Right(Double.PositiveInfinity)
         case "-INF" => Right(Double.NegativeInfinity)
-        case "NAN"  => Right(Double.NaN)
-        case other  => other.toDoubleOption.toRight(s"'$value' is not a double")
+        case "NAN" => Right(Double.NaN)
+        case other => other.toDoubleOption.toRight(s"'$value' is not a double")
 
   val bool: Lex[Boolean] =
     value =>
       value.trim.toLowerCase match
-        case "true" | "1"  => Right(true)
+        case "true" | "1" => Right(true)
         case "false" | "0" => Right(false)
-        case _             => Left(s"'$value' is not a boolean")
+        case _ => Left(s"'$value' is not a boolean")
 
   val hexBinary: Lex[Vector[Byte]] =
     value =>
@@ -145,8 +143,8 @@ object Lexical:
       tokens(value) match
         case Vector(first, last) =>
           for
-            f <- int(first)
-            l <- int(last)
+            f     <- int(first)
+            l     <- int(last)
             range <- IntegerRange.from(f, l).left.map(error => Show[ValidationError].show(error))
           yield range
         case other => Left(s"'$value' must contain exactly two integers, got ${other.size}")
@@ -201,9 +199,9 @@ object Lexical:
       tokens(value) match
         case Vector(l, a, b) =>
           for
-            ll <- double(l)
-            aa <- double(a)
-            bb <- double(b)
+            ll    <- double(l)
+            aa    <- double(a)
+            bb    <- double(b)
             color <- LabColor.from(ll, aa, bb).left.map(error => Show[ValidationError].show(error))
           yield color
         case other => Left(s"'$value' must contain exactly three numbers, got ${other.size}")
@@ -213,10 +211,10 @@ object Lexical:
       tokens(value) match
         case Vector(c, m, y, k) =>
           for
-            cc <- double(c)
-            mm <- double(m)
-            yy <- double(y)
-            kk <- double(k)
+            cc    <- double(c)
+            mm    <- double(m)
+            yy    <- double(y)
+            kk    <- double(k)
             color <- CmykColor.from(cc, mm, yy, kk).left.map(error => Show[ValidationError].show(error))
           yield color
         case other => Left(s"'$value' must contain exactly four numbers, got ${other.size}")
@@ -226,9 +224,9 @@ object Lexical:
       tokens(value) match
         case Vector(r, g, b) =>
           for
-            rr <- double(r)
-            gg <- double(g)
-            bb <- double(b)
+            rr    <- double(r)
+            gg    <- double(g)
+            bb    <- double(b)
             color <- SrgbColor.from(rr, gg, bb).left.map(error => Show[ValidationError].show(error))
           yield color
         case other => Left(s"'$value' must contain exactly three numbers, got ${other.size}")

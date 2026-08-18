@@ -3,11 +3,10 @@ package xjdf4s.codec.json
 import io.circe.{Decoder, Encoder, HCursor, Json}
 import io.circe.syntax.*
 
-/**
- * Shared JSON codec helpers: member builders, optional/required/vector cursor accessors and the root-level
- * utilities (`$schema`, the `Name` member). Kept in a separate file so that the codec objects reference the helpers
- * WITHOUT depending on the object that re-exports their givens - the file-level dependency cycle the analyzer
- * reported is broken this way.
+/** Shared JSON codec helpers: member builders, optional/required/vector cursor accessors and the root-level
+ *  utilities (`$schema`, the `Name` member). Kept in a separate file so that the codec objects reference the helpers
+ *  WITHOUT depending on the object that re-exports their givens - the file-level dependency cycle the analyzer
+ *  reported is broken this way.
  */
 object JsonHelpers:
 
@@ -26,13 +25,13 @@ object JsonHelpers:
   def opt[A: Decoder](cursor: HCursor, name: String): Decoder.Result[Option[A]] =
     cursor.downField(name).focus match
       case Some(json) => json.as[A].map(Some(_))
-      case None       => Right(None)
+      case None => Right(None)
 
   /** Optional vector member: absent member decodes to the empty vector. */
   def vec[A: Decoder](cursor: HCursor, name: String): Decoder.Result[Vector[A]] =
     cursor.downField(name).focus match
       case Some(json) => json.as[List[A]].map(_.toVector)
-      case None       => Right(Vector.empty)
+      case None => Right(Vector.empty)
 
   /** Required member. */
   def req[A: Decoder](cursor: HCursor, name: String): Decoder.Result[A] =

@@ -5,7 +5,6 @@ import xjdf4s.model.*
 
 enum DieSide derives CanEqual:
   case Up, Down
-end DieSide
 
 final case class DieStation(
     stationName: Nmtoken,

@@ -1,17 +1,17 @@
 package xjdf4s.codec.xml
 
 import java.io.StringReader
-
 import javax.xml.XMLConstants
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.{Schema, SchemaFactory}
+
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.NonFatal
+
 import org.xml.sax.{ErrorHandler, SAXParseException}
 
-/**
- * Validates emitted XML against the checked-in XJDF schema (`src/test/resources/xjdf.xsd`, a copy of the XSD
- * shipped with the specification). The JDK JAXP validator is used, so no additional test dependency is required.
+/** Validates emitted XML against the checked-in XJDF schema (`src/test/resources/xjdf.xsd`, a copy of the XSD
+ *  shipped with the specification). The JDK JAXP validator is used, so no additional test dependency is required.
  */
 object XsdValidator:
 
@@ -28,8 +28,7 @@ object XsdValidator:
     validator.setErrorHandler(new ErrorHandler:
       def warning(exception: SAXParseException): Unit = problems += s"warning: ${exception.getMessage}"
       def error(exception: SAXParseException): Unit = problems += s"error: ${exception.getMessage}"
-      def fatalError(exception: SAXParseException): Unit = problems += s"fatal: ${exception.getMessage}"
-    )
+      def fatalError(exception: SAXParseException): Unit = problems += s"fatal: ${exception.getMessage}")
     try
       validator.validate(new StreamSource(new StringReader(xml)))
       if problems.isEmpty then Right(()) else Left(problems.mkString("; "))

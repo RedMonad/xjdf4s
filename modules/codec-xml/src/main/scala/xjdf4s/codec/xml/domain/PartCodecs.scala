@@ -9,33 +9,33 @@ object PartCodec:
     XmlDecoder.instance: element =>
       for
         binderySignatureId <- XmlDecoders.attributeOf("BinderySignatureID")(Lexical.nmtoken).decode(element)
-        blockName <- XmlDecoders.attributeOf("BlockName")(Lexical.nmtoken).decode(element)
-        contactType <- XmlDecoders.attributeOf("ContactType")(Lexical.nmtoken).decode(element)
-        docIndex <- XmlDecoders.attributeOf("DocIndex")(Lexical.integerRange).decode(element)
-        dropId <- XmlDecoders.attributeOf("DropID")(Lexical.nmtoken).decode(element)
-        location <- XmlDecoders.attributeOf("Location")(Lexical.nmtoken).decode(element)
-        lotId <- XmlDecoders.attributeOf("LotID")(Lexical.nmtoken).decode(element)
-        metadata <- XmlDecoders.attribute("Metadata").decode(element)
-        option <- XmlDecoders.attributeOf("Option")(Lexical.nmtoken).decode(element)
-        pageNumber <- XmlDecoders.attributeOf("PageNumber")(Lexical.integerRange).decode(element)
-        partVersion <- XmlDecoders.attributeOf("PartVersion")(Lexical.nmtoken).decode(element)
-        previewType <- XmlDecoders.attributeOf("PreviewType")(Lexical.previewType).decode(element)
-        printCondition <- XmlDecoders.attributeOf("PrintCondition")(Lexical.nmtoken).decode(element)
-        product <- XmlDecoders.attributeOf("Product")(Lexical.nmtoken).decode(element)
-        productPart <- XmlDecoders.attributeOf("ProductPart")(Lexical.nmtoken).decode(element)
+        blockName          <- XmlDecoders.attributeOf("BlockName")(Lexical.nmtoken).decode(element)
+        contactType        <- XmlDecoders.attributeOf("ContactType")(Lexical.nmtoken).decode(element)
+        docIndex           <- XmlDecoders.attributeOf("DocIndex")(Lexical.integerRange).decode(element)
+        dropId             <- XmlDecoders.attributeOf("DropID")(Lexical.nmtoken).decode(element)
+        location           <- XmlDecoders.attributeOf("Location")(Lexical.nmtoken).decode(element)
+        lotId              <- XmlDecoders.attributeOf("LotID")(Lexical.nmtoken).decode(element)
+        metadata           <- XmlDecoders.attribute("Metadata").decode(element)
+        option             <- XmlDecoders.attributeOf("Option")(Lexical.nmtoken).decode(element)
+        pageNumber         <- XmlDecoders.attributeOf("PageNumber")(Lexical.integerRange).decode(element)
+        partVersion        <- XmlDecoders.attributeOf("PartVersion")(Lexical.nmtoken).decode(element)
+        previewType        <- XmlDecoders.attributeOf("PreviewType")(Lexical.previewType).decode(element)
+        printCondition     <- XmlDecoders.attributeOf("PrintCondition")(Lexical.nmtoken).decode(element)
+        product            <- XmlDecoders.attributeOf("Product")(Lexical.nmtoken).decode(element)
+        productPart        <- XmlDecoders.attributeOf("ProductPart")(Lexical.nmtoken).decode(element)
         qualityMeasurement <- XmlDecoders.attributeOf("QualityMeasurement")(Lexical.nmtoken).decode(element)
-        run <- XmlDecoders.attributeOf("Run")(Lexical.nmtoken).decode(element)
-        runIndex <- XmlDecoders.attributeOf("RunIndex")(Lexical.integerRange).decode(element)
-        separation <- XmlDecoders.attributeOf("Separation")(Lexical.nmtoken).decode(element)
-        setIndex <- XmlDecoders.attributeOf("SetIndex")(Lexical.integerRange).decode(element)
-        sheetIndex <- XmlDecoders.attributeOf("SheetIndex")(Lexical.integerRange).decode(element)
-        sheetName <- XmlDecoders.attributeOf("SheetName")(Lexical.nmtoken).decode(element)
-        side <- XmlDecoders.attributeOf("Side")(Lexical.side).decode(element)
-        stationName <- XmlDecoders.attributeOf("StationName")(Lexical.nmtoken).decode(element)
-        tileId <- XmlDecoders.attributeOf("TileID")(Lexical.tileCoordinate).decode(element)
-        transferCurveName <- XmlDecoders.attributeOf("TransferCurveName")(Lexical.transferCurveName).decode(element)
-        webName <- XmlDecoders.attributeOf("WebName")(Lexical.nmtoken).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        run                <- XmlDecoders.attributeOf("Run")(Lexical.nmtoken).decode(element)
+        runIndex           <- XmlDecoders.attributeOf("RunIndex")(Lexical.integerRange).decode(element)
+        separation         <- XmlDecoders.attributeOf("Separation")(Lexical.nmtoken).decode(element)
+        setIndex           <- XmlDecoders.attributeOf("SetIndex")(Lexical.integerRange).decode(element)
+        sheetIndex         <- XmlDecoders.attributeOf("SheetIndex")(Lexical.integerRange).decode(element)
+        sheetName          <- XmlDecoders.attributeOf("SheetName")(Lexical.nmtoken).decode(element)
+        side               <- XmlDecoders.attributeOf("Side")(Lexical.side).decode(element)
+        stationName        <- XmlDecoders.attributeOf("StationName")(Lexical.nmtoken).decode(element)
+        tileId             <- XmlDecoders.attributeOf("TileID")(Lexical.tileCoordinate).decode(element)
+        transferCurveName  <- XmlDecoders.attributeOf("TransferCurveName")(Lexical.transferCurveName).decode(element)
+        webName            <- XmlDecoders.attributeOf("WebName")(Lexical.nmtoken).decode(element)
+        _                  <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield Part(
         binderySignatureId,
         blockName,
@@ -105,15 +105,15 @@ object PartWasteCodec:
   val decoder: XmlDecoder[PartWaste] =
     XmlDecoder.instance: element =>
       for
-        waste <- XmlDecoders.requiredAttribute("Waste")(Lexical.float).decode(element)
-        moduleIds <- XmlDecoders.attributeOf("ModuleIDs")(Lexical.nmtokens).decode(element)
+        waste        <- XmlDecoders.requiredAttribute("Waste")(Lexical.float).decode(element)
+        moduleIds    <- XmlDecoders.attributeOf("ModuleIDs")(Lexical.nmtokens).decode(element)
         wasteDetails <- XmlDecoders.attributeOf("WasteDetails")(Lexical.nmtoken).decode(element)
-        origin <- (moduleIds, wasteDetails) match
+        origin       <- (moduleIds, wasteDetails) match
           case (Some(modules), _) if modules.nonEmpty =>
             val nonEmpty = NonEmptyVector(modules.head, modules.tail*)
             wasteDetails match
               case Some(details) => Right(WasteOrigin.ModulesAndDetails(nonEmpty, details))
-              case None          => Right(WasteOrigin.Modules(nonEmpty))
+              case None => Right(WasteOrigin.Modules(nonEmpty))
           case (_, Some(details)) => Right(WasteOrigin.Details(details))
           case _ =>
             Left(
@@ -148,13 +148,13 @@ object PartAmountCodec:
   val decoder: XmlDecoder[PartAmount] =
     XmlDecoder.instance: element =>
       for
-        amount <- XmlDecoders.attributeOf("Amount")(Lexical.float).decode(element)
+        amount    <- XmlDecoders.attributeOf("Amount")(Lexical.float).decode(element)
         maxAmount <- XmlDecoders.attributeOf("MaxAmount")(Lexical.float).decode(element)
         minAmount <- XmlDecoders.attributeOf("MinAmount")(Lexical.float).decode(element)
-        waste <- XmlDecoders.attributeOf("Waste")(Lexical.float).decode(element)
-        parts <- XmlDecoders.repeatedChild("Part")(PartCodec.decoder).decode(element)
+        waste     <- XmlDecoders.attributeOf("Waste")(Lexical.float).decode(element)
+        parts     <- XmlDecoders.repeatedChild("Part")(PartCodec.decoder).decode(element)
         partWaste <- XmlDecoders.repeatedChild("PartWaste")(PartWasteCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Part", "PartWaste")).decode(element)
+        _         <- XmlDecoders.expectChildrenOnly(Set("Part", "PartWaste")).decode(element)
       yield PartAmount(
         amount,
         maxAmount,
@@ -183,7 +183,7 @@ object AmountPoolCodec:
     XmlDecoder.instance: element =>
       for
         amounts <- XmlDecoders.oneOrMoreChild("PartAmount")(PartAmountCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("PartAmount")).decode(element)
+        _       <- XmlDecoders.expectChildrenOnly(Set("PartAmount")).decode(element)
       yield AmountPool(amounts, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[AmountPool] =

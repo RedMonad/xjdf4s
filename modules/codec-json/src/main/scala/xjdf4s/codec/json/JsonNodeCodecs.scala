@@ -2,23 +2,20 @@ package xjdf4s.codec.json
 
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.*
-
 import xjdf4s.codec.xml.Lexical
 import xjdf4s.codec.xml.domain.CodecHelpers
 import xjdf4s.core.*
 import xjdf4s.model.*
 
-/**
- * JSON codecs for the document tree. Member names follow the normative JSON convention (attribute names without
- * `@`); repeated children are arrays; simple-content elements (Comment) become strings.
+/** JSON codecs for the document tree. Member names follow the normative JSON convention (attribute names without
+ *  `@`); repeated children are arrays; simple-content elements (Comment) become strings.
  */
 object JsonNodeCodecs:
 
   // -- simple-content and small nodes -------------------------------------------
 
-  /**
-   * 9.10.2.5: Comment is the only mixed-content element; its body maps to a JSON string under the "Text" key
-   * (Table 8.14 makes the JSON-only @Text attribute explicit). Attribute members follow the usual naming.
+  /** 9.10.2.5: Comment is the only mixed-content element; its body maps to a JSON string under the "Text" key
+   *  (Table 8.14 makes the JSON-only @Text attribute explicit). Attribute members follow the usual naming.
    */
   given Encoder[Comment] = Encoder.instance(comment =>
     JsonHelpers.obj(
@@ -35,12 +32,12 @@ object JsonNodeCodecs:
   )
   given Decoder[Comment] = Decoder.instance(cursor =>
     for
-      value <- cursor.get[String]("Text")
-      author <- JsonHelpers.opt[XjdfString](cursor, "Author")
-      externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
-      language <- JsonHelpers.opt[LanguageTag](cursor, "Language")
-      personalId <- JsonHelpers.opt[Nmtoken](cursor, "PersonalID")
-      timeStamp <- JsonHelpers.opt[XsdDateTime](cursor, "TimeStamp")
+      value       <- cursor.get[String]("Text")
+      author      <- JsonHelpers.opt[XjdfString](cursor, "Author")
+      externalId  <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+      language    <- JsonHelpers.opt[LanguageTag](cursor, "Language")
+      personalId  <- JsonHelpers.opt[Nmtoken](cursor, "PersonalID")
+      timeStamp   <- JsonHelpers.opt[XsdDateTime](cursor, "TimeStamp")
       commentType <- JsonHelpers.opt[Nmtoken](cursor, "Type")
     yield Comment(value, author, externalId, language, personalId, timeStamp, commentType),
   )
@@ -56,8 +53,8 @@ object JsonNodeCodecs:
   )
   given Decoder[GeneralId] = Decoder.instance(cursor =>
     for
-      usage <- cursor.get[Nmtoken]("IDUsage")
-      value <- cursor.get[XjdfString]("IDValue")
+      usage    <- cursor.get[Nmtoken]("IDUsage")
+      value    <- cursor.get[XjdfString]("IDValue")
       dataType <- JsonHelpers.opt[GeneralId.DataType](cursor, "DataType")
     yield GeneralId(usage, value, dataType),
   )
@@ -102,32 +99,32 @@ object JsonNodeCodecs:
   given Decoder[Part] = Decoder.instance(cursor =>
     for
       binderySignatureId <- JsonHelpers.opt[Nmtoken](cursor, "BinderySignatureID")
-      blockName <- JsonHelpers.opt[Nmtoken](cursor, "BlockName")
-      contactType <- JsonHelpers.opt[Nmtoken](cursor, "ContactType")
-      docIndex <- JsonHelpers.opt[IntegerRange](cursor, "DocIndex")
-      dropId <- JsonHelpers.opt[Nmtoken](cursor, "DropID")
-      location <- JsonHelpers.opt[Nmtoken](cursor, "Location")
-      lotId <- JsonHelpers.opt[Nmtoken](cursor, "LotID")
-      metadata <- JsonHelpers.opt[String](cursor, "Metadata")
-      option <- JsonHelpers.opt[Nmtoken](cursor, "Option")
-      pageNumber <- JsonHelpers.opt[IntegerRange](cursor, "PageNumber")
-      partVersion <- JsonHelpers.opt[Nmtoken](cursor, "PartVersion")
-      previewType <- JsonHelpers.opt[PreviewType](cursor, "PreviewType")
-      printCondition <- JsonHelpers.opt[Nmtoken](cursor, "PrintCondition")
-      product <- JsonHelpers.opt[Nmtoken](cursor, "Product")
-      productPart <- JsonHelpers.opt[Nmtoken](cursor, "ProductPart")
+      blockName          <- JsonHelpers.opt[Nmtoken](cursor, "BlockName")
+      contactType        <- JsonHelpers.opt[Nmtoken](cursor, "ContactType")
+      docIndex           <- JsonHelpers.opt[IntegerRange](cursor, "DocIndex")
+      dropId             <- JsonHelpers.opt[Nmtoken](cursor, "DropID")
+      location           <- JsonHelpers.opt[Nmtoken](cursor, "Location")
+      lotId              <- JsonHelpers.opt[Nmtoken](cursor, "LotID")
+      metadata           <- JsonHelpers.opt[String](cursor, "Metadata")
+      option             <- JsonHelpers.opt[Nmtoken](cursor, "Option")
+      pageNumber         <- JsonHelpers.opt[IntegerRange](cursor, "PageNumber")
+      partVersion        <- JsonHelpers.opt[Nmtoken](cursor, "PartVersion")
+      previewType        <- JsonHelpers.opt[PreviewType](cursor, "PreviewType")
+      printCondition     <- JsonHelpers.opt[Nmtoken](cursor, "PrintCondition")
+      product            <- JsonHelpers.opt[Nmtoken](cursor, "Product")
+      productPart        <- JsonHelpers.opt[Nmtoken](cursor, "ProductPart")
       qualityMeasurement <- JsonHelpers.opt[Nmtoken](cursor, "QualityMeasurement")
-      run <- JsonHelpers.opt[Nmtoken](cursor, "Run")
-      runIndex <- JsonHelpers.opt[IntegerRange](cursor, "RunIndex")
-      separation <- JsonHelpers.opt[Nmtoken](cursor, "Separation")
-      setIndex <- JsonHelpers.opt[IntegerRange](cursor, "SetIndex")
-      sheetIndex <- JsonHelpers.opt[IntegerRange](cursor, "SheetIndex")
-      sheetName <- JsonHelpers.opt[Nmtoken](cursor, "SheetName")
-      side <- JsonHelpers.opt[Side](cursor, "Side")
-      stationName <- JsonHelpers.opt[Nmtoken](cursor, "StationName")
-      tileId <- JsonHelpers.opt[TileCoordinate](cursor, "TileID")
-      transferCurveName <- JsonHelpers.opt[TransferCurveName](cursor, "TransferCurveName")
-      webName <- JsonHelpers.opt[Nmtoken](cursor, "WebName")
+      run                <- JsonHelpers.opt[Nmtoken](cursor, "Run")
+      runIndex           <- JsonHelpers.opt[IntegerRange](cursor, "RunIndex")
+      separation         <- JsonHelpers.opt[Nmtoken](cursor, "Separation")
+      setIndex           <- JsonHelpers.opt[IntegerRange](cursor, "SetIndex")
+      sheetIndex         <- JsonHelpers.opt[IntegerRange](cursor, "SheetIndex")
+      sheetName          <- JsonHelpers.opt[Nmtoken](cursor, "SheetName")
+      side               <- JsonHelpers.opt[Side](cursor, "Side")
+      stationName        <- JsonHelpers.opt[Nmtoken](cursor, "StationName")
+      tileId             <- JsonHelpers.opt[TileCoordinate](cursor, "TileID")
+      transferCurveName  <- JsonHelpers.opt[TransferCurveName](cursor, "TransferCurveName")
+      webName            <- JsonHelpers.opt[Nmtoken](cursor, "WebName")
     yield Part(
       binderySignatureId,
       blockName,
@@ -176,18 +173,18 @@ object JsonNodeCodecs:
   )
   given Decoder[PartWaste] = Decoder.instance(cursor =>
     for
-      waste <- cursor.get[Float]("Waste")
-      moduleIds <- JsonHelpers.vec[Nmtoken](cursor, "ModuleIDs")
+      waste        <- cursor.get[Float]("Waste")
+      moduleIds    <- JsonHelpers.vec[Nmtoken](cursor, "ModuleIDs")
       wasteDetails <- JsonHelpers.opt[Nmtoken](cursor, "WasteDetails")
-      origin <- (moduleIds, wasteDetails) match
+      origin       <- (moduleIds, wasteDetails) match
         case (ids, Some(details)) if ids.nonEmpty =>
           NonEmptyVector.from(ids) match
             case Right(nonEmpty) => Right(WasteOrigin.ModulesAndDetails(nonEmpty, details))
-            case Left(_)         => JsonHelpers.fail(cursor, "ModuleIDs must not be empty")
+            case Left(_) => JsonHelpers.fail(cursor, "ModuleIDs must not be empty")
         case (ids, None) if ids.nonEmpty =>
           NonEmptyVector.from(ids) match
             case Right(nonEmpty) => Right(WasteOrigin.Modules(nonEmpty))
-            case Left(_)         => JsonHelpers.fail(cursor, "ModuleIDs must not be empty")
+            case Left(_) => JsonHelpers.fail(cursor, "ModuleIDs must not be empty")
         case (_, Some(details)) => Right(WasteOrigin.Details(details))
         case _ => JsonHelpers.fail(cursor, "at least one of ModuleIDs or WasteDetails is required")
     yield PartWaste(waste, origin),
@@ -207,11 +204,11 @@ object JsonNodeCodecs:
   )
   given Decoder[PartAmount] = Decoder.instance(cursor =>
     for
-      amount <- JsonHelpers.opt[Float](cursor, "Amount")
+      amount    <- JsonHelpers.opt[Float](cursor, "Amount")
       maxAmount <- JsonHelpers.opt[Float](cursor, "MaxAmount")
       minAmount <- JsonHelpers.opt[Float](cursor, "MinAmount")
-      waste <- JsonHelpers.opt[Float](cursor, "Waste")
-      parts <- JsonHelpers.vec[Part](cursor, "Part")
+      waste     <- JsonHelpers.opt[Float](cursor, "Waste")
+      parts     <- JsonHelpers.vec[Part](cursor, "Part")
       partWaste <- JsonHelpers.vec[PartWaste](cursor, "PartWaste")
     yield PartAmount(amount, maxAmount, minAmount, waste, parts, partWaste),
   )
@@ -220,10 +217,10 @@ object JsonNodeCodecs:
     Encoder.instance(pool => Json.obj(JsonHelpers.member("PartAmount", Json.arr(pool.amounts.toVector.map(_.asJson)*))))
   given Decoder[AmountPool] = Decoder.instance(cursor =>
     for
-      amounts <- cursor.get[List[PartAmount]]("PartAmount")
+      amounts  <- cursor.get[List[PartAmount]]("PartAmount")
       nonEmpty <- NonEmptyVector.from(amounts.toVector) match
         case Right(nonEmpty) => Right(nonEmpty)
-        case Left(_)         => JsonHelpers.fail(cursor, "PartAmount must not be empty")
+        case Left(_) => JsonHelpers.fail(cursor, "PartAmount must not be empty")
     yield AmountPool(nonEmpty),
   )
 
@@ -258,26 +255,26 @@ object JsonNodeCodecs:
   )
   given Decoder[Resource] = Decoder.instance(cursor =>
     for
-      amountPool <- JsonHelpers.opt[AmountPool](cursor, "AmountPool")
-      comments <- JsonHelpers.vec[Comment](cursor, "Comment")
-      generalIds <- JsonHelpers.vec[GeneralId](cursor, "GeneralID")
-      parts <- JsonHelpers.vec[Part](cursor, "Part")
-      specific <- JsonResources.decodeSpecific(cursor)
+      amountPool        <- JsonHelpers.opt[AmountPool](cursor, "AmountPool")
+      comments          <- JsonHelpers.vec[Comment](cursor, "Comment")
+      generalIds        <- JsonHelpers.vec[GeneralId](cursor, "GeneralID")
+      parts             <- JsonHelpers.vec[Part](cursor, "Part")
+      specific          <- JsonResources.decodeSpecific(cursor)
       decodedExtensions <- JsonForeign.decodeExtensions(cursor)
-      brand <- JsonHelpers.opt[XjdfString](cursor, "Brand")
-      commentUrl <- JsonHelpers.opt[UriRef](cursor, "CommentURL")
-      descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
-      duration <- JsonHelpers.opt[XsdDuration](cursor, "Duration")
-      expires <- JsonHelpers.opt[XsdDateTime](cursor, "Expires")
-      externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
-      grossWeight <- JsonHelpers.opt[Float](cursor, "GrossWeight")
-      id <- JsonHelpers.opt[XsdId](cursor, "ID")
-      orientation <- JsonHelpers.opt[Orientation](cursor, "Orientation")
-      resourceWeight <- JsonHelpers.opt[Float](cursor, "ResourceWeight")
-      start <- JsonHelpers.opt[XsdDateTime](cursor, "Start")
-      startOffset <- JsonHelpers.opt[XsdDuration](cursor, "StartOffset")
-      status <- JsonHelpers.opt[ResourceAvailability](cursor, "Status")
-      transformation <- JsonHelpers.opt[Matrix](cursor, "Transformation")
+      brand             <- JsonHelpers.opt[XjdfString](cursor, "Brand")
+      commentUrl        <- JsonHelpers.opt[UriRef](cursor, "CommentURL")
+      descriptiveName   <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
+      duration          <- JsonHelpers.opt[XsdDuration](cursor, "Duration")
+      expires           <- JsonHelpers.opt[XsdDateTime](cursor, "Expires")
+      externalId        <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+      grossWeight       <- JsonHelpers.opt[Float](cursor, "GrossWeight")
+      id                <- JsonHelpers.opt[XsdId](cursor, "ID")
+      orientation       <- JsonHelpers.opt[Orientation](cursor, "Orientation")
+      resourceWeight    <- JsonHelpers.opt[Float](cursor, "ResourceWeight")
+      start             <- JsonHelpers.opt[XsdDateTime](cursor, "Start")
+      startOffset       <- JsonHelpers.opt[XsdDuration](cursor, "StartOffset")
+      status            <- JsonHelpers.opt[ResourceAvailability](cursor, "Status")
+      transformation    <- JsonHelpers.opt[Matrix](cursor, "Transformation")
     yield Resource(
       amountPool,
       comments,
@@ -323,18 +320,18 @@ object JsonNodeCodecs:
   )
   given Decoder[ResourceSet] = Decoder.instance(cursor =>
     for
-      name <- cursor.get[Nmtoken]("Name")
+      name                 <- cursor.get[Nmtoken]("Name")
       combinedProcessIndex <- JsonHelpers.vec[Int](cursor, "CombinedProcessIndex")
-      commentUrl <- JsonHelpers.opt[UriRef](cursor, "CommentURL")
-      descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
-      id <- JsonHelpers.opt[XsdId](cursor, "ID")
-      processUsage <- JsonHelpers.opt[Nmtoken](cursor, "ProcessUsage")
-      unit <- JsonHelpers.opt[Nmtoken](cursor, "Unit")
-      usage <- JsonHelpers.opt[ResourceUsage](cursor, "Usage")
-      comments <- JsonHelpers.vec[Comment](cursor, "Comment")
-      dependents <- JsonHelpers.vec[Dependent](cursor, "Dependent")
-      generalIds <- JsonHelpers.vec[GeneralId](cursor, "GeneralID")
-      resources <- JsonHelpers.vec[Resource](cursor, "Resource")
+      commentUrl           <- JsonHelpers.opt[UriRef](cursor, "CommentURL")
+      descriptiveName      <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
+      id                   <- JsonHelpers.opt[XsdId](cursor, "ID")
+      processUsage         <- JsonHelpers.opt[Nmtoken](cursor, "ProcessUsage")
+      unit                 <- JsonHelpers.opt[Nmtoken](cursor, "Unit")
+      usage                <- JsonHelpers.opt[ResourceUsage](cursor, "Usage")
+      comments             <- JsonHelpers.vec[Comment](cursor, "Comment")
+      dependents           <- JsonHelpers.vec[Dependent](cursor, "Dependent")
+      generalIds           <- JsonHelpers.vec[GeneralId](cursor, "GeneralID")
+      resources            <- JsonHelpers.vec[Resource](cursor, "Resource")
     yield ResourceSet(
       name,
       combinedProcessIndex,

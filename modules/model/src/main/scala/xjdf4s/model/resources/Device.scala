@@ -16,11 +16,9 @@ enum JdfVersion(val lexical: String):
   case V2_0 extends JdfVersion("2.0")
   case V2_1 extends JdfVersion("2.1")
   case V2_2 extends JdfVersion("2.2")
-end JdfVersion
 
 enum DevicePackaging derives CanEqual:
   case XML, Zip
-end DevicePackaging
 
 final case class DeviceIcon(
     bitDepth: Int,

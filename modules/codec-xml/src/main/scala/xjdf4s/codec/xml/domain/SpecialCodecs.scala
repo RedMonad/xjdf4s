@@ -11,33 +11,33 @@ object FileSpecCodec:
   val decoder: XmlDecoder[FileSpec] =
     XmlDecoder.instance: element =>
       for
-        checkSum <- XmlDecoders.attributeOf("CheckSum")(Lexical.hexBinary).decode(element)
-        encoding <- XmlDecoders.attributeOf("Encoding")(Lexical.nmtoken).decode(element)
-        fileSize <- XmlDecoders.attributeOf("FileSize")(Lexical.long).decode(element)
-        mimeType <- XmlDecoders.attributeOf("MIMEType")(Lexical.xjdfString).decode(element)
-        numberOfPages <- XmlDecoders.attributeOf("NPage")(Lexical.int).decode(element)
+        checkSum        <- XmlDecoders.attributeOf("CheckSum")(Lexical.hexBinary).decode(element)
+        encoding        <- XmlDecoders.attributeOf("Encoding")(Lexical.nmtoken).decode(element)
+        fileSize        <- XmlDecoders.attributeOf("FileSize")(Lexical.long).decode(element)
+        mimeType        <- XmlDecoders.attributeOf("MIMEType")(Lexical.xjdfString).decode(element)
+        numberOfPages   <- XmlDecoders.attributeOf("NPage")(Lexical.int).decode(element)
         overwritePolicy <- XmlDecoders.attributeOf("OverwritePolicy")(Lexical.enumOf(
           OverwritePolicy.values.toVector,
           _.toString,
         )).decode(element)
-        password <- XmlDecoders.attributeOf("Password")(Lexical.xjdfString).decode(element)
-        resourceUsage <- XmlDecoders.attributeOf("ResourceUsage")(Lexical.nmtoken).decode(element)
-        searchDepth <- XmlDecoders.attributeOf("SearchDepth")(Lexical.int).decode(element)
-        userFileName <- XmlDecoders.attributeOf("UserFileName")(Lexical.xjdfString).decode(element)
-        url <- XmlDecoders.attributeOf("URL")(Lexical.uri).decode(element)
-        uid <- XmlDecoders.attributeOf("UID")(Lexical.nmtoken).decode(element)
-        fileFormat <- XmlDecoders.attributeOf("FileFormat")(Lexical.xjdfString).decode(element)
-        fileTemplate <- XmlDecoders.attributeOf("FileTemplate")(Lexical.nmtokens).decode(element)
-        disposition <- XmlDecoders.optionalChild("Disposition")(DispositionCodec.decoder).decode(element)
+        password       <- XmlDecoders.attributeOf("Password")(Lexical.xjdfString).decode(element)
+        resourceUsage  <- XmlDecoders.attributeOf("ResourceUsage")(Lexical.nmtoken).decode(element)
+        searchDepth    <- XmlDecoders.attributeOf("SearchDepth")(Lexical.int).decode(element)
+        userFileName   <- XmlDecoders.attributeOf("UserFileName")(Lexical.xjdfString).decode(element)
+        url            <- XmlDecoders.attributeOf("URL")(Lexical.uri).decode(element)
+        uid            <- XmlDecoders.attributeOf("UID")(Lexical.nmtoken).decode(element)
+        fileFormat     <- XmlDecoders.attributeOf("FileFormat")(Lexical.xjdfString).decode(element)
+        fileTemplate   <- XmlDecoders.attributeOf("FileTemplate")(Lexical.nmtokens).decode(element)
+        disposition    <- XmlDecoders.optionalChild("Disposition")(DispositionCodec.decoder).decode(element)
         networkHeaders <- XmlDecoders.repeatedChild("NetworkHeader")(NetworkHeaderCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Disposition", "NetworkHeader")).decode(element)
-        location <- (url, uid, fileFormat, fileTemplate) match
+        _              <- XmlDecoders.expectChildrenOnly(Set("Disposition", "NetworkHeader")).decode(element)
+        location       <- (url, uid, fileFormat, fileTemplate) match
           case (Some(u), None, None, None) => Right(FileLocation.Url(u))
           case (None, Some(u), None, None) => Right(FileLocation.Uid(u))
           case (None, None, Some(format), Some(template)) =>
             NonEmptyVector.from(template) match
               case Right(nonEmpty) => Right(FileLocation.Sequence(format, nonEmpty))
-              case Left(_)         => Left(XmlError.InvalidAttribute("FileSpec", "FileTemplate", "", "a non-empty NMTOKENS"))
+              case Left(_) => Left(XmlError.InvalidAttribute("FileSpec", "FileTemplate", "", "a non-empty NMTOKENS"))
           case (None, None, None, None) => Right(FileLocation.Pipe)
           case _ => Left(XmlError.ConflictingFields("FileSpec", "URL/UID/FileFormat+FileTemplate"))
       yield FileSpec(
@@ -96,14 +96,14 @@ object DispositionCodec:
         action <- XmlDecoders.attributeOf("Action")(Lexical.enumOf(DispositionAction.values.toVector, _.toString))
           .decode(element)
         extraDuration <- XmlDecoders.attributeOf("ExtraDuration")(Lexical.duration).decode(element)
-        minDuration <- XmlDecoders.attributeOf("MinDuration")(Lexical.duration).decode(element)
-        until <- XmlDecoders.attributeOf("Until")(Lexical.dateTime).decode(element)
-        priority <- XmlDecoders.attributeOf("Priority")(Lexical.priority).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
-        time <- (minDuration, until) match
+        minDuration   <- XmlDecoders.attributeOf("MinDuration")(Lexical.duration).decode(element)
+        until         <- XmlDecoders.attributeOf("Until")(Lexical.dateTime).decode(element)
+        priority      <- XmlDecoders.attributeOf("Priority")(Lexical.priority).decode(element)
+        _             <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        time          <- (minDuration, until) match
           case (Some(duration), None) => Right(Some(DispositionTime.AfterProcess(duration)))
-          case (None, Some(at))      => Right(Some(DispositionTime.At(at)))
-          case (None, None)          => Right(None)
+          case (None, Some(at)) => Right(Some(DispositionTime.At(at)))
+          case (None, None) => Right(None)
           case _ => Left(XmlError.ConflictingFields(element.name.localName, "MinDuration/Until"))
       yield Disposition(action, time, extraDuration, priority, CodecHelpers.decodeExtensionAttributes(element))
 
@@ -113,7 +113,7 @@ object DispositionCodec:
         case Some(DispositionTime.AfterProcess(duration)) =>
           CodecHelpers.attribute("MinDuration", Some(duration.value))
         case Some(DispositionTime.At(until)) => CodecHelpers.attribute("Until", Some(until.value))
-        case None                            => Vector.empty
+        case None => Vector.empty
       val attributes =
         CodecHelpers.attributeOf("Action", disposition.action, _.toString) ++
           CodecHelpers.attributeOf("ExtraDuration", disposition.extraDuration, (v: XsdDuration) => v.value) ++
@@ -127,7 +127,7 @@ object NetworkHeaderCodec:
   val decoder: XmlDecoder[NetworkHeader] =
     XmlDecoder.instance: element =>
       for
-        name <- XmlDecoders.requiredAttribute("Name")(Lexical.xjdfString).decode(element)
+        name  <- XmlDecoders.requiredAttribute("Name")(Lexical.xjdfString).decode(element)
         value <- XjdfString
           .from(element.text)
           .left
@@ -149,7 +149,9 @@ object ExtraValuesCodec:
     XmlDecoder.instance: element =>
       for
         usage <- XmlDecoders.requiredAttribute("Usage")(Lexical.nmtoken).decode(element)
-        value <- XjdfString.from(element.text).left.map(error => XmlError.InvalidAttribute("ExtraValues", "text", element.text, error.toString))
+        value <- XjdfString.from(element.text).left.map(error =>
+          XmlError.InvalidAttribute("ExtraValues", "text", element.text, error.toString)
+        )
         _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield ExtraValues(usage, value, CodecHelpers.decodeExtensionAttributes(element))
 
@@ -168,19 +170,19 @@ object TiffTagCodec:
   val decoder: XmlDecoder[TiffTag] =
     XmlDecoder.instance: element =>
       for
-        tagNumber <- XmlDecoders.requiredAttribute("TagNumber")(Lexical.int).decode(element)
-        tagType <- XmlDecoders.requiredAttribute("TagType")(Lexical.int).decode(element)
-        binaryValue <- XmlDecoders.attributeOf("BinaryValue")(Lexical.hexBinary).decode(element)
+        tagNumber    <- XmlDecoders.requiredAttribute("TagNumber")(Lexical.int).decode(element)
+        tagType      <- XmlDecoders.requiredAttribute("TagType")(Lexical.int).decode(element)
+        binaryValue  <- XmlDecoders.attributeOf("BinaryValue")(Lexical.hexBinary).decode(element)
         integerValue <- XmlDecoders.attributeOf("IntegerValue")(Lexical.intList).decode(element)
-        numberValue <- XmlDecoders.attributeOf("NumberValue")(Lexical.floatList).decode(element)
-        stringValue <- XmlDecoders.attributeOf("StringValue")(Lexical.xjdfString).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
-        value <- (binaryValue, integerValue, numberValue, stringValue) match
-          case (Some(bytes), _, _, _)   => Right(Some(TiffTagValue.Binary(bytes)))
-          case (_, Some(ints), _, _)    => Right(Some(TiffTagValue.Integers(ints)))
+        numberValue  <- XmlDecoders.attributeOf("NumberValue")(Lexical.floatList).decode(element)
+        stringValue  <- XmlDecoders.attributeOf("StringValue")(Lexical.xjdfString).decode(element)
+        _            <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        value        <- (binaryValue, integerValue, numberValue, stringValue) match
+          case (Some(bytes), _, _, _) => Right(Some(TiffTagValue.Binary(bytes)))
+          case (_, Some(ints), _, _) => Right(Some(TiffTagValue.Integers(ints)))
           case (_, _, Some(numbers), _) => Right(Some(TiffTagValue.Numbers(numbers)))
-          case (_, _, _, Some(text))    => Right(Some(TiffTagValue.Text(text.value)))
-          case _                        => Right(None)
+          case (_, _, _, Some(text)) => Right(Some(TiffTagValue.Text(text.value)))
+          case _ => Right(None)
       yield TiffTag(tagNumber, tagType, value, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[TiffTag] =
@@ -193,7 +195,7 @@ object TiffTagCodec:
         case Some(TiffTagValue.Numbers(numbers)) =>
           CodecHelpers.attribute("NumberValue", Some(CodecHelpers.renderFloats(numbers)))
         case Some(TiffTagValue.Text(text)) => CodecHelpers.attribute("StringValue", Some(text))
-        case None                          => Vector.empty
+        case None => Vector.empty
       val attributes =
         CodecHelpers.attribute("TagNumber", Some(CodecHelpers.renderInt(tag.tagNumber))) ++
           CodecHelpers.attribute("TagType", Some(CodecHelpers.renderInt(tag.tagType))) ++
@@ -208,18 +210,18 @@ object PatchCodec:
       for
         usage <- XmlDecoders.requiredAttribute("PatchUsage")(Lexical.enumOf(PatchUsage.values.toVector, _.toString))
           .decode(element)
-        center <- XmlDecoders.attributeOf("Center")(Lexical.xypair).decode(element)
-        density <- XmlDecoders.attributeOf("Density")(Lexical.float).decode(element)
-        externalId <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
-        lab <- XmlDecoders.attributeOf("Lab")(Lexical.labColor).decode(element)
+        center         <- XmlDecoders.attributeOf("Center")(Lexical.xypair).decode(element)
+        density        <- XmlDecoders.attributeOf("Density")(Lexical.float).decode(element)
+        externalId     <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
+        lab            <- XmlDecoders.attributeOf("Lab")(Lexical.labColor).decode(element)
         neutralDensity <- XmlDecoders.attributeOf("NeutralDensity")(Lexical.neutralDensity).decode(element)
-        rgb <- XmlDecoders.attributeOf("RGB")(Lexical.srgbColor).decode(element)
-        size <- XmlDecoders.attributeOf("Size")(Lexical.xypair).decode(element)
-        spectrum <- XmlDecoders.attributeOf("Spectrum")(Lexical.transferFunction).decode(element)
-        spotType <- XmlDecoders.attributeOf("SpotType")(Lexical.enumOf(SpotType.values.toVector, _.toString))
+        rgb            <- XmlDecoders.attributeOf("RGB")(Lexical.srgbColor).decode(element)
+        size           <- XmlDecoders.attributeOf("Size")(Lexical.xypair).decode(element)
+        spectrum       <- XmlDecoders.attributeOf("Spectrum")(Lexical.transferFunction).decode(element)
+        spotType       <- XmlDecoders.attributeOf("SpotType")(Lexical.enumOf(SpotType.values.toVector, _.toString))
           .decode(element)
         separationTints <- XmlDecoders.repeatedChild("SeparationTint")(SeparationTintCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("SeparationTint")).decode(element)
+        _               <- XmlDecoders.expectChildrenOnly(Set("SeparationTint")).decode(element)
       yield Patch(
         usage,
         center,
@@ -265,7 +267,7 @@ object SeparationTintCodec:
       for
         name <- XmlDecoders.requiredAttribute("Name")(Lexical.nmtoken).decode(element)
         tint <- XmlDecoders.requiredAttribute("Tint")(Lexical.float).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        _    <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield SeparationTint(name, tint)
 
   val encoder: XmlEncoder[SeparationTint] =
@@ -278,10 +280,9 @@ object SeparationTintCodec:
       )
 end SeparationTintCodec
 
-/**
- * FileSpec-role wrappers: several resources carry two or more FileSpec children distinguished by `@ResourceUsage`
- * (`DeviceSchemas`, `DeviceInfoSchemas`, `DeliveryFiles`, `VerificationFiles`, `QualityControlFiles`). Each wrapper
- * is a FieldCodec that selects the FileSpec children of the owning element.
+/** FileSpec-role wrappers: several resources carry two or more FileSpec children distinguished by `@ResourceUsage`
+ *  (`DeviceSchemas`, `DeviceInfoSchemas`, `DeliveryFiles`, `VerificationFiles`, `QualityControlFiles`). Each wrapper
+ *  is a FieldCodec that selects the FileSpec children of the owning element.
  */
 object FileSpecRoles:
 
@@ -291,7 +292,8 @@ object FileSpecRoles:
       for
         pairs <- acc
         role = child.attribute("ResourceUsage").getOrElse("")
-        _ <- if roles.contains(role) then Right(()) else Left(XmlError.InvalidAttribute("FileSpec", "ResourceUsage", role, "one of " + roles.mkString(", ")))
+        _ <- if roles.contains(role) then Right(())
+        else Left(XmlError.InvalidAttribute("FileSpec", "ResourceUsage", role, "one of " + roles.mkString(", ")))
         fileSpec <- FileSpecCodec.decoder.decode(child)
       yield pairs :+ (role, fileSpec)
     }
@@ -314,40 +316,39 @@ object FileSpecRoles:
         split(children, names.map(_._1).toSet).map(build)
       def encodeElements(value: W): Vector[Xml.Element] =
         names.flatMap { case (role, getter) => encode(role, getter(value)) }
-  end wrapper
 
 end FileSpecRoles
 
 given deviceSchemasField: FieldCodec[DeviceSchemas] = FileSpecRoles.wrapper(
-    Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)),
-    pairs => DeviceSchemas(pairs.find(_._1 == "CurrentSchema").map(_._2), pairs.find(_._1 == "Schema").map(_._2)),
-  )
+  Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)),
+  pairs => DeviceSchemas(pairs.find(_._1 == "CurrentSchema").map(_._2), pairs.find(_._1 == "Schema").map(_._2)),
+)
 
 given deviceInfoSchemasField: FieldCodec[DeviceInfoSchemas] = FileSpecRoles.wrapper(
-    Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)),
-    pairs => DeviceInfoSchemas(pairs.find(_._1 == "CurrentSchema").map(_._2), pairs.find(_._1 == "Schema").map(_._2)),
-  )
+  Vector("CurrentSchema" -> (_.current), "Schema" -> (_.global)),
+  pairs => DeviceInfoSchemas(pairs.find(_._1 == "CurrentSchema").map(_._2), pairs.find(_._1 == "Schema").map(_._2)),
+)
 
 given deliveryFilesField: FieldCodec[DeliveryFiles] = FileSpecRoles.wrapper(
-    Vector("Contents" -> (_.contents), "MailingList" -> (_.mailingList), "RemoteURL" -> (_.remoteUrl)),
-    pairs =>
-      DeliveryFiles(
-        pairs.find(_._1 == "Contents").map(_._2),
-        pairs.find(_._1 == "MailingList").map(_._2),
-        pairs.find(_._1 == "RemoteURL").map(_._2),
-      ),
-  )
+  Vector("Contents" -> (_.contents), "MailingList" -> (_.mailingList), "RemoteURL" -> (_.remoteUrl)),
+  pairs =>
+    DeliveryFiles(
+      pairs.find(_._1 == "Contents").map(_._2),
+      pairs.find(_._1 == "MailingList").map(_._2),
+      pairs.find(_._1 == "RemoteURL").map(_._2),
+    ),
+)
 
 given verificationFilesField: FieldCodec[VerificationFiles] = FileSpecRoles.wrapper(
-    Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
-    pairs =>
-      VerificationFiles(
-        pairs.find(_._1 == "Accepted").map(_._2),
-        pairs.find(_._1 == "Combined").map(_._2),
-        pairs.find(_._1 == "Rejected").map(_._2),
-        pairs.find(_._1 == "Unknown").map(_._2),
-      ),
-  )
+  Vector("Accepted" -> (_.accepted), "Combined" -> (_.combined), "Rejected" -> (_.rejected), "Unknown" -> (_.unknown)),
+  pairs =>
+    VerificationFiles(
+      pairs.find(_._1 == "Accepted").map(_._2),
+      pairs.find(_._1 == "Combined").map(_._2),
+      pairs.find(_._1 == "Rejected").map(_._2),
+      pairs.find(_._1 == "Unknown").map(_._2),
+    ),
+)
 
 given qualityControlFilesField: FieldCodec[QualityControlFiles] = FileSpecRoles.wrapper(
   Vector("Image" -> (_.image), "Setup" -> (_.setup)),

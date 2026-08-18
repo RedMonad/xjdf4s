@@ -5,7 +5,6 @@ import xjdf4s.model.*
 
 enum ApprovalRole derives CanEqual:
   case Approvinator, Informative, Obligated
-end ApprovalRole
 
 final case class ApprovalPerson(
     contactRef: XsdIdRef,
@@ -17,7 +16,6 @@ final case class ApprovalPerson(
 
 enum ApprovalState derives CanEqual:
   case Approved, ApprovedWithComment, Rejected
-end ApprovalState
 
 final case class ApprovalDetails(
     approvalState: ApprovalState,
@@ -61,15 +59,12 @@ final case class VerificationResult(
 
 enum Drying derives CanEqual:
   case Heatset, IR, Off, On, UV
-end Drying
 
 enum FountainSolution derives CanEqual:
   case On, Off
-end FountainSolution
 
 enum WorkStyle derives CanEqual:
   case Perfecting, Simplex, WorkAndBack, WorkAndTumble, WorkAndTurn
-end WorkStyle
 
 final case class ConventionalPrintingParams(
     drying: Option[Drying] = None,
@@ -86,15 +81,12 @@ final case class ConventionalPrintingParams(
 
 enum DigitalCollation derives CanEqual:
   case None, Sheet
-end DigitalCollation
 
 enum PageDelivery derives CanEqual:
   case FanFold, SameOrderFaceUp, SameOrderFaceDown, ReverseOrderFaceUp, ReverseOrderFaceDown
-end PageDelivery
 
 enum DigitalSides derives CanEqual:
   case OneSidedFront, OneSidedBack, TwoSided, Unprinted
-end DigitalSides
 
 final case class DigitalPrintingParams(
     collate: Option[DigitalCollation] = None,
@@ -108,11 +100,9 @@ final case class DigitalPrintingParams(
 
 enum PreviewCompensation derives CanEqual:
   case None, Film, Plate, Press
-end PreviewCompensation
 
 enum PreviewFileType derives CanEqual:
   case PNG, CIP3Multiple, CIP3Single
-end PreviewFileType
 
 final case class Preview(
     compensation: Option[PreviewCompensation] = None,

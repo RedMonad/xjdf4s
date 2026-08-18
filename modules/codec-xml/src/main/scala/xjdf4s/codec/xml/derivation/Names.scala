@@ -1,15 +1,14 @@
 package xjdf4s.codec.xml.derivation
 
-/**
- * Central naming policy of the derived codecs.
+/** Central naming policy of the derived codecs.
  *
  *  - `attributeName` maps a case-class field name to the normative attribute name (PascalCase with the acronyms the
  *    XJDF specification spells differently, e.g. `jobId` -> `JobID`, `xjmfUrl` -> `XJMFURL`, `cieLab` -> `CIELab`).
  *  - `elementName` maps a case-class name to the element name (`PdfCreationDetails` -> `PDFCreationDetails`,
  *    `TiffFormatParams` -> `TIFFFormatParams`, `CieLabMeasuringField` -> `CIELabMeasuringField`).
  *
- * Per-type overrides belong here, not scattered through the codecs, so a normative naming correction is a
- * one-line change.
+ *  Per-type overrides belong here, not scattered through the codecs, so a normative naming correction is a
+ *  one-line change.
  */
 object Names:
   private val Acronyms: Map[String, String] = Map(

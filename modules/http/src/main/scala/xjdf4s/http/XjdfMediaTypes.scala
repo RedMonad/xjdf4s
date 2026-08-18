@@ -2,10 +2,9 @@ package xjdf4s.http
 
 import org.http4s.MediaType
 
-/**
- * Table 9.1: MIME types and file extensions for unpackaged and zip-packaged XJDF/XJMF. The XML variants carry
- * an explicit UTF-8 charset, matching the XML writer's declaration (in http4s 0.23 a charset is a media-type
- * extension, so the parameterized form is parsed).
+/** Table 9.1: MIME types and file extensions for unpackaged and zip-packaged XJDF/XJMF. The XML variants carry
+ *  an explicit UTF-8 charset, matching the XML writer's declaration (in http4s 0.23 a charset is a media-type
+ *  extension, so the parameterized form is parsed).
  */
 object XjdfMediaTypes:
 

@@ -2,9 +2,8 @@ package xjdf4s.codec.json
 
 import io.circe.parser.*
 import io.circe.syntax.*
-
-import xjdf4s.codec.json.given
 import xjdf4s.codec.json.JsonRootCodecs.given
+import xjdf4s.codec.json.given
 import xjdf4s.codec.xml.*
 import xjdf4s.codec.xml.domain.*
 import xjdf4s.core.*
@@ -18,7 +17,7 @@ object NormativeJsonFixtureChecks:
   private def decodeOrFail[A: io.circe.Decoder](json: String): A =
     parse(json).flatMap(_.as[A]) match
       case Right(value) => value
-      case Left(error)  => throw new AssertionError(s"fixture decode failed: $error")
+      case Left(error) => throw new AssertionError(s"fixture decode failed: $error")
 
   val example31Root: Unit =
     val json = """{
@@ -85,6 +84,7 @@ object NormativeJsonFixtureChecks:
     val layers = viaJson.resources.head.specificResource.get.asInstanceOf[Media].mediaLayers.get.layers
     assert(layers.size == 3)
     assert(layers(1).asInstanceOf[MediaLayer.GlueLayer].value.glueType.contains(GlueType.Removable))
+  end example85MediaLayers
 
   val example911AuditPool: Unit =
     // Example 9.11: an XJDF with AuditPool, encoded in JSON and XML

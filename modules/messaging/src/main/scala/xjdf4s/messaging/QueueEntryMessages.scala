@@ -8,13 +8,11 @@ enum QueueMoveTarget:
   case Before(queueEntryId: Nmtoken)
   case Position(value: Int)
   case Priority(value: QueuePriority)
-end QueueMoveTarget
 
 enum QueueModification:
   case Abort, Complete, Hold, Remove, Resume, Suspend
   case Move(target: Option[QueueMoveTarget] = None)
   case SetGang(gangName: Option[Nmtoken] = None)
-end QueueModification
 
 final case class ModifyQueueEntryParams(
     operation: QueueModification,
@@ -66,7 +64,6 @@ final case class ResponseRequestQueueEntry(
 
 enum ResubmissionUpdateMethod derives CanEqual:
   case Complete, Incremental, Remove
-end ResubmissionUpdateMethod
 
 final case class ResubmissionParams(
     queueEntryId: Nmtoken,
@@ -117,7 +114,6 @@ enum QueueSubmissionPosition:
   case After(queueEntryId: Nmtoken)
   case Before(queueEntryId: Nmtoken)
   case Priority(value: QueuePriority)
-end QueueSubmissionPosition
 
 final case class QueueSubmissionParams(
     url: UriRef,

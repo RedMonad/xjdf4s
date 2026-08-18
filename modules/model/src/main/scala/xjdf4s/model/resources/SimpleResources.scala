@@ -5,7 +5,6 @@ import xjdf4s.model.*
 
 enum ResourceShapeType derives CanEqual:
   case Path, Rectangular, Round, RoundedRectangle
-end ResourceShapeType
 
 final case class Shape(
     shapeType: ResourceShapeType,
@@ -31,7 +30,6 @@ final case class Tool(
 
 enum UsageCounterScope derives CanEqual:
   case Lifetime, PowerOn, Job
-end UsageCounterScope
 
 final case class UsageCounter(
     scope: UsageCounterScope,
@@ -53,7 +51,6 @@ final case class MiscConsumable(
 
 enum PrintQuality derives CanEqual:
   case High, Normal, Draft
-end PrintQuality
 
 final case class PrintCondition(
     name: Nmtoken,

@@ -75,4 +75,3 @@ class ModelChecksSuite extends munit.FunSuite:
     )
     assert(results.size == 68)
   }
-end ModelChecksSuite

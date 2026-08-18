@@ -4,23 +4,18 @@ import xjdf4s.core.*
 
 enum BindingOrder derives CanEqual:
   case None, Collecting, Gathering
-end BindingOrder
 
 enum BindingEdge derives CanEqual:
   case Bottom, Left, Right, Top
-end BindingEdge
 
 enum BindingGlue derives CanEqual:
   case ColdGlue, Hotmelt, PUR
-end BindingGlue
 
 enum TightBacking derives CanEqual:
   case Round, RoundBacked, Flat, FlatBacked
-end TightBacking
 
 enum StapleShape derives CanEqual:
   case Butted, ClinchOut, Crown, Eyelet, Overlap
-end StapleShape
 
 final case class AdhesiveNoteDetails(
     glue: Option[Glue] = None,
@@ -47,7 +42,6 @@ final case class RegisterRibbon(
 
 enum JacketStyle derives CanEqual:
   case None, Loose, Glue
-end JacketStyle
 
 final case class HardCoverBindingDetails(
     blockThreadSewing: Option[Boolean] = None,
@@ -70,7 +64,6 @@ final case class HardCoverBindingDetails(
 
 enum BinderMaterial derives CanEqual:
   case Steel, ColorCoatedSteel, Plastic
-end BinderMaterial
 
 final case class CoilBindingDetails(
     coilShape: Option[Nmtoken] = None,
@@ -95,9 +88,8 @@ final case class RingBindingDetails(
 ) extends XjdfNode,
       Extensible
 
-/**
- * The shared attribute set of the `LooseBinding` detail element (Table 4.12) for binding types that have no
- * type-specific child element: ChannelBinding, LooseBinding, StripBinding and WireComb.
+/** The shared attribute set of the `LooseBinding` detail element (Table 4.12) for binding types that have no
+ *  type-specific child element: ChannelBinding, LooseBinding, StripBinding and WireComb.
  */
 final case class LooseBindingDetails(
     brand: Option[XjdfString] = None,
@@ -107,10 +99,9 @@ final case class LooseBindingDetails(
 ) extends XjdfNode,
       Extensible
 
-/**
- * `LooseBinding` details for CoilBinding. Tables 4.12-4.13: the `CoilBinding` child element SHALL NOT be specified
- * unless `BindingIntent/@BindingType = "CoilBinding"`, which the dedicated detail type makes unrepresentable for the
- * other binding cases.
+/** `LooseBinding` details for CoilBinding. Tables 4.12-4.13: the `CoilBinding` child element SHALL NOT be specified
+ *  unless `BindingIntent/@BindingType = "CoilBinding"`, which the dedicated detail type makes unrepresentable for the
+ *  other binding cases.
  */
 final case class CoilLooseBindingDetails(
     brand: Option[XjdfString] = None,
@@ -150,11 +141,9 @@ final case class StitchingDetails(
 
 enum GlueProcedure derives CanEqual:
   case Spine, SideOnly, SingleSide, SideSpine
-end GlueProcedure
 
 enum Scoring derives CanEqual:
   case TwiceScored, QuadScored, None
-end Scoring
 
 final case class SoftCoverBindingDetails(
     blockThreadSewing: Option[Boolean] = None,
@@ -183,10 +172,9 @@ final case class Tabs(
 ) extends XjdfNode,
       Extensible
 
-/**
- * Binding type and its compatible detail element represented by one coproduct. Each case carries the detail ADT that
- * the corresponding table (4.8-4.17) permits, so incompatible nested combinations such as CombBinding details under
- * a Coil binding are unrepresentable. `None`, `Tape` and `CornerStitch` have no detail element.
+/** Binding type and its compatible detail element represented by one coproduct. Each case carries the detail ADT that
+ *  the corresponding table (4.8-4.17) permits, so incompatible nested combinations such as CombBinding details under
+ *  a Coil binding are unrepresentable. `None`, `Tape` and `CornerStitch` have no detail element.
  */
 enum BindingSpecification:
   case AdhesiveNote(details: Option[AdhesiveNoteDetails] = Option.empty)
@@ -205,7 +193,6 @@ enum BindingSpecification:
   case StripBinding(details: Option[LooseBindingDetails] = Option.empty)
   case Tape
   case WireComb(details: Option[LooseBindingDetails] = Option.empty)
-end BindingSpecification
 
 final case class BindingIntent(
     binding: BindingSpecification,

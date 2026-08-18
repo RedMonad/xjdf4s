@@ -6,13 +6,11 @@ import xjdf4s.model.{HasHeader, Header, Notification}
 /** Table A.10: the reliability mode of a message channel. */
 enum ChannelMode derives CanEqual:
   case FireAndForget, Reliable
-end ChannelMode
 
-/**
- * Table 7.5. `@ChannelMode` is an ordered list of channel modes with the most preferred mode first; keeping the list
- * ordered preserves the preference semantics of a persistent channel subscription. `@Languages` is Deprecated in
- * XJDF 2.2 (the Query and the `SubscriptionInfo` element now carry the language selection) and is retained only for
- * deprecated-backward compatibility.
+/** Table 7.5. `@ChannelMode` is an ordered list of channel modes with the most preferred mode first; keeping the list
+ *  ordered preserves the preference semantics of a persistent channel subscription. `@Languages` is Deprecated in
+ *  XJDF 2.2 (the Query and the `SubscriptionInfo` element now carry the language selection) and is retained only for
+ *  deprecated-backward compatibility.
  */
 final case class Subscription(
     url: UriRef,
@@ -28,32 +26,26 @@ trait Message extends XjdfNode,
       HasHeader:
   def elementName: QualifiedName
   def extensions: Extensions
-end Message
 
-/**
- * The family contract of Table 7.4 defines the common message attributes, but `@Languages` is only listed by the
- * concrete tables of QueryNotification, QueryKnownDevices, QueryResource and QueryStatus. The trait therefore does
- * not force a `languages` member; each query carries it exactly where the normative table does.
+/** The family contract of Table 7.4 defines the common message attributes, but `@Languages` is only listed by the
+ *  concrete tables of QueryNotification, QueryKnownDevices, QueryResource and QueryStatus. The trait therefore does
+ *  not force a `languages` member; each query carries it exactly where the normative table does.
  */
 trait Query extends Message:
   def subscription: Option[Subscription]
-end Query
 
 trait Command extends Message
 
 trait Signal extends Message:
   def channelMode: Option[ChannelMode]
-end Signal
 
 trait Response extends Message:
   def returnCode: Option[Int]
   def notification: Option[Notification]
-end Response
 
-/**
- * Family-safe records for ICS and foreign-namespace message extensions outside the 44 standard messages. Each
- * constructor takes a [[ForeignQName]], so a standard XJMF message name can never be smuggled through the generic
- * fallback; the trait accessor re-exposes the name as a plain `QualifiedName`.
+/** Family-safe records for ICS and foreign-namespace message extensions outside the 44 standard messages. Each
+ *  constructor takes a [[ForeignQName]], so a standard XJMF message name can never be smuggled through the generic
+ *  fallback; the trait accessor re-exposes the name as a plain `QualifiedName`.
  */
 final case class QueryMessage(
     foreignName: ForeignQName,

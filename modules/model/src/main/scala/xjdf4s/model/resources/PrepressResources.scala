@@ -29,7 +29,6 @@ final case class ManualLaborParams(
 
 enum SourceObject derives CanEqual:
   case ImagePhotographic, ImageScreenShot, LineArt, SmoothShades, Text
-end SourceObject
 
 final case class ImageEnhancementOperation(
     operation: Nmtoken,
@@ -47,7 +46,6 @@ final case class ImageEnhancementParams(
 
 enum DeviceAxis derives CanEqual:
   case None, FeedDirection, MediaWidth, Both
-end DeviceAxis
 
 final case class ImageSetterParams(
     advanceDistance: Option[Float] = None,
@@ -93,7 +91,6 @@ final case class ColorCorrectionParams(
 
 enum PreviewAspectRatio derives CanEqual:
   case CenterMax, CenterMin, Crop, Expand, Ignore
-end PreviewAspectRatio
 
 final case class PreviewGenerationParams(
     aspectRatio: Option[PreviewAspectRatio] = None,

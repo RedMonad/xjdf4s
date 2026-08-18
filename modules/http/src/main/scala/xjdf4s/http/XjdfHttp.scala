@@ -3,9 +3,8 @@ package xjdf4s.http
 import xjdf4s.core.*
 import xjdf4s.model.Header
 
-/**
- * Small shared helpers of the HTTP layer: the device identity of the demo server, the current timestamp and
- * response-header construction (`Header/@ID` fresh per response, `Header/@refID` per Table 7.3).
+/** Small shared helpers of the HTTP layer: the device identity of the demo server, the current timestamp and
+ *  response-header construction (`Header/@ID` fresh per response, `Header/@refID` per Table 7.3).
  */
 object XjdfHttp:
 

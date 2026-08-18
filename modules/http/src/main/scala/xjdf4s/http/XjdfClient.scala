@@ -3,19 +3,16 @@ package xjdf4s.http
 import cats.effect.IO
 import fs2.Stream
 import fs2.text
-
-import org.http4s.client.Client
 import org.http4s.{Method, Request}
+import org.http4s.client.Client
 import org.http4s.implicits.*
-
 import xjdf4s.codec.json.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.XJDF
 
-/**
- * The client side of the demo transport: submits XJDF documents, subscribes for status signals and streams the
- * delivered signals. The same stage 04/05 codecs back every entity — no duplicated encoding logic.
+/** The client side of the demo transport: submits XJDF documents, subscribes for status signals and streams the
+ *  delivered signals. The same stage 04/05 codecs back every entity — no duplicated encoding logic.
  */
 object XjdfClient:
 
@@ -30,14 +27,13 @@ object XjdfClient:
       Request[IO](Method.POST, uri"/status/subscribe").withEntity(query)(using XjdfMessageEntities.queryStatusEncoder)
     client.expect[ResponseStatus](request)(using XjdfMessageEntities.responseStatusDecoder)
 
-  /**
-   * GET /channels/{id}/signals: the subscription stream, one JSON XJMF envelope per line (the vendor framing
-   * documented in [[XjdfServer]]). The stream ends when the server closes the channel or the client cancels.
+  /** GET /channels/{id}/signals: the subscription stream, one JSON XJMF envelope per line (the vendor framing
+   *  documented in [[XjdfServer]]). The stream ends when the server closes the channel or the client cancels.
    *
-   * NOTE for in-memory testing: `Client.fromHttpApp` pumps the response body through a synchronous channel and
-   * its finalizer drains that channel, which only finishes when the producer ends - with an infinite
-   * subscription stream the finalizer deadlocks on completion/cancellation. Tests consume [[framesOf]] from a
-   * direct `app.run(...)` response instead; socket-backed clients (ember) are unaffected.
+   *  NOTE for in-memory testing: `Client.fromHttpApp` pumps the response body through a synchronous channel and
+   *  its finalizer drains that channel, which only finishes when the producer ends - with an infinite
+   *  subscription stream the finalizer deadlocks on completion/cancellation. Tests consume [[framesOf]] from a
+   *  direct `app.run(...)` response instead; socket-backed clients (ember) are unaffected.
    */
   def signals(client: Client[IO], channelId: Nmtoken): Stream[IO, XJMF] =
     client

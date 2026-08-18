@@ -20,9 +20,9 @@ object Protocol:
     case _: XJMF => "XJMF"
 
   def messageFamily(message: Message): String = message match
-    case _: Query    => "Query"
-    case _: Command  => "Command"
-    case _: Signal   => "Signal"
+    case _: Query => "Query"
+    case _: Command => "Command"
+    case _: Signal => "Signal"
     case _: Response => "Response"
-    case _           => "Extension"
+    case _ => "Extension"
 end Protocol

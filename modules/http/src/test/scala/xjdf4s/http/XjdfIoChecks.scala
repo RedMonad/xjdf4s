@@ -1,26 +1,23 @@
 package xjdf4s.http
 
+import scala.concurrent.duration.*
+
 import cats.effect.{IO, Ref}
 import cats.effect.unsafe.implicits.global
 import cats.syntax.all.*
-
 import org.http4s.multipart.Multiparts
-
-import scala.concurrent.duration.*
-
 import xjdf4s.core.*
 import xjdf4s.dsl.DocDsl
 import xjdf4s.messaging.*
 import xjdf4s.model.{DeviceInfo, Header, XJDF}
 import xjdf4s.xjmf.*
 
-/**
- * The stage 07 interpreters: the effectful transport (stateful core + delivery hook + deferred correlation +
- * await timeout with cancellation cleanup) and the effectful document builder. The stage 03/06 algebras are
- * untouched — these are new interpreters only.
+/** The stage 07 interpreters: the effectful transport (stateful core + delivery hook + deferred correlation +
+ *  await timeout with cancellation cleanup) and the effectful document builder. The stage 03/06 algebras are
+ *  untouched — these are new interpreters only.
  *
- * The timer is injected: an instant timer fires the await timeout immediately, a never timer disables it.
- * This keeps every test deterministic - no wall-clock scheduling is involved.
+ *  The timer is injected: an instant timer fires the await timeout immediately, a never timer disables it.
+ *  This keeps every test deterministic - no wall-clock scheduling is involved.
  */
 object XjdfIoChecks:
 
@@ -41,7 +38,11 @@ object XjdfIoChecks:
     )
 
   private val signal: SignalStatus =
-    SignalStatus(header("S1", Some(channelId.value)), DeviceInfo(DeviceStatus.Production), channelMode = Some(ChannelMode.Reliable))
+    SignalStatus(
+      header("S1", Some(channelId.value)),
+      DeviceInfo(DeviceStatus.Production),
+      channelMode = Some(ChannelMode.Reliable)
+    )
 
   private val answer: ResponseResource =
     ResponseResource(header("R1", Some("S1")), returnCode = Some(0))
@@ -50,48 +51,74 @@ object XjdfIoChecks:
   def transportTimeout(): Unit =
     val run: IO[(Option[Response], Option[Response], Vector[Signal], XjmfState)] =
       for
-        state <- Ref.of[IO, XjmfState](XjmfState.empty)
-        sent <- Ref.of[IO, Vector[Signal]](Vector.empty)
-        transport <- XjdfIoInterpreters.transport(state, value => sent.update(_ :+ value), 100.millis, _ => IO.unit)
-        _ <- (Xjmf.openChannel(subscription, channelId, messageType) *> Xjmf.deliver(signal)).foldMap(transport.interpreter)
-        before <- Xjmf.awaitResponse(signalId).foldMap(transport.interpreter)
-        _ <- Xjmf.deliverResponse(answer).foldMap(transport.interpreter)
-        after <- Xjmf.awaitResponse(signalId).foldMap(transport.interpreter)
-        delivered <- sent.get
+        state     <- Ref.of[IO, XjmfState](XjmfState.empty)
+        sent      <- Ref.of[IO, Vector[Signal]](Vector.empty)
+        transport <- XjdfIoInterpreters.transport(
+          state,
+          value => sent.update(_ :+ value),
+          100.millis,
+          _ => IO.unit
+        )
+        _ <- (Xjmf.openChannel(subscription, channelId, messageType) *> Xjmf.deliver(signal))
+          .foldMap(transport.interpreter)
+        before     <- Xjmf.awaitResponse(signalId).foldMap(transport.interpreter)
+        _          <- Xjmf.deliverResponse(answer).foldMap(transport.interpreter)
+        after      <- Xjmf.awaitResponse(signalId).foldMap(transport.interpreter)
+        delivered  <- sent.get
         finalState <- state.get
       yield (before, after, delivered, finalState)
+
     val (before, after, delivered, finalState) = run.unsafeRunSync()
+
     assert(before.isEmpty, "the reliable signal has no answer yet, so the await must time out")
     assert(after.contains(answer))
     assert(delivered == Vector(signal))
     assert(finalState.pending.isEmpty)
+  end transportTimeout
 
   /** Task 5: with the never timer the await waits indefinitely, and cancelling it frees the registration. */
   def awaitCancellation(): Unit =
     val run: IO[Int] =
       for
-        state <- Ref.of[IO, XjmfState](XjmfState.empty)
-        transport <- XjdfIoInterpreters.transport(state, _ => IO.unit, 10.seconds, _ => IO.never)
+        state     <- Ref.of[IO, XjmfState](XjmfState.empty)
+        transport <- XjdfIoInterpreters.transport(
+          state,
+          _ => IO.unit,
+          10.seconds,
+          _ => IO.never
+        )
         program = Xjmf.openChannel(subscription, channelId, messageType) *> Xjmf.awaitResponse(signalId)
         fiber <- program.foldMap(transport.interpreter).start
-        _ <- fiber.cancel
+        _     <- IO.cede
+        _     <- fiber.cancel
+        _     <- fiber.join.void
         waits <- transport.waitingCount
       yield waits
+
     assert(run.unsafeRunSync() == 0)
+  end awaitCancellation
 
   /** Task 5: the effectful document builder folds the stage 03 program into a Ref. */
   def documentInterpreter(): Unit =
-    val seed = XJDF(Nmtoken.from("job-1").toOption.get, NonEmptyVector.one(Nmtoken.from("Product").toOption.get))
+    val seed = XJDF(
+      Nmtoken.from("job-1").toOption.get,
+      NonEmptyVector.one(Nmtoken.from("Product").toOption.get)
+    )
+
     val program = DocDsl.version(Version.V2_2) *> DocDsl.comment("generated by test")
+
     val run: IO[XJDF] =
       for
-        ref <- Ref.of[IO, XJDF](seed)
-        _ <- program.foldMap(XjdfIoInterpreters.document(ref))
+        ref    <- Ref.of[IO, XJDF](seed)
+        _      <- program.foldMap(XjdfIoInterpreters.document(ref))
         result <- ref.get
       yield result
+
     val document = run.unsafeRunSync()
+
     assert(document.version.contains(Version.V2_2))
     assert(document.comments.map(_.value) == Vector("generated by test"))
+  end documentInterpreter
 
   /** 9.10.4.2 (Example 9.13): the multipart packaging round-trips the "xjmf" field and the attachments. */
   def multipartSubmission(): Unit =
@@ -99,15 +126,31 @@ object XjdfIoChecks:
       Header(deviceId, time, id = Some(XsdId.from("C1").toOption.get)),
       QueueSubmissionParams(url),
     )
-    val xjmf = XJMF(Header(deviceId, time), NonEmptyVector.one(command), Some(Version.V2_2))
-    val attachment = XjdfMultipart.Attachment("order-A.xjdf", "payload".getBytes(java.nio.charset.StandardCharsets.UTF_8))
+
+    val xjmf = XJMF(
+      Header(deviceId, time),
+      NonEmptyVector.one(command),
+      Some(Version.V2_2)
+    )
+
+    val attachment = XjdfMultipart.Attachment(
+      "order-A.xjdf",
+      "payload".getBytes(java.nio.charset.StandardCharsets.UTF_8)
+    )
+
     val run: IO[(XJMF, Vector[XjdfMultipart.Attachment])] =
       for
         multiparts <- Multiparts.forSync[IO]
-        packaged <- XjdfMultipart.packageSubmission(multiparts, xjmf, Vector(attachment))
-        decoded <- XjdfMultipart.partsOf(packaged)
+        packaged   <- XjdfMultipart.packageSubmission(multiparts, xjmf, Vector(attachment))
+        decoded    <- XjdfMultipart.partsOf(packaged)
       yield decoded
+
     val (decodedXjmf, decodedAttachments) = run.unsafeRunSync()
+
     assert(decodedXjmf == xjmf)
-    assert(decodedAttachments == Vector(attachment))
+    assert(decodedAttachments.size == 1)
+    assert(decodedAttachments.head.filename == attachment.filename)
+    assert(java.util.Arrays.equals(decodedAttachments.head.content, attachment.content))
+  end multipartSubmission
+
 end XjdfIoChecks

@@ -15,11 +15,9 @@ final case class DropItem(
 
 enum DeliveryOwnership derives CanEqual:
   case Destination, Origin
-end DeliveryOwnership
 
 enum DeliveryTransfer derives CanEqual:
   case BuyerToPrinterDeliver, BuyerToPrinterPickup, PrinterToBuyerDeliver, PrinterToBuyerPickup
-end DeliveryTransfer
 
 final case class DeliveryFiles(
     contents: Option[FileSpec] = None,
@@ -45,7 +43,6 @@ final case class DeliveryParams(
 
 enum PreflightAction derives CanEqual:
   case Abort, Continue, Repair
-end PreflightAction
 
 final case class PreflightTest(
     action: Option[PreflightAction] = None,

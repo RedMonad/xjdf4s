@@ -35,9 +35,8 @@ final case class SignalNotification(
 ) extends Signal:
   val elementName: QualifiedName = MessageNames.element("SignalNotification")
 
-/**
- * The normative element name is `StatusQuParams` (Table 7.65); the earlier construction-phase name
- * `StatusQueryParams` has been retired for round-trip fidelity.
+/** The normative element name is `StatusQuParams` (Table 7.65); the earlier construction-phase name
+ *  `StatusQueryParams` has been retired for round-trip fidelity.
  */
 final case class StatusQuParams(
     jobId: Option[XjdfString] = None,
@@ -80,7 +79,6 @@ final case class SignalStatus(
 
 enum ResourceUpdateMethod derives CanEqual:
   case Complete, CompleteSet, Incremental, Remove, RemoveSet
-end ResourceUpdateMethod
 
 final case class ResourceCommandParams(
     updateMethod: ResourceUpdateMethod,
@@ -98,12 +96,10 @@ final case class CommandResource(
 
 enum ResourceDetails derives CanEqual:
   case Brief, Full
-end ResourceDetails
 
-/**
- * The normative element name is `ResourceQuParams` (Table 7.49); the earlier construction-phase name
- * `ResourceQueryParams` has been retired for round-trip fidelity. `@Types` (New in XJDF 2.2) filters by the
- * `XJDF/@Types` of the processes whose resources are queried.
+/** The normative element name is `ResourceQuParams` (Table 7.49); the earlier construction-phase name
+ *  `ResourceQueryParams` has been retired for round-trip fidelity. `@Types` (New in XJDF 2.2) filters by the
+ *  `XJDF/@Types` of the processes whose resources are queried.
  */
 final case class ResourceQuParams(
     scope: Scope,
@@ -137,9 +133,8 @@ final case class ResponseResource(
 ) extends Response:
   val elementName: QualifiedName = MessageNames.element("ResponseResource")
 
-/**
- * Table 7.54: `@ReplaceAfter` and `@ReplaceBefore` bound the replacement window of previous SignalResource data in
- * the same scope. If neither is specified, the signal is an original and SHALL NOT replace a previous signal.
+/** Table 7.54: `@ReplaceAfter` and `@ReplaceBefore` bound the replacement window of previous SignalResource data in
+ *  the same scope. If neither is specified, the signal is an original and SHALL NOT replace a previous signal.
  */
 final case class SignalResource(
     header: Header,

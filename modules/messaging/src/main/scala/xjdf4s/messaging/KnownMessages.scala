@@ -6,7 +6,6 @@ import xjdf4s.model.resources.Device
 
 enum DeviceDetails derives CanEqual:
   case Brief, Modules, Full
-end DeviceDetails
 
 final case class DeviceFilter(
     details: Option[DeviceDetails] = None,
@@ -42,12 +41,10 @@ final case class SignalKnownDevices(
 
 enum MessageResponseMode derives CanEqual:
   case FireAndForget, Reliable, Response
-end MessageResponseMode
 
 enum MessageUrlScheme(val lexical: String):
   case Http extends MessageUrlScheme("http")
   case Https extends MessageUrlScheme("https")
-end MessageUrlScheme
 
 final case class MessageService(
     messageType: Nmtoken,

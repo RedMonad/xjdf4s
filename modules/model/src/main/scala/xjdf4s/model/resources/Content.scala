@@ -22,7 +22,6 @@ final case class ContentMetadata(
 
 enum RefAnchorType derives CanEqual:
   case Parent, Sibling
-end RefAnchorType
 
 final case class RefAnchor(
     anchor: Anchor,

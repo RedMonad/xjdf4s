@@ -11,11 +11,10 @@ import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Per-field serialization contract used by the derived node codec. A field is either an attribute (scalars, opaque
- * types, enums, value products such as `XYPair`) or an element (nodes, containers of nodes). Containers of
- * attribute types stay attributes (`Vector[Nmtoken]` is `NMTOKENS`), containers of element types become repeated
- * children.
+/** Per-field serialization contract used by the derived node codec. A field is either an attribute (scalars, opaque
+ *  types, enums, value products such as `XYPair`) or an element (nodes, containers of nodes). Containers of
+ *  attribute types stay attributes (`Vector[Nmtoken]` is `NMTOKENS`), containers of element types become repeated
+ *  children.
  */
 trait FieldCodec[A]:
   def isElement: Boolean
@@ -79,12 +78,11 @@ object FieldCodec extends LowPriorityFieldCodecs:
       def decodeAttribute(raw: Option[String]): Either[String, A] =
         raw match
           case Some(value) => parse(value)
-          case None        => Left("missing required attribute")
+          case None => Left("missing required attribute")
       def renderAttribute(value: A): Option[String] = render(value)
       def decodeElements(children: Vector[Xml.Element]): Either[XmlError, A] =
         Left(XmlError.UnexpectedElement("attribute", elementName))
       def encodeElements(value: A): Vector[Xml.Element] = Vector.empty
-  end attribute
 
   def element[A](codec: XmlElementCodec[A]): FieldCodec[A] =
     new FieldCodec[A]:
@@ -99,7 +97,6 @@ object FieldCodec extends LowPriorityFieldCodecs:
           case _ =>
             Left(XmlError.MissingElement("", elementName))
       def encodeElements(value: A): Vector[Xml.Element] = Vector(codec.encode(value))
-  end element
 
   // -- XSD built-ins -------------------------------------------------------------
 
@@ -182,10 +179,9 @@ object FieldCodec extends LowPriorityFieldCodecs:
 
   // -- special markers handled by the DerivedCodec runtime by field name -----------------
 
-  /**
-   * The `extensions` field of every node is handled specially by the derived codec (foreign attributes and
-   * children), so this instance exists only to satisfy the per-field materialization of the inline instance
-   * walk; the runtime never calls it.
+  /** The `extensions` field of every node is handled specially by the derived codec (foreign attributes and
+   *  children), so this instance exists only to satisfy the per-field materialization of the inline instance
+   *  walk; the runtime never calls it.
    */
   given extensionsCodec: FieldCodec[Extensions] =
     new FieldCodec[Extensions]:
@@ -195,7 +191,6 @@ object FieldCodec extends LowPriorityFieldCodecs:
       def renderAttribute(value: Extensions): Option[String] = None
       def decodeElements(children: Vector[Xml.Element]): Either[XmlError, Extensions] = Right(Extensions.empty)
       def encodeElements(value: Extensions): Vector[Xml.Element] = Vector.empty
-  end extensionsCodec
 
   // -- containers ----------------------------------------------------------------
 
@@ -205,17 +200,16 @@ object FieldCodec extends LowPriorityFieldCodecs:
       def elementName: String = inner.elementName
       def decodeAttribute(raw: Option[String]): Either[String, Option[A]] =
         raw match
-          case None       => Right(None)
+          case None => Right(None)
           case Some(value) => inner.decodeAttribute(Some(value)).map(Some(_))
       def renderAttribute(value: Option[A]): Option[String] = value.flatMap(inner.renderAttribute)
       def decodeElements(children: Vector[Xml.Element]): Either[XmlError, Option[A]] =
         children match
-          case Vector()      => Right(None)
+          case Vector() => Right(None)
           case Vector(single) => inner.decodeElements(Vector(single)).map(Some(_))
-          case _             => Left(XmlError.UnexpectedElement("Option", elementName))
+          case _ => Left(XmlError.UnexpectedElement("Option", elementName))
       def encodeElements(value: Option[A]): Vector[Xml.Element] =
         value.toVector.flatMap(inner.encodeElements)
-  end optionCodec
 
   given vectorCodec[A](using inner: FieldCodec[A]): FieldCodec[Vector[A]] =
     new FieldCodec[Vector[A]]:
@@ -225,7 +219,10 @@ object FieldCodec extends LowPriorityFieldCodecs:
         raw match
           case None => Right(Vector.empty)
           case Some(value) =>
-            value.trim.split("\\s+").toVector.filter(_.nonEmpty).foldLeft[Either[String, Vector[A]]](Right(Vector.empty)) {
+            value.trim.split("\\s+").toVector.filter(_.nonEmpty).foldLeft[Either[
+              String,
+              Vector[A]
+            ]](Right(Vector.empty)) {
               (acc, token) =>
                 for
                   values <- acc
@@ -242,7 +239,6 @@ object FieldCodec extends LowPriorityFieldCodecs:
           yield values :+ parsed
         }
       def encodeElements(value: Vector[A]): Vector[Xml.Element] = value.flatMap(inner.encodeElements)
-  end vectorCodec
 
   given nonEmptyVectorCodec[A](using inner: FieldCodec[A]): FieldCodec[NonEmptyVector[A]] =
     new FieldCodec[NonEmptyVector[A]]:
@@ -260,7 +256,6 @@ object FieldCodec extends LowPriorityFieldCodecs:
             .left
             .map(_ => XmlError.MissingElement("", elementName))
       def encodeElements(value: NonEmptyVector[A]): Vector[Xml.Element] = vectorCodec.encodeElements(value.toVector)
-  end nonEmptyVectorCodec
 
   given twoOrMoreCodec[A](using inner: FieldCodec[A]): FieldCodec[TwoOrMore[A]] =
     new FieldCodec[TwoOrMore[A]]:
@@ -275,7 +270,6 @@ object FieldCodec extends LowPriorityFieldCodecs:
         vectorCodec.decodeElements(children).flatMap: values =>
           TwoOrMore.from(values).left.map(_ => XmlError.MissingElement("", elementName))
       def encodeElements(value: TwoOrMore[A]): Vector[Xml.Element] = vectorCodec.encodeElements(value.toVector)
-  end twoOrMoreCodec
 
   given atMostTwoCodec[A](using inner: FieldCodec[A]): FieldCodec[AtMostTwo[A]] =
     new FieldCodec[AtMostTwo[A]]:
@@ -290,16 +284,14 @@ object FieldCodec extends LowPriorityFieldCodecs:
         vectorCodec.decodeElements(children).flatMap: values =>
           AtMostTwo.from(values).left.map(_ => XmlError.MissingElement("", elementName))
       def encodeElements(value: AtMostTwo[A]): Vector[Xml.Element] = vectorCodec.encodeElements(value.toVector)
-  end atMostTwoCodec
 
   // -- nodes: any Product with an XmlElementCodec becomes an element field ---------
 
-  /**
-   * Canonical `deriveOrSummon` pattern from the reference documentation: an inline given selected through
-   * `summonInline` (the mechanism that finds inline givens), which at its expansion site first looks for an
-   * existing `XmlElementCodec[A]` (hand codecs, generated per-type givens) and otherwise derives one inline,
-   * right there. This resolves nested products without relying on the visibility of per-type instances in the
-   * search context.
+  /** Canonical `deriveOrSummon` pattern from the reference documentation: an inline given selected through
+   *  `summonInline` (the mechanism that finds inline givens), which at its expansion site first looks for an
+   *  existing `XmlElementCodec[A]` (hand codecs, generated per-type givens) and otherwise derives one inline,
+   *  right there. This resolves nested products without relying on the visibility of per-type instances in the
+   *  search context.
    */
   inline given productCodec[A <: scala.Product]: FieldCodec[A] =
     summonFrom {

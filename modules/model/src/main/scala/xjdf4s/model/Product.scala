@@ -6,7 +6,6 @@ import xjdf4s.core.*
 trait ProductIntent extends XjdfNode,
       Extensible:
   def elementName: QualifiedName
-end ProductIntent
 
 /** The 14 schema-defined ProductIntent descendants; ProductIntent itself stays open for ICS extensions. */
 type StandardProductIntent =
@@ -14,10 +13,9 @@ type StandardProductIntent =
     HoleMakingIntent | IntentResource | LaminatingIntent | LayoutIntent | MediaIntent | ProductionIntent |
     ShapeCuttingIntent | VariableIntent
 
-/**
- * Lossless fallback for a product intent defined by an ICS or a foreign namespace. The constructor takes a
- * [[ForeignQName]], so a standard XJDF intent name can never be smuggled through the generic fallback; the trait
- * accessor re-exposes the name as a plain `QualifiedName`.
+/** Lossless fallback for a product intent defined by an ICS or a foreign namespace. The constructor takes a
+ *  [[ForeignQName]], so a standard XJDF intent name can never be smuggled through the generic fallback; the trait
+ *  accessor re-exposes the name as a plain `QualifiedName`.
  */
 final case class NamedProductIntent(
     foreignName: ForeignQName,

@@ -5,7 +5,6 @@ import xjdf4s.model.*
 
 enum ForceGangPolicy derives CanEqual:
   case All, Optimized
-end ForceGangPolicy
 
 final case class GangCommandFilter(
     gangNames: Vector[Nmtoken] = Vector.empty,
@@ -69,18 +68,15 @@ final case class SignalGangStatus(
 
 enum UpdateGranularity derives CanEqual:
   case All, ChangesOnly
-end UpdateGranularity
 
 /** Compatibility alias: the 0..100 priority is the shared core type [[Priority0To100]]. */
 type QueuePriority = Priority0To100
 
 enum QueueActivation derives CanEqual:
   case Informative, Held, Active, PendingReturn, Removed
-end QueueActivation
 
 enum QueueGangPolicy derives CanEqual:
   case Gang, GangAndForce, NoGang
-end QueueGangPolicy
 
 final case class QueueFilter(
     firstEntry: Option[Nmtoken] = None,

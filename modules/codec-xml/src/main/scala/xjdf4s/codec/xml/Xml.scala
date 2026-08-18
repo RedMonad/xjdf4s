@@ -6,7 +6,6 @@ import xjdf4s.core.QualifiedName
 enum Xml derives CanEqual:
   case Element(name: QualifiedName, attributes: Vector[(QualifiedName, String)], children: Vector[Xml])
   case Text(value: String)
-end Xml
 
 object Xml:
   def element(name: QualifiedName, attributes: Vector[(QualifiedName, String)] = Vector.empty)(

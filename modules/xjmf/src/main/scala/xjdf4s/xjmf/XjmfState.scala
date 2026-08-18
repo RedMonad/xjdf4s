@@ -1,15 +1,13 @@
 package xjdf4s.xjmf
 
 import cats.data.Chain
-
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 
-/**
- * A reliable signal that has been delivered but not yet answered. `signalId` is the `Header/@ID` of the signal
- * (SHOULD be present per Table 7.3; an absent ID yields the empty string and the signal cannot be correlated).
- * Normative anchor: 9.6.5 — a reliable signal SHALL be resent until it is answered; this pending record is the
- * observable state the stage 07 runtime will attach timers to.
+/** A reliable signal that has been delivered but not yet answered. `signalId` is the `Header/@ID` of the signal
+ *  (SHOULD be present per Table 7.3; an absent ID yields the empty string and the signal cannot be correlated).
+ *  Normative anchor: 9.6.5 — a reliable signal SHALL be resent until it is answered; this pending record is the
+ *  observable state the stage 07 runtime will attach timers to.
  */
 final case class PendingSignal(
     channelId: Nmtoken,
@@ -17,19 +15,16 @@ final case class PendingSignal(
     signal: Signal,
 )
 
-/**
- * The lifecycle of a persistent channel (9.6.2, 9.6.3, 9.6.6). A closed channel stays in the channel map as
- * `Closed` so that a delivery attempt on it is observable as a `ChannelNotOpen` event instead of being silently
- * dropped. `messageType` is the `@MessageType` of Table 8.71: the local element name of the channel's signals.
+/** The lifecycle of a persistent channel (9.6.2, 9.6.3, 9.6.6). A closed channel stays in the channel map as
+ *  `Closed` so that a delivery attempt on it is observable as a `ChannelNotOpen` event instead of being silently
+ *  dropped. `messageType` is the `@MessageType` of Table 8.71: the local element name of the channel's signals.
  */
 enum ChannelState derives CanEqual:
   case Subscribed(messageType: Nmtoken, subscription: Subscription)
   case Closed
-end ChannelState
 
-/**
- * One entry of the exchange trace. The trace is a flat, chronological list of what happened on the transport —
- * it is the material both interpreters must agree on.
+/** One entry of the exchange trace. The trace is a flat, chronological list of what happened on the transport —
+ *  it is the material both interpreters must agree on.
  */
 enum TransportEvent derives CanEqual:
   /** A persistent channel was opened (or replaced, 9.6.3). */
@@ -54,8 +49,7 @@ enum TransportEvent derives CanEqual:
   case ChannelNotOpen(channelId: Nmtoken, signalId: String)
 end TransportEvent
 
-/**
- * The full state of the in-memory transport machine:
+/** The full state of the in-memory transport machine:
  *
  *  - `channels` — the persistent channels by `@ChannelID` (the initiating query's `Header/@ID`, Table 8.71);
  *  - `pending` — reliable signals awaiting a response, in delivery order (the sequence order of 9.6.5.1);
@@ -74,4 +68,3 @@ final case class XjmfState(
 
 object XjmfState:
   val empty: XjmfState = XjmfState()
-end XjmfState

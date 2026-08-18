@@ -5,23 +5,18 @@ import xjdf4s.model.*
 
 enum GutterPolicy derives CanEqual:
   case Distribute, Fixed
-end GutterPolicy
 
 enum HorizontalGridDirection derives CanEqual:
   case LeftToRight, RightToLeft
-end HorizontalGridDirection
 
 enum RotatePolicy derives CanEqual:
   case NoRotate, RotateOrthogonal, RotateClockwise, RotateCounterClockwise
-end RotatePolicy
 
 enum FitSizePolicy derives CanEqual:
   case Abort, ClipToMaxPage, CompleteGrid, FillGrid, FitToPage, ReduceToFit, Tile
-end FitSizePolicy
 
 enum VerticalGridDirection derives CanEqual:
   case BottomToTop, TopToBottom
-end VerticalGridDirection
 
 final case class FitPolicy(
     clipOffset: Option[XYPair] = None,
@@ -53,7 +48,6 @@ final case class OptionalContentGroupControl(
 
 enum ReferenceXObjectMode derives CanEqual:
   case Ignore, ResolveAlways, ResolveIfPDFX5
-end ReferenceXObjectMode
 
 final case class ReferenceXObjectParams(
     mode: ReferenceXObjectMode,

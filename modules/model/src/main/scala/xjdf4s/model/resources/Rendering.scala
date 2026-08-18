@@ -13,11 +13,9 @@ final case class ObjectResolution(
 
 enum TiffByteOrder derives CanEqual:
   case II, MM
-end TiffByteOrder
 
 enum TiffSegmentation derives CanEqual:
   case SingleStrip, Stripped, Tiled
-end TiffSegmentation
 
 final case class TiffEmbeddedFile(
     tagNumber: Int,
@@ -32,7 +30,6 @@ enum TiffTagValue:
   case Integers(value: Vector[Int])
   case Numbers(value: Vector[Float])
   case Text(value: String)
-end TiffTagValue
 
 final case class TiffTag(
     tagNumber: Int,

@@ -33,7 +33,6 @@ final case class Notification(
 
 enum ProcessRunEndStatus derives CanEqual:
   case Aborted, Completed
-end ProcessRunEndStatus
 
 final case class ProcessRun(
     end: XsdDateTime,
@@ -50,19 +49,15 @@ final case class ProcessRun(
 
 enum CommandResult derives CanEqual:
   case Merged, New, Rejected, Removed, Replaced
-end CommandResult
 
 enum ResourceLevel derives CanEqual:
   case Empty, Full, High, Low, OK
-end ResourceLevel
 
 enum CostType derives CanEqual:
   case Chargeable, NonChargeable
-end CostType
 
 enum WorkType derives CanEqual:
   case Original, Alteration, Rework
-end WorkType
 
 final case class MisDetails(
     complexity: Option[SheetLay] = None,
@@ -113,7 +108,6 @@ final case class GangSource(
 
 enum Deadline derives CanEqual:
   case InTime, Late, Warning
-end Deadline
 
 final case class JobPhase(
     jobId: Nmtoken,
@@ -145,16 +139,13 @@ final case class JobPhase(
 
 enum OverwritePolicy derives CanEqual:
   case Overwrite, RenameNew, RenameOld, NewVersion, OperatorIntervention, Abort
-end OverwritePolicy
 
 enum DispositionAction derives CanEqual:
   case Archive, Delete
-end DispositionAction
 
 enum DispositionTime:
   case AfterProcess(minimumDuration: XsdDuration)
   case At(until: XsdDateTime)
-end DispositionTime
 
 final case class Disposition(
     action: Option[DispositionAction] = None,
@@ -177,7 +168,6 @@ enum FileLocation:
   case Uid(value: Nmtoken)
   case Sequence(format: XjdfString, template: NonEmptyVector[Nmtoken])
   case Pipe
-end FileLocation
 
 final case class FileSpec(
     location: FileLocation = FileLocation.Pipe,

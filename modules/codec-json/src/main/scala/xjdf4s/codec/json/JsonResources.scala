@@ -1,16 +1,14 @@
 package xjdf4s.codec.json
 
 import io.circe.{Decoder, Encoder, HCursor, Json}
-
 import xjdf4s.core.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Dispatch for the specific-resource member of `Resource`: the member name is the resource element name and the
- * tables come from [[JsonRegistry]] (all standard resources with a JSON codec). Also holds the JSON-exception
- * codecs for `Address` and `Company` (9.10.2.1: their `AddressLine`/`OrganizationalUnit` text elements map to
- * arrays of strings instead of arrays of objects).
+/** Dispatch for the specific-resource member of `Resource`: the member name is the resource element name and the
+ *  tables come from [[JsonRegistry]] (all standard resources with a JSON codec). Also holds the JSON-exception
+ *  codecs for `Address` and `Company` (9.10.2.1: their `AddressLine`/`OrganizationalUnit` text elements map to
+ *  arrays of strings instead of arrays of objects).
  */
 object JsonResources:
 
@@ -36,13 +34,12 @@ object JsonResources:
           case Right(None) =>
             cursor.downField(name).focus match
               case Some(json) => JsonRegistry.decodeSpecificResource(name, json).map(value => Some(value))
-              case None       => Right(None)
+              case None => Right(None)
           case failure => failure
     }
 
-  /**
-   * 9.10.2.1 JSON exception: the `AddressLine` text elements of `Address` map to an array of strings under the
-   * `"AddressLine"` member, not to an array of objects.
+  /** 9.10.2.1 JSON exception: the `AddressLine` text elements of `Address` map to an array of strings under the
+   *  `"AddressLine"` member, not to an array of objects.
    */
   given Encoder[Address] = Encoder.instance(address =>
     JsonHelpers.obj(
@@ -63,17 +60,17 @@ object JsonResources:
   )
   given Decoder[Address] = Decoder.instance(cursor =>
     for
-      addressUsage <- JsonHelpers.opt[Nmtoken](cursor, "AddressUsage")
-      city <- JsonHelpers.opt[XjdfString](cursor, "City")
-      civicNumber <- JsonHelpers.opt[XjdfString](cursor, "CivicNumber")
-      country <- JsonHelpers.opt[XjdfString](cursor, "Country")
-      countryCode <- JsonHelpers.opt[CountryCode](cursor, "CountryCode")
+      addressUsage    <- JsonHelpers.opt[Nmtoken](cursor, "AddressUsage")
+      city            <- JsonHelpers.opt[XjdfString](cursor, "City")
+      civicNumber     <- JsonHelpers.opt[XjdfString](cursor, "CivicNumber")
+      country         <- JsonHelpers.opt[XjdfString](cursor, "Country")
+      countryCode     <- JsonHelpers.opt[CountryCode](cursor, "CountryCode")
       extendedAddress <- JsonHelpers.opt[XjdfString](cursor, "ExtendedAddress")
-      postalCode <- JsonHelpers.opt[XjdfString](cursor, "PostalCode")
-      postBox <- JsonHelpers.opt[XjdfString](cursor, "PostBox")
-      region <- JsonHelpers.opt[XjdfString](cursor, "Region")
-      street <- JsonHelpers.opt[XjdfString](cursor, "Street")
-      addressLines <- JsonHelpers.vec[String](cursor, "AddressLine")
+      postalCode      <- JsonHelpers.opt[XjdfString](cursor, "PostalCode")
+      postBox         <- JsonHelpers.opt[XjdfString](cursor, "PostBox")
+      region          <- JsonHelpers.opt[XjdfString](cursor, "Region")
+      street          <- JsonHelpers.opt[XjdfString](cursor, "Street")
+      addressLines    <- JsonHelpers.vec[String](cursor, "AddressLine")
     yield Address(
       addressUsage,
       city,
@@ -102,9 +99,9 @@ object JsonResources:
   )
   given Decoder[Company] = Decoder.instance(cursor =>
     for
-      organizationName <- cursor.get[XjdfString]("OrganizationName")
-      companyId <- JsonHelpers.opt[Nmtoken](cursor, "CompanyID")
-      descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
+      organizationName    <- cursor.get[XjdfString]("OrganizationName")
+      companyId           <- JsonHelpers.opt[Nmtoken](cursor, "CompanyID")
+      descriptiveName     <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
       organizationalUnits <- JsonHelpers.vec[String](cursor, "OrganizationalUnit")
     yield Company(organizationName, companyId, descriptiveName, organizationalUnits),
   )

@@ -2,18 +2,15 @@ package xjdf4s.http
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-
 import org.http4s.{DecodeFailure, EntityDecoder, MediaTypeMismatch, Method, Request}
 import org.http4s.headers.`Content-Type`
-
 import xjdf4s.codec.json.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.{Header, Notification, XJDF}
 
-/**
- * The entity layer of stage 07: round-trips through the stage 04/05 codecs and strict media-type checking
- * (Table 9.1; wrong MIME types are rejected with MediaTypeMismatch).
+/** The entity layer of stage 07: round-trips through the stage 04/05 codecs and strict media-type checking
+ *  (Table 9.1; wrong MIME types are rejected with MediaTypeMismatch).
  */
 object XjdfEntityChecks:
 
@@ -56,11 +53,11 @@ object XjdfEntityChecks:
     val xmlBody = Request[IO](Method.POST).withEntity(document)(using XjdfEntities.xjdfXmlEncoder)
     decodeResult(xmlBody, XjdfEntities.xjdfJsonDecoder).unsafeRunSync() match
       case Left(_: MediaTypeMismatch) => ()
-      case other                      => assert(false, s"expected MediaTypeMismatch, got $other")
+      case other => assert(false, s"expected MediaTypeMismatch, got $other")
     val jsonBody = Request[IO](Method.POST).withEntity(document)(using XjdfEntities.xjdfJsonEncoder)
     decodeResult(jsonBody, XjdfEntities.xjdfXmlDecoder).unsafeRunSync() match
       case Left(_: MediaTypeMismatch) => ()
-      case other                      => assert(false, s"expected MediaTypeMismatch, got $other")
+      case other => assert(false, s"expected MediaTypeMismatch, got $other")
 
   /** A single message element as a JSON body: the endpoint implies the element name (9.10.3). */
   val messageEntityRoundTrip: Unit =

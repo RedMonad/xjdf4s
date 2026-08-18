@@ -4,14 +4,12 @@ import xjdf4s.core.*
 
 enum AuditName derives CanEqual:
   case AuditCreated, AuditNotification, AuditProcessRun, AuditResource, AuditStatus
-end AuditName
 
 /** Closed choice of the five XJDF 2.2 audit variants from table 3.3. */
 sealed trait Audit extends XjdfNode,
       HasHeader,
       Extensible:
   def name: AuditName
-end Audit
 
 final case class AuditCreated(
     header: Header,

@@ -1,12 +1,10 @@
 package xjdf4s.model
 
 import cats.{Eq, Hash, Show}
-
 import xjdf4s.core.*
 
 enum PreflightLevel derives CanEqual:
   case Basic, Extended, Premium
-end PreflightLevel
 
 final case class PreflightItem(
     level: Option[PreflightLevel] = None,
@@ -16,11 +14,9 @@ final case class PreflightItem(
 
 enum ProofColorType derives CanEqual:
   case Monochrome, BasicColor, MatchedColor
-end ProofColorType
 
-/**
- * An inclusive two-integer range (Appendix A.1). `IntegerRange` MAY select a contiguous set of items from a list;
- * the two values represent an inclusive index range.
+/** An inclusive two-integer range (Appendix A.1). `IntegerRange` MAY select a contiguous set of items from a list;
+ *  the two values represent an inclusive index range.
  */
 final case class IntegerRange(first: Int, last: Int) derives CanEqual
 
@@ -29,7 +25,11 @@ object IntegerRange:
     Either.cond(
       first <= last,
       IntegerRange(first, last),
-      ValidationError.InvalidValue("IntegerRange", s"$first $last", "a range whose first value does not exceed its last"),
+      ValidationError.InvalidValue(
+        "IntegerRange",
+        s"$first $last",
+        "a range whose first value does not exceed its last"
+      ),
     )
 
   given Eq[IntegerRange] = Eq.fromUniversalEquals
@@ -62,21 +62,18 @@ final case class Rectangle(lowerLeft: XYPair, upperRight: XYPair) derives CanEqu
 object Rectangle:
   given Eq[Rectangle] = Eq.fromUniversalEquals
   given Show[Rectangle] = Show.show(rectangle =>
-    s"${rectangle.lowerLeft.x} ${rectangle.lowerLeft.y} ${rectangle.upperRight.x} ${rectangle.upperRight.y}")
+    s"${rectangle.lowerLeft.x} ${rectangle.lowerLeft.y} ${rectangle.upperRight.x} ${rectangle.upperRight.y}"
+  )
   given Hash[Rectangle] = Hash.fromUniversalHashCode
-end Rectangle
 
 enum CutDepth derives CanEqual:
   case Full, Partial
-end CutDepth
 
 enum ShapeCutType derives CanEqual:
   case Cut, Perforate
-end ShapeCutType
 
 enum ProductShapeType derives CanEqual:
   case Line, Path, Rectangular, Round, RoundedRectangle
-end ProductShapeType
 
 opaque type PdfPath = String
 object PdfPath:

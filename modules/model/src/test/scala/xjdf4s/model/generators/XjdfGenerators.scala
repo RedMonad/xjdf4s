@@ -6,17 +6,16 @@ import xjdf4s.core.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Deterministic, XSD-safe generators for the codec property tests.
+/** Deterministic, XSD-safe generators for the codec property tests.
  *
- * They live in the model TEST scope because they are domain concerns: downstream modules reuse them through
- * `dependsOn(model % "test->test")` (see the sbt multi-project guide in `reference/sbt`, section "Per-configuration
- * classpath dependencies").
+ *  They live in the model TEST scope because they are domain concerns: downstream modules reuse them through
+ *  `dependsOn(model % "test->test")` (see the sbt multi-project guide in `reference/sbt`, section "Per-configuration
+ *  classpath dependencies").
  *
- * "XSD-safe" means: values deliberately stay inside the subset the checked-in `schema.xsd` accepts. Fields where
- * the normative tables supersede the stale XSD (`@Version` 2.2, `Media/@MediaColorName`, `Part/@BlockName`,
- * `ResourceSet/@CombinedProcessIndex`, `Tool` 2.2 attributes, `Patch/@SpotType`, newer enum values, ...) are left
- * unset by these generators. The full normative surface is covered by the plain round-trip suites instead.
+ *  "XSD-safe" means: values deliberately stay inside the subset the checked-in `schema.xsd` accepts. Fields where
+ *  the normative tables supersede the stale XSD (`@Version` 2.2, `Media/@MediaColorName`, `Part/@BlockName`,
+ *  `ResourceSet/@CombinedProcessIndex`, `Tool` 2.2 attributes, `Patch/@SpotType`, newer enum values, ...) are left
+ *  unset by these generators. The full normative surface is covered by the plain round-trip suites instead.
  */
 final class XjdfGenerators(seed: Long):
 

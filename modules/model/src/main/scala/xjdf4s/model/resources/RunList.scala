@@ -5,7 +5,6 @@ import xjdf4s.model.*
 
 enum BandOrdering derives CanEqual:
   case BandMajor, ColorMajor
-end BandOrdering
 
 final case class Band(
     height: Option[Int] = None,
@@ -31,7 +30,6 @@ final case class ByteMap(
 
 enum RunListOrderType derives CanEqual:
   case Content, Insert, Reservation
-end RunListOrderType
 
 final case class RunList(
     automation: Option[Automation] = None,

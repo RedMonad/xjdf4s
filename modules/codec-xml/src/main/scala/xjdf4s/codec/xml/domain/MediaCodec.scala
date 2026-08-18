@@ -9,17 +9,17 @@ object GlueCodec:
   val decoder: XmlDecoder[Glue] =
     XmlDecoder.instance: element =>
       for
-        areaGlue <- XmlDecoders.attributeOf("AreaGlue")(Lexical.bool).decode(element)
-        glueLineWidth <- XmlDecoders.attributeOf("GlueLineWidth")(Lexical.float).decode(element)
-        glueRef <- XmlDecoders.attributeOf("GlueRef")(Lexical.xsdIdRef).decode(element)
-        glueType <- XmlDecoders.attributeOf("GlueType")(Lexical.glueType).decode(element)
-        gluingPattern <- XmlDecoders.attributeOf("GluingPattern")(Lexical.gluingPattern).decode(element)
-        gluingTechnique <- XmlDecoders.attributeOf("GluingTechnique")(Lexical.gluingTechnique).decode(element)
+        areaGlue           <- XmlDecoders.attributeOf("AreaGlue")(Lexical.bool).decode(element)
+        glueLineWidth      <- XmlDecoders.attributeOf("GlueLineWidth")(Lexical.float).decode(element)
+        glueRef            <- XmlDecoders.attributeOf("GlueRef")(Lexical.xsdIdRef).decode(element)
+        glueType           <- XmlDecoders.attributeOf("GlueType")(Lexical.glueType).decode(element)
+        gluingPattern      <- XmlDecoders.attributeOf("GluingPattern")(Lexical.gluingPattern).decode(element)
+        gluingTechnique    <- XmlDecoders.attributeOf("GluingTechnique")(Lexical.gluingTechnique).decode(element)
         meltingTemperature <- XmlDecoders.attributeOf("MeltingTemperature")(Lexical.int).decode(element)
-        startPosition <- XmlDecoders.attributeOf("StartPosition")(Lexical.xypair).decode(element)
-        workingDirection <- XmlDecoders.attributeOf("WorkingDirection")(Lexical.face).decode(element)
-        workingPath <- XmlDecoders.attributeOf("WorkingPath")(Lexical.xypair).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        startPosition      <- XmlDecoders.attributeOf("StartPosition")(Lexical.xypair).decode(element)
+        workingDirection   <- XmlDecoders.attributeOf("WorkingDirection")(Lexical.face).decode(element)
+        workingPath        <- XmlDecoders.attributeOf("WorkingPath")(Lexical.xypair).decode(element)
+        _                  <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield Glue(
         areaGlue,
         glueLineWidth,
@@ -62,14 +62,14 @@ object MediaLayersCodec:
       for
         _ <- unexpected match
           case Some(child) => Left(XmlError.UnexpectedElement("MediaLayers", child.name.localName))
-          case None        => Right(())
+          case None => Right(())
         layers <- standardChildren.foldLeft[Either[XmlError, Vector[MediaLayer]]](Right(Vector.empty)) {
           (acc, child) =>
             for
               values <- acc
-              layer <- child.name.localName match
-                case "Glue"  => GlueCodec.decoder.decode(child).map(MediaLayer.GlueLayer(_))
-                case _       => MediaCodec.decoder.decode(child).map(MediaLayer.MediaLayer(_))
+              layer  <- child.name.localName match
+                case "Glue" => GlueCodec.decoder.decode(child).map(MediaLayer.GlueLayer(_))
+                case _ => MediaCodec.decoder.decode(child).map(MediaLayer.MediaLayer(_))
             yield values :+ layer
         }
       yield MediaLayers(layers, CodecHelpers.decodeExtensionAttributes(element))
@@ -91,19 +91,19 @@ object ColorMeasurementConditionsCodec:
   val decoder: XmlDecoder[ColorMeasurementConditions] =
     XmlDecoder.instance: element =>
       for
-        aperture <- XmlDecoders.attributeOf("Aperture")(Lexical.float).decode(element)
-        densityStandard <- XmlDecoders.attributeOf("DensityStandard")(Lexical.nmtoken).decode(element)
-        illumination <- XmlDecoders.attributeOf("Illumination")(Lexical.nmtoken).decode(element)
-        illuminationAngle <- XmlDecoders.attributeOf("IlluminationAngle")(Lexical.int).decode(element)
-        inkState <- XmlDecoders.attributeOf("InkState")(Lexical.inkState).decode(element)
-        measurementAngle <- XmlDecoders.attributeOf("MeasurementAngle")(Lexical.int).decode(element)
-        measurementFilter <- XmlDecoders.attributeOf("MeasurementFilter")(Lexical.measurementFilter).decode(element)
-        measurementMode <- XmlDecoders.attributeOf("MeasurementMode")(Lexical.nmtoken).decode(element)
-        observer <- XmlDecoders.attributeOf("Observer")(Lexical.int).decode(element)
-        sampleBacking <- XmlDecoders.attributeOf("SampleBacking")(Lexical.sampleBacking).decode(element)
+        aperture           <- XmlDecoders.attributeOf("Aperture")(Lexical.float).decode(element)
+        densityStandard    <- XmlDecoders.attributeOf("DensityStandard")(Lexical.nmtoken).decode(element)
+        illumination       <- XmlDecoders.attributeOf("Illumination")(Lexical.nmtoken).decode(element)
+        illuminationAngle  <- XmlDecoders.attributeOf("IlluminationAngle")(Lexical.int).decode(element)
+        inkState           <- XmlDecoders.attributeOf("InkState")(Lexical.inkState).decode(element)
+        measurementAngle   <- XmlDecoders.attributeOf("MeasurementAngle")(Lexical.int).decode(element)
+        measurementFilter  <- XmlDecoders.attributeOf("MeasurementFilter")(Lexical.measurementFilter).decode(element)
+        measurementMode    <- XmlDecoders.attributeOf("MeasurementMode")(Lexical.nmtoken).decode(element)
+        observer           <- XmlDecoders.attributeOf("Observer")(Lexical.int).decode(element)
+        sampleBacking      <- XmlDecoders.attributeOf("SampleBacking")(Lexical.sampleBacking).decode(element)
         spectralResolution <- XmlDecoders.attributeOf("SpectralResolution")(Lexical.float).decode(element)
-        whiteBase <- XmlDecoders.attributeOf("WhiteBase")(Lexical.whiteBase).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        whiteBase          <- XmlDecoders.attributeOf("WhiteBase")(Lexical.whiteBase).decode(element)
+        _                  <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield ColorMeasurementConditions(
         aperture,
         densityStandard,
@@ -143,67 +143,76 @@ object MediaCodec:
   val decoder: XmlDecoder[Media] =
     XmlDecoder.instance: element =>
       for
-        mediaType <- XmlDecoders.requiredAttribute("MediaType")(Lexical.mediaType).decode(element)
-        backBrightness <- XmlDecoders.attributeOf("BackBrightness")(Lexical.float).decode(element)
-        backCieTint <- XmlDecoders.attributeOf("BackCIETint")(Lexical.float).decode(element)
-        backCieWhiteness <- XmlDecoders.attributeOf("BackCIEWhiteness")(Lexical.float).decode(element)
-        backCoating <- XmlDecoders.attributeOf("BackCoating")(Lexical.coating).decode(element)
-        backCoatingDetail <- XmlDecoders.attributeOf("BackCoatingDetail")(Lexical.nmtoken).decode(element)
-        backGlossValue <- XmlDecoders.attributeOf("BackGlossValue")(Lexical.float).decode(element)
-        backIsoPaperSubstrate <- XmlDecoders.attributeOf("BackISOPaperSubstrate")(Lexical.isoPaperSubstrate).decode(element)
-        backLabColorValue <- XmlDecoders.attributeOf("BackLabColorValue")(Lexical.labColor).decode(element)
-        backSpectrum <- XmlDecoders.attributeOf("BackSpectrum")(Lexical.transferFunction).decode(element)
-        brightness <- XmlDecoders.attributeOf("Brightness")(Lexical.float).decode(element)
-        cieTint <- XmlDecoders.attributeOf("CIETint")(Lexical.float).decode(element)
-        cieWhiteness <- XmlDecoders.attributeOf("CIEWhiteness")(Lexical.float).decode(element)
-        coating <- XmlDecoders.attributeOf("Coating")(Lexical.coating).decode(element)
-        coatingDetail <- XmlDecoders.attributeOf("CoatingDetail")(Lexical.nmtoken).decode(element)
-        coreWeight <- XmlDecoders.attributeOf("CoreWeight")(Lexical.float).decode(element)
-        dimension <- XmlDecoders.attributeOf("Dimension")(Lexical.xypair).decode(element)
-        flute <- XmlDecoders.attributeOf("Flute")(Lexical.nmtoken).decode(element)
-        fluteDirection <- XmlDecoders.attributeOf("FluteDirection")(Lexical.mediaDirection).decode(element)
-        glossValue <- XmlDecoders.attributeOf("GlossValue")(Lexical.float).decode(element)
-        grainDirection <- XmlDecoders.attributeOf("GrainDirection")(Lexical.mediaDirection).decode(element)
-        imagableSide <- XmlDecoders.attributeOf("ImagableSide")(Lexical.imagableSide).decode(element)
-        innerCoreDiameter <- XmlDecoders.attributeOf("InnerCoreDiameter")(Lexical.float).decode(element)
-        insideLoss <- XmlDecoders.attributeOf("InsideLoss")(Lexical.float).decode(element)
-        isoPaperSubstrate <- XmlDecoders.attributeOf("ISOPaperSubstrate")(Lexical.isoPaperSubstrate).decode(element)
-        labColorValue <- XmlDecoders.attributeOf("LabColorValue")(Lexical.labColor).decode(element)
-        mediaColorName <- XmlDecoders.attributeOf("MediaColorName")(Lexical.namedColor).decode(element)
+        mediaType             <- XmlDecoders.requiredAttribute("MediaType")(Lexical.mediaType).decode(element)
+        backBrightness        <- XmlDecoders.attributeOf("BackBrightness")(Lexical.float).decode(element)
+        backCieTint           <- XmlDecoders.attributeOf("BackCIETint")(Lexical.float).decode(element)
+        backCieWhiteness      <- XmlDecoders.attributeOf("BackCIEWhiteness")(Lexical.float).decode(element)
+        backCoating           <- XmlDecoders.attributeOf("BackCoating")(Lexical.coating).decode(element)
+        backCoatingDetail     <- XmlDecoders.attributeOf("BackCoatingDetail")(Lexical.nmtoken).decode(element)
+        backGlossValue        <- XmlDecoders.attributeOf("BackGlossValue")(Lexical.float).decode(element)
+        backIsoPaperSubstrate <-
+          XmlDecoders.attributeOf("BackISOPaperSubstrate")(Lexical.isoPaperSubstrate).decode(element)
+        backLabColorValue     <- XmlDecoders.attributeOf("BackLabColorValue")(Lexical.labColor).decode(element)
+        backSpectrum          <- XmlDecoders.attributeOf("BackSpectrum")(Lexical.transferFunction).decode(element)
+        brightness            <- XmlDecoders.attributeOf("Brightness")(Lexical.float).decode(element)
+        cieTint               <- XmlDecoders.attributeOf("CIETint")(Lexical.float).decode(element)
+        cieWhiteness          <- XmlDecoders.attributeOf("CIEWhiteness")(Lexical.float).decode(element)
+        coating               <- XmlDecoders.attributeOf("Coating")(Lexical.coating).decode(element)
+        coatingDetail         <- XmlDecoders.attributeOf("CoatingDetail")(Lexical.nmtoken).decode(element)
+        coreWeight            <- XmlDecoders.attributeOf("CoreWeight")(Lexical.float).decode(element)
+        dimension             <- XmlDecoders.attributeOf("Dimension")(Lexical.xypair).decode(element)
+        flute                 <- XmlDecoders.attributeOf("Flute")(Lexical.nmtoken).decode(element)
+        fluteDirection        <- XmlDecoders.attributeOf("FluteDirection")(Lexical.mediaDirection).decode(element)
+        glossValue            <- XmlDecoders.attributeOf("GlossValue")(Lexical.float).decode(element)
+        grainDirection        <- XmlDecoders.attributeOf("GrainDirection")(Lexical.mediaDirection).decode(element)
+        imagableSide          <- XmlDecoders.attributeOf("ImagableSide")(Lexical.imagableSide).decode(element)
+        innerCoreDiameter     <- XmlDecoders.attributeOf("InnerCoreDiameter")(Lexical.float).decode(element)
+        insideLoss            <- XmlDecoders.attributeOf("InsideLoss")(Lexical.float).decode(element)
+        isoPaperSubstrate     <- XmlDecoders.attributeOf("ISOPaperSubstrate")(Lexical.isoPaperSubstrate).decode(element)
+        labColorValue         <- XmlDecoders.attributeOf("LabColorValue")(Lexical.labColor).decode(element)
+        mediaColorName        <- XmlDecoders.attributeOf("MediaColorName")(Lexical.namedColor).decode(element)
         mediaColorNameDetails <- XmlDecoders.attributeOf("MediaColorNameDetails")(Lexical.xjdfString).decode(element)
-        mediaQuality <- XmlDecoders.attributeOf("MediaQuality")(Lexical.xjdfString).decode(element)
-        mediaSetCount <- XmlDecoders.attributeOf("MediaSetCount")(Lexical.int).decode(element)
-        mediaTypeDetails <- XmlDecoders.attributeOf("MediaTypeDetails")(Lexical.nmtoken).decode(element)
-        mediaUnit <- XmlDecoders.attributeOf("MediaUnit")(Lexical.mediaUnit).decode(element)
-        opacity <- XmlDecoders.attributeOf("Opacity")(Lexical.opacity).decode(element)
-        opacityLevel <- XmlDecoders.attributeOf("OpacityLevel")(Lexical.float).decode(element)
-        outerCoreDiameter <- XmlDecoders.attributeOf("OuterCoreDiameter")(Lexical.float).decode(element)
-        outsideGain <- XmlDecoders.attributeOf("OutsideGain")(Lexical.float).decode(element)
-        plateTechnology <- XmlDecoders.attributeOf("PlateTechnology")(Lexical.plateTechnology).decode(element)
-        polarity <- XmlDecoders.attributeOf("Polarity")(Lexical.polarity).decode(element)
-        printingTechnology <- XmlDecoders.attributeOf("PrintingTechnology")(Lexical.nmtoken).decode(element)
-        recycledPercentage <- XmlDecoders.attributeOf("RecycledPercentage")(Lexical.float).decode(element)
-        reliefThickness <- XmlDecoders.attributeOf("ReliefThickness")(Lexical.float).decode(element)
-        rollDiameter <- XmlDecoders.attributeOf("RollDiameter")(Lexical.float).decode(element)
-        shrinkIndex <- XmlDecoders.attributeOf("ShrinkIndex")(Lexical.xypair).decode(element)
-        sleeveInterlock <- XmlDecoders.attributeOf("SleeveInterlock")(Lexical.nmtoken).decode(element)
-        spectrum <- XmlDecoders.attributeOf("Spectrum")(Lexical.transferFunction).decode(element)
-        stockType <- XmlDecoders.attributeOf("StockType")(Lexical.nmtoken).decode(element)
-        texture <- XmlDecoders.attributeOf("Texture")(Lexical.nmtoken).decode(element)
-        thickness <- XmlDecoders.attributeOf("Thickness")(Lexical.float).decode(element)
-        weight <- XmlDecoders.attributeOf("Weight")(Lexical.float).decode(element)
+        mediaQuality          <- XmlDecoders.attributeOf("MediaQuality")(Lexical.xjdfString).decode(element)
+        mediaSetCount         <- XmlDecoders.attributeOf("MediaSetCount")(Lexical.int).decode(element)
+        mediaTypeDetails      <- XmlDecoders.attributeOf("MediaTypeDetails")(Lexical.nmtoken).decode(element)
+        mediaUnit             <- XmlDecoders.attributeOf("MediaUnit")(Lexical.mediaUnit).decode(element)
+        opacity               <- XmlDecoders.attributeOf("Opacity")(Lexical.opacity).decode(element)
+        opacityLevel          <- XmlDecoders.attributeOf("OpacityLevel")(Lexical.float).decode(element)
+        outerCoreDiameter     <- XmlDecoders.attributeOf("OuterCoreDiameter")(Lexical.float).decode(element)
+        outsideGain           <- XmlDecoders.attributeOf("OutsideGain")(Lexical.float).decode(element)
+        plateTechnology       <- XmlDecoders.attributeOf("PlateTechnology")(Lexical.plateTechnology).decode(element)
+        polarity              <- XmlDecoders.attributeOf("Polarity")(Lexical.polarity).decode(element)
+        printingTechnology    <- XmlDecoders.attributeOf("PrintingTechnology")(Lexical.nmtoken).decode(element)
+        recycledPercentage    <- XmlDecoders.attributeOf("RecycledPercentage")(Lexical.float).decode(element)
+        reliefThickness       <- XmlDecoders.attributeOf("ReliefThickness")(Lexical.float).decode(element)
+        rollDiameter          <- XmlDecoders.attributeOf("RollDiameter")(Lexical.float).decode(element)
+        shrinkIndex           <- XmlDecoders.attributeOf("ShrinkIndex")(Lexical.xypair).decode(element)
+        sleeveInterlock       <- XmlDecoders.attributeOf("SleeveInterlock")(Lexical.nmtoken).decode(element)
+        spectrum              <- XmlDecoders.attributeOf("Spectrum")(Lexical.transferFunction).decode(element)
+        stockType             <- XmlDecoders.attributeOf("StockType")(Lexical.nmtoken).decode(element)
+        texture               <- XmlDecoders.attributeOf("Texture")(Lexical.nmtoken).decode(element)
+        thickness             <- XmlDecoders.attributeOf("Thickness")(Lexical.float).decode(element)
+        weight                <- XmlDecoders.attributeOf("Weight")(Lexical.float).decode(element)
         conditions <- XmlDecoders.optionalChild("ColorMeasurementConditions")(ColorMeasurementConditionsCodec.decoder)
           .decode(element)
-        mediaLayers <- XmlDecoders.optionalChild("MediaLayers")(MediaLayersCodec.decoder).decode(element)
+        mediaLayers    <- XmlDecoders.optionalChild("MediaLayers")(MediaLayersCodec.decoder).decode(element)
         certifications <- XmlDecoders.repeatedChild("Certification")(summon[XmlElementCodec[Certification]])
           .decode(element)
         holePatterns <- XmlDecoders.repeatedChild("HolePattern")(summon[XmlElementCodec[HolePattern]]).decode(element)
         identificationFields <- XmlDecoders
           .repeatedChild("IdentificationField")(summon[XmlElementCodec[IdentificationField]])
           .decode(element)
-        tabDimensions <- XmlDecoders.optionalChild("TabDimensions")(summon[XmlElementCodec[TabDimensions]]).decode(element)
+        tabDimensions <-
+          XmlDecoders.optionalChild("TabDimensions")(summon[XmlElementCodec[TabDimensions]]).decode(element)
         _ <- XmlDecoders
-          .expectChildrenOnly(Set("ColorMeasurementConditions", "MediaLayers", "Certification", "HolePattern", "IdentificationField", "TabDimensions"))
+          .expectChildrenOnly(Set(
+            "ColorMeasurementConditions",
+            "MediaLayers",
+            "Certification",
+            "HolePattern",
+            "IdentificationField",
+            "TabDimensions"
+          ))
           .decode(element)
       yield Media(
         mediaType,

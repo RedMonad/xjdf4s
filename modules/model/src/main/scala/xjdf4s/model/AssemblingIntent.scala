@@ -30,7 +30,6 @@ final case class BlowIn(
 enum ProductLocation derives CanEqual:
   case OnFace(face: Face)
   case OnFolio(folio: Int)
-end ProductLocation
 
 final case class StickOn(
     childRef: XsdIdRef,
@@ -44,11 +43,9 @@ final case class StickOn(
 
 enum GlueType derives CanEqual:
   case ColdGlue, Hotmelt, Permanent, PUR, Removable
-end GlueType
 
 enum GluingTechnique derives CanEqual:
   case SpineGluing, SideGluingFront, SideGluingBack
-end GluingTechnique
 
 final case class Glue(
     areaGlue: Option[Boolean] = None,

@@ -3,10 +3,9 @@ package xjdf4s.core
 import cats.{Eq, Show}
 import cats.data.{NonEmptyList, Validated, ValidatedNel}
 
-/**
- * Domain validation error vocabulary. Type-level invariants (opaque types, coproducts, cardinality containers) make
- * most invalid states unrepresentable; this error set backs the remaining cross-field SHALL constraints, which are
- * exposed per node through [[ValidatedNode#validate]].
+/** Domain validation error vocabulary. Type-level invariants (opaque types, coproducts, cardinality containers) make
+ *  most invalid states unrepresentable; this error set backs the remaining cross-field SHALL constraints, which are
+ *  exposed per node through [[ValidatedNode#validate]].
  */
 enum ValidationError derives CanEqual:
   case EmptyValue(field: String)
@@ -57,23 +56,20 @@ final case class Warning(code: String, message: String)
 
 object Warning:
   given Show[Warning] = Show.show(warning => s"[${warning.code}] ${warning.message}")
-end Warning
 
-/**
- * Two-channel result of a validation pass: blocking errors plus non-blocking warnings. Errors make a document
- * invalid; warnings never do.
+/** Two-channel result of a validation pass: blocking errors plus non-blocking warnings. Errors make a document
+ *  invalid; warnings never do.
  */
 final case class ValidationOutcome(errors: Vector[ValidationError], warnings: Vector[Warning]):
   def isValid: Boolean = errors.isEmpty
   def toValidatedNel: ValidatedNel[ValidationError, Unit] = errors.toValidatedNel
-end ValidationOutcome
 
 extension (errors: Vector[ValidationError])
   /** Accumulating view: `Invalid` carries every error in a `NonEmptyList` (cats `ValidatedNel`). */
   def toValidatedNel: ValidatedNel[ValidationError, Unit] =
     NonEmptyList.fromList(errors.toList) match
       case Some(nel) => Validated.invalid(nel)
-      case None      => Validated.validNel[ValidationError, Unit](())
+      case None => Validated.validNel[ValidationError, Unit](())
 
   /** Fail-fast view of the same errors. */
   def toEitherNel: Either[NonEmptyList[ValidationError], Unit] =
@@ -89,12 +85,10 @@ extension (node: ValidatedNode)
     node.validate.map(error => ValidationError.AtPath(path, error)).toValidatedNel
 end extension
 
-/**
- * Compositional validation hook for nodes carrying normative cross-field SHALL constraints that cannot be expressed as
- * a product/coproduct shape (mutually exclusive attributes, reference targets, dependent attributes). A node with no
- * such constraints simply returns an empty vector; the API exists uniformly so that documents and codecs can reject
- * invalid states without pattern-matching on every node kind.
+/** Compositional validation hook for nodes carrying normative cross-field SHALL constraints that cannot be expressed as
+ *  a product/coproduct shape (mutually exclusive attributes, reference targets, dependent attributes). A node with no
+ *  such constraints simply returns an empty vector; the API exists uniformly so that documents and codecs can reject
+ *  invalid states without pattern-matching on every node kind.
  */
 trait ValidatedNode:
   def validate: Vector[ValidationError]
-end ValidatedNode

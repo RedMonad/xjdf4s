@@ -1,7 +1,6 @@
 package xjdf4s.model
 
 import cats.Show
-
 import xjdf4s.core.*
 import xjdf4s.model.resources.*
 
@@ -55,7 +54,11 @@ object ValidationDslChecks:
     assert(clean.warnings.isEmpty)
     assert(!validateWithWarnings(invalidResource).isValid)
     val document =
-      XJDF(jobId, NonEmptyVector.one(process), resourceSets = Vector(ResourceSet(mediaName, resources = Vector(invalidResource))))
+      XJDF(
+        jobId,
+        NonEmptyVector.one(process),
+        resourceSets = Vector(ResourceSet(mediaName, resources = Vector(invalidResource)))
+      )
     val outcome = validateDocumentWithWarnings(document)
     assert(!outcome.isValid)
     assert(outcome.errors.size == 1)

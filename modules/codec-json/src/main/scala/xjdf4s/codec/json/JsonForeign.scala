@@ -1,17 +1,15 @@
 package xjdf4s.codec.json
 
 import io.circe.{Decoder, DecodingFailure, HCursor, Json}
-
 import xjdf4s.core.*
 
-/**
- * JSON support for foreign-namespace content (9.10.2.4, Example 9.12): XJDF members are unprefixed, foreign
- * attributes and elements map to `"Prefix:Name"` members, and the prefix-to-namespace mapping is carried by the
- * JSON-LD `"@context"` member. The JSON-LD subset used here is minimal by design.
+/** JSON support for foreign-namespace content (9.10.2.4, Example 9.12): XJDF members are unprefixed, foreign
+ *  attributes and elements map to `"Prefix:Name"` members, and the prefix-to-namespace mapping is carried by the
+ *  JSON-LD `"@context"` member. The JSON-LD subset used here is minimal by design.
  *
- * Namespaces without a prefix get a synthesized `"ns1"`, `"ns2"`, ... prefix (assigned per encode call, sorted by
- * namespace for determinism). On decode the `"@context"` map reverses the prefix; an unmapped prefix falls back
- * to using the prefix itself as the namespace, so the JSON round-trip stays lossless.
+ *  Namespaces without a prefix get a synthesized `"ns1"`, `"ns2"`, ... prefix (assigned per encode call, sorted by
+ *  namespace for determinism). On decode the `"@context"` map reverses the prefix; an unmapped prefix falls back
+ *  to using the prefix itself as the namespace, so the JSON round-trip stays lossless.
  */
 object JsonForeign:
 
@@ -23,7 +21,7 @@ object JsonForeign:
     def keyOf(name: QualifiedName): String =
       name.prefix match
         case Some(prefix) => s"$prefix:${name.localName}"
-        case None         => s"${synthesized(name.namespace)}:${name.localName}"
+        case None => s"${synthesized(name.namespace)}:${name.localName}"
 
     private def synthesized(namespace: String): String =
       byNamespace.getOrElseUpdate(
@@ -66,7 +64,8 @@ object JsonForeign:
   def encodeForeignElementMember(element: ExtensionElement): Vector[(String, Json)] =
     val prefixes = new PrefixTable
     val key = prefixes.keyOf(element.name.qualifiedName)
-    contextMember(Vector((key, element.name.qualifiedName.namespace))) ++ Vector((key, encodeElement(element, prefixes)))
+    contextMember(Vector((key, element.name.qualifiedName.namespace))) ++
+      Vector((key, encodeElement(element, prefixes)))
 
   private def contextMember(entries: Vector[(String, String)]): Vector[(String, Json)] =
     val mappings = entries.distinctBy(_._1).sortBy(_._1).map { case (key, namespace) =>
@@ -89,10 +88,12 @@ object JsonForeign:
       .sortBy(_._1)
       .map { case (key, entries) => (key, oneOrArray(entries.map(entry => encodeElement(entry._3, prefixes)))) }
     val attributeMembers = attributeEntries.map { case (key, _, value) => (key, value) }
-    val context = contextMember((attributeEntries.map(entry => (entry._1, entry._2)) ++ childEntries.map(entry => (entry._1, entry._2))).toVector)
+    val context = contextMember((attributeEntries.map(entry => (entry._1, entry._2)) ++
+      childEntries.map(entry => (entry._1, entry._2))).toVector)
     Json.obj((context ++ attributeMembers ++ childMembers ++ textMember(element.content))*)
 
-  private def decodeForeignMembers(cursor: HCursor): Decoder.Result[(Map[QualifiedName, ExtensionValue], Vector[ExtensionElement])] =
+  private def decodeForeignMembers(cursor: HCursor)
+      : Decoder.Result[(Map[QualifiedName, ExtensionValue], Vector[ExtensionElement])] =
     val keys = cursor.keys.getOrElse(Iterable.empty).toVector
     val context = contextOf(cursor)
     keys
@@ -102,7 +103,8 @@ object JsonForeign:
       ) { (acc, key) =>
         for
           accumulated <- acc
-          member <- cursor.downField(key).focus.toRight(DecodingFailure(s"missing foreign member '$key'", cursor.history))
+          member      <-
+            cursor.downField(key).focus.toRight(DecodingFailure(s"missing foreign member '$key'", cursor.history))
           decoded <- decodeForeignMember(key, context, member)
         yield (accumulated._1 ++ decoded._1, accumulated._2 ++ decoded._2)
       }
@@ -112,8 +114,8 @@ object JsonForeign:
     for
       key <- cursor.keys.getOrElse(Iterable.empty)
       if key == "@context"
-      json <- cursor.downField(key).focus
-      obj <- json.asObject
+      json            <- cursor.downField(key).focus
+      obj             <- json.asObject
       (prefix, value) <- obj.toIterable
       if value.isString
     do mappings += ((prefix, value.asString.getOrElse("")))
@@ -136,7 +138,7 @@ object JsonForeign:
         .foldLeft[Decoder.Result[Vector[ExtensionElement]]](Right(Vector.empty)) { (acc, item) =>
           for
             elements <- acc
-            element <- decodeElement(prefix, localName, context, item)
+            element  <- decodeElement(prefix, localName, context, item)
           yield elements :+ element
         }
         .map(elements => (Map.empty, elements))
@@ -147,7 +149,12 @@ object JsonForeign:
   private def isElementJson(json: Json): Boolean =
     json.isObject || (json.isArray && json.asArray.exists(_.forall(_.isObject)))
 
-  private def decodeElement(prefix: String, localName: String, context: Map[String, String], json: Json): Decoder.Result[ExtensionElement] =
+  private def decodeElement(
+      prefix: String,
+      localName: String,
+      context: Map[String, String],
+      json: Json
+  ): Decoder.Result[ExtensionElement] =
     ForeignQName
       .from(context.getOrElse(prefix, prefix), localName, Some(prefix))
       .left
@@ -162,7 +169,8 @@ object JsonForeign:
           ) { (acc, key) =>
             for
               accumulated <- acc
-              member <- json.hcursor.downField(key).focus.toRight(DecodingFailure(s"missing foreign member '$key'", Nil))
+              member      <-
+                json.hcursor.downField(key).focus.toRight(DecodingFailure(s"missing foreign member '$key'", Nil))
               decoded <-
                 if isElementJson(member) then
                   val memberSplit = key.indexOf(":")
@@ -171,7 +179,12 @@ object JsonForeign:
                     .foldLeft[Decoder.Result[Vector[ExtensionElement]]](Right(Vector.empty)) { (innerAcc, item) =>
                       for
                         elements <- innerAcc
-                        element <- decodeElement(key.substring(0, memberSplit), key.substring(memberSplit + 1), innerContext, item)
+                        element  <- decodeElement(
+                          key.substring(0, memberSplit),
+                          key.substring(memberSplit + 1),
+                          innerContext,
+                          item
+                        )
                       yield elements :+ element
                     }
                     .map(elements => elements.map(element => Right(ExtensionContent.Element(element))))
@@ -185,12 +198,11 @@ object JsonForeign:
                     )
                     Vector(Left((attributeName, value)))
                   }
-            yield
-              decoded.foldLeft(accumulated) { case ((attributes, contents), entry) =>
-                entry match
-                  case Left(attribute) => (attributes + attribute, contents)
-                  case Right(content)  => (attributes, contents :+ content)
-              }
+            yield decoded.foldLeft(accumulated) { case ((attributes, contents), entry) =>
+              entry match
+                case Left(attribute) => (attributes + attribute, contents)
+                case Right(content) => (attributes, contents :+ content)
+            }
           }
           .flatMap { case (attributes, contents) =>
             decodeText(json, keys).map { texts =>
@@ -205,15 +217,16 @@ object JsonForeign:
       .foldLeft[Decoder.Result[Vector[String]]](Right(Vector.empty)) { (acc, key) =>
         for
           accumulated <- acc
-          member <- json.hcursor.downField(key).focus.toRight(DecodingFailure("missing 'Text' member", Nil))
-          decoded <-
+          member      <- json.hcursor.downField(key).focus.toRight(DecodingFailure("missing 'Text' member", Nil))
+          decoded     <-
             if member.isString then Right(Vector(member.asString.get))
             else if member.isArray then
-              member.asArray.get.toVector.foldLeft[Decoder.Result[Vector[String]]](Right(Vector.empty)) { (innerAcc, item) =>
-                for
-                  items <- innerAcc
-                  text <- item.asString.toRight(DecodingFailure("Text member entries must be strings", Nil))
-                yield items :+ text
+              member.asArray.get.toVector.foldLeft[Decoder.Result[Vector[String]]](Right(Vector.empty)) {
+                (innerAcc, item) =>
+                  for
+                    items <- innerAcc
+                    text  <- item.asString.toRight(DecodingFailure("Text member entries must be strings", Nil))
+                  yield items :+ text
               }
             else Left(DecodingFailure("Text member must be a string or an array of strings", Nil))
         yield accumulated ++ decoded
@@ -222,9 +235,9 @@ object JsonForeign:
   private def extensionValueJson(value: ExtensionValue): Json =
     value match
       case ExtensionValue.Text(text) => Json.fromString(text)
-      case ExtensionValue.Number(n)  => Json.fromBigDecimal(n)
+      case ExtensionValue.Number(n) => Json.fromBigDecimal(n)
       case ExtensionValue.Bool(flag) => Json.fromBoolean(flag)
-      case ExtensionValue.Null       => Json.Null
+      case ExtensionValue.Null => Json.Null
 
   private def jsonExtensionValue(json: Json, key: String): Decoder.Result[ExtensionValue] =
     if json.isString then Right(ExtensionValue.Text(json.asString.get))
@@ -240,12 +253,12 @@ object JsonForeign:
   private def textMember(content: Vector[ExtensionContent]): Vector[(String, Json)] =
     val texts = content.collect { case ExtensionContent.Text(value) => value }
     texts match
-      case Vector()       => Vector.empty
+      case Vector() => Vector.empty
       case Vector(single) => Vector(("Text", Json.fromString(single)))
-      case many           => Vector(("Text", Json.arr(many.map(Json.fromString)*)))
+      case many => Vector(("Text", Json.arr(many.map(Json.fromString)*)))
 
   private def oneOrArray(values: Vector[Json]): Json =
     values match
       case Vector(single) => single
-      case many           => Json.arr(many*)
+      case many => Json.arr(many*)
 end JsonForeign

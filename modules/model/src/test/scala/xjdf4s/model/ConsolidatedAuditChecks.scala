@@ -3,9 +3,8 @@ package xjdf4s.model
 import xjdf4s.core.*
 import xjdf4s.model.resources.*
 
-/**
- * Regression checks for the consolidated AUDIT.md findings: closed vocabularies, 2.2 fields, scalar/list corrections
- * and the compositional validation hooks.
+/** Regression checks for the consolidated AUDIT.md findings: closed vocabularies, 2.2 fields, scalar/list corrections
+ *  and the compositional validation hooks.
  */
 object ConsolidatedAuditChecks:
   val closedVocabularies: Unit =

@@ -3,9 +3,8 @@ package xjdf4s.core
 import cats.{Eq, Hash, Show}
 import cats.syntax.semigroup.*
 
-/**
- * Hand-rolled smoke checks of the cats instances (stage 01): Monoid laws for Extensions, Eq/Hash agreement and
- * Show rendering. The full law suite via cats-laws + discipline is planned for stage 08.
+/** Hand-rolled smoke checks of the cats instances (stage 01): Monoid laws for Extensions, Eq/Hash agreement and
+ *  Show rendering. The full law suite via cats-laws + discipline is planned for stage 08.
  */
 object CatsInstanceChecks:
   private val key = QualifiedName("urn:vendor:ns", "weight")

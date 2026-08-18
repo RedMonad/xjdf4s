@@ -1,7 +1,6 @@
 package xjdf4s.model
 
 import cats.{Eq, Hash, Show}
-
 import xjdf4s.core.*
 
 /** Stage 01 checks for the value-type instances of the model module. */
@@ -18,4 +17,3 @@ object ModelInstanceChecks:
         .show(ValidationError.AtPath(Vector("ResourceSet[0]"), ValidationError.EmptyValue("x")))
         .contains("ResourceSet[0]"),
     )
-end ModelInstanceChecks

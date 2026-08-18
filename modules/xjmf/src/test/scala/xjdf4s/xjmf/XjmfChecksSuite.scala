@@ -14,4 +14,3 @@ class XjmfChecksSuite extends munit.FunSuite:
     )
     assert(results.size == 7)
   }
-end XjmfChecksSuite

@@ -5,19 +5,15 @@ import xjdf4s.model.*
 
 enum ImageDownsampleType derives CanEqual:
   case Average, Bicubic, Subsample
-end ImageDownsampleType
 
 enum CompressedImageType derives CanEqual:
   case Color, Grayscale, Monochrome
-end CompressedImageType
 
 enum DctColorTransform derives CanEqual:
   case None, YUV, Automatic
-end DctColorTransform
 
 enum Jpeg2000ProgressionOrder derives CanEqual:
   case LRCP, RLCP, RPCL, PCRL, CPRL
-end Jpeg2000ProgressionOrder
 
 final case class CcittFaxParams(
     encodedByteAlign: Option[Boolean] = None,

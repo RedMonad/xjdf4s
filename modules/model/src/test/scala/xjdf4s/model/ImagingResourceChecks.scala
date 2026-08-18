@@ -16,6 +16,7 @@ object ImagingResourceChecks:
 
   val typedTiffTagValue: Unit =
     val tag = TiffTag(tagNumber = 270, tagType = 2, value = Some(TiffTagValue.Text("description")))
-    val resource: PrepressSpecificResource = RenderingParams(tiffFormatParams = Some(TiffFormatParams(tags = Vector(tag))))
+    val resource: PrepressSpecificResource =
+      RenderingParams(tiffFormatParams = Some(TiffFormatParams(tags = Vector(tag))))
     assert(resource.elementName.localName == "RenderingParams")
 end ImagingResourceChecks

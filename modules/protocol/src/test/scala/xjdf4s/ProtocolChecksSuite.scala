@@ -6,4 +6,3 @@ class ProtocolChecksSuite extends munit.FunSuite:
     val results: Vector[Unit] = Vector(ProtocolChecks.xjdfCardinality)
     assert(results.size == 1)
   }
-end ProtocolChecksSuite

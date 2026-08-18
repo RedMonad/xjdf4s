@@ -6,12 +6,11 @@ import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * GENERATED registry: dispatch tables for the open substitution points. Every entry summons the
- * [[XmlElementCodec]] of the type - hand-written where the XML shape is special, derived otherwise. Regenerate
- * from the union type lists when the model grows.
+/** GENERATED registry: dispatch tables for the open substitution points. Every entry summons the
+ *  [[XmlElementCodec]] of the type - hand-written where the XML shape is special, derived otherwise. Regenerate
+ *  from the union type lists when the model grows.
  *
- * Covered: 102 SpecificResource, 14 ProductIntent, 44 XJMF messages.
+ *  Covered: 102 SpecificResource, 14 ProductIntent, 44 XJMF messages.
  */
 object Registry:
 
@@ -123,106 +122,174 @@ object Registry:
   )
 
   private val resourceEncoders: Map[String, SpecificResource => Xml.Element] = Map(
-    "ApprovalDetails" -> (value => summon[XmlElementCodec[ApprovalDetails]].encode(value.asInstanceOf[ApprovalDetails])),
+    "ApprovalDetails" ->
+      (value => summon[XmlElementCodec[ApprovalDetails]].encode(value.asInstanceOf[ApprovalDetails])),
     "ApprovalParams" -> (value => summon[XmlElementCodec[ApprovalParams]].encode(value.asInstanceOf[ApprovalParams])),
     "Assembly" -> (value => summon[XmlElementCodec[Assembly]].encode(value.asInstanceOf[Assembly])),
-    "BarcodeCompParams" -> (value => summon[XmlElementCodec[BarcodeCompParams]].encode(value.asInstanceOf[BarcodeCompParams])),
-    "BarcodeReproParams" -> (value => summon[XmlElementCodec[BarcodeReproParams]].encode(value.asInstanceOf[BarcodeReproParams])),
+    "BarcodeCompParams" ->
+      (value => summon[XmlElementCodec[BarcodeCompParams]].encode(value.asInstanceOf[BarcodeCompParams])),
+    "BarcodeReproParams" ->
+      (value => summon[XmlElementCodec[BarcodeReproParams]].encode(value.asInstanceOf[BarcodeReproParams])),
     "BendingParams" -> (value => summon[XmlElementCodec[BendingParams]].encode(value.asInstanceOf[BendingParams])),
-    "BinderySignature" -> (value => summon[XmlElementCodec[BinderySignature]].encode(value.asInstanceOf[BinderySignature])),
-    "BlockPreparationParams" -> (value => summon[XmlElementCodec[BlockPreparationParams]].encode(value.asInstanceOf[BlockPreparationParams])),
-    "BoxFoldingParams" -> (value => summon[XmlElementCodec[BoxFoldingParams]].encode(value.asInstanceOf[BoxFoldingParams])),
-    "BoxPackingParams" -> (value => summon[XmlElementCodec[BoxPackingParams]].encode(value.asInstanceOf[BoxPackingParams])),
+    "BinderySignature" ->
+      (value => summon[XmlElementCodec[BinderySignature]].encode(value.asInstanceOf[BinderySignature])),
+    "BlockPreparationParams" ->
+      (value => summon[XmlElementCodec[BlockPreparationParams]].encode(value.asInstanceOf[BlockPreparationParams])),
+    "BoxFoldingParams" ->
+      (value => summon[XmlElementCodec[BoxFoldingParams]].encode(value.asInstanceOf[BoxFoldingParams])),
+    "BoxPackingParams" ->
+      (value => summon[XmlElementCodec[BoxPackingParams]].encode(value.asInstanceOf[BoxPackingParams])),
     "Bundle" -> (value => summon[XmlElementCodec[Bundle]].encode(value.asInstanceOf[Bundle])),
     "BundlingParams" -> (value => summon[XmlElementCodec[BundlingParams]].encode(value.asInstanceOf[BundlingParams])),
-    "CaseMakingParams" -> (value => summon[XmlElementCodec[CaseMakingParams]].encode(value.asInstanceOf[CaseMakingParams])),
+    "CaseMakingParams" ->
+      (value => summon[XmlElementCodec[CaseMakingParams]].encode(value.asInstanceOf[CaseMakingParams])),
     "CasingInParams" -> (value => summon[XmlElementCodec[CasingInParams]].encode(value.asInstanceOf[CasingInParams])),
     "Color" -> (value => summon[XmlElementCodec[Color]].encode(value.asInstanceOf[Color])),
-    "ColorCorrectionParams" -> (value => summon[XmlElementCodec[ColorCorrectionParams]].encode(value.asInstanceOf[ColorCorrectionParams])),
-    "ColorSpaceConversionParams" -> (value => summon[XmlElementCodec[ColorSpaceConversionParams]].encode(value.asInstanceOf[ColorSpaceConversionParams])),
-    "ColorantControl" -> (value => summon[XmlElementCodec[ColorantControl]].encode(value.asInstanceOf[ColorantControl])),
+    "ColorCorrectionParams" ->
+      (value => summon[XmlElementCodec[ColorCorrectionParams]].encode(value.asInstanceOf[ColorCorrectionParams])),
+    "ColorSpaceConversionParams" ->
+      (value =>
+        summon[XmlElementCodec[ColorSpaceConversionParams]].encode(value.asInstanceOf[ColorSpaceConversionParams])
+      ),
+    "ColorantControl" ->
+      (value => summon[XmlElementCodec[ColorantControl]].encode(value.asInstanceOf[ColorantControl])),
     "Component" -> (value => summon[XmlElementCodec[Component]].encode(value.asInstanceOf[Component])),
     "Contact" -> (value => summon[XmlElementCodec[Contact]].encode(value.asInstanceOf[Contact])),
     "Content" -> (value => summon[XmlElementCodec[Content]].encode(value.asInstanceOf[Content])),
-    "ConventionalPrintingParams" -> (value => summon[XmlElementCodec[ConventionalPrintingParams]].encode(value.asInstanceOf[ConventionalPrintingParams])),
-    "CoverApplicationParams" -> (value => summon[XmlElementCodec[CoverApplicationParams]].encode(value.asInstanceOf[CoverApplicationParams])),
+    "ConventionalPrintingParams" ->
+      (value =>
+        summon[XmlElementCodec[ConventionalPrintingParams]].encode(value.asInstanceOf[ConventionalPrintingParams])
+      ),
+    "CoverApplicationParams" ->
+      (value => summon[XmlElementCodec[CoverApplicationParams]].encode(value.asInstanceOf[CoverApplicationParams])),
     "CreasingParams" -> (value => summon[XmlElementCodec[CreasingParams]].encode(value.asInstanceOf[CreasingParams])),
     "CustomerInfo" -> (value => summon[XmlElementCodec[CustomerInfo]].encode(value.asInstanceOf[CustomerInfo])),
     "CuttingParams" -> (value => summon[XmlElementCodec[CuttingParams]].encode(value.asInstanceOf[CuttingParams])),
     "DeliveryParams" -> (value => summon[XmlElementCodec[DeliveryParams]].encode(value.asInstanceOf[DeliveryParams])),
-    "DevelopingParams" -> (value => summon[XmlElementCodec[DevelopingParams]].encode(value.asInstanceOf[DevelopingParams])),
+    "DevelopingParams" ->
+      (value => summon[XmlElementCodec[DevelopingParams]].encode(value.asInstanceOf[DevelopingParams])),
     "Device" -> (value => summon[XmlElementCodec[Device]].encode(value.asInstanceOf[Device])),
     "DieLayout" -> (value => summon[XmlElementCodec[DieLayout]].encode(value.asInstanceOf[DieLayout])),
-    "DieLayoutProductionParams" -> (value => summon[XmlElementCodec[DieLayoutProductionParams]].encode(value.asInstanceOf[DieLayoutProductionParams])),
-    "DigitalPrintingParams" -> (value => summon[XmlElementCodec[DigitalPrintingParams]].encode(value.asInstanceOf[DigitalPrintingParams])),
-    "EmbossingParams" -> (value => summon[XmlElementCodec[EmbossingParams]].encode(value.asInstanceOf[EmbossingParams])),
-    "EndSheetGluingParams" -> (value => summon[XmlElementCodec[EndSheetGluingParams]].encode(value.asInstanceOf[EndSheetGluingParams])),
+    "DieLayoutProductionParams" ->
+      (value =>
+        summon[XmlElementCodec[DieLayoutProductionParams]].encode(value.asInstanceOf[DieLayoutProductionParams])
+      ),
+    "DigitalPrintingParams" ->
+      (value => summon[XmlElementCodec[DigitalPrintingParams]].encode(value.asInstanceOf[DigitalPrintingParams])),
+    "EmbossingParams" ->
+      (value => summon[XmlElementCodec[EmbossingParams]].encode(value.asInstanceOf[EmbossingParams])),
+    "EndSheetGluingParams" ->
+      (value => summon[XmlElementCodec[EndSheetGluingParams]].encode(value.asInstanceOf[EndSheetGluingParams])),
     "ExposedMedia" -> (value => summon[XmlElementCodec[ExposedMedia]].encode(value.asInstanceOf[ExposedMedia])),
     "FeedingParams" -> (value => summon[XmlElementCodec[FeedingParams]].encode(value.asInstanceOf[FeedingParams])),
     "FoldingParams" -> (value => summon[XmlElementCodec[FoldingParams]].encode(value.asInstanceOf[FoldingParams])),
     "FontPolicy" -> (value => summon[XmlElementCodec[FontPolicy]].encode(value.asInstanceOf[FontPolicy])),
     "GluingParams" -> (value => summon[XmlElementCodec[GluingParams]].encode(value.asInstanceOf[GluingParams])),
-    "HeadBandApplicationParams" -> (value => summon[XmlElementCodec[HeadBandApplicationParams]].encode(value.asInstanceOf[HeadBandApplicationParams])),
-    "HoleMakingParams" -> (value => summon[XmlElementCodec[HoleMakingParams]].encode(value.asInstanceOf[HoleMakingParams])),
-    "ImageCompressionParams" -> (value => summon[XmlElementCodec[ImageCompressionParams]].encode(value.asInstanceOf[ImageCompressionParams])),
-    "ImageEnhancementParams" -> (value => summon[XmlElementCodec[ImageEnhancementParams]].encode(value.asInstanceOf[ImageEnhancementParams])),
-    "ImageSetterParams" -> (value => summon[XmlElementCodec[ImageSetterParams]].encode(value.asInstanceOf[ImageSetterParams])),
+    "HeadBandApplicationParams" ->
+      (value =>
+        summon[XmlElementCodec[HeadBandApplicationParams]].encode(value.asInstanceOf[HeadBandApplicationParams])
+      ),
+    "HoleMakingParams" ->
+      (value => summon[XmlElementCodec[HoleMakingParams]].encode(value.asInstanceOf[HoleMakingParams])),
+    "ImageCompressionParams" ->
+      (value => summon[XmlElementCodec[ImageCompressionParams]].encode(value.asInstanceOf[ImageCompressionParams])),
+    "ImageEnhancementParams" ->
+      (value => summon[XmlElementCodec[ImageEnhancementParams]].encode(value.asInstanceOf[ImageEnhancementParams])),
+    "ImageSetterParams" ->
+      (value => summon[XmlElementCodec[ImageSetterParams]].encode(value.asInstanceOf[ImageSetterParams])),
     "Ink" -> (value => summon[XmlElementCodec[Ink]].encode(value.asInstanceOf[Ink])),
-    "InkZoneCalculationParams" -> (value => summon[XmlElementCodec[InkZoneCalculationParams]].encode(value.asInstanceOf[InkZoneCalculationParams])),
+    "InkZoneCalculationParams" ->
+      (value => summon[XmlElementCodec[InkZoneCalculationParams]].encode(value.asInstanceOf[InkZoneCalculationParams])),
     "InkZoneProfile" -> (value => summon[XmlElementCodec[InkZoneProfile]].encode(value.asInstanceOf[InkZoneProfile])),
-    "InsertingParams" -> (value => summon[XmlElementCodec[InsertingParams]].encode(value.asInstanceOf[InsertingParams])),
-    "InterpretingParams" -> (value => summon[XmlElementCodec[InterpretingParams]].encode(value.asInstanceOf[InterpretingParams])),
-    "JacketingParams" -> (value => summon[XmlElementCodec[JacketingParams]].encode(value.asInstanceOf[JacketingParams])),
+    "InsertingParams" ->
+      (value => summon[XmlElementCodec[InsertingParams]].encode(value.asInstanceOf[InsertingParams])),
+    "InterpretingParams" ->
+      (value => summon[XmlElementCodec[InterpretingParams]].encode(value.asInstanceOf[InterpretingParams])),
+    "JacketingParams" ->
+      (value => summon[XmlElementCodec[JacketingParams]].encode(value.asInstanceOf[JacketingParams])),
     "LabelingParams" -> (value => summon[XmlElementCodec[LabelingParams]].encode(value.asInstanceOf[LabelingParams])),
-    "LaminatingParams" -> (value => summon[XmlElementCodec[LaminatingParams]].encode(value.asInstanceOf[LaminatingParams])),
+    "LaminatingParams" ->
+      (value => summon[XmlElementCodec[LaminatingParams]].encode(value.asInstanceOf[LaminatingParams])),
     "Layout" -> (value => summon[XmlElementCodec[Layout]].encode(value.asInstanceOf[Layout])),
-    "LayoutElementProductionParams" -> (value => summon[XmlElementCodec[LayoutElementProductionParams]].encode(value.asInstanceOf[LayoutElementProductionParams])),
+    "LayoutElementProductionParams" ->
+      (value =>
+        summon[XmlElementCodec[LayoutElementProductionParams]].encode(value.asInstanceOf[LayoutElementProductionParams])
+      ),
     "LayoutShift" -> (value => summon[XmlElementCodec[LayoutShift]].encode(value.asInstanceOf[LayoutShift])),
-    "LooseBindingParams" -> (value => summon[XmlElementCodec[LooseBindingParams]].encode(value.asInstanceOf[LooseBindingParams])),
-    "ManualLaborParams" -> (value => summon[XmlElementCodec[ManualLaborParams]].encode(value.asInstanceOf[ManualLaborParams])),
+    "LooseBindingParams" ->
+      (value => summon[XmlElementCodec[LooseBindingParams]].encode(value.asInstanceOf[LooseBindingParams])),
+    "ManualLaborParams" ->
+      (value => summon[XmlElementCodec[ManualLaborParams]].encode(value.asInstanceOf[ManualLaborParams])),
     "Media" -> (value => summon[XmlElementCodec[Media]].encode(value.asInstanceOf[Media])),
     "MiscConsumable" -> (value => summon[XmlElementCodec[MiscConsumable]].encode(value.asInstanceOf[MiscConsumable])),
     "NodeInfo" -> (value => summon[XmlElementCodec[NodeInfo]].encode(value.asInstanceOf[NodeInfo])),
-    "PDLCreationParams" -> (value => summon[XmlElementCodec[PDLCreationParams]].encode(value.asInstanceOf[PDLCreationParams])),
+    "PDLCreationParams" ->
+      (value => summon[XmlElementCodec[PDLCreationParams]].encode(value.asInstanceOf[PDLCreationParams])),
     "Pallet" -> (value => summon[XmlElementCodec[Pallet]].encode(value.asInstanceOf[Pallet])),
-    "PalletizingParams" -> (value => summon[XmlElementCodec[PalletizingParams]].encode(value.asInstanceOf[PalletizingParams])),
-    "PerforatingParams" -> (value => summon[XmlElementCodec[PerforatingParams]].encode(value.asInstanceOf[PerforatingParams])),
-    "PreflightParams" -> (value => summon[XmlElementCodec[PreflightParams]].encode(value.asInstanceOf[PreflightParams])),
-    "PreflightReport" -> (value => summon[XmlElementCodec[PreflightReport]].encode(value.asInstanceOf[PreflightReport])),
+    "PalletizingParams" ->
+      (value => summon[XmlElementCodec[PalletizingParams]].encode(value.asInstanceOf[PalletizingParams])),
+    "PerforatingParams" ->
+      (value => summon[XmlElementCodec[PerforatingParams]].encode(value.asInstanceOf[PerforatingParams])),
+    "PreflightParams" ->
+      (value => summon[XmlElementCodec[PreflightParams]].encode(value.asInstanceOf[PreflightParams])),
+    "PreflightReport" ->
+      (value => summon[XmlElementCodec[PreflightReport]].encode(value.asInstanceOf[PreflightReport])),
     "Preview" -> (value => summon[XmlElementCodec[Preview]].encode(value.asInstanceOf[Preview])),
-    "PreviewGenerationParams" -> (value => summon[XmlElementCodec[PreviewGenerationParams]].encode(value.asInstanceOf[PreviewGenerationParams])),
+    "PreviewGenerationParams" ->
+      (value => summon[XmlElementCodec[PreviewGenerationParams]].encode(value.asInstanceOf[PreviewGenerationParams])),
     "PrintCondition" -> (value => summon[XmlElementCodec[PrintCondition]].encode(value.asInstanceOf[PrintCondition])),
-    "QualityControlParams" -> (value => summon[XmlElementCodec[QualityControlParams]].encode(value.asInstanceOf[QualityControlParams])),
-    "QualityControlResult" -> (value => summon[XmlElementCodec[QualityControlResult]].encode(value.asInstanceOf[QualityControlResult])),
-    "RasterReadingParams" -> (value => summon[XmlElementCodec[RasterReadingParams]].encode(value.asInstanceOf[RasterReadingParams])),
+    "QualityControlParams" ->
+      (value => summon[XmlElementCodec[QualityControlParams]].encode(value.asInstanceOf[QualityControlParams])),
+    "QualityControlResult" ->
+      (value => summon[XmlElementCodec[QualityControlResult]].encode(value.asInstanceOf[QualityControlResult])),
+    "RasterReadingParams" ->
+      (value => summon[XmlElementCodec[RasterReadingParams]].encode(value.asInstanceOf[RasterReadingParams])),
     "RegisterMark" -> (value => summon[XmlElementCodec[RegisterMark]].encode(value.asInstanceOf[RegisterMark])),
-    "RenderingParams" -> (value => summon[XmlElementCodec[RenderingParams]].encode(value.asInstanceOf[RenderingParams])),
+    "RenderingParams" ->
+      (value => summon[XmlElementCodec[RenderingParams]].encode(value.asInstanceOf[RenderingParams])),
     "RunList" -> (value => summon[XmlElementCodec[RunList]].encode(value.asInstanceOf[RunList])),
-    "ScreeningParams" -> (value => summon[XmlElementCodec[ScreeningParams]].encode(value.asInstanceOf[ScreeningParams])),
-    "SeparationControlParams" -> (value => summon[XmlElementCodec[SeparationControlParams]].encode(value.asInstanceOf[SeparationControlParams])),
+    "ScreeningParams" ->
+      (value => summon[XmlElementCodec[ScreeningParams]].encode(value.asInstanceOf[ScreeningParams])),
+    "SeparationControlParams" ->
+      (value => summon[XmlElementCodec[SeparationControlParams]].encode(value.asInstanceOf[SeparationControlParams])),
     "Shape" -> (value => summon[XmlElementCodec[Shape]].encode(value.asInstanceOf[Shape])),
-    "ShapeCuttingParams" -> (value => summon[XmlElementCodec[ShapeCuttingParams]].encode(value.asInstanceOf[ShapeCuttingParams])),
+    "ShapeCuttingParams" ->
+      (value => summon[XmlElementCodec[ShapeCuttingParams]].encode(value.asInstanceOf[ShapeCuttingParams])),
     "ShapeDef" -> (value => summon[XmlElementCodec[ShapeDef]].encode(value.asInstanceOf[ShapeDef])),
-    "ShapeDefProductionParams" -> (value => summon[XmlElementCodec[ShapeDefProductionParams]].encode(value.asInstanceOf[ShapeDefProductionParams])),
-    "SheetOptimizingParams" -> (value => summon[XmlElementCodec[SheetOptimizingParams]].encode(value.asInstanceOf[SheetOptimizingParams])),
-    "SheetOptimizingReport" -> (value => summon[XmlElementCodec[SheetOptimizingReport]].encode(value.asInstanceOf[SheetOptimizingReport])),
-    "ShrinkingParams" -> (value => summon[XmlElementCodec[ShrinkingParams]].encode(value.asInstanceOf[ShrinkingParams])),
-    "SpinePreparationParams" -> (value => summon[XmlElementCodec[SpinePreparationParams]].encode(value.asInstanceOf[SpinePreparationParams])),
-    "SpineTapingParams" -> (value => summon[XmlElementCodec[SpineTapingParams]].encode(value.asInstanceOf[SpineTapingParams])),
+    "ShapeDefProductionParams" ->
+      (value => summon[XmlElementCodec[ShapeDefProductionParams]].encode(value.asInstanceOf[ShapeDefProductionParams])),
+    "SheetOptimizingParams" ->
+      (value => summon[XmlElementCodec[SheetOptimizingParams]].encode(value.asInstanceOf[SheetOptimizingParams])),
+    "SheetOptimizingReport" ->
+      (value => summon[XmlElementCodec[SheetOptimizingReport]].encode(value.asInstanceOf[SheetOptimizingReport])),
+    "ShrinkingParams" ->
+      (value => summon[XmlElementCodec[ShrinkingParams]].encode(value.asInstanceOf[ShrinkingParams])),
+    "SpinePreparationParams" ->
+      (value => summon[XmlElementCodec[SpinePreparationParams]].encode(value.asInstanceOf[SpinePreparationParams])),
+    "SpineTapingParams" ->
+      (value => summon[XmlElementCodec[SpineTapingParams]].encode(value.asInstanceOf[SpineTapingParams])),
     "StackingParams" -> (value => summon[XmlElementCodec[StackingParams]].encode(value.asInstanceOf[StackingParams])),
-    "StitchingParams" -> (value => summon[XmlElementCodec[StitchingParams]].encode(value.asInstanceOf[StitchingParams])),
-    "StrappingParams" -> (value => summon[XmlElementCodec[StrappingParams]].encode(value.asInstanceOf[StrappingParams])),
-    "ThreadSealingParams" -> (value => summon[XmlElementCodec[ThreadSealingParams]].encode(value.asInstanceOf[ThreadSealingParams])),
-    "ThreadSewingParams" -> (value => summon[XmlElementCodec[ThreadSewingParams]].encode(value.asInstanceOf[ThreadSewingParams])),
+    "StitchingParams" ->
+      (value => summon[XmlElementCodec[StitchingParams]].encode(value.asInstanceOf[StitchingParams])),
+    "StrappingParams" ->
+      (value => summon[XmlElementCodec[StrappingParams]].encode(value.asInstanceOf[StrappingParams])),
+    "ThreadSealingParams" ->
+      (value => summon[XmlElementCodec[ThreadSealingParams]].encode(value.asInstanceOf[ThreadSealingParams])),
+    "ThreadSewingParams" ->
+      (value => summon[XmlElementCodec[ThreadSewingParams]].encode(value.asInstanceOf[ThreadSewingParams])),
     "Tool" -> (value => summon[XmlElementCodec[Tool]].encode(value.asInstanceOf[Tool])),
     "TransferCurve" -> (value => summon[XmlElementCodec[TransferCurve]].encode(value.asInstanceOf[TransferCurve])),
     "TrappingParams" -> (value => summon[XmlElementCodec[TrappingParams]].encode(value.asInstanceOf[TrappingParams])),
     "TrimmingParams" -> (value => summon[XmlElementCodec[TrimmingParams]].encode(value.asInstanceOf[TrimmingParams])),
     "UsageCounter" -> (value => summon[XmlElementCodec[UsageCounter]].encode(value.asInstanceOf[UsageCounter])),
-    "VarnishingParams" -> (value => summon[XmlElementCodec[VarnishingParams]].encode(value.asInstanceOf[VarnishingParams])),
-    "VerificationParams" -> (value => summon[XmlElementCodec[VerificationParams]].encode(value.asInstanceOf[VerificationParams])),
-    "VerificationResult" -> (value => summon[XmlElementCodec[VerificationResult]].encode(value.asInstanceOf[VerificationResult])),
-    "WebInlineFinishingParams" -> (value => summon[XmlElementCodec[WebInlineFinishingParams]].encode(value.asInstanceOf[WebInlineFinishingParams])),
+    "VarnishingParams" ->
+      (value => summon[XmlElementCodec[VarnishingParams]].encode(value.asInstanceOf[VarnishingParams])),
+    "VerificationParams" ->
+      (value => summon[XmlElementCodec[VerificationParams]].encode(value.asInstanceOf[VerificationParams])),
+    "VerificationResult" ->
+      (value => summon[XmlElementCodec[VerificationResult]].encode(value.asInstanceOf[VerificationResult])),
+    "WebInlineFinishingParams" ->
+      (value => summon[XmlElementCodec[WebInlineFinishingParams]].encode(value.asInstanceOf[WebInlineFinishingParams])),
     "WindingParams" -> (value => summon[XmlElementCodec[WindingParams]].encode(value.asInstanceOf[WindingParams])),
     "WrappingParams" -> (value => summon[XmlElementCodec[WrappingParams]].encode(value.asInstanceOf[WrappingParams])),
   )
@@ -247,19 +314,26 @@ object Registry:
   )
 
   private val intentEncoders: Map[String, ProductIntent => Xml.Element] = Map(
-    "AssemblingIntent" -> (value => summon[XmlElementCodec[AssemblingIntent]].encode(value.asInstanceOf[AssemblingIntent])),
+    "AssemblingIntent" ->
+      (value => summon[XmlElementCodec[AssemblingIntent]].encode(value.asInstanceOf[AssemblingIntent])),
     "BindingIntent" -> (value => summon[XmlElementCodec[BindingIntent]].encode(value.asInstanceOf[BindingIntent])),
     "ColorIntent" -> (value => summon[XmlElementCodec[ColorIntent]].encode(value.asInstanceOf[ColorIntent])),
-    "ContentCheckIntent" -> (value => summon[XmlElementCodec[ContentCheckIntent]].encode(value.asInstanceOf[ContentCheckIntent])),
-    "EmbossingIntent" -> (value => summon[XmlElementCodec[EmbossingIntent]].encode(value.asInstanceOf[EmbossingIntent])),
+    "ContentCheckIntent" ->
+      (value => summon[XmlElementCodec[ContentCheckIntent]].encode(value.asInstanceOf[ContentCheckIntent])),
+    "EmbossingIntent" ->
+      (value => summon[XmlElementCodec[EmbossingIntent]].encode(value.asInstanceOf[EmbossingIntent])),
     "FoldingIntent" -> (value => summon[XmlElementCodec[FoldingIntent]].encode(value.asInstanceOf[FoldingIntent])),
-    "HoleMakingIntent" -> (value => summon[XmlElementCodec[HoleMakingIntent]].encode(value.asInstanceOf[HoleMakingIntent])),
+    "HoleMakingIntent" ->
+      (value => summon[XmlElementCodec[HoleMakingIntent]].encode(value.asInstanceOf[HoleMakingIntent])),
     "IntentResource" -> (value => summon[XmlElementCodec[IntentResource]].encode(value.asInstanceOf[IntentResource])),
-    "LaminatingIntent" -> (value => summon[XmlElementCodec[LaminatingIntent]].encode(value.asInstanceOf[LaminatingIntent])),
+    "LaminatingIntent" ->
+      (value => summon[XmlElementCodec[LaminatingIntent]].encode(value.asInstanceOf[LaminatingIntent])),
     "LayoutIntent" -> (value => summon[XmlElementCodec[LayoutIntent]].encode(value.asInstanceOf[LayoutIntent])),
     "MediaIntent" -> (value => summon[XmlElementCodec[MediaIntent]].encode(value.asInstanceOf[MediaIntent])),
-    "ProductionIntent" -> (value => summon[XmlElementCodec[ProductionIntent]].encode(value.asInstanceOf[ProductionIntent])),
-    "ShapeCuttingIntent" -> (value => summon[XmlElementCodec[ShapeCuttingIntent]].encode(value.asInstanceOf[ShapeCuttingIntent])),
+    "ProductionIntent" ->
+      (value => summon[XmlElementCodec[ProductionIntent]].encode(value.asInstanceOf[ProductionIntent])),
+    "ShapeCuttingIntent" ->
+      (value => summon[XmlElementCodec[ShapeCuttingIntent]].encode(value.asInstanceOf[ShapeCuttingIntent])),
     "VariableIntent" -> (value => summon[XmlElementCodec[VariableIntent]].encode(value.asInstanceOf[VariableIntent])),
   )
 
@@ -313,48 +387,97 @@ object Registry:
   )
 
   private val messageEncoders: Map[String, Message => Xml.Element] = Map(
-    "CommandForceGang" -> (value => summon[XmlElementCodec[CommandForceGang]].encode(value.asInstanceOf[CommandForceGang])),
-    "CommandModifyQueueEntry" -> (value => summon[XmlElementCodec[CommandModifyQueueEntry]].encode(value.asInstanceOf[CommandModifyQueueEntry])),
-    "CommandPipeControl" -> (value => summon[XmlElementCodec[CommandPipeControl]].encode(value.asInstanceOf[CommandPipeControl])),
-    "CommandRequestQueueEntry" -> (value => summon[XmlElementCodec[CommandRequestQueueEntry]].encode(value.asInstanceOf[CommandRequestQueueEntry])),
-    "CommandResource" -> (value => summon[XmlElementCodec[CommandResource]].encode(value.asInstanceOf[CommandResource])),
-    "CommandResubmitQueueEntry" -> (value => summon[XmlElementCodec[CommandResubmitQueueEntry]].encode(value.asInstanceOf[CommandResubmitQueueEntry])),
-    "CommandReturnQueueEntry" -> (value => summon[XmlElementCodec[CommandReturnQueueEntry]].encode(value.asInstanceOf[CommandReturnQueueEntry])),
-    "CommandShutDown" -> (value => summon[XmlElementCodec[CommandShutDown]].encode(value.asInstanceOf[CommandShutDown])),
-    "CommandStopPersistentChannel" -> (value => summon[XmlElementCodec[CommandStopPersistentChannel]].encode(value.asInstanceOf[CommandStopPersistentChannel])),
-    "CommandSubmitQueueEntry" -> (value => summon[XmlElementCodec[CommandSubmitQueueEntry]].encode(value.asInstanceOf[CommandSubmitQueueEntry])),
+    "CommandForceGang" ->
+      (value => summon[XmlElementCodec[CommandForceGang]].encode(value.asInstanceOf[CommandForceGang])),
+    "CommandModifyQueueEntry" ->
+      (value => summon[XmlElementCodec[CommandModifyQueueEntry]].encode(value.asInstanceOf[CommandModifyQueueEntry])),
+    "CommandPipeControl" ->
+      (value => summon[XmlElementCodec[CommandPipeControl]].encode(value.asInstanceOf[CommandPipeControl])),
+    "CommandRequestQueueEntry" ->
+      (value => summon[XmlElementCodec[CommandRequestQueueEntry]].encode(value.asInstanceOf[CommandRequestQueueEntry])),
+    "CommandResource" ->
+      (value => summon[XmlElementCodec[CommandResource]].encode(value.asInstanceOf[CommandResource])),
+    "CommandResubmitQueueEntry" ->
+      (value =>
+        summon[XmlElementCodec[CommandResubmitQueueEntry]].encode(value.asInstanceOf[CommandResubmitQueueEntry])
+      ),
+    "CommandReturnQueueEntry" ->
+      (value => summon[XmlElementCodec[CommandReturnQueueEntry]].encode(value.asInstanceOf[CommandReturnQueueEntry])),
+    "CommandShutDown" ->
+      (value => summon[XmlElementCodec[CommandShutDown]].encode(value.asInstanceOf[CommandShutDown])),
+    "CommandStopPersistentChannel" ->
+      (value =>
+        summon[XmlElementCodec[CommandStopPersistentChannel]].encode(value.asInstanceOf[CommandStopPersistentChannel])
+      ),
+    "CommandSubmitQueueEntry" ->
+      (value => summon[XmlElementCodec[CommandSubmitQueueEntry]].encode(value.asInstanceOf[CommandSubmitQueueEntry])),
     "CommandWakeUp" -> (value => summon[XmlElementCodec[CommandWakeUp]].encode(value.asInstanceOf[CommandWakeUp])),
-    "QueryGangStatus" -> (value => summon[XmlElementCodec[QueryGangStatus]].encode(value.asInstanceOf[QueryGangStatus])),
-    "QueryKnownDevices" -> (value => summon[XmlElementCodec[QueryKnownDevices]].encode(value.asInstanceOf[QueryKnownDevices])),
-    "QueryKnownMessages" -> (value => summon[XmlElementCodec[QueryKnownMessages]].encode(value.asInstanceOf[QueryKnownMessages])),
-    "QueryKnownSubscriptions" -> (value => summon[XmlElementCodec[QueryKnownSubscriptions]].encode(value.asInstanceOf[QueryKnownSubscriptions])),
-    "QueryNotification" -> (value => summon[XmlElementCodec[QueryNotification]].encode(value.asInstanceOf[QueryNotification])),
-    "QueryQueueStatus" -> (value => summon[XmlElementCodec[QueryQueueStatus]].encode(value.asInstanceOf[QueryQueueStatus])),
+    "QueryGangStatus" ->
+      (value => summon[XmlElementCodec[QueryGangStatus]].encode(value.asInstanceOf[QueryGangStatus])),
+    "QueryKnownDevices" ->
+      (value => summon[XmlElementCodec[QueryKnownDevices]].encode(value.asInstanceOf[QueryKnownDevices])),
+    "QueryKnownMessages" ->
+      (value => summon[XmlElementCodec[QueryKnownMessages]].encode(value.asInstanceOf[QueryKnownMessages])),
+    "QueryKnownSubscriptions" ->
+      (value => summon[XmlElementCodec[QueryKnownSubscriptions]].encode(value.asInstanceOf[QueryKnownSubscriptions])),
+    "QueryNotification" ->
+      (value => summon[XmlElementCodec[QueryNotification]].encode(value.asInstanceOf[QueryNotification])),
+    "QueryQueueStatus" ->
+      (value => summon[XmlElementCodec[QueryQueueStatus]].encode(value.asInstanceOf[QueryQueueStatus])),
     "QueryResource" -> (value => summon[XmlElementCodec[QueryResource]].encode(value.asInstanceOf[QueryResource])),
     "QueryStatus" -> (value => summon[XmlElementCodec[QueryStatus]].encode(value.asInstanceOf[QueryStatus])),
-    "ResponseForceGang" -> (value => summon[XmlElementCodec[ResponseForceGang]].encode(value.asInstanceOf[ResponseForceGang])),
-    "ResponseGangStatus" -> (value => summon[XmlElementCodec[ResponseGangStatus]].encode(value.asInstanceOf[ResponseGangStatus])),
-    "ResponseKnownDevices" -> (value => summon[XmlElementCodec[ResponseKnownDevices]].encode(value.asInstanceOf[ResponseKnownDevices])),
-    "ResponseKnownMessages" -> (value => summon[XmlElementCodec[ResponseKnownMessages]].encode(value.asInstanceOf[ResponseKnownMessages])),
-    "ResponseKnownSubscriptions" -> (value => summon[XmlElementCodec[ResponseKnownSubscriptions]].encode(value.asInstanceOf[ResponseKnownSubscriptions])),
-    "ResponseModifyQueueEntry" -> (value => summon[XmlElementCodec[ResponseModifyQueueEntry]].encode(value.asInstanceOf[ResponseModifyQueueEntry])),
-    "ResponseNotification" -> (value => summon[XmlElementCodec[ResponseNotification]].encode(value.asInstanceOf[ResponseNotification])),
-    "ResponsePipeControl" -> (value => summon[XmlElementCodec[ResponsePipeControl]].encode(value.asInstanceOf[ResponsePipeControl])),
-    "ResponseQueueStatus" -> (value => summon[XmlElementCodec[ResponseQueueStatus]].encode(value.asInstanceOf[ResponseQueueStatus])),
-    "ResponseRequestQueueEntry" -> (value => summon[XmlElementCodec[ResponseRequestQueueEntry]].encode(value.asInstanceOf[ResponseRequestQueueEntry])),
-    "ResponseResource" -> (value => summon[XmlElementCodec[ResponseResource]].encode(value.asInstanceOf[ResponseResource])),
-    "ResponseResubmitQueueEntry" -> (value => summon[XmlElementCodec[ResponseResubmitQueueEntry]].encode(value.asInstanceOf[ResponseResubmitQueueEntry])),
-    "ResponseReturnQueueEntry" -> (value => summon[XmlElementCodec[ResponseReturnQueueEntry]].encode(value.asInstanceOf[ResponseReturnQueueEntry])),
-    "ResponseShutDown" -> (value => summon[XmlElementCodec[ResponseShutDown]].encode(value.asInstanceOf[ResponseShutDown])),
+    "ResponseForceGang" ->
+      (value => summon[XmlElementCodec[ResponseForceGang]].encode(value.asInstanceOf[ResponseForceGang])),
+    "ResponseGangStatus" ->
+      (value => summon[XmlElementCodec[ResponseGangStatus]].encode(value.asInstanceOf[ResponseGangStatus])),
+    "ResponseKnownDevices" ->
+      (value => summon[XmlElementCodec[ResponseKnownDevices]].encode(value.asInstanceOf[ResponseKnownDevices])),
+    "ResponseKnownMessages" ->
+      (value => summon[XmlElementCodec[ResponseKnownMessages]].encode(value.asInstanceOf[ResponseKnownMessages])),
+    "ResponseKnownSubscriptions" ->
+      (value =>
+        summon[XmlElementCodec[ResponseKnownSubscriptions]].encode(value.asInstanceOf[ResponseKnownSubscriptions])
+      ),
+    "ResponseModifyQueueEntry" ->
+      (value => summon[XmlElementCodec[ResponseModifyQueueEntry]].encode(value.asInstanceOf[ResponseModifyQueueEntry])),
+    "ResponseNotification" ->
+      (value => summon[XmlElementCodec[ResponseNotification]].encode(value.asInstanceOf[ResponseNotification])),
+    "ResponsePipeControl" ->
+      (value => summon[XmlElementCodec[ResponsePipeControl]].encode(value.asInstanceOf[ResponsePipeControl])),
+    "ResponseQueueStatus" ->
+      (value => summon[XmlElementCodec[ResponseQueueStatus]].encode(value.asInstanceOf[ResponseQueueStatus])),
+    "ResponseRequestQueueEntry" ->
+      (value =>
+        summon[XmlElementCodec[ResponseRequestQueueEntry]].encode(value.asInstanceOf[ResponseRequestQueueEntry])
+      ),
+    "ResponseResource" ->
+      (value => summon[XmlElementCodec[ResponseResource]].encode(value.asInstanceOf[ResponseResource])),
+    "ResponseResubmitQueueEntry" ->
+      (value =>
+        summon[XmlElementCodec[ResponseResubmitQueueEntry]].encode(value.asInstanceOf[ResponseResubmitQueueEntry])
+      ),
+    "ResponseReturnQueueEntry" ->
+      (value => summon[XmlElementCodec[ResponseReturnQueueEntry]].encode(value.asInstanceOf[ResponseReturnQueueEntry])),
+    "ResponseShutDown" ->
+      (value => summon[XmlElementCodec[ResponseShutDown]].encode(value.asInstanceOf[ResponseShutDown])),
     "ResponseStatus" -> (value => summon[XmlElementCodec[ResponseStatus]].encode(value.asInstanceOf[ResponseStatus])),
-    "ResponseStopPersistentChannel" -> (value => summon[XmlElementCodec[ResponseStopPersistentChannel]].encode(value.asInstanceOf[ResponseStopPersistentChannel])),
-    "ResponseSubmitQueueEntry" -> (value => summon[XmlElementCodec[ResponseSubmitQueueEntry]].encode(value.asInstanceOf[ResponseSubmitQueueEntry])),
+    "ResponseStopPersistentChannel" ->
+      (value =>
+        summon[XmlElementCodec[ResponseStopPersistentChannel]].encode(value.asInstanceOf[ResponseStopPersistentChannel])
+      ),
+    "ResponseSubmitQueueEntry" ->
+      (value => summon[XmlElementCodec[ResponseSubmitQueueEntry]].encode(value.asInstanceOf[ResponseSubmitQueueEntry])),
     "ResponseWakeUp" -> (value => summon[XmlElementCodec[ResponseWakeUp]].encode(value.asInstanceOf[ResponseWakeUp])),
-    "SignalGangStatus" -> (value => summon[XmlElementCodec[SignalGangStatus]].encode(value.asInstanceOf[SignalGangStatus])),
-    "SignalKnownDevices" -> (value => summon[XmlElementCodec[SignalKnownDevices]].encode(value.asInstanceOf[SignalKnownDevices])),
-    "SignalKnownSubscriptions" -> (value => summon[XmlElementCodec[SignalKnownSubscriptions]].encode(value.asInstanceOf[SignalKnownSubscriptions])),
-    "SignalNotification" -> (value => summon[XmlElementCodec[SignalNotification]].encode(value.asInstanceOf[SignalNotification])),
-    "SignalQueueStatus" -> (value => summon[XmlElementCodec[SignalQueueStatus]].encode(value.asInstanceOf[SignalQueueStatus])),
+    "SignalGangStatus" ->
+      (value => summon[XmlElementCodec[SignalGangStatus]].encode(value.asInstanceOf[SignalGangStatus])),
+    "SignalKnownDevices" ->
+      (value => summon[XmlElementCodec[SignalKnownDevices]].encode(value.asInstanceOf[SignalKnownDevices])),
+    "SignalKnownSubscriptions" ->
+      (value => summon[XmlElementCodec[SignalKnownSubscriptions]].encode(value.asInstanceOf[SignalKnownSubscriptions])),
+    "SignalNotification" ->
+      (value => summon[XmlElementCodec[SignalNotification]].encode(value.asInstanceOf[SignalNotification])),
+    "SignalQueueStatus" ->
+      (value => summon[XmlElementCodec[SignalQueueStatus]].encode(value.asInstanceOf[SignalQueueStatus])),
     "SignalResource" -> (value => summon[XmlElementCodec[SignalResource]].encode(value.asInstanceOf[SignalResource])),
     "SignalStatus" -> (value => summon[XmlElementCodec[SignalStatus]].encode(value.asInstanceOf[SignalStatus])),
   )
@@ -396,7 +519,7 @@ object Registry:
   def decodeMessage(element: Xml.Element): Either[XmlError, Message] =
     messageDecoders.get(element.name) match
       case Some(decoder) => decoder.decode(element)
-      case None          => Left(XmlError.UnsupportedElement(element.name.localName))
+      case None => Left(XmlError.UnsupportedElement(element.name.localName))
 
   def encodeMessage(message: Message): Xml.Element =
     messageEncoders.get(message.getClass.getSimpleName) match

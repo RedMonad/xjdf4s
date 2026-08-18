@@ -39,7 +39,6 @@ final case class FoldingParams(
 
 enum SewingPattern derives CanEqual:
   case CombinedStaggered, Normal, Side, Staggered
-end SewingPattern
 
 final case class ThreadSewingParams(
     blindStitch: Option[Boolean] = None,

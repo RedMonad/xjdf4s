@@ -2,9 +2,8 @@ package xjdf4s.codec.xml
 
 import xjdf4s.codec.xml.domain.Registry
 
-/**
- * Completeness of the generated dispatch registries: every standard resource, product intent and XJMF message of
- * the model union types must have a codec entry. The expected sets are generated from the model union lists.
+/** Completeness of the generated dispatch registries: every standard resource, product intent and XJMF message of
+ *  the model union types must have a codec entry. The expected sets are generated from the model union lists.
  */
 object RegistryCoverageChecks:
   private val expectedResources: Set[String] = Set(

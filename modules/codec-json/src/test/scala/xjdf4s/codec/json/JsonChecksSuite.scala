@@ -49,4 +49,3 @@ class JsonChecksSuite extends munit.FunSuite:
     )
     assert(results.size == 42)
   }
-end JsonChecksSuite

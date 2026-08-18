@@ -20,11 +20,9 @@ final case class DeviceNSpace(
 
 enum MappingSelection derives CanEqual:
   case UsePDLValues, UseLocalPrinterValues, UseProcessColorValues
-end MappingSelection
 
 enum ProcessColorModel derives CanEqual:
   case DeviceCMY, DeviceCMYK, DeviceGray, DeviceN, DeviceRGB, None
-end ProcessColorModel
 
 final case class ColorantControl(
     colorantConvertProcess: Vector[Nmtoken] = Vector.empty,

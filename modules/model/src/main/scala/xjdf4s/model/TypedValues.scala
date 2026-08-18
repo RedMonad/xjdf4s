@@ -2,9 +2,8 @@ package xjdf4s.model
 
 import xjdf4s.core.ValidationError
 
-/**
- * `TransferFunction` (Appendix A.1.1): a sampled function encoded as an even-length float list of `x y` pairs.
- * Odd-length lists and empty curves are rejected at construction.
+/** `TransferFunction` (Appendix A.1.1): a sampled function encoded as an even-length float list of `x y` pairs.
+ *  Odd-length lists and empty curves are rejected at construction.
  */
 opaque type TransferFunction = Vector[Float]
 object TransferFunction:
@@ -20,9 +19,8 @@ object TransferFunction:
     def pairs: Vector[(Float, Float)] = values.grouped(2).map(pair => (pair(0), pair(1))).toVector
 end TransferFunction
 
-/**
- * `@GluingPattern` (Glue, chapter 8): an even-length float list alternating glue line segment lengths (odd indices)
- * and gap lengths (even indices). A solid line is expressed by the pattern `(1 0)`.
+/** `@GluingPattern` (Glue, chapter 8): an even-length float list alternating glue line segment lengths (odd indices)
+ *  and gap lengths (even indices). A solid line is expressed by the pattern `(1 0)`.
  */
 opaque type GluingPattern = Vector[Float]
 object GluingPattern:
@@ -39,10 +37,9 @@ object GluingPattern:
     def gapLengths: Vector[Float] = values.zipWithIndex.collect { case (value, index) if index % 2 == 1 => value }
 end GluingPattern
 
-/**
- * `FoldCatalog` (XSD `pattern = F[0-9]+-([0-9]+|X)` over NMTOKEN): identifiers of folding patterns from the
- * Folding Catalog (Appendix E). The pattern semantics are preserved instead of weakening the type to a bare
- * NMTOKEN.
+/** `FoldCatalog` (XSD `pattern = F[0-9]+-([0-9]+|X)` over NMTOKEN): identifiers of folding patterns from the
+ *  Folding Catalog (Appendix E). The pattern semantics are preserved instead of weakening the type to a bare
+ *  NMTOKEN.
  */
 opaque type FoldCatalog = String
 object FoldCatalog:
@@ -58,9 +55,8 @@ object FoldCatalog:
   extension (value: FoldCatalog) def value: String = value
 end FoldCatalog
 
-/**
- * Neutral density (Patch and Color resources, chapter 8): a float in the range `[0.001..10]`, defined as
- * `10 * log10(1/Y)` with the tristimulus value Y normalized to 1.0.
+/** Neutral density (Patch and Color resources, chapter 8): a float in the range `[0.001..10]`, defined as
+ *  `10 * log10(1/Y)` with the tristimulus value Y normalized to 1.0.
  */
 opaque type NeutralDensity = Float
 object NeutralDensity:

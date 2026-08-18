@@ -4,16 +4,13 @@ import xjdf4s.core.*
 
 enum Coating derives CanEqual:
   case Coated, Gloss, Matte, None, Satin
-end Coating
 
 enum IsoPaperSubstrate derives CanEqual:
   case PS1, PS2, PS3, PS4, PS5, PS6, PS7, PS8, PS9
   case LWCPlus, LWCStandard, NewsPlus, SCPlus, SCStandard, SNP
-end IsoPaperSubstrate
 
 enum MediaDirection derives CanEqual:
   case Any, SameDirection, XDirection, YDirection
-end MediaDirection
 
 enum MediaType derives CanEqual:
   case Blanket, CorrugatedBoard, Disc, EmbossingFoil, Film, Foil, GravureCylinder, ImagingCylinder
@@ -27,7 +24,6 @@ end MediaType
 
 enum Opacity derives CanEqual:
   case Opaque, Translucent, Transparent
-end Opacity
 
 final case class MediaIntent(
     mediaType: MediaType,
@@ -60,6 +56,9 @@ final case class MediaIntent(
   override def validate: Vector[ValidationError] =
     backIsoPaperSubstrate match
       case Some(_) if isoPaperSubstrate.isEmpty =>
-        Vector(ValidationError.MissingCompanionValue("MediaIntent/@BackISOPaperSubstrate", "MediaIntent/@ISOPaperSubstrate"))
+        Vector(ValidationError.MissingCompanionValue(
+          "MediaIntent/@BackISOPaperSubstrate",
+          "MediaIntent/@ISOPaperSubstrate"
+        ))
       case _ => Vector.empty
 end MediaIntent

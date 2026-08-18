@@ -2,8 +2,7 @@ package xjdf4s.codec.xml
 
 import xjdf4s.core.{QualifiedName, XjdfNamespace}
 
-/**
- * Minimal, dependency-free XML parser for XJDF/XJMF documents:
+/** Minimal, dependency-free XML parser for XJDF/XJMF documents:
  *
  *  - `<?xml ...?>` prolog, comments and processing instructions are recognized and skipped;
  *  - CDATA sections are preserved as text;
@@ -72,14 +71,16 @@ object XmlParser:
       val raw = readName()
       raw.split(":", 2) match
         case Array(prefix, local) => (prefix, local)
-        case _                    => ("", raw)
+        case _ => ("", raw)
 
     private def readName(): String =
       val start = position
       if position < input.length &&
-          (input.charAt(position).isLetter || input.charAt(position) == '_' || input.charAt(position) == ':')
+        (input.charAt(position).isLetter || input.charAt(position) == '_' || input.charAt(position) == ':')
       then position += 1
-      while position < input.length && (input.charAt(position).isLetterOrDigit || "._:-".contains(input.charAt(position))) do
+      while position < input.length &&
+        (input.charAt(position).isLetterOrDigit || "._:-".contains(input.charAt(position)))
+      do
         position += 1
       if position == start then abort("expected a name")
       input.substring(start, position)
@@ -133,7 +134,8 @@ object XmlParser:
         val (_, endLocal) = readQualifiedName()
         skipWhitespace()
         if peek == '>' then position += 1 else abort("expected '>'")
-        if endLocal != localName then abort(s"mismatched closing tag: expected '</$localName>' but found '</$endLocal>'")
+        if endLocal != localName then
+          abort(s"mismatched closing tag: expected '</$localName>' but found '</$endLocal>'")
         Xml.Element(name, attributes.result(), children)
 
     private def readContent(scopes: Map[String, String]): Vector[Xml] =

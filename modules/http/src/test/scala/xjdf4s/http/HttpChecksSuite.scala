@@ -2,10 +2,9 @@ package xjdf4s.http
 
 import scala.concurrent.duration.*
 
-/**
- * One munit test per stage 07 check: a hung scenario fails with its own name (the demo scenarios additionally
- * carry racePair step guards that name the exact step) instead of taking the whole suite down through a shared
- * eager initializer. The suite-level munitTimeout is the final safety net.
+/** One munit test per stage 07 check: a hung scenario fails with its own name (the demo scenarios additionally
+ *  carry racePair step guards that name the exact step) instead of taking the whole suite down through a shared
+ *  eager initializer. The suite-level munitTimeout is the final safety net.
  */
 class HttpChecksSuite extends munit.FunSuite:
 

@@ -7,14 +7,14 @@ object CommentCodec:
   val decoder: XmlDecoder[Comment] =
     XmlDecoder.instance: element =>
       for
-        value <- XmlDecoders.textContent.decode(element)
-        author <- XmlDecoders.attributeOf("Author")(Lexical.xjdfString).decode(element)
-        externalId <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
-        language <- XmlDecoders.attributeOf("Language")(Lexical.languageTag).decode(element)
-        personalId <- XmlDecoders.attributeOf("PersonalID")(Lexical.nmtoken).decode(element)
-        timeStamp <- XmlDecoders.attributeOf("TimeStamp")(Lexical.dateTime).decode(element)
+        value       <- XmlDecoders.textContent.decode(element)
+        author      <- XmlDecoders.attributeOf("Author")(Lexical.xjdfString).decode(element)
+        externalId  <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
+        language    <- XmlDecoders.attributeOf("Language")(Lexical.languageTag).decode(element)
+        personalId  <- XmlDecoders.attributeOf("PersonalID")(Lexical.nmtoken).decode(element)
+        timeStamp   <- XmlDecoders.attributeOf("TimeStamp")(Lexical.dateTime).decode(element)
         commentType <- XmlDecoders.attributeOf("CommentType")(Lexical.nmtoken).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        _           <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield Comment(
         value,
         author,

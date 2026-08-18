@@ -2,13 +2,11 @@ package xjdf4s.codec.json
 
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.*
-
 import xjdf4s.core.*
 import xjdf4s.model.*
 
-/**
- * JSON codecs for the Audit family (Example 9.11): `AuditPool` is an array of audit objects, each carrying the
- * root-style `"Name"` discriminator (`AuditCreated`, `AuditNotification`, ...), its `Header` and its payload.
+/** JSON codecs for the Audit family (Example 9.11): `AuditPool` is an array of audit objects, each carrying the
+ *  root-style `"Name"` discriminator (`AuditCreated`, `AuditNotification`, ...), its `Header` and its payload.
  */
 object JsonAuditCodecs:
 
@@ -28,14 +26,14 @@ object JsonAuditCodecs:
   )
   given Decoder[ProcessRun] = Decoder.instance(cursor =>
     for
-      end <- cursor.get[XsdDateTime]("End")
-      endStatus <- cursor.get[ProcessRunEndStatus]("EndStatus")
-      start <- cursor.get[XsdDateTime]("Start")
-      duration <- JsonHelpers.opt[XsdDuration](cursor, "Duration")
-      queueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "QueueEntryID")
-      returnTime <- JsonHelpers.opt[XsdDateTime](cursor, "ReturnTime")
+      end            <- cursor.get[XsdDateTime]("End")
+      endStatus      <- cursor.get[ProcessRunEndStatus]("EndStatus")
+      start          <- cursor.get[XsdDateTime]("Start")
+      duration       <- JsonHelpers.opt[XsdDuration](cursor, "Duration")
+      queueEntryId   <- JsonHelpers.opt[Nmtoken](cursor, "QueueEntryID")
+      returnTime     <- JsonHelpers.opt[XsdDateTime](cursor, "ReturnTime")
       submissionTime <- JsonHelpers.opt[XsdDateTime](cursor, "SubmissionTime")
-      parts <- JsonHelpers.vec[Part](cursor, "Part")
+      parts          <- JsonHelpers.vec[Part](cursor, "Part")
     yield ProcessRun(end, endStatus, start, duration, queueEntryId, returnTime, submissionTime, parts),
   )
 
@@ -63,9 +61,9 @@ object JsonAuditCodecs:
 
   private def decodeAudit(json: Json): Decoder.Result[Audit] =
     for
-      name <- json.hcursor.get[String]("Name")
+      name   <- json.hcursor.get[String]("Name")
       header <- json.hcursor.get[Header]("Header")
-      audit <- name match
+      audit  <- name match
         case "AuditCreated" =>
           Right(AuditCreated(header))
         case "AuditNotification" =>
@@ -84,7 +82,7 @@ object JsonAuditCodecs:
     cursor.as[List[Json]].flatMap { items =>
       items.foldLeft[Decoder.Result[Vector[Audit]]](Right(Vector.empty)) { (acc, item) =>
         for
-          audits <- acc
+          audits  <- acc
           decoded <- decodeAudit(item)
         yield audits :+ decoded
       }

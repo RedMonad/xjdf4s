@@ -1,7 +1,6 @@
 package xjdf4s.model
 
 import cats.{Eq, Hash, Show}
-
 import xjdf4s.core.*
 
 final case class Certification(
@@ -28,7 +27,6 @@ enum ColorSurfaces:
   case Front(value: SurfaceColor)
   case Back(value: SurfaceColor)
   case Both(front: SurfaceColor, back: SurfaceColor)
-end ColorSurfaces
 
 final case class ColorIntent(
     surfaces: ColorSurfaces = ColorSurfaces.Unprinted,
@@ -38,11 +36,9 @@ final case class ColorIntent(
 
 enum LaminatedSurfaces derives CanEqual:
   case Front, Back, Both
-end LaminatedSurfaces
 
 enum LaminationTemperature derives CanEqual:
   case Hot, Cold
-end LaminationTemperature
 
 final case class LaminatingIntent(
     surfaces: LaminatedSurfaces,
@@ -59,7 +55,6 @@ object Shape3D:
   given Eq[Shape3D] = Eq.fromUniversalEquals
   given Show[Shape3D] = Show.show(shape => s"${shape.width} ${shape.height} ${shape.depth}")
   given Hash[Shape3D] = Hash.fromUniversalHashCode
-end Shape3D
 
 final case class GridSize(columns: Int, rows: Int) derives CanEqual
 
@@ -67,7 +62,6 @@ object GridSize:
   given Eq[GridSize] = Eq.fromUniversalEquals
   given Show[GridSize] = Show.show(grid => s"${grid.columns} ${grid.rows}")
   given Hash[GridSize] = Hash.fromUniversalHashCode
-end GridSize
 
 opaque type EvenPageCount = Int
 object EvenPageCount:
@@ -83,11 +77,9 @@ end EvenPageCount
 
 enum Sides derives CanEqual:
   case OneSided, OneSidedBack, TwoSidedHeadToFoot, TwoSidedHeadToHead, Unprinted
-end Sides
 
 enum SpreadType derives CanEqual:
   case SinglePage, Spread
-end SpreadType
 
 final case class LayoutIntent(
     bleed: Option[Float] = None,
@@ -105,7 +97,6 @@ final case class LayoutIntent(
 
 enum PrintPreference derives CanEqual:
   case Balanced, CostEffective, Fastest, HighestQuality
-end PrintPreference
 
 final case class ProductionIntent(
     printPreference: Option[PrintPreference] = None,
@@ -117,11 +108,9 @@ final case class ProductionIntent(
 
 enum VariableType derives CanEqual:
   case OneLine, AddressField, IdentificationField, Area
-end VariableType
 
 enum VariableQuality derives CanEqual:
   case Simple, Imprint, Full
-end VariableQuality
 
 final case class VariableIntent(
     variableType: VariableType,

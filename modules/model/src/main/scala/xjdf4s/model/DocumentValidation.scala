@@ -2,18 +2,15 @@ package xjdf4s.model
 
 import cats.data.{Validated, ValidatedNel}
 import cats.implicits.*
-
 import xjdf4s.core.*
 
-/**
- * Compositional document validation: an accumulating traversal over the node tree. Type-level invariants keep most
- * invalid states unrepresentable; this pass collects every cross-field violation of a document at once, with the
- * document path attached to each error (`ValidationError.AtPath`).
+/** Compositional document validation: an accumulating traversal over the node tree. Type-level invariants keep most
+ *  invalid states unrepresentable; this pass collects every cross-field violation of a document at once, with the
+ *  document path attached to each error (`ValidationError.AtPath`).
  */
 extension (resource: Resource)
-  /**
-   * Validates the resource itself, its `Part` elements and its specific resource, accumulating all errors. `path`
-   * is the location of this resource inside the document (empty for the root of the traversal).
+  /** Validates the resource itself, its `Part` elements and its specific resource, accumulating all errors. `path`
+   *  is the location of this resource inside the document (empty for the root of the traversal).
    */
   def validateAllAt(path: Vector[String]): ValidatedNel[ValidationError, Unit] =
     def atPath(error: ValidationError): ValidationError =
@@ -23,8 +20,9 @@ extension (resource: Resource)
     val partErrors = resource.parts.traverse_(_.validateAt(path :+ "Part"))
     val specificErrors = resource.specificResource match
       case Some(node: ValidatedNode) => node.validateAt(path :+ "SpecificResource")
-      case _                         => Validated.validNel[ValidationError, Unit](())
+      case _ => Validated.validNel[ValidationError, Unit](())
     ownErrors *> partErrors *> specificErrors
+  end validateAllAt
 
   def validateAll: ValidatedNel[ValidationError, Unit] =
     validateAllAt(Vector.empty)
@@ -38,7 +36,6 @@ extension (document: XJDF)
         resource.validateAllAt(Vector(s"ResourceSet[$setIndex]", s"Resource[$resourceIndex]"))
       }
     }
-end extension
 
 private val legacyVinylMediaType: Option[MediaType] =
   // The Vinyl enum case is @deprecated: detect it by lexical match to avoid referencing the deprecated symbol.
@@ -62,7 +59,6 @@ def resourceWarnings(resource: Resource): Vector[Warning] =
         ),
       )
     case _ => Vector.empty
-end resourceWarnings
 
 /** Two-channel validation of a single resource: blocking errors plus advisory deprecation warnings. */
 def validateWithWarnings(resource: Resource): ValidationOutcome =
@@ -72,6 +68,6 @@ def validateWithWarnings(resource: Resource): ValidationOutcome =
 def validateDocumentWithWarnings(document: XJDF): ValidationOutcome =
   val errors = document.validateAll.toEither match
     case Left(nel) => nel.toList.toVector
-    case Right(_)  => Vector.empty
+    case Right(_) => Vector.empty
   val warnings = document.resourceSets.flatMap(_.resources).flatMap(resourceWarnings)
   ValidationOutcome(errors, warnings)

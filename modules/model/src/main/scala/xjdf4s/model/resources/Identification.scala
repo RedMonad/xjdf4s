@@ -5,11 +5,9 @@ import xjdf4s.model.{Rectangle, XYPair}
 
 enum IdentificationEncoding derives CanEqual:
   case ASCII, Barcode, Braille, RFID
-end IdentificationEncoding
 
 enum IdentificationPurpose derives CanEqual:
   case Label, Separation, Verification
-end IdentificationPurpose
 
 final case class BarcodeDetails(
     barcodeVersion: Option[Nmtoken] = None,

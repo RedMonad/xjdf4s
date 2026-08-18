@@ -5,7 +5,6 @@ import xjdf4s.model.*
 
 enum BoxType derives CanEqual:
   case Box, Carton, Envelope, Tube
-end BoxType
 
 final case class BoxPackingParams(
     boxType: BoxType,
@@ -37,7 +36,6 @@ final case class PalletizingParams(
 
 enum CompensationProcess derives CanEqual:
   case Printing, Platemaking
-end CompensationProcess
 
 final case class BarcodeCompParams(
     compensationProcess: CompensationProcess,
@@ -80,7 +78,6 @@ final case class InkZoneProfile(
 enum BundleType derives CanEqual:
   case BoundSet, Box, Carton, CollectedStack, CompensatedStack, Product, Pallet, Roll, Sheet, Stack
   case StrappedStack, StrappedCompensatedStack, WrappedBundle
-end BundleType
 
 final case class BundleItem(
     amount: Int,
@@ -111,7 +108,6 @@ final case class Pallet(
 
 enum EmbossEdgeShape derives CanEqual:
   case Beveled, Rounded
-end EmbossEdgeShape
 
 final case class EmbossOperation(
     direction: EmbossDirection,
@@ -146,11 +142,9 @@ final case class LabelingParams(
 
 enum InsertLocation derives CanEqual:
   case Back, FinishedPage, Front, Overfold
-end InsertLocation
 
 enum InsertingMethod derives CanEqual:
   case BindIn, BlowIn
-end InsertingMethod
 
 final case class InsertingParams(
     insertLocation: InsertLocation,
@@ -188,7 +182,6 @@ enum AssemblyPlan:
   case Gathering(binderySignatureIds: Vector[Nmtoken] = Vector.empty)
   case None
   case Listed(sections: NonEmptyVector[AssemblySection])
-end AssemblyPlan
 
 final case class Assembly(
     plan: AssemblyPlan,

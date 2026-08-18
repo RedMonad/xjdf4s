@@ -2,22 +2,19 @@ package xjdf4s.codec.json
 
 import io.circe.{Decoder, Json}
 import io.circe.syntax.*
-
 import xjdf4s.codec.json.JsonSpecialCodecs.given
-
 import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * GENERATED registry: JSON dispatch tables for the open substitution points. Every entry summons the
- * Encoder/Decoder of the type - hand-written where the JSON shape is special (the slice codecs), derived
- * otherwise. Regenerate with tools/gen-json-codecs.py when the model grows.
+/** GENERATED registry: JSON dispatch tables for the open substitution points. Every entry summons the
+ *  Encoder/Decoder of the type - hand-written where the JSON shape is special (the slice codecs), derived
+ *  otherwise. Regenerate with tools/gen-json-codecs.py when the model grows.
  *
- * Deferred until their hand codecs land: Assembly, LooseBindingParams (payload-enum resources),
- * FeedingParams (embeds CollatingItem), BindingIntent/ColorIntent/AssemblingIntent (payload-enum intents),
- * CommandModifyQueueEntry/CommandSubmitQueueEntry (embed deferred params); the foreign message carriers
- * stay rejected by design.
+ *  Deferred until their hand codecs land: Assembly, LooseBindingParams (payload-enum resources),
+ *  FeedingParams (embeds CollatingItem), BindingIntent/ColorIntent/AssemblingIntent (payload-enum intents),
+ *  CommandModifyQueueEntry/CommandSubmitQueueEntry (embed deferred params); the foreign message carriers
+ *  stay rejected by design.
  */
 object JsonRegistry:
 
@@ -547,7 +544,7 @@ object JsonRegistry:
   def decodeSpecificResource(name: String, json: Json): Decoder.Result[SpecificResource] =
     resourceDecoders.get(name) match
       case Some(decode) => decode(json)
-      case None         => JsonHelpers.fail(json.hcursor, s"resource '$name' is not covered by the JSON codec")
+      case None => JsonHelpers.fail(json.hcursor, s"resource '$name' is not covered by the JSON codec")
 
   def encodeProductIntent(intent: ProductIntent): Json =
     intentEncoders.get(intentName(intent)) match
@@ -559,7 +556,7 @@ object JsonRegistry:
   def decodeProductIntent(name: String, json: Json): Decoder.Result[ProductIntent] =
     intentDecoders.get(name) match
       case Some(decode) => decode(json)
-      case None         => JsonHelpers.fail(json.hcursor, s"intent '$name' is not covered by the JSON codec")
+      case None => JsonHelpers.fail(json.hcursor, s"intent '$name' is not covered by the JSON codec")
 
   def encodeMessage(message: Message): Json =
     messageEncoders.get(messageName(message)) match
@@ -571,5 +568,5 @@ object JsonRegistry:
   def decodeMessage(name: String, json: Json): Decoder.Result[Message] =
     messageDecoders.get(name) match
       case Some(decode) => decode(json)
-      case None         => JsonHelpers.fail(json.hcursor, s"message '$name' is not covered by the JSON codec")
+      case None => JsonHelpers.fail(json.hcursor, s"message '$name' is not covered by the JSON codec")
 end JsonRegistry

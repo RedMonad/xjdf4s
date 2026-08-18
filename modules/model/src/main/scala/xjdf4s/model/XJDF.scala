@@ -2,9 +2,8 @@ package xjdf4s.model
 
 import xjdf4s.core.*
 
-/**
- * Root XJDF job/process document (chapter 3.1). Transport-specific members (the JSON-only `$schema` and `@Name`
- * properties) are intentionally absent from the domain root; they are codec concerns.
+/** Root XJDF job/process document (chapter 3.1). Transport-specific members (the JSON-only `$schema` and `@Name`
+ *  properties) are intentionally absent from the domain root; they are codec concerns.
  */
 final case class XJDF(
     jobId: Nmtoken,

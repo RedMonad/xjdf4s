@@ -39,4 +39,3 @@ object XmlError:
     case XmlError.ConflictingFields(element, fields) =>
       s"<$element>: mutually exclusive fields: $fields"
   }
-end XmlError

@@ -27,7 +27,6 @@ final case class GluingParams(
 
 enum LaminatingMethod derives CanEqual:
   case CompoundFoil, DispersionGlue, Fusing
-end LaminatingMethod
 
 final case class LaminatingParams(
     gapList: Vector[Float] = Vector.empty,
@@ -70,7 +69,6 @@ final case class SpineTapingParams(
 
 enum StrappingType derives CanEqual:
   case Single, Double, Cross, DoubleCross
-end StrappingType
 
 final case class StrappingParams(
     strappingType: StrappingType,
@@ -90,15 +88,12 @@ final case class ThreadSealingParams(
 
 enum VarnishingModuleType derives CanEqual:
   case PrintModule, CoatingModule
-end VarnishingModuleType
 
 enum VarnishArea derives CanEqual:
   case Full, Spot
-end VarnishArea
 
 enum VarnishMethod derives CanEqual:
   case Blanket, Plate, Independent
-end VarnishMethod
 
 final case class VarnishingParams(
     moduleId: Option[Nmtoken] = None,

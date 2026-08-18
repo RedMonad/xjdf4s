@@ -11,4 +11,3 @@ class DocDslChecksSuite extends munit.FunSuite:
     )
     assert(results.size == 4)
   }
-end DocDslChecksSuite

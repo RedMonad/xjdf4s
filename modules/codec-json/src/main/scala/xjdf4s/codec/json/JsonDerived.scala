@@ -5,16 +5,14 @@ import scala.deriving.Mirror
 import scala.reflect.ClassTag
 
 import io.circe.{Decoder, DecodingFailure, Encoder, HCursor, Json}
-
 import xjdf4s.codec.xml.derivation.{Defaults, Names}
 import xjdf4s.core.*
 import xjdf4s.model.*
 
-/**
- * Per-field serialization contract used by the derived JSON node codec. Unlike the XML side there is no
- * attribute/element split - every field becomes a member of the object - but the naming source differs:
- * scalar fields use the attribute name (`Names.attributeName`), node fields use the element name of the child
- * type. `isElement` carries exactly that distinction.
+/** Per-field serialization contract used by the derived JSON node codec. Unlike the XML side there is no
+ *  attribute/element split - every field becomes a member of the object - but the naming source differs:
+ *  scalar fields use the attribute name (`Names.attributeName`), node fields use the element name of the child
+ *  type. `isElement` carries exactly that distinction.
  */
 trait JsonFieldCodec[A]:
   def isElement: Boolean
@@ -48,15 +46,14 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def elementName: String = ""
       def encodeField(value: Any): Option[Json] =
         value match
-          case None    => None
+          case None => None
           case Some(v) => Some(encoder(v.asInstanceOf[A]))
-          case other   => Some(encoder(other.asInstanceOf[A]))
+          case other => Some(encoder(other.asInstanceOf[A]))
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[A] =
         cursor.downField(memberName).focus match
           case Some(json) => decoder.decodeJson(json)
-          case None       => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
+          case None => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
       def decodeValue(json: Json): Decoder.Result[A] = decoder.decodeJson(json)
-  end from
 
   /** Node field: the member name is the element name derived from the runtime class (with naming overrides). */
   def fromProduct[A](encoder: Encoder[A], decoder: Decoder[A], classTag: ClassTag[?]): JsonFieldCodec[A] =
@@ -66,15 +63,14 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def elementName: String = name
       def encodeField(value: Any): Option[Json] =
         value match
-          case None    => None
+          case None => None
           case Some(v) => Some(encoder(v.asInstanceOf[A]))
-          case other   => Some(encoder(other.asInstanceOf[A]))
+          case other => Some(encoder(other.asInstanceOf[A]))
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[A] =
         cursor.downField(memberName).focus match
           case Some(json) => decoder.decodeJson(json)
-          case None       => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
+          case None => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
       def decodeValue(json: Json): Decoder.Result[A] = decoder.decodeJson(json)
-  end fromProduct
 
   // -- containers ----------------------------------------------------------------
 
@@ -84,15 +80,14 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def elementName: String = inner.elementName
       def encodeField(value: Any): Option[Json] =
         value match
-          case None    => None
+          case None => None
           case Some(v) => inner.encodeField(v)
-          case other   => inner.encodeField(other)
+          case other => inner.encodeField(other)
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[Option[A]] =
         cursor.downField(memberName).focus match
           case Some(json) => inner.decodeValue(json).map(Some(_))
-          case None       => Right(None)
+          case None => Right(None)
       def decodeValue(json: Json): Decoder.Result[Option[A]] = inner.decodeValue(json).map(Some(_))
-  end optionFieldCodec
 
   given vectorFieldCodec[A](using inner: JsonFieldCodec[A]): JsonFieldCodec[Vector[A]] =
     new JsonFieldCodec[Vector[A]]:
@@ -101,24 +96,23 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def encodeField(value: Any): Option[Json] =
         value match
           case values: Vector[?] if values.isEmpty => None
-          case values: Vector[?]                   => Some(Json.arr(values.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
-          case None                                => None
-          case other                               => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
+          case values: Vector[?] => Some(Json.arr(values.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
+          case None => None
+          case other => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[Vector[A]] =
         cursor.downField(memberName).focus match
           case Some(json) => decodeValue(json)
-          case None       => Right(Vector.empty)
+          case None => Right(Vector.empty)
       def decodeValue(json: Json): Decoder.Result[Vector[A]] =
         json.asArray match
           case Some(items) =>
             items.toVector.foldLeft[Decoder.Result[Vector[A]]](Right(Vector.empty)) { (acc, item) =>
               for
-                values <- acc
+                values  <- acc
                 decoded <- inner.decodeValue(item)
               yield values :+ decoded
             }
           case None => Left(DecodingFailure("expected an array", Nil))
-  end vectorFieldCodec
 
   given nonEmptyVectorFieldCodec[A](using inner: JsonFieldCodec[A]): JsonFieldCodec[NonEmptyVector[A]] =
     new JsonFieldCodec[NonEmptyVector[A]]:
@@ -127,16 +121,15 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def encodeField(value: Any): Option[Json] =
         value match
           case values: Vector[?] => Some(Json.arr(values.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
-          case other                     => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
+          case other => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[NonEmptyVector[A]] =
         cursor.downField(memberName).focus match
           case Some(json) => decodeValue(json)
-          case None       => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
+          case None => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
       def decodeValue(json: Json): Decoder.Result[NonEmptyVector[A]] =
         vectorFieldCodec[A].decodeValue(json).flatMap { values =>
           NonEmptyVector.from(values).left.map(_ => DecodingFailure("expected a non-empty array", Nil))
         }
-  end nonEmptyVectorFieldCodec
 
   given twoOrMoreFieldCodec[A](using inner: JsonFieldCodec[A]): JsonFieldCodec[TwoOrMore[A]] =
     new JsonFieldCodec[TwoOrMore[A]]:
@@ -145,16 +138,15 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def encodeField(value: Any): Option[Json] =
         value match
           case values: Vector[?] => Some(Json.arr(values.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
-          case other                => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
+          case other => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[TwoOrMore[A]] =
         cursor.downField(memberName).focus match
           case Some(json) => decodeValue(json)
-          case None       => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
+          case None => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
       def decodeValue(json: Json): Decoder.Result[TwoOrMore[A]] =
         vectorFieldCodec[A].decodeValue(json).flatMap { values =>
           TwoOrMore.from(values).left.map(_ => DecodingFailure("expected at least two elements", Nil))
         }
-  end twoOrMoreFieldCodec
 
   given atMostTwoFieldCodec[A](using inner: JsonFieldCodec[A]): JsonFieldCodec[AtMostTwo[A]] =
     new JsonFieldCodec[AtMostTwo[A]]:
@@ -163,23 +155,21 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def encodeField(value: Any): Option[Json] =
         value match
           case values: Vector[?] => Some(Json.arr(values.map(item => inner.encodeField(item).getOrElse(Json.Null))*))
-          case other                => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
+          case other => Some(Json.arr(inner.encodeField(other).getOrElse(Json.Null)))
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[AtMostTwo[A]] =
         cursor.downField(memberName).focus match
           case Some(json) => decodeValue(json)
-          case None       => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
+          case None => Left(DecodingFailure(s"missing member '$memberName'", cursor.history))
       def decodeValue(json: Json): Decoder.Result[AtMostTwo[A]] =
         vectorFieldCodec[A].decodeValue(json).flatMap { values =>
           AtMostTwo.from(values).left.map(_ => DecodingFailure("expected at most two elements", Nil))
         }
-  end atMostTwoFieldCodec
 
   // -- special markers handled by the derived runtime by field name --------------
 
-  /**
-   * The `extensions` field of every node is handled by the derived runtime (foreign members plus `"@context"`),
-   * so this instance exists only to satisfy the per-field materialization of the inline instance walk; the
-   * runtime never calls it.
+  /** The `extensions` field of every node is handled by the derived runtime (foreign members plus `"@context"`),
+   *  so this instance exists only to satisfy the per-field materialization of the inline instance walk; the
+   *  runtime never calls it.
    */
   given extensionsFieldCodec: JsonFieldCodec[Extensions] =
     new JsonFieldCodec[Extensions]:
@@ -188,7 +178,6 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
       def encodeField(value: Any): Option[Json] = None
       def decodeMember(cursor: HCursor, memberName: String): Decoder.Result[Extensions] = Right(Extensions.empty)
       def decodeValue(json: Json): Decoder.Result[Extensions] = Right(Extensions.empty)
-  end extensionsFieldCodec
 
   /** Same marker role for `foreignElements` fields of type `Vector[ExtensionElement]`. */
   given extensionElementFieldCodec: JsonFieldCodec[ExtensionElement] =
@@ -200,35 +189,35 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
         Left(DecodingFailure("foreign elements are collected by the derived codec", Nil))
       def decodeValue(json: Json): Decoder.Result[ExtensionElement] =
         Left(DecodingFailure("foreign elements are collected by the derived codec", Nil))
-  end extensionElementFieldCodec
 
   // -- value types: case classes with hand scalar codecs, but attributes in the naming -------------------
 
-  /**
-   * `XYPair`, `Matrix`, `Rectangle`, ... are case classes (hence `scala.Product`), so the generic
-   * `productFieldCodec` would classify them as nodes. The exact-type givens below beat the generic bound and
-   * keep them scalar attributes, mirroring the explicit FieldCodec givens of the XML side.
+  /** `XYPair`, `Matrix`, `Rectangle`, ... are case classes (hence `scala.Product`), so the generic
+   *  `productFieldCodec` would classify them as nodes. The exact-type givens below beat the generic bound and
+   *  keep them scalar attributes, mirroring the explicit FieldCodec givens of the XML side.
    */
   given xypairFieldCodec: JsonFieldCodec[XYPair] = JsonFieldCodec.from(summon[Encoder[XYPair]], summon[Decoder[XYPair]])
   given matrixFieldCodec: JsonFieldCodec[Matrix] = JsonFieldCodec.from(summon[Encoder[Matrix]], summon[Decoder[Matrix]])
-  given rectangleFieldCodec: JsonFieldCodec[Rectangle] = JsonFieldCodec.from(summon[Encoder[Rectangle]], summon[Decoder[Rectangle]])
+  given rectangleFieldCodec: JsonFieldCodec[Rectangle] =
+    JsonFieldCodec.from(summon[Encoder[Rectangle]], summon[Decoder[Rectangle]])
   given integerRangeFieldCodec: JsonFieldCodec[IntegerRange] =
     JsonFieldCodec.from(summon[Encoder[IntegerRange]], summon[Decoder[IntegerRange]])
-  given shape3dFieldCodec: JsonFieldCodec[Shape3D] = JsonFieldCodec.from(summon[Encoder[Shape3D]], summon[Decoder[Shape3D]])
-  given gridSizeFieldCodec: JsonFieldCodec[GridSize] = JsonFieldCodec.from(summon[Encoder[GridSize]], summon[Decoder[GridSize]])
+  given shape3dFieldCodec: JsonFieldCodec[Shape3D] =
+    JsonFieldCodec.from(summon[Encoder[Shape3D]], summon[Decoder[Shape3D]])
+  given gridSizeFieldCodec: JsonFieldCodec[GridSize] =
+    JsonFieldCodec.from(summon[Encoder[GridSize]], summon[Decoder[GridSize]])
   given tileCoordinateFieldCodec: JsonFieldCodec[TileCoordinate] =
     JsonFieldCodec.from(summon[Encoder[TileCoordinate]], summon[Decoder[TileCoordinate]])
 
   // -- nodes ---------------------------------------------------------------------
 
-  /**
-   * Canonical `deriveOrSummon` pattern from the reference documentation: an inline given selected through
-   * `summonInline`, which at its expansion site first looks for an existing Encoder/Decoder pair (hand codecs,
-   * generated per-type givens) and otherwise derives both inline, right there.
+  /** Canonical `deriveOrSummon` pattern from the reference documentation: an inline given selected through
+   *  `summonInline`, which at its expansion site first looks for an existing Encoder/Decoder pair (hand codecs,
+   *  generated per-type givens) and otherwise derives both inline, right there.
    *
-   * `scala.reflect.Enum` extends `scala.Product` (reference/enums.md), so this given also matches plain enums.
-   * The `Mirror.ProductOf` check tells case classes (node, element-name member) from enums (scalar attribute,
-   * attribute-name member): enums only have a `Mirror.SumOf`.
+   *  `scala.reflect.Enum` extends `scala.Product` (reference/enums.md), so this given also matches plain enums.
+   *  The `Mirror.ProductOf` check tells case classes (node, element-name member) from enums (scalar attribute,
+   *  attribute-name member): enums only have a `Mirror.SumOf`.
    */
   inline given productFieldCodec[A <: scala.Product]: JsonFieldCodec[A] =
     val classTag = summonInline[ClassTag[A]]
@@ -237,7 +226,7 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
         val decoder = summonFrom { case decoder: Decoder[A] => decoder }
         summonFrom {
           case _: Mirror.ProductOf[A] => JsonFieldCodec.fromProduct(encoder, decoder, classTag)
-          case _                      => JsonFieldCodec.from(encoder, decoder)
+          case _ => JsonFieldCodec.from(encoder, decoder)
         }
       case _ =>
         val node = JsonDerived.derived[A](using summonInline[Mirror.ProductOf[A]], classTag)
@@ -245,15 +234,14 @@ object JsonFieldCodec extends LowPriorityJsonFieldCodecs:
     }
 end JsonFieldCodec
 
-/**
- * Compile-time derivation of circe Encoder/Decoder pairs for case classes. Every case-class field is
- * serialized through its [[JsonFieldCodec]] instance: scalar fields become members named by the normative
- * attribute name, node fields become members named by the child element name; `Option` fields are omitted when
- * absent, vector fields become arrays; `extensions`/`foreignElements` are handled through [[JsonForeign]].
+/** Compile-time derivation of circe Encoder/Decoder pairs for case classes. Every case-class field is
+ *  serialized through its [[JsonFieldCodec]] instance: scalar fields become members named by the normative
+ *  attribute name, node fields become members named by the child element name; `Option` fields are omitted when
+ *  absent, vector fields become arrays; `extensions`/`foreignElements` are handled through [[JsonForeign]].
  *
- * The entry points are inline *defs* rather than inline givens: inline givens cannot be found by ordinary
- * implicit search, so per-type non-inline givens are generated in `JsonDerivedInstances` and call these methods
- * directly; the inlining then happens here, at those call sites.
+ *  The entry points are inline *defs* rather than inline givens: inline givens cannot be found by ordinary
+ *  implicit search, so per-type non-inline givens are generated in `JsonDerivedInstances` and call these methods
+ *  directly; the inlining then happens here, at those call sites.
  */
 object JsonDerived:
 
@@ -277,25 +265,26 @@ object JsonDerived:
     val codecs = fieldCodecInstances[mirror.MirroredElemTypes]
     new DerivedJsonDecoder[A](mirror, labels, codecs, Defaults.of(classTag))
 
-  inline def derived[A <: scala.Product](using mirror: Mirror.ProductOf[A], classTag: ClassTag[A]): (Encoder[A], Decoder[A]) =
+  inline def derived[A <: scala.Product](
+      using mirror: Mirror.ProductOf[A],
+      classTag: ClassTag[A]
+  ): (Encoder[A], Decoder[A]) =
     (derivedEncoder[A], derivedDecoder[A])
 
-  /**
-   * Per-element instance collection: the tuple is walked with `summonInline` so every search is delayed until
-   * inlining at the call site, where the field codecs (including this file's inline `productFieldCodec`) are
-   * visible.
+  /** Per-element instance collection: the tuple is walked with `summonInline` so every search is delayed until
+   *  inlining at the call site, where the field codecs (including this file's inline `productFieldCodec`) are
+   *  visible.
    */
   private inline def fieldCodecInstances[Elems <: Tuple]: Tuple =
     inline erasedValue[Elems] match
-      case _: EmptyTuple      => EmptyTuple
+      case _: EmptyTuple => EmptyTuple
       case _: (elem *: elems) => summonInline[JsonFieldCodec[elem]] *: fieldCodecInstances[elems]
 end JsonDerived
 
-/**
- * Runtime engine of the derivation. The field labels and the field codecs are produced at compile time by
- * [[JsonDerived.derivedEncoder]]/[[JsonDerived.derivedDecoder]]; encoding and decoding are plain runtime loops
- * over the fields. The decoder additionally takes the mirror (to rebuild the case class) and the reflective
- * defaults, so a missing optional member falls back to the declared default as on the XML side.
+/** Runtime engine of the derivation. The field labels and the field codecs are produced at compile time by
+ *  [[JsonDerived.derivedEncoder]]/[[JsonDerived.derivedDecoder]]; encoding and decoding are plain runtime loops
+ *  over the fields. The decoder additionally takes the mirror (to rebuild the case class) and the reflective
+ *  defaults, so a missing optional member falls back to the declared default as on the XML side.
  */
 final class DerivedJsonEncoder[A](
     labels: Tuple,
@@ -351,11 +340,11 @@ final class DerivedJsonDecoder[A](
         case "extensions" =>
           JsonForeign.decodeExtensions(c) match
             case Right(extensions) => values(index) = extensions
-            case Left(error)       => failure = Some(error)
+            case Left(error) => failure = Some(error)
         case "foreignElements" =>
           JsonForeign.decodeForeignElements(c) match
             case Right(elements) => values(index) = elements
-            case Left(error)     => failure = Some(error)
+            case Left(error) => failure = Some(error)
         case _ =>
           val memberName = if codec.isElement then codec.elementName else Names.attributeName(label)
           codec.decodeMember(c, memberName) match
@@ -363,7 +352,7 @@ final class DerivedJsonDecoder[A](
             case Left(error) =>
               defaults.get(index) match
                 case Some(default) => values(index) = default
-                case None          => failure = Some(error)
+                case None => failure = Some(error)
       index += 1
     for
       _ <- unexpected
@@ -381,7 +370,7 @@ final class DerivedJsonDecoder[A](
       val label = labelAt(index)
       val codec = codecAt(index)
       label match
-        case "extensions"      => ()
+        case "extensions" => ()
         case "foreignElements" => ()
         case _ =>
           val memberName = if codec.isElement then codec.elementName else Names.attributeName(label)
@@ -400,5 +389,4 @@ final class DerivedJsonDecoder[A](
         if unknown.isEmpty then Right(())
         else Left(DecodingFailure(s"unexpected member(s): ${unknown.mkString(", ")}", c.history))
       case None => Right(())
-  end unexpectedMembers
 end DerivedJsonDecoder

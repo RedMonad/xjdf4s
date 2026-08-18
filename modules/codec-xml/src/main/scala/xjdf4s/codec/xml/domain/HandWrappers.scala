@@ -7,11 +7,10 @@ import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Wires the hand-written codec objects into the typeclass-driven derivation: every hand-coded node gets an
- * [[XmlElementCodec]] (used by registries and derived parents) and a [[FieldCodec]] (used when the node appears as
- * a field of a derived node). Hand instances are more specific than the universal derivation, so they win.
- * All givens are top-level so that every file of this package sees them without imports.
+/** Wires the hand-written codec objects into the typeclass-driven derivation: every hand-coded node gets an
+ *  [[XmlElementCodec]] (used by registries and derived parents) and a [[FieldCodec]] (used when the node appears as
+ *  a field of a derived node). Hand instances are more specific than the universal derivation, so they win.
+ *  All givens are top-level so that every file of this package sees them without imports.
  */
 private def handBoth[A](name: String)(decoder: XmlDecoder[A], encoder: XmlEncoder[A]): XmlElementCodec[A] =
   XmlElementCodec.instance(name)(decoder.decode, encoder.encode)
@@ -79,7 +78,10 @@ given mediaLayersCodec: XmlElementCodec[MediaLayers] =
 given mediaLayersField: FieldCodec[MediaLayers] = FieldCodec.element(summon[XmlElementCodec[MediaLayers]])
 
 given conditionsCodec: XmlElementCodec[ColorMeasurementConditions] =
-  handBoth("ColorMeasurementConditions")(ColorMeasurementConditionsCodec.decoder, ColorMeasurementConditionsCodec.encoder)
+  handBoth("ColorMeasurementConditions")(
+    ColorMeasurementConditionsCodec.decoder,
+    ColorMeasurementConditionsCodec.encoder
+  )
 given conditionsField: FieldCodec[ColorMeasurementConditions] =
   FieldCodec.element(summon[XmlElementCodec[ColorMeasurementConditions]])
 

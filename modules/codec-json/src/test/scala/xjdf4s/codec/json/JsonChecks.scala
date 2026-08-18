@@ -1,9 +1,8 @@
 package xjdf4s.codec.json
 
 import io.circe.syntax.*
-
-import xjdf4s.codec.json.given
 import xjdf4s.codec.json.JsonRootCodecs.given
+import xjdf4s.codec.json.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
@@ -98,7 +97,8 @@ object JsonChecks:
     val document = XJDF(
       jobId,
       NonEmptyVector.one(process),
-      auditPool = Some(AuditPool(Vector(AuditCreated(header), AuditNotification(header, Notification(Severity.Event))))),
+      auditPool =
+        Some(AuditPool(Vector(AuditCreated(header), AuditNotification(header, Notification(Severity.Event))))),
     )
     val decoded = roundTrip(document)
     assert(decoded.auditPool.nonEmpty)

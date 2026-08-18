@@ -9,17 +9,17 @@ object HeaderCodec:
   val decoder: XmlDecoder[Header] =
     XmlDecoder.instance: element =>
       for
-        deviceId <- XmlDecoders.requiredAttribute("DeviceID")(Lexical.nmtoken).decode(element)
-        time <- XmlDecoders.requiredAttribute("Time")(Lexical.dateTime).decode(element)
-        agentName <- XmlDecoders.attributeOf("AgentName")(Lexical.xjdfString).decode(element)
-        agentVersion <- XmlDecoders.attributeOf("AgentVersion")(Lexical.xjdfString).decode(element)
-        author <- XmlDecoders.attributeOf("Author")(Lexical.xjdfString).decode(element)
+        deviceId        <- XmlDecoders.requiredAttribute("DeviceID")(Lexical.nmtoken).decode(element)
+        time            <- XmlDecoders.requiredAttribute("Time")(Lexical.dateTime).decode(element)
+        agentName       <- XmlDecoders.attributeOf("AgentName")(Lexical.xjdfString).decode(element)
+        agentVersion    <- XmlDecoders.attributeOf("AgentVersion")(Lexical.xjdfString).decode(element)
+        author          <- XmlDecoders.attributeOf("Author")(Lexical.xjdfString).decode(element)
         descriptiveName <- XmlDecoders.attributeOf("DescriptiveName")(Lexical.xjdfString).decode(element)
-        icsVersions <- XmlDecoders.attributeOf("ICSVersions")(Lexical.nmtokens).decode(element)
-        id <- XmlDecoders.attributeOf("ID")(Lexical.xsdId).decode(element)
-        personalId <- XmlDecoders.attributeOf("PersonalID")(Lexical.nmtoken).decode(element)
-        refId <- XmlDecoders.attributeOf("refID")(Lexical.nmtoken).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        icsVersions     <- XmlDecoders.attributeOf("ICSVersions")(Lexical.nmtokens).decode(element)
+        id              <- XmlDecoders.attributeOf("ID")(Lexical.xsdId).decode(element)
+        personalId      <- XmlDecoders.attributeOf("PersonalID")(Lexical.nmtoken).decode(element)
+        refId           <- XmlDecoders.attributeOf("refID")(Lexical.nmtoken).decode(element)
+        _               <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield Header(
         deviceId,
         time,
@@ -44,8 +44,8 @@ object HeaderCodec:
           CodecHelpers.attribute("DeviceID", Some(header.deviceId.value)) ++
           CodecHelpers.attribute(
             "ICSVersions",
-        Option.when(header.icsVersions.nonEmpty)(CodecHelpers.renderNmtokens(header.icsVersions)),
-      ) ++
+            Option.when(header.icsVersions.nonEmpty)(CodecHelpers.renderNmtokens(header.icsVersions)),
+          ) ++
           CodecHelpers.attributeOf("ID", header.id, (v: XsdId) => v.value) ++
           CodecHelpers.attributeOf("PersonalID", header.personalId, (v: Nmtoken) => v.value) ++
           CodecHelpers.attributeOf("refID", header.refId, (v: Nmtoken) => v.value) ++
@@ -61,11 +61,11 @@ object SubscriptionCodec:
   val decoder: XmlDecoder[Subscription] =
     XmlDecoder.instance: element =>
       for
-        url <- XmlDecoders.requiredAttribute("URL")(Lexical.uri).decode(element)
+        url          <- XmlDecoders.requiredAttribute("URL")(Lexical.uri).decode(element)
         channelModes <- XmlDecoders.attributeOf("ChannelMode")(Lexical.list(channelMode)).decode(element)
-        languages <- XmlDecoders.attributeOf("Languages")(Lexical.languages).decode(element)
-        repeatTime <- XmlDecoders.attributeOf("RepeatTime")(Lexical.float).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        languages    <- XmlDecoders.attributeOf("Languages")(Lexical.languages).decode(element)
+        repeatTime   <- XmlDecoders.attributeOf("RepeatTime")(Lexical.float).decode(element)
+        _            <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield Subscription(
         url,
         channelModes.getOrElse(Vector.empty),
@@ -79,8 +79,8 @@ object SubscriptionCodec:
       val attributes =
         CodecHelpers.attribute(
           "ChannelMode",
-        Option.when(subscription.channelMode.nonEmpty)(subscription.channelMode.map(_.toString).mkString(" ")),
-      ) ++
+          Option.when(subscription.channelMode.nonEmpty)(subscription.channelMode.map(_.toString).mkString(" ")),
+        ) ++
           CodecHelpers.attribute(
             "Languages",
             Option.when(subscription.languages.nonEmpty)(CodecHelpers.renderLanguages(subscription.languages)),
@@ -98,16 +98,16 @@ object ResourceQuParamsCodec:
   val decoder: XmlDecoder[ResourceQuParams] =
     XmlDecoder.instance: element =>
       for
-        scope <- XmlDecoders.requiredAttribute("Scope")(Lexical.scope).decode(element)
-        externalId <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
-        jobId <- XmlDecoders.attributeOf("JobID")(Lexical.nmtoken).decode(element)
-        jobPartId <- XmlDecoders.attributeOf("JobPartID")(Lexical.nmtoken).decode(element)
+        scope        <- XmlDecoders.requiredAttribute("Scope")(Lexical.scope).decode(element)
+        externalId   <- XmlDecoders.attributeOf("ExternalID")(Lexical.nmtoken).decode(element)
+        jobId        <- XmlDecoders.attributeOf("JobID")(Lexical.nmtoken).decode(element)
+        jobPartId    <- XmlDecoders.attributeOf("JobPartID")(Lexical.nmtoken).decode(element)
         queueEntryId <- XmlDecoders.attributeOf("QueueEntryID")(Lexical.nmtoken).decode(element)
-        details <- XmlDecoders.attributeOf("ResourceDetails")(resourceDetails).decode(element)
+        details      <- XmlDecoders.attributeOf("ResourceDetails")(resourceDetails).decode(element)
         resourceName <- XmlDecoders.attributeOf("ResourceName")(Lexical.nmtoken).decode(element)
-        types <- XmlDecoders.attributeOf("Types")(Lexical.nmtokens).decode(element)
-        parts <- XmlDecoders.repeatedChild("Part")(PartCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Part")).decode(element)
+        types        <- XmlDecoders.attributeOf("Types")(Lexical.nmtokens).decode(element)
+        parts        <- XmlDecoders.repeatedChild("Part")(PartCodec.decoder).decode(element)
+        _            <- XmlDecoders.expectChildrenOnly(Set("Part")).decode(element)
       yield ResourceQuParams(
         scope,
         externalId,
@@ -147,10 +147,10 @@ object QueryResourceCodec:
   val decoder: XmlDecoder[QueryResource] =
     XmlDecoder.instance: element =>
       for
-        header <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
-        params <- XmlDecoders.singleChild("ResourceQuParams")(ResourceQuParamsCodec.decoder).decode(element)
+        header       <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
+        params       <- XmlDecoders.singleChild("ResourceQuParams")(ResourceQuParamsCodec.decoder).decode(element)
         subscription <- XmlDecoders.optionalChild("Subscription")(SubscriptionCodec.decoder).decode(element)
-        languages <- XmlDecoders.attributeOf("Languages")(Lexical.languages).decode(element)
+        languages    <- XmlDecoders.attributeOf("Languages")(Lexical.languages).decode(element)
         _ <- XmlDecoders.expectChildrenOnly(Set("Header", "ResourceQuParams", "Subscription")).decode(element)
       yield QueryResource(
         header,
@@ -165,8 +165,8 @@ object QueryResourceCodec:
       val attributes =
         CodecHelpers.attribute(
           "Languages",
-        Option.when(query.languages.nonEmpty)(CodecHelpers.renderLanguages(query.languages)),
-      ) ++ CodecHelpers.extensionAttributes(query.extensions)
+          Option.when(query.languages.nonEmpty)(CodecHelpers.renderLanguages(query.languages)),
+        ) ++ CodecHelpers.extensionAttributes(query.extensions)
       // XSD Query base sequence: Header, Subscription?; ResourceQuParams is the extension content after them.
       val children =
         Vector(HeaderCodec.encoder.encode(query.header)) ++
@@ -184,18 +184,18 @@ object ResourceInfoCodec:
   val decoder: XmlDecoder[ResourceInfo] =
     XmlDecoder.instance: element =>
       for
-        resourceSet <- XmlDecoders.singleChild("ResourceSet")(ResourceSetCodec.decoder).decode(element)
+        resourceSet   <- XmlDecoders.singleChild("ResourceSet")(ResourceSetCodec.decoder).decode(element)
         commandResult <- XmlDecoders.attributeOf("CommandResult")(commandResultLex).decode(element)
-        jobId <- XmlDecoders.attributeOf("JobID")(Lexical.nmtoken).decode(element)
-        jobPartId <- XmlDecoders.attributeOf("JobPartID")(Lexical.nmtoken).decode(element)
-        level <- XmlDecoders.attributeOf("Level")(resourceLevelLex).decode(element)
-        moduleId <- XmlDecoders.attributeOf("ModuleID")(Lexical.nmtoken).decode(element)
-        queueEntryId <- XmlDecoders.attributeOf("QueueEntryID")(Lexical.nmtoken).decode(element)
-        scope <- XmlDecoders.attributeOf("Scope")(Lexical.scope).decode(element)
-        speed <- XmlDecoders.attributeOf("Speed")(Lexical.float).decode(element)
-        types <- XmlDecoders.attributeOf("Types")(Lexical.nmtokens).decode(element)
-        totalAmount <- XmlDecoders.attributeOf("TotalAmount")(Lexical.float).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("ResourceSet")).decode(element)
+        jobId         <- XmlDecoders.attributeOf("JobID")(Lexical.nmtoken).decode(element)
+        jobPartId     <- XmlDecoders.attributeOf("JobPartID")(Lexical.nmtoken).decode(element)
+        level         <- XmlDecoders.attributeOf("Level")(resourceLevelLex).decode(element)
+        moduleId      <- XmlDecoders.attributeOf("ModuleID")(Lexical.nmtoken).decode(element)
+        queueEntryId  <- XmlDecoders.attributeOf("QueueEntryID")(Lexical.nmtoken).decode(element)
+        scope         <- XmlDecoders.attributeOf("Scope")(Lexical.scope).decode(element)
+        speed         <- XmlDecoders.attributeOf("Speed")(Lexical.float).decode(element)
+        types         <- XmlDecoders.attributeOf("Types")(Lexical.nmtokens).decode(element)
+        totalAmount   <- XmlDecoders.attributeOf("TotalAmount")(Lexical.float).decode(element)
+        _             <- XmlDecoders.expectChildrenOnly(Set("ResourceSet")).decode(element)
       yield ResourceInfo(
         resourceSet,
         Vector.empty,
@@ -226,8 +226,8 @@ object ResourceInfoCodec:
           CodecHelpers.attributeOf("Speed", info.speed, CodecHelpers.renderFloat) ++
           CodecHelpers.attribute(
             "Types",
-        Option.when(info.types.nonEmpty)(CodecHelpers.renderNmtokens(info.types)),
-      ) ++
+            Option.when(info.types.nonEmpty)(CodecHelpers.renderNmtokens(info.types)),
+          ) ++
           CodecHelpers.attributeOf("TotalAmount", info.totalAmount, CodecHelpers.renderFloat) ++
           CodecHelpers.extensionAttributes(info.extensions)
       Xml.Element(
@@ -241,12 +241,18 @@ object ResponseResourceCodec:
   val decoder: XmlDecoder[ResponseResource] =
     XmlDecoder.instance: element =>
       for
-        header <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
-        returnCode <- XmlDecoders.attributeOf("ReturnCode")(Lexical.int).decode(element)
+        header       <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
+        returnCode   <- XmlDecoders.attributeOf("ReturnCode")(Lexical.int).decode(element)
         notification <- XmlDecoders.optionalChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
         resourceInfo <- XmlDecoders.repeatedChild("ResourceInfo")(ResourceInfoCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Header", "Notification", "ResourceInfo")).decode(element)
-      yield ResponseResource(header, resourceInfo, returnCode, notification, CodecHelpers.decodeExtensionAttributes(element))
+        _            <- XmlDecoders.expectChildrenOnly(Set("Header", "Notification", "ResourceInfo")).decode(element)
+      yield ResponseResource(
+        header,
+        resourceInfo,
+        returnCode,
+        notification,
+        CodecHelpers.decodeExtensionAttributes(element)
+      )
 
   val encoder: XmlEncoder[ResponseResource] =
     XmlEncoder.instance: response =>
@@ -267,12 +273,12 @@ object SignalResourceCodec:
   val decoder: XmlDecoder[SignalResource] =
     XmlDecoder.instance: element =>
       for
-        header <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
-        resourceInfo <- XmlDecoders.repeatedChild("ResourceInfo")(ResourceInfoCodec.decoder).decode(element)
-        channelMode <- XmlDecoders.attributeOf("ChannelMode")(channelMode).decode(element)
-        replaceAfter <- XmlDecoders.attributeOf("ReplaceAfter")(Lexical.dateTime).decode(element)
+        header        <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
+        resourceInfo  <- XmlDecoders.repeatedChild("ResourceInfo")(ResourceInfoCodec.decoder).decode(element)
+        channelMode   <- XmlDecoders.attributeOf("ChannelMode")(channelMode).decode(element)
+        replaceAfter  <- XmlDecoders.attributeOf("ReplaceAfter")(Lexical.dateTime).decode(element)
         replaceBefore <- XmlDecoders.attributeOf("ReplaceBefore")(Lexical.dateTime).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Header", "ResourceInfo")).decode(element)
+        _             <- XmlDecoders.expectChildrenOnly(Set("Header", "ResourceInfo")).decode(element)
       yield SignalResource(
         header,
         resourceInfo,
@@ -300,7 +306,7 @@ object QueryKnownMessagesCodec:
     XmlDecoder.instance: element =>
       for
         header <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Header")).decode(element)
+        _      <- XmlDecoders.expectChildrenOnly(Set("Header")).decode(element)
       yield QueryKnownMessages(header, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[QueryKnownMessages] =
@@ -321,10 +327,10 @@ object MessageServiceCodec:
   val decoder: XmlDecoder[MessageService] =
     XmlDecoder.instance: element =>
       for
-        messageType <- XmlDecoders.requiredAttribute("Type")(Lexical.nmtoken).decode(element)
+        messageType   <- XmlDecoders.requiredAttribute("Type")(Lexical.nmtoken).decode(element)
         responseModes <- XmlDecoders.attributeOf("ResponseModes")(Lexical.list(responseMode)).decode(element)
-        urlSchemes <- XmlDecoders.attributeOf("URLSchemes")(Lexical.list(urlScheme)).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
+        urlSchemes    <- XmlDecoders.attributeOf("URLSchemes")(Lexical.list(urlScheme)).decode(element)
+        _             <- XmlDecoders.expectChildrenOnly(Set.empty).decode(element)
       yield MessageService(
         messageType,
         responseModes.getOrElse(Vector.empty),
@@ -337,13 +343,13 @@ object MessageServiceCodec:
       val attributes =
         CodecHelpers.attribute(
           "ResponseModes",
-        Option.when(service.responseModes.nonEmpty)(service.responseModes.map(_.toString).mkString(" ")),
-      ) ++
+          Option.when(service.responseModes.nonEmpty)(service.responseModes.map(_.toString).mkString(" ")),
+        ) ++
           CodecHelpers.attribute("Type", Some(service.messageType.value)) ++
           CodecHelpers.attribute(
             "URLSchemes",
-        Option.when(service.urlSchemes.nonEmpty)(service.urlSchemes.map(_.lexical).mkString(" ")),
-      ) ++
+            Option.when(service.urlSchemes.nonEmpty)(service.urlSchemes.map(_.lexical).mkString(" ")),
+          ) ++
           CodecHelpers.extensionAttributes(service.extensions)
       Xml.Element(CodecHelpers.qname("MessageService"), attributes, Vector.empty)
 end MessageServiceCodec
@@ -352,12 +358,18 @@ object ResponseKnownMessagesCodec:
   val decoder: XmlDecoder[ResponseKnownMessages] =
     XmlDecoder.instance: element =>
       for
-        header <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
-        returnCode <- XmlDecoders.attributeOf("ReturnCode")(Lexical.int).decode(element)
+        header       <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
+        returnCode   <- XmlDecoders.attributeOf("ReturnCode")(Lexical.int).decode(element)
         notification <- XmlDecoders.optionalChild("Notification")(summon[XmlElementCodec[Notification]]).decode(element)
-        services <- XmlDecoders.repeatedChild("MessageService")(MessageServiceCodec.decoder).decode(element)
-        _ <- XmlDecoders.expectChildrenOnly(Set("Header", "Notification", "MessageService")).decode(element)
-      yield ResponseKnownMessages(header, services, returnCode, notification, CodecHelpers.decodeExtensionAttributes(element))
+        services     <- XmlDecoders.repeatedChild("MessageService")(MessageServiceCodec.decoder).decode(element)
+        _            <- XmlDecoders.expectChildrenOnly(Set("Header", "Notification", "MessageService")).decode(element)
+      yield ResponseKnownMessages(
+        header,
+        services,
+        returnCode,
+        notification,
+        CodecHelpers.decodeExtensionAttributes(element)
+      )
 
   val encoder: XmlEncoder[ResponseKnownMessages] =
     XmlEncoder.instance: response =>
@@ -371,26 +383,23 @@ object ResponseKnownMessagesCodec:
       Xml.Element(CodecHelpers.qname("ResponseKnownMessages"), attributes, children)
 end ResponseKnownMessagesCodec
 
-
-
-
 object XjmfCodec:
   val decoder: XmlDecoder[XJMF] =
     XmlDecoder.instance: element =>
       for
-        header <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
-        version <- XmlDecoders.attributeOf("Version")(Lexical.version).decode(element)
+        header   <- XmlDecoders.singleChild("Header")(HeaderCodec.decoder).decode(element)
+        version  <- XmlDecoders.attributeOf("Version")(Lexical.version).decode(element)
         messages <- element.childElements
           .filter(_.name.localName != "Header")
           .foldLeft[Either[XmlError, Vector[Message]]](Right(Vector.empty)) { (acc, child) =>
             for
-              values <- acc
+              values  <- acc
               message <- Registry.decodeMessage(child)
             yield values :+ message
           }
         nonEmpty <- NonEmptyVector.from(messages) match
           case Right(nonEmpty) => Right(nonEmpty)
-          case Left(_)         => Left(XmlError.MissingElement("XJMF", "Message"))
+          case Left(_) => Left(XmlError.MissingElement("XJMF", "Message"))
       yield XJMF(header, nonEmpty, version, CodecHelpers.decodeExtensionAttributes(element))
 
   val encoder: XmlEncoder[XJMF] =

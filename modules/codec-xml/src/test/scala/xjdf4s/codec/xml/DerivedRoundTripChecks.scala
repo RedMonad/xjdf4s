@@ -6,9 +6,8 @@ import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Round-trip law for the special hand codecs and for the generic derivation: `decode(encode(value)) == value`
- * across intents, audits, derived resources and derived messages.
+/** Round-trip law for the special hand codecs and for the generic derivation: `decode(encode(value)) == value`
+ *  across intents, audits, derived resources and derived messages.
  */
 object DerivedRoundTripChecks:
   private def roundTrip[A: XmlElementCodec](value: A): A =
@@ -27,8 +26,12 @@ object DerivedRoundTripChecks:
   val intents: Unit =
     assert(roundTrip(MediaIntent(MediaType.Paper)) == MediaIntent(MediaType.Paper))
     assert(roundTrip(LaminatingIntent(LaminatedSurfaces.Front)) == LaminatingIntent(LaminatedSurfaces.Front))
-    assert(roundTrip(LayoutIntent(pages = EvenPageCount.from(8).toOption)) == LayoutIntent(pages = EvenPageCount.from(8).toOption))
-    val colorIntent = ColorIntent(ColorSurfaces.Both(SurfaceColor(), SurfaceColor(colorsUsed = Vector(Nmtoken.from("Cyan").toOption.get))))
+    assert(roundTrip(LayoutIntent(pages = EvenPageCount.from(8).toOption)) ==
+      LayoutIntent(pages = EvenPageCount.from(8).toOption))
+    val colorIntent = ColorIntent(ColorSurfaces.Both(
+      SurfaceColor(),
+      SurfaceColor(colorsUsed = Vector(Nmtoken.from("Cyan").toOption.get))
+    ))
     assert(roundTrip(colorIntent) == colorIntent)
 
   val bindingIntent: Unit =
@@ -37,13 +40,16 @@ object DerivedRoundTripChecks:
       bindingSide = Some(BindingEdge.Top),
     )
     assert(roundTrip(value) == value)
-    val stitched = BindingIntent(BindingSpecification.SideStitch(Some(StitchingDetails(stapleShape = Some(StapleShape.Crown)))))
+    val stitched =
+      BindingIntent(BindingSpecification.SideStitch(Some(StitchingDetails(stapleShape = Some(StapleShape.Crown)))))
     assert(roundTrip(stitched) == stitched)
 
   val fileSpecRoles: Unit =
     val device = Device(
       deviceId,
-      schemas = DeviceSchemas(current = Some(FileSpec(location = FileLocation.Url(UriRef.from("https://example.org/schema.xsd").toOption.get)))),
+      schemas = DeviceSchemas(current =
+        Some(FileSpec(location = FileLocation.Url(UriRef.from("https://example.org/schema.xsd").toOption.get)))
+      ),
       modules = Vector(DeviceModule(Nmtoken.from("module-1").toOption.get)),
     )
     // The schema FileSpecs acquire their @ResourceUsage role on the wire (CurrentSchema/Schema); the round-trip
@@ -60,13 +66,15 @@ object DerivedRoundTripChecks:
   val tiffAndPatch: Unit =
     val tag = TiffTag(tagNumber = 270, tagType = 2, value = Some(TiffTagValue.Text("description")))
     assert(roundTrip(tag) == tag)
-    val patch = Patch(PatchUsage.Color, spotType = Some(SpotType.Emulated), neutralDensity = NeutralDensity.from(0.5f).toOption)
+    val patch =
+      Patch(PatchUsage.Color, spotType = Some(SpotType.Emulated), neutralDensity = NeutralDensity.from(0.5f).toOption)
     assert(roundTrip(patch) == patch)
 
   val derivedResources: Unit =
     assert(roundTrip(RunList(pages = Some(IntegerRange(0, 9)))) == RunList(pages = Some(IntegerRange(0, 9))))
     assert(roundTrip(RegisterMark(center = Some(XYPair(1, 2)))) == RegisterMark(center = Some(XYPair(1, 2))))
-    val assembly = Assembly(AssemblyPlan.Listed(NonEmptyVector.one(AssemblySection(Nmtoken.from("sig-1").toOption.get))))
+    val assembly =
+      Assembly(AssemblyPlan.Listed(NonEmptyVector.one(AssemblySection(Nmtoken.from("sig-1").toOption.get))))
     assert(roundTrip(assembly) == assembly)
     val delivery = DeliveryParams(files = DeliveryFiles(mailingList = Some(FileSpec())))
     val decodedDelivery = roundTrip(delivery)
@@ -90,7 +98,11 @@ object DerivedRoundTripChecks:
     assert(roundTrip(notification) == notification)
     val knownSubs = ResponseKnownSubscriptions(
       header,
-      subscriptions = Vector(SubscriptionInfo(Nmtoken.from("Q1").toOption.get, Nmtoken.from("SignalResource").toOption.get, Subscription(UriRef.from("https://example.org/sub").toOption.get))),
+      subscriptions = Vector(SubscriptionInfo(
+        Nmtoken.from("Q1").toOption.get,
+        Nmtoken.from("SignalResource").toOption.get,
+        Subscription(UriRef.from("https://example.org/sub").toOption.get)
+      )),
     )
     assert(roundTrip(knownSubs) == knownSubs)
 

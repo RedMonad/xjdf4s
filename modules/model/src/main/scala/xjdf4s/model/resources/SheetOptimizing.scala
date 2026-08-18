@@ -5,11 +5,9 @@ import xjdf4s.model.*
 
 enum SheetOptimizingPolicy derives CanEqual:
   case All, Collect, Optimized
-end SheetOptimizingPolicy
 
 enum PositionPolicy derives CanEqual:
   case Exact, Free
-end PositionPolicy
 
 final case class GangElement(
     gangElementId: Nmtoken,

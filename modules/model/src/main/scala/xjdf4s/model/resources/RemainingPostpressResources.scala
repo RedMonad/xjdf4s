@@ -9,7 +9,6 @@ enum ProductionLooseBinding:
   case Comb(details: Option[CombBindingProductionDetails] = Option.empty)
   case Ring(details: Option[RingBindingProductionDetails] = Option.empty)
   case Strip(details: Option[StripBindingProductionDetails] = Option.empty)
-end ProductionLooseBinding
 
 final case class ChannelBindingProductionDetails(
     clampDistance: Option[Float] = None,
@@ -61,7 +60,6 @@ final case class LooseBindingParams(
 
 enum BoxFoldingType derives CanEqual:
   case Type00, Type01, Type02, Type03, Type04, Type10, Type11, Type12, Type13, Type15, Type20
-end BoxFoldingType
 
 enum BoxFoldActionType derives CanEqual:
   case LongFoldLeftToRight, LongFoldRightToLeft, LongPreFoldLeftToRight, LongPreFoldRightToLeft
@@ -81,10 +79,9 @@ final case class BoxFoldAction(
 ) extends XjdfNode,
       Extensible
 
-/**
- * Tables 6.17/6.19/6.20 and release note H.1: a folder-gluer program is an ordered, repeatable sequence of
- * `BoxFoldAction` elements; glue application is the `Action = "Glue"` action with a child `Glue` element. The
- * deprecated 2.1-style top-level `Glue` children remain representable for compatibility but are optional.
+/** Tables 6.17/6.19/6.20 and release note H.1: a folder-gluer program is an ordered, repeatable sequence of
+ *  `BoxFoldAction` elements; glue application is the `Action = "Glue"` action with a child `Glue` element. The
+ *  deprecated 2.1-style top-level `Glue` children remain representable for compatibility but are optional.
  */
 final case class BoxFoldingParams(
     boxFoldingType: BoxFoldingType,
@@ -99,11 +96,9 @@ final case class BoxFoldingParams(
 enum CollatingPlacement:
   case ByOrientation(value: Orientation)
   case ByTransformation(value: Matrix)
-end CollatingPlacement
 
 enum TransformationContext derives CanEqual:
   case CollateItem, Component, StackItem
-end TransformationContext
 
 final case class CollatingItem(
     amount: Option[Int] = None,
@@ -116,7 +111,6 @@ final case class CollatingItem(
 
 enum FeedQuality derives CanEqual:
   case NotActive, Check, Waste, StopNoWaste, StopWaste
-end FeedQuality
 
 final case class FeederQualityParams(
     badFeedQuality: Option[FeedQuality] = None,
@@ -131,11 +125,9 @@ final case class FeederQualityParams(
 
 enum FeederSynchronization derives CanEqual:
   case Alternate, Backup, Chain, Primary
-end FeederSynchronization
 
 enum FeederOpening derives CanEqual:
   case Back, Front, None, Sucker
-end FeederOpening
 
 final case class Feeder(
     alternatePositions: Vector[Int] = Vector.empty,

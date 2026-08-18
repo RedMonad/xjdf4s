@@ -7,10 +7,9 @@ import scala.reflect.ClassTag
 import xjdf4s.codec.xml.*
 import xjdf4s.core.*
 
-/**
- * Compile-time derivation of [[XmlElementCodec]] for case classes.
+/** Compile-time derivation of [[XmlElementCodec]] for case classes.
  *
- * Every case-class field is serialized through its [[FieldCodec]] instance:
+ *  Every case-class field is serialized through its [[FieldCodec]] instance:
  *
  *  - attribute fields read/write the attribute named by [[Names.attributeName]];
  *  - element fields read/write children selected by the element name of the inner codec;
@@ -22,11 +21,10 @@ import xjdf4s.core.*
  */
 object Derived:
 
-  /**
-   * Compile-time derivation entry point. It is an inline *def* rather than an inline *given*: inline givens cannot
-   * be found by ordinary implicit search, so every `summon[XmlElementCodec[X]]` in registries and tests would fail.
-   * Instead, non-inline given instances are generated per type in `DerivedInstances` and call this method directly;
-   * the inlining then happens here, at those call sites.
+  /** Compile-time derivation entry point. It is an inline *def* rather than an inline *given*: inline givens cannot
+   *  be found by ordinary implicit search, so every `summon[XmlElementCodec[X]]` in registries and tests would fail.
+   *  Instead, non-inline given instances are generated per type in `DerivedInstances` and call this method directly;
+   *  the inlining then happens here, at those call sites.
    */
   inline def derived[A <: scala.Product](using m: Mirror.ProductOf[A], ct: ClassTag[A]): XmlElementCodec[A] =
     val labels = constValueTuple[m.MirroredElemLabels]
@@ -40,23 +38,22 @@ object Derived:
     )
 
   /** Same derivation with an explicit element name (for names the naming policy cannot derive, e.g. TIFFtag). */
-  inline def derivedNamed[A <: scala.Product](elementName: String)(using
-      m: Mirror.ProductOf[A],
+  inline def derivedNamed[A <: scala.Product](elementName: String)(
+      using m: Mirror.ProductOf[A],
       ct: ClassTag[A],
   ): XmlElementCodec[A] =
     val labels = constValueTuple[m.MirroredElemLabels]
     val codecs = fieldCodecInstances[m.MirroredElemTypes]
     new DerivedCodec[A](m, labels, codecs, elementName, Defaults.of(ct))
 
-  /**
-   * Canonical per-element instance collection, following the reference documentation on type class derivation:
-   * `scala.compiletime.summonAll` performs its searches in a context where the per-type codec instances of the
-   * call site are not visible, so the tuple is walked with `summonInline` instead — each search is delayed until
-   * the inlining at the call site, where the field codec can be resolved.
+  /** Canonical per-element instance collection, following the reference documentation on type class derivation:
+   *  `scala.compiletime.summonAll` performs its searches in a context where the per-type codec instances of the
+   *  call site are not visible, so the tuple is walked with `summonInline` instead — each search is delayed until
+   *  the inlining at the call site, where the field codec can be resolved.
    */
   private inline def fieldCodecInstances[Elems <: Tuple]: Tuple =
     inline erasedValue[Elems] match
-      case _: EmptyTuple      => EmptyTuple
+      case _: EmptyTuple => EmptyTuple
       case _: (elem *: elems) => summonInline[FieldCodec[elem]] *: fieldCodecInstances[elems]
 end Derived
 
@@ -79,11 +76,9 @@ object Defaults:
             .map(_.invoke(module))
       catch case _: Exception => Vector.empty
     new Defaults(values)
-end Defaults
 
-/**
- * Runtime engine of the derivation. The mirror, the field labels and the field codecs are produced at compile time
- * by [[Derived.derived]]; decoding and encoding are plain runtime loops over the fields.
+/** Runtime engine of the derivation. The mirror, the field labels and the field codecs are produced at compile time
+ *  by [[Derived.derived]]; decoding and encoding are plain runtime loops over the fields.
  */
 final class DerivedCodec[A](
     mirror: Mirror.ProductOf[A],
@@ -128,7 +123,7 @@ final class DerivedCodec[A](
               case Left(error) =>
                 defaults.get(index) match
                   case Some(default) => values(index) = default
-                  case None          => failure = Some(error)
+                  case None => failure = Some(error)
           else
             codec.decodeAttribute(element.attribute(Names.attributeName(label))) match
               case Right(value) => values(index) = value
@@ -154,9 +149,10 @@ final class DerivedCodec[A](
       label match
         case "extensions" =>
           val extensions = fieldValue.asInstanceOf[Extensions]
-          attributes ++= extensions.attributes.toVector
-            .sortBy(pair => (pair._1.namespace, pair._1.localName))
-            .map { case (name, raw) => (name, ForeignCodec.renderExtensionValue(raw)) }
+          attributes ++=
+            extensions.attributes.toVector
+              .sortBy(pair => (pair._1.namespace, pair._1.localName))
+              .map { case (name, raw) => (name, ForeignCodec.renderExtensionValue(raw)) }
           children ++= extensions.elements.map(ForeignCodec.encodeForeignElement)
         case "foreignElements" =>
           children ++= fieldValue.asInstanceOf[Vector[ExtensionElement]].map(ForeignCodec.encodeForeignElement)
@@ -185,14 +181,13 @@ final class DerivedCodec[A](
       found = labelAt(index) == "foreignElements"
       index += 1
     found
-  end hasForeignElementsField
 
   private def decodeForeignElements(children: Vector[Xml.Element]): Vector[ExtensionElement] =
     children
       .foldLeft[Either[XmlError, Vector[ExtensionElement]]](Right(Vector.empty)) { (acc, child) =>
         for
           elements <- acc
-          decoded <- ForeignCodec.decodeForeignElement(child)
+          decoded  <- ForeignCodec.decodeForeignElement(child)
         yield elements :+ decoded
       }
       .getOrElse(Vector.empty)
@@ -213,6 +208,5 @@ final class DerivedCodec[A](
       val expected = expectedNames.result().toSet
       standardChildren.find(child => !expected.contains(child.name.localName)) match
         case Some(child) => Left(XmlError.UnexpectedElement(context, child.name.localName))
-        case None        => Right(())
-  end unexpectedChild
+        case None => Right(())
 end DerivedCodec

@@ -17,11 +17,9 @@ end QualityScore
 
 enum QualityBase derives CanEqual:
   case Absolute, Standard
-end QualityBase
 
 enum MeasurementUsage derives CanEqual:
   case Master, Standard
-end MeasurementUsage
 
 final case class BindingQualityParams(
     flexValue: Option[Float] = None,
@@ -82,7 +80,6 @@ final case class BindingQualityMeasurement(
 
 enum DefectKind derives CanEqual:
   case FinishingDefect, ImageDefect, ImageFinishingDefect, Other, SheetDefect, SubstrateDefect
-end DefectKind
 
 final case class Defect(
     kinds: NonEmptyVector[DefectKind],

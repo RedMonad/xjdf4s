@@ -3,7 +3,6 @@ package xjdf4s.model
 import scala.util.Try
 
 import cats.{Eq, Hash, Show}
-
 import xjdf4s.core.*
 
 final case class XYPair(x: Double, y: Double) derives CanEqual
@@ -12,7 +11,6 @@ object XYPair:
   given Eq[XYPair] = Eq.fromUniversalEquals
   given Show[XYPair] = Show.show(pair => s"${pair.x} ${pair.y}")
   given Hash[XYPair] = Hash.fromUniversalHashCode
-end XYPair
 
 final case class TileCoordinate(x: Int, y: Int) derives CanEqual
 
@@ -20,20 +18,16 @@ object TileCoordinate:
   given Eq[TileCoordinate] = Eq.fromUniversalEquals
   given Show[TileCoordinate] = Show.show(tile => s"${tile.x} ${tile.y}")
   given Hash[TileCoordinate] = Hash.fromUniversalHashCode
-end TileCoordinate
 
 enum PreviewType derives CanEqual:
   case Animation, Identification, SeparatedThumbNail, Separation, SeparationRaw, Static3D, ThumbNail, Viewable
-end PreviewType
 
 enum TransferCurveName derives CanEqual:
   case Film, Plate, Press, Proof, Substrate
-end TransferCurveName
 
-/**
- * Resource partition selector from XJDF 2.2 table 6.4. The five partition keys `DocIndex`, `PageNumber`, `RunIndex`,
- * `SetIndex` and `SheetIndex` are two-integer `IntegerRange` values, not arbitrary range expressions, so their
- * fixed-length integer semantics are preserved by the type.
+/** Resource partition selector from XJDF 2.2 table 6.4. The five partition keys `DocIndex`, `PageNumber`, `RunIndex`,
+ *  `SetIndex` and `SheetIndex` are two-integer `IntegerRange` values, not arbitrary range expressions, so their
+ *  fixed-length integer semantics are preserved by the type.
  */
 final case class Part(
     binderySignatureId: Option[Nmtoken] = None,

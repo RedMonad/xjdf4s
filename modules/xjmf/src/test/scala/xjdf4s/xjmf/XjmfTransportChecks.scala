@@ -4,10 +4,9 @@ import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.Header
 
-/**
- * The stage 06 scenarios, executed by both interpreters: the subscription handshake (9.6.2), the refID
- * correlation chain (9.6.1, Table 8.71), the SignalResource replacement windows (Table 7.54), the
- * ChannelMode semantics (9.6.4/9.6.5) and the event trace.
+/** The stage 06 scenarios, executed by both interpreters: the subscription handshake (9.6.2), the refID
+ *  correlation chain (9.6.1, Table 8.71), the SignalResource replacement windows (Table 7.54), the
+ *  ChannelMode semantics (9.6.4/9.6.5) and the event trace.
  */
 object XjmfTransportChecks:
 
@@ -46,12 +45,12 @@ object XjmfTransportChecks:
   val subscriptionScenario: Unit =
     val program: Xjmf[(Vector[SubscriptionInfo], Option[Response], Option[Response])] =
       for
-        _ <- Xjmf.openChannel(subscription, channelId, messageType)
-        channels <- Xjmf.channels
-        _ <- Xjmf.deliver(resourceSignal("S1", "2026-08-17T12:00:00+03:00"))
+        _             <- Xjmf.openChannel(subscription, channelId, messageType)
+        channels      <- Xjmf.channels
+        _             <- Xjmf.deliver(resourceSignal("S1", "2026-08-17T12:00:00+03:00"))
         awaitedBefore <- Xjmf.awaitResponse(signalS1)
-        _ <- Xjmf.deliverResponse(initialResponse)
-        awaitedAfter <- Xjmf.awaitResponse(signalS1)
+        _             <- Xjmf.deliverResponse(initialResponse)
+        awaitedAfter  <- Xjmf.awaitResponse(signalS1)
       yield (channels, awaitedBefore, awaitedAfter)
     val finalState = XjmfInterpreters.run(program)
     val (channels, awaitedBefore, awaitedAfter) =
@@ -73,8 +72,8 @@ object XjmfTransportChecks:
   val initialQueryResponse: Unit =
     val program: Xjmf[Option[Response]] =
       for
-        _ <- Xjmf.openChannel(subscription, channelId, messageType)
-        _ <- Xjmf.deliverResponse(ResponseResource(header("R0", refId = Some("Q1"))))
+        _       <- Xjmf.openChannel(subscription, channelId, messageType)
+        _       <- Xjmf.deliverResponse(ResponseResource(header("R0", refId = Some("Q1"))))
         awaited <- Xjmf.awaitResponse(channelId)
       yield awaited
     val awaited = program.foldMap(XjmfInterpreters.stateful).runA(XjmfState.empty).value
@@ -87,11 +86,18 @@ object XjmfTransportChecks:
       for
         _ <- Xjmf.openChannel(subscription, channelId, messageType)
         _ <- Xjmf.deliver(resourceSignal("A", "2026-08-17T10:01:00+03:00"))
-        _ <- Xjmf.deliver(resourceSignal("B", "2026-08-17T10:05:00+03:00", replaceAfter = Some("2026-08-17T10:00:00+03:00"), replaceBefore = Some("2026-08-17T10:06:00+03:00")))
+        _ <- Xjmf.deliver(resourceSignal(
+          "B",
+          "2026-08-17T10:05:00+03:00",
+          replaceAfter = Some("2026-08-17T10:00:00+03:00"),
+          replaceBefore = Some("2026-08-17T10:06:00+03:00")
+        ))
         _ <- Xjmf.deliver(resourceSignal("C", "2026-08-17T10:06:00+03:00"))
       yield ()
     val finalState = XjmfInterpreters.run(program)
-    val deliveredIds = finalState.delivered.toList.map { case (_, signal) => signal.header.id.map(_.value).getOrElse("") }
+    val deliveredIds = finalState.delivered.toList.map { case (_, signal) =>
+      signal.header.id.map(_.value).getOrElse("")
+    }
     assert(deliveredIds == List("B", "C"), s"the window retired A, journal is $deliveredIds")
     assert(
       finalState.events.toList.contains(TransportEvent.SignalsReplaced(channelId, by = "B", replaced = Vector("A"))),
@@ -114,7 +120,12 @@ object XjmfTransportChecks:
       for
         _ <- Xjmf.openChannel(subscription, channelId, messageType)
         _ <- Xjmf.deliver(resourceSignal("A", "2026-08-17T10:01:00+03:00"))
-        _ <- Xjmf.deliver(resourceSignal("B", "2026-08-17T10:05:00+03:00", replaceAfter = Some("2026-08-17T10:00:00+03:00"), replaceBefore = Some("2026-08-17T10:06:00+03:00")))
+        _ <- Xjmf.deliver(resourceSignal(
+          "B",
+          "2026-08-17T10:05:00+03:00",
+          replaceAfter = Some("2026-08-17T10:00:00+03:00"),
+          replaceBefore = Some("2026-08-17T10:06:00+03:00")
+        ))
         _ <- Xjmf.deliverResponse(ResponseResource(header("R2", refId = Some("B"))))
         _ <- Xjmf.closeChannel(channelId)
       yield ()

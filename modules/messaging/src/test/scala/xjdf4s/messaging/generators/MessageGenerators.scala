@@ -6,10 +6,9 @@ import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
 
-/**
- * XSD-safe generators for XJMF message trees, mirroring the XJDF document generators in the model test scope.
- * They live in the messaging TEST scope and are shared with downstream modules through
- * `dependsOn(messaging % "test->test")`.
+/** XSD-safe generators for XJMF message trees, mirroring the XJDF document generators in the model test scope.
+ *  They live in the messaging TEST scope and are shared with downstream modules through
+ *  `dependsOn(messaging % "test->test")`.
  */
 final class MessageGenerators(seed: Long):
 

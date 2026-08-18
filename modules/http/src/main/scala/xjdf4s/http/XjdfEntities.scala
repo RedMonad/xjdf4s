@@ -1,27 +1,23 @@
 package xjdf4s.http
 
+import java.nio.charset.StandardCharsets
+
 import cats.data.EitherT
 import cats.effect.IO
 import fs2.Chunk
-
 import io.circe.{DecodingFailure, Json}
 import io.circe.syntax.*
-
-import org.http4s.headers.`Content-Type`
 import org.http4s.{EntityDecoder, EntityEncoder, MalformedMessageBodyFailure, MediaTypeMismatch, MediaTypeMissing}
-
-import java.nio.charset.StandardCharsets
-
-import xjdf4s.codec.json.given
+import org.http4s.headers.`Content-Type`
 import xjdf4s.codec.json.JsonRootCodecs.given
-import xjdf4s.codec.xml.domain.{XjdfCodec, XjmfCodec}
+import xjdf4s.codec.json.given
 import xjdf4s.codec.xml.{Xml, XmlError, XmlParser, XmlWriter}
+import xjdf4s.codec.xml.domain.{XjdfCodec, XjmfCodec}
 import xjdf4s.messaging.XJMF
 import xjdf4s.model.XJDF
 
-/**
- * HTTP entity codecs for the XJDF/XJMF documents, built directly over the stage 04/05 codecs. Two deliberate
- * choices, documented here because they deviate from the http4s defaults:
+/** HTTP entity codecs for the XJDF/XJMF documents, built directly over the stage 04/05 codecs. Two deliberate
+ *  choices, documented here because they deviate from the http4s defaults:
  *
  *  1. The codecs are named values, not givens: both representations (XML and JSON) exist for the same domain
  *     type, so a given instance would be ambiguous; endpoints pick their representation explicitly.
@@ -47,7 +43,10 @@ object XjdfEntities:
                 contentType.mediaType.subType == mediaType.subType =>
             media.as[String].map(text => decode(text))
           case Some(contentType) =>
-            IO.pure((Left(MediaTypeMismatch(contentType.mediaType, Set(mediaType))): Either[org.http4s.DecodeFailure, A]))
+            IO.pure((Left(MediaTypeMismatch(
+              contentType.mediaType,
+              Set(mediaType)
+            )): Either[org.http4s.DecodeFailure, A]))
           case None =>
             IO.pure((Left(MediaTypeMissing(Set(mediaType))): Either[org.http4s.DecodeFailure, A]))
       EitherT(result)
@@ -57,7 +56,7 @@ object XjdfEntities:
       text: String,
   ): Either[MalformedMessageBodyFailure, A] =
     for
-      parsed <- XmlParser.parse(text).left.map(error => decodeFailure(error.toString))
+      parsed  <- XmlParser.parse(text).left.map(error => decodeFailure(error.toString))
       decoded <- decode(parsed).left.map(error => decodeFailure(error.toString))
     yield decoded
 
@@ -65,7 +64,7 @@ object XjdfEntities:
       text: String,
   ): Either[MalformedMessageBodyFailure, A] =
     for
-      parsed <- io.circe.parser.parse(text).left.map(error => decodeFailure(error.toString))
+      parsed  <- io.circe.parser.parse(text).left.map(error => decodeFailure(error.toString))
       decoded <- decode(parsed).left.map(error => decodeFailure(error.toString))
     yield decoded
 

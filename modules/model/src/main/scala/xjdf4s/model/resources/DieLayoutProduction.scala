@@ -5,11 +5,9 @@ import xjdf4s.model.*
 
 enum Anchor derives CanEqual:
   case BottomCenter, BottomLeft, BottomRight, Center, CenterLeft, CenterRight, TopCenter, TopLeft, TopRight
-end Anchor
 
 enum AllowedRotation derives CanEqual:
   case None, Grain, MinorGrain, CrossGrain
-end AllowedRotation
 
 final case class ConvertingConfig(
     marginBottom: Option[Float] = None,

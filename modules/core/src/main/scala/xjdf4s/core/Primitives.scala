@@ -48,11 +48,10 @@ object XsdId:
   given Hash[XsdId] = Hash.by(_.value)
 end XsdId
 
-/**
- * The IDREF side of the XSD identity constraint pair. IDREF shares the lexical space of [[XsdId]] but is a *reference*,
- * never a declaration: keeping the two types separate makes it impossible to point a reference at a declaration slot or
- * vice versa. Reference integrity (existence, target type) is checked document-wide, see the `validate` methods of the
- * document roots.
+/** The IDREF side of the XSD identity constraint pair. IDREF shares the lexical space of [[XsdId]] but is a *reference*,
+ *  never a declaration: keeping the two types separate makes it impossible to point a reference at a declaration slot or
+ *  vice versa. Reference integrity (existence, target type) is checked document-wide, see the `validate` methods of the
+ *  document roots.
  */
 opaque type XsdIdRef = String
 object XsdIdRef:
@@ -104,10 +103,9 @@ object LanguageTag:
   given Hash[LanguageTag] = Hash.by(_.value)
 end LanguageTag
 
-/**
- * The XJDF `string` simple type (Appendix A.1): a normalized string of at most 1023 characters. Tabs, line feeds and
- * similar control characters are not valid. Field values of the normative `string` type are modelled with this opaque
- * type; XML `text` element bodies (which are not length-restricted) remain plain `String`.
+/** The XJDF `string` simple type (Appendix A.1): a normalized string of at most 1023 characters. Tabs, line feeds and
+ *  similar control characters are not valid. Field values of the normative `string` type are modelled with this opaque
+ *  type; XML `text` element bodies (which are not length-restricted) remain plain `String`.
  */
 opaque type XjdfString = String
 object XjdfString:

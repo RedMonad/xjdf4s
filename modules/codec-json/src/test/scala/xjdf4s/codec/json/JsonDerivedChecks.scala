@@ -1,10 +1,9 @@
 package xjdf4s.codec.json
 
 import io.circe.syntax.*
-
-import xjdf4s.codec.json.given
-import xjdf4s.codec.json.JsonSpecialCodecs.given
 import xjdf4s.codec.json.JsonRootCodecs.given
+import xjdf4s.codec.json.JsonSpecialCodecs.given
+import xjdf4s.codec.json.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
@@ -53,7 +52,8 @@ object JsonDerivedChecks:
 
   val contact: Unit =
     val contact = Contact(
-      address = Some(Address(city = Some(XjdfString.from("Berlin").toOption.get), addressLines = Vector("Line 1", "Line 2"))),
+      address =
+        Some(Address(city = Some(XjdfString.from("Berlin").toOption.get), addressLines = Vector("Line 1", "Line 2"))),
       company = Some(Company(XjdfString.from("ACME").toOption.get, organizationalUnits = Vector("R&D"))),
     )
     assert(roundTrip(contact) == contact)
@@ -80,12 +80,12 @@ object JsonDerivedChecks:
 
   /** The Product -> Intent -> ProductIntent chain exercises the open-union dispatch of the derived codecs. */
   val productWithIntent: Unit =
-    val product = Product(intents = Vector(Intent(Nmtoken.from("media-intent").toOption.get, Some(MediaIntent(MediaType.Paper)))))
+    val product =
+      Product(intents = Vector(Intent(Nmtoken.from("media-intent").toOption.get, Some(MediaIntent(MediaType.Paper)))))
     assert(roundTrip(product) == product)
 
-  /**
-   * Plain enums extend scala.Product (reference/enums.md), so they must stay scalar attributes in the derived
-   * codecs - the member is the attribute name "Status", never the enum class name "NodeStatus".
+  /** Plain enums extend scala.Product (reference/enums.md), so they must stay scalar attributes in the derived
+   *  codecs - the member is the attribute name "Status", never the enum class name "NodeStatus".
    */
   val nodeInfoStatus: Unit =
     val info = NodeInfo(start = Some(time), status = Some(NodeStatus.Waiting))
@@ -139,7 +139,8 @@ object JsonDerivedChecks:
       bindingSide = Some(BindingEdge.Left),
     )
     assert(roundTrip(value) == value)
-    assert(roundTrip(BindingIntent(BindingSpecification.AdhesiveNote(None))) == BindingIntent(BindingSpecification.AdhesiveNote(None)))
+    assert(roundTrip(BindingIntent(BindingSpecification.AdhesiveNote(None))) ==
+      BindingIntent(BindingSpecification.AdhesiveNote(None)))
 
   val colorIntent: Unit =
     val value = ColorIntent(ColorSurfaces.Both(SurfaceColor(coverage = Some(0.5f)), SurfaceColor()))
@@ -152,7 +153,10 @@ object JsonDerivedChecks:
     )
     assert(roundTrip(value) == value)
     assert(
-      roundTrip(ModifyQueueEntryParams(QueueModification.SetGang(Some(Nmtoken.from("gang-1").toOption.get)), QueueFilter())) ==
+      roundTrip(ModifyQueueEntryParams(
+        QueueModification.SetGang(Some(Nmtoken.from("gang-1").toOption.get)),
+        QueueFilter()
+      )) ==
         ModifyQueueEntryParams(QueueModification.SetGang(Some(Nmtoken.from("gang-1").toOption.get)), QueueFilter()),
     )
 
@@ -170,7 +174,10 @@ object JsonDerivedChecks:
     val document = XJDF(
       Nmtoken.from("job-1").toOption.get,
       NonEmptyVector.one(Nmtoken.from("Product").toOption.get),
-      productList = Some(ProductList(NonEmptyVector.one(Product(amount = Some(2), intents = Vector(Intent(Nmtoken.from("i-1").toOption.get, Some(MediaIntent(MediaType.Paper)))))))),
+      productList = Some(ProductList(NonEmptyVector.one(Product(
+        amount = Some(2),
+        intents = Vector(Intent(Nmtoken.from("i-1").toOption.get, Some(MediaIntent(MediaType.Paper))))
+      )))),
     )
     val decoded = roundTrip(document)
     assert(decoded.productList.exists(_.products.toVector.head.intents.size == 1))
@@ -178,7 +185,8 @@ object JsonDerivedChecks:
   val dependentResourceSet: Unit =
     val set = ResourceSet(
       Nmtoken.from("NodeInfo").toOption.get,
-      dependents = Vector(Dependent(Nmtoken.from("job-2").toOption.get, pipeProtocol = Some(Nmtoken.from("pipe").toOption.get))),
+      dependents =
+        Vector(Dependent(Nmtoken.from("job-2").toOption.get, pipeProtocol = Some(Nmtoken.from("pipe").toOption.get))),
     )
     assert(roundTrip(set) == set)
 
@@ -186,7 +194,11 @@ object JsonDerivedChecks:
     val foreignName = ForeignQName.from("http://example.com/ics", "FooBar", Some("Foo")).toOption.get
     val resource = Resource(
       specificResource = None,
-      foreignElements = Vector(ExtensionElement(foreignName, attributes = Map(QualifiedName("http://example.com/ics", "weight", Some("Foo")) -> ExtensionValue.Number(BigDecimal("1.5"))))),
+      foreignElements = Vector(ExtensionElement(
+        foreignName,
+        attributes = Map(QualifiedName("http://example.com/ics", "weight", Some("Foo")) ->
+          ExtensionValue.Number(BigDecimal("1.5")))
+      )),
     )
     val decoded = roundTrip(resource)
     assert(decoded.foreignElements.size == 1)
@@ -202,7 +214,9 @@ object JsonDerivedChecks:
   val foreignExtensions: Unit =
     val mediaIntent = MediaIntent(
       MediaType.Paper,
-      extensions = Extensions(attributes = Map(QualifiedName("http://example.com/ics", "weight") -> ExtensionValue.Number(BigDecimal("1.5")))),
+      extensions = Extensions(attributes =
+        Map(QualifiedName("http://example.com/ics", "weight") -> ExtensionValue.Number(BigDecimal("1.5")))
+      ),
     )
     val decoded = roundTrip(mediaIntent)
     val decodedAttribute = decoded.extensions.attributes.toVector.head

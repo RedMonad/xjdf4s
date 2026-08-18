@@ -28,7 +28,6 @@ final case class CasingInParams(
 
 enum ScoreSide derives CanEqual:
   case FromInside, FromOutside
-end ScoreSide
 
 final case class Score(
     offset: Float,
@@ -61,7 +60,6 @@ final case class JacketingParams(
 
 enum ShrinkingMethod derives CanEqual:
   case ShrinkCool, ShrinkHot
-end ShrinkingMethod
 
 final case class ShrinkingParams(
     shrinkingMethod: Option[ShrinkingMethod] = None,
@@ -72,7 +70,6 @@ final case class ShrinkingParams(
 
 enum WrappingKind derives CanEqual:
   case Band, LooseWrap, ShrinkWrap
-end WrappingKind
 
 final case class WrappingParams(
     wrappingKind: WrappingKind,
@@ -91,7 +88,6 @@ final case class WindingParams(
 
 enum TrimCover derives CanEqual:
   case Back, Both, Front, Neither
-end TrimCover
 
 final case class TrimmingParams(
     height: Option[Float] = None,
@@ -104,11 +100,9 @@ final case class TrimmingParams(
 
 enum StitchOrigin derives CanEqual:
   case TrimBoxCenter, TrimBoxJogSide, UntrimmedJogSide
-end StitchOrigin
 
 enum StitchType derives CanEqual:
   case Corner, Saddle, Side
-end StitchType
 
 final case class StitchingParams(
     angle: Option[Float] = None,

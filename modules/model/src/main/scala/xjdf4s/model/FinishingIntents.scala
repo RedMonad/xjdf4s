@@ -4,11 +4,9 @@ import xjdf4s.core.*
 
 enum EmbossDirection derives CanEqual:
   case Both, Depressed, Flat, Raised
-end EmbossDirection
 
 enum EmbossType derives CanEqual:
   case BlindEmbossing, Braille, EmbossedFinish, FoilEmbossing, FoilStamping
-end EmbossType
 
 final case class EmbossingItem(
     embossingType: EmbossType,
@@ -33,7 +31,6 @@ final case class EmbossingIntent(
 
 enum TopBottom derives CanEqual:
   case Top, Bottom
-end TopBottom
 
 final case class Crease(
     depth: Option[Float] = None,
@@ -46,7 +43,6 @@ final case class Crease(
 
 enum FoldFrom derives CanEqual:
   case Front, Left
-end FoldFrom
 
 final case class Fold(
     from: FoldFrom,
@@ -79,15 +75,12 @@ final case class FoldingIntent(
 
 enum HoleCenterReference derives CanEqual:
   case RegistrationMark, TrailingEdge
-end HoleCenterReference
 
 enum HoleReferenceEdge derives CanEqual:
   case Bottom, Left, Pattern, Right, Top
-end HoleReferenceEdge
 
 enum HoleShape derives CanEqual:
   case Elliptic, Rectangular, Round
-end HoleShape
 
 enum HolePatternCatalog(val lexical: String):
   case None extends HolePatternCatalog("None")
@@ -124,7 +117,6 @@ enum HolePatternCatalog(val lexical: String):
   case W2_1iSquare0t extends HolePatternCatalog("W2_1i-square-0t")
   case W3_1iSquare0t extends HolePatternCatalog("W3_1i-square-0t")
   case C9_5mRound0t extends HolePatternCatalog("C9.5m-round-0t")
-end HolePatternCatalog
 
 final case class HolePattern(
     center: Option[XYPair] = None,

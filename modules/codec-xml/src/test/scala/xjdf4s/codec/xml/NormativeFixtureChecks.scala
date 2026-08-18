@@ -6,9 +6,8 @@ import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Normative fixtures from the XJDF 2.2 reference: Example 7.5 (QueryResource), Example 8.5 (MediaLayers XML) and
- * Example 7.8 (SignalResource about consumed resources).
+/** Normative fixtures from the XJDF 2.2 reference: Example 7.5 (QueryResource), Example 8.5 (MediaLayers XML) and
+ *  Example 7.8 (SignalResource about consumed resources).
  */
 object NormativeFixtureChecks:
   val example75QueryResource: Unit =
@@ -24,7 +23,7 @@ object NormativeFixtureChecks:
     assert(decoded.header.deviceId.value == "TestSender")
     val query = decoded.messages.toVector.head match
       case message: QueryResource => message
-      case other                  => assert(false, s"expected QueryResource, got ${other.getClass.getName}")
+      case other => assert(false, s"expected QueryResource, got ${other.getClass.getName}")
     assert(query.header.id.exists(_.value == "Q1"))
     assert(query.params.scope == Scope.Allowed)
     assert(query.params.resourceName.exists(_.value == "Media"))
@@ -84,7 +83,7 @@ object NormativeFixtureChecks:
     val decoded = XmlParser.parse(xml).flatMap(XjmfCodec.decoder.decode).toOption.get
     val signal = decoded.messages.toVector.head match
       case message: SignalResource => message
-      case other                   => assert(false, s"expected SignalResource, got ${other.getClass.getName}")
+      case other => assert(false, s"expected SignalResource, got ${other.getClass.getName}")
     assert(signal.header.refId.exists(_.value == "Sub1"))
     assert(signal.resourceInfo.size == 1)
     val resourceSet = signal.resourceInfo.head.resourceSet

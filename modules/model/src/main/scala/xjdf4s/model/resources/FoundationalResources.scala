@@ -5,19 +5,15 @@ import xjdf4s.model.*
 
 enum DueLevel derives CanEqual:
   case Trivial, Penalty, JobCancelled
-end DueLevel
 
 enum Automation derives CanEqual:
   case Dynamic, Static
-end Automation
 
 enum Polarity derives CanEqual:
   case Negative, Positive
-end Polarity
 
 enum PlateType derives CanEqual:
   case Exposed, Dummy
-end PlateType
 
 final case class CustomerInfo(
     customerId: Option[Nmtoken] = None,

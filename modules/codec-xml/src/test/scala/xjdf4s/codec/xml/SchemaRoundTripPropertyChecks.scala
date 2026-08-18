@@ -1,19 +1,18 @@
 package xjdf4s.codec.xml
 
 import xjdf4s.codec.xml.domain.*
-import xjdf4s.model.generators.XjdfGenerators
 import xjdf4s.messaging.generators.MessageGenerators
+import xjdf4s.model.generators.XjdfGenerators
 
-/**
- * Property-based proof of the codec, validated AGAINST THE XML SCHEMA:
+/** Property-based proof of the codec, validated AGAINST THE XML SCHEMA:
  *
- * for every randomly generated document:
+ *  for every randomly generated document:
  *   1. the encoder produces XML that OUR parser reads back to an equal value (round-trip law);
  *   2. the emitted XML is valid against the checked-in `xjdf.xsd` (JAXP validator).
  *
- * The generators are deliberately XSD-safe: fields where the normative tables supersede the stale XSD are left
- * unset (see `XjdfGenerators`), so a failure here is a codec defect, not a known normative divergence. Runs are
- * deterministic (fixed seeds); the full normative surface is covered by the plain round-trip suites.
+ *  The generators are deliberately XSD-safe: fields where the normative tables supersede the stale XSD are left
+ *  unset (see `XjdfGenerators`), so a failure here is a codec defect, not a known normative divergence. Runs are
+ *  deterministic (fixed seeds); the full normative surface is covered by the plain round-trip suites.
  */
 object SchemaRoundTripPropertyChecks:
 

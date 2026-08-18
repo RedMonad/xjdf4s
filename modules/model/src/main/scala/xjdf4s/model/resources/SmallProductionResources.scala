@@ -24,7 +24,6 @@ final case class LayoutElementProductionParams(
 
 enum FolderProductionType derives CanEqual:
   case Collect, NonCollect
-end FolderProductionType
 
 final case class FolderProduction(
     moduleId: Option[Nmtoken] = None,

@@ -1,50 +1,40 @@
 package xjdf4s.codec.json
 
 import io.circe.{Decoder, Encoder}
-
 import xjdf4s.codec.json.JsonFieldCodec.given
-
-import xjdf4s.codec.json.JsonScalars.given
-
-import xjdf4s.codec.json.JsonNodeCodecs.given
-
 import xjdf4s.codec.json.JsonMediaCodecs.given
-
 import xjdf4s.codec.json.JsonMessagingCodecs.given
-
-import xjdf4s.codec.json.JsonSpecialCodecs.given
-
+import xjdf4s.codec.json.JsonNodeCodecs.given
 import xjdf4s.codec.json.JsonResources.given
-
+import xjdf4s.codec.json.JsonScalars.given
+import xjdf4s.codec.json.JsonSpecialCodecs.given
 import xjdf4s.core.*
-
 import xjdf4s.messaging.*
-
 import xjdf4s.model.*
-
 import xjdf4s.model.resources.*
 
-/**
- * GENERATED: root circe Encoder/Decoder givens for every case class without a hand-written JSON codec. They are
- * non-inline givens because inline givens cannot be found by ordinary implicit search; each one calls the
- * inline derivation entry point, which then expands at this call site. Nested product fields resolve through
- * the canonical deriveOrSummon fallback in JsonFieldCodec.productFieldCodec, so the list order does not affect
- * resolution (it is kept topologically sorted by field dependencies anyway).
+/** GENERATED: root circe Encoder/Decoder givens for every case class without a hand-written JSON codec. They are
+ *  non-inline givens because inline givens cannot be found by ordinary implicit search; each one calls the
+ *  inline derivation entry point, which then expands at this call site. Nested product fields resolve through
+ *  the canonical deriveOrSummon fallback in JsonFieldCodec.productFieldCodec, so the list order does not affect
+ *  resolution (it is kept topologically sorted by field dependencies anyway).
  *
- * Excluded: the JSON hand codecs (slice codecs plus the special forms with payload-enum fields whose JSON
- * mappings live in JsonSpecialCodecs), the self-recursive BundleItem/AssemblySection (XML rule f: the generic
- * derivation would recurse infinitely - the given is not visible in its own initializer, so the inline fallback
- * re-derives the type forever; their hand codecs recurse at runtime instead), the specials still waiting for
- * their hand codecs (BindingIntent, ColorIntent, StickOn, CollatingItem, LooseBindingParams, Assembly,
- * ModifyQueueEntryParams, QueueSubmissionParams) and every class that transitively embeds them (computed as a
- * closure, so the inline deriveOrSummon fallback never silently encodes a payload enum as a bare case name).
+ *  Excluded: the JSON hand codecs (slice codecs plus the special forms with payload-enum fields whose JSON
+ *  mappings live in JsonSpecialCodecs), the self-recursive BundleItem/AssemblySection (XML rule f: the generic
+ *  derivation would recurse infinitely - the given is not visible in its own initializer, so the inline fallback
+ *  re-derives the type forever; their hand codecs recurse at runtime instead), the specials still waiting for
+ *  their hand codecs (BindingIntent, ColorIntent, StickOn, CollatingItem, LooseBindingParams, Assembly,
+ *  ModifyQueueEntryParams, QueueSubmissionParams) and every class that transitively embeds them (computed as a
+ *  closure, so the inline deriveOrSummon fallback never silently encodes a payload enum as a bare case name).
  *
- * Regenerate with tools/gen-json-codecs.py when the model grows.
+ *  Regenerate with tools/gen-json-codecs.py when the model grows.
  */
 given derivedJsonEncoderActivity: Encoder[Activity] = JsonDerived.derivedEncoder[Activity]
 given derivedJsonDecoderActivity: Decoder[Activity] = JsonDerived.derivedDecoder[Activity]
-given derivedJsonEncoderAdhesiveNoteDetails: Encoder[AdhesiveNoteDetails] = JsonDerived.derivedEncoder[AdhesiveNoteDetails]
-given derivedJsonDecoderAdhesiveNoteDetails: Decoder[AdhesiveNoteDetails] = JsonDerived.derivedDecoder[AdhesiveNoteDetails]
+given derivedJsonEncoderAdhesiveNoteDetails: Encoder[AdhesiveNoteDetails] =
+  JsonDerived.derivedEncoder[AdhesiveNoteDetails]
+given derivedJsonDecoderAdhesiveNoteDetails: Decoder[AdhesiveNoteDetails] =
+  JsonDerived.derivedDecoder[AdhesiveNoteDetails]
 given derivedJsonEncoderAdvancedPdfParams: Encoder[AdvancedPdfParams] = JsonDerived.derivedEncoder[AdvancedPdfParams]
 given derivedJsonDecoderAdvancedPdfParams: Decoder[AdvancedPdfParams] = JsonDerived.derivedDecoder[AdvancedPdfParams]
 given derivedJsonEncoderApprovalDetails: Encoder[ApprovalDetails] = JsonDerived.derivedEncoder[ApprovalDetails]
@@ -57,16 +47,20 @@ given derivedJsonEncoderAssemblingIntent: Encoder[AssemblingIntent] = JsonDerive
 given derivedJsonDecoderAssemblingIntent: Decoder[AssemblingIntent] = JsonDerived.derivedDecoder[AssemblingIntent]
 given derivedJsonEncoderAssemblyItem: Encoder[AssemblyItem] = JsonDerived.derivedEncoder[AssemblyItem]
 given derivedJsonDecoderAssemblyItem: Decoder[AssemblyItem] = JsonDerived.derivedDecoder[AssemblyItem]
-given derivedJsonEncoderAutomatedOverPrintParams: Encoder[AutomatedOverPrintParams] = JsonDerived.derivedEncoder[AutomatedOverPrintParams]
-given derivedJsonDecoderAutomatedOverPrintParams: Decoder[AutomatedOverPrintParams] = JsonDerived.derivedDecoder[AutomatedOverPrintParams]
+given derivedJsonEncoderAutomatedOverPrintParams: Encoder[AutomatedOverPrintParams] =
+  JsonDerived.derivedEncoder[AutomatedOverPrintParams]
+given derivedJsonDecoderAutomatedOverPrintParams: Decoder[AutomatedOverPrintParams] =
+  JsonDerived.derivedDecoder[AutomatedOverPrintParams]
 given derivedJsonEncoderBand: Encoder[Band] = JsonDerived.derivedEncoder[Band]
 given derivedJsonDecoderBand: Decoder[Band] = JsonDerived.derivedDecoder[Band]
 given derivedJsonEncoderBarcodeCompParams: Encoder[BarcodeCompParams] = JsonDerived.derivedEncoder[BarcodeCompParams]
 given derivedJsonDecoderBarcodeCompParams: Decoder[BarcodeCompParams] = JsonDerived.derivedDecoder[BarcodeCompParams]
 given derivedJsonEncoderBarcodeDetails: Encoder[BarcodeDetails] = JsonDerived.derivedEncoder[BarcodeDetails]
 given derivedJsonDecoderBarcodeDetails: Decoder[BarcodeDetails] = JsonDerived.derivedDecoder[BarcodeDetails]
-given derivedJsonEncoderBarcodeProductionParams: Encoder[BarcodeProductionParams] = JsonDerived.derivedEncoder[BarcodeProductionParams]
-given derivedJsonDecoderBarcodeProductionParams: Decoder[BarcodeProductionParams] = JsonDerived.derivedDecoder[BarcodeProductionParams]
+given derivedJsonEncoderBarcodeProductionParams: Encoder[BarcodeProductionParams] =
+  JsonDerived.derivedEncoder[BarcodeProductionParams]
+given derivedJsonDecoderBarcodeProductionParams: Decoder[BarcodeProductionParams] =
+  JsonDerived.derivedDecoder[BarcodeProductionParams]
 given derivedJsonEncoderBarcodeReproParams: Encoder[BarcodeReproParams] = JsonDerived.derivedEncoder[BarcodeReproParams]
 given derivedJsonDecoderBarcodeReproParams: Decoder[BarcodeReproParams] = JsonDerived.derivedDecoder[BarcodeReproParams]
 given derivedJsonEncoderBendingParams: Encoder[BendingParams] = JsonDerived.derivedEncoder[BendingParams]
@@ -77,12 +71,18 @@ given derivedJsonEncoderBinderySignature: Encoder[BinderySignature] = JsonDerive
 given derivedJsonDecoderBinderySignature: Decoder[BinderySignature] = JsonDerived.derivedDecoder[BinderySignature]
 given derivedJsonEncoderBindingQuality: Encoder[BindingQuality] = JsonDerived.derivedEncoder[BindingQuality]
 given derivedJsonDecoderBindingQuality: Decoder[BindingQuality] = JsonDerived.derivedDecoder[BindingQuality]
-given derivedJsonEncoderBindingQualityMeasurement: Encoder[BindingQualityMeasurement] = JsonDerived.derivedEncoder[BindingQualityMeasurement]
-given derivedJsonDecoderBindingQualityMeasurement: Decoder[BindingQualityMeasurement] = JsonDerived.derivedDecoder[BindingQualityMeasurement]
-given derivedJsonEncoderBindingQualityParams: Encoder[BindingQualityParams] = JsonDerived.derivedEncoder[BindingQualityParams]
-given derivedJsonDecoderBindingQualityParams: Decoder[BindingQualityParams] = JsonDerived.derivedDecoder[BindingQualityParams]
-given derivedJsonEncoderBlockPreparationParams: Encoder[BlockPreparationParams] = JsonDerived.derivedEncoder[BlockPreparationParams]
-given derivedJsonDecoderBlockPreparationParams: Decoder[BlockPreparationParams] = JsonDerived.derivedDecoder[BlockPreparationParams]
+given derivedJsonEncoderBindingQualityMeasurement: Encoder[BindingQualityMeasurement] =
+  JsonDerived.derivedEncoder[BindingQualityMeasurement]
+given derivedJsonDecoderBindingQualityMeasurement: Decoder[BindingQualityMeasurement] =
+  JsonDerived.derivedDecoder[BindingQualityMeasurement]
+given derivedJsonEncoderBindingQualityParams: Encoder[BindingQualityParams] =
+  JsonDerived.derivedEncoder[BindingQualityParams]
+given derivedJsonDecoderBindingQualityParams: Decoder[BindingQualityParams] =
+  JsonDerived.derivedDecoder[BindingQualityParams]
+given derivedJsonEncoderBlockPreparationParams: Encoder[BlockPreparationParams] =
+  JsonDerived.derivedEncoder[BlockPreparationParams]
+given derivedJsonDecoderBlockPreparationParams: Decoder[BlockPreparationParams] =
+  JsonDerived.derivedDecoder[BlockPreparationParams]
 given derivedJsonEncoderBlowIn: Encoder[BlowIn] = JsonDerived.derivedEncoder[BlowIn]
 given derivedJsonDecoderBlowIn: Decoder[BlowIn] = JsonDerived.derivedDecoder[BlowIn]
 given derivedJsonEncoderBoxFoldAction: Encoder[BoxFoldAction] = JsonDerived.derivedEncoder[BoxFoldAction]
@@ -107,74 +107,118 @@ given derivedJsonEncoderCellCondition: Encoder[CellCondition] = JsonDerived.deri
 given derivedJsonDecoderCellCondition: Decoder[CellCondition] = JsonDerived.derivedDecoder[CellCondition]
 given derivedJsonEncoderCertification: Encoder[Certification] = JsonDerived.derivedEncoder[Certification]
 given derivedJsonDecoderCertification: Decoder[Certification] = JsonDerived.derivedDecoder[Certification]
-given derivedJsonEncoderChannelBindingProductionDetails: Encoder[ChannelBindingProductionDetails] = JsonDerived.derivedEncoder[ChannelBindingProductionDetails]
-given derivedJsonDecoderChannelBindingProductionDetails: Decoder[ChannelBindingProductionDetails] = JsonDerived.derivedDecoder[ChannelBindingProductionDetails]
-given derivedJsonEncoderCieLabMeasuringField: Encoder[CieLabMeasuringField] = JsonDerived.derivedEncoder[CieLabMeasuringField]
-given derivedJsonDecoderCieLabMeasuringField: Decoder[CieLabMeasuringField] = JsonDerived.derivedDecoder[CieLabMeasuringField]
-given derivedJsonEncoderCoilBindingProductionDetails: Encoder[CoilBindingProductionDetails] = JsonDerived.derivedEncoder[CoilBindingProductionDetails]
-given derivedJsonDecoderCoilBindingProductionDetails: Decoder[CoilBindingProductionDetails] = JsonDerived.derivedDecoder[CoilBindingProductionDetails]
-given derivedJsonEncoderCoilLooseBindingDetails: Encoder[CoilLooseBindingDetails] = JsonDerived.derivedEncoder[CoilLooseBindingDetails]
-given derivedJsonDecoderCoilLooseBindingDetails: Decoder[CoilLooseBindingDetails] = JsonDerived.derivedDecoder[CoilLooseBindingDetails]
+given derivedJsonEncoderChannelBindingProductionDetails: Encoder[ChannelBindingProductionDetails] =
+  JsonDerived.derivedEncoder[ChannelBindingProductionDetails]
+given derivedJsonDecoderChannelBindingProductionDetails: Decoder[ChannelBindingProductionDetails] =
+  JsonDerived.derivedDecoder[ChannelBindingProductionDetails]
+given derivedJsonEncoderCieLabMeasuringField: Encoder[CieLabMeasuringField] =
+  JsonDerived.derivedEncoder[CieLabMeasuringField]
+given derivedJsonDecoderCieLabMeasuringField: Decoder[CieLabMeasuringField] =
+  JsonDerived.derivedDecoder[CieLabMeasuringField]
+given derivedJsonEncoderCoilBindingProductionDetails: Encoder[CoilBindingProductionDetails] =
+  JsonDerived.derivedEncoder[CoilBindingProductionDetails]
+given derivedJsonDecoderCoilBindingProductionDetails: Decoder[CoilBindingProductionDetails] =
+  JsonDerived.derivedDecoder[CoilBindingProductionDetails]
+given derivedJsonEncoderCoilLooseBindingDetails: Encoder[CoilLooseBindingDetails] =
+  JsonDerived.derivedEncoder[CoilLooseBindingDetails]
+given derivedJsonDecoderCoilLooseBindingDetails: Decoder[CoilLooseBindingDetails] =
+  JsonDerived.derivedDecoder[CoilLooseBindingDetails]
 given derivedJsonEncoderColorControlStrip: Encoder[ColorControlStrip] = JsonDerived.derivedEncoder[ColorControlStrip]
 given derivedJsonDecoderColorControlStrip: Decoder[ColorControlStrip] = JsonDerived.derivedDecoder[ColorControlStrip]
-given derivedJsonEncoderColorConversionProfiles: Encoder[ColorConversionProfiles] = JsonDerived.derivedEncoder[ColorConversionProfiles]
-given derivedJsonDecoderColorConversionProfiles: Decoder[ColorConversionProfiles] = JsonDerived.derivedDecoder[ColorConversionProfiles]
-given derivedJsonEncoderColorCorrectionOperation: Encoder[ColorCorrectionOperation] = JsonDerived.derivedEncoder[ColorCorrectionOperation]
-given derivedJsonDecoderColorCorrectionOperation: Decoder[ColorCorrectionOperation] = JsonDerived.derivedDecoder[ColorCorrectionOperation]
-given derivedJsonEncoderColorCorrectionParams: Encoder[ColorCorrectionParams] = JsonDerived.derivedEncoder[ColorCorrectionParams]
-given derivedJsonDecoderColorCorrectionParams: Decoder[ColorCorrectionParams] = JsonDerived.derivedDecoder[ColorCorrectionParams]
+given derivedJsonEncoderColorConversionProfiles: Encoder[ColorConversionProfiles] =
+  JsonDerived.derivedEncoder[ColorConversionProfiles]
+given derivedJsonDecoderColorConversionProfiles: Decoder[ColorConversionProfiles] =
+  JsonDerived.derivedDecoder[ColorConversionProfiles]
+given derivedJsonEncoderColorCorrectionOperation: Encoder[ColorCorrectionOperation] =
+  JsonDerived.derivedEncoder[ColorCorrectionOperation]
+given derivedJsonDecoderColorCorrectionOperation: Decoder[ColorCorrectionOperation] =
+  JsonDerived.derivedDecoder[ColorCorrectionOperation]
+given derivedJsonEncoderColorCorrectionParams: Encoder[ColorCorrectionParams] =
+  JsonDerived.derivedEncoder[ColorCorrectionParams]
+given derivedJsonDecoderColorCorrectionParams: Decoder[ColorCorrectionParams] =
+  JsonDerived.derivedDecoder[ColorCorrectionParams]
 given derivedJsonEncoderColorMeasurement: Encoder[ColorMeasurement] = JsonDerived.derivedEncoder[ColorMeasurement]
 given derivedJsonDecoderColorMeasurement: Decoder[ColorMeasurement] = JsonDerived.derivedDecoder[ColorMeasurement]
-given derivedJsonEncoderColorSpaceConversionOperation: Encoder[ColorSpaceConversionOperation] = JsonDerived.derivedEncoder[ColorSpaceConversionOperation]
-given derivedJsonDecoderColorSpaceConversionOperation: Decoder[ColorSpaceConversionOperation] = JsonDerived.derivedDecoder[ColorSpaceConversionOperation]
-given derivedJsonEncoderColorSpaceConversionParams: Encoder[ColorSpaceConversionParams] = JsonDerived.derivedEncoder[ColorSpaceConversionParams]
-given derivedJsonDecoderColorSpaceConversionParams: Decoder[ColorSpaceConversionParams] = JsonDerived.derivedDecoder[ColorSpaceConversionParams]
+given derivedJsonEncoderColorSpaceConversionOperation: Encoder[ColorSpaceConversionOperation] =
+  JsonDerived.derivedEncoder[ColorSpaceConversionOperation]
+given derivedJsonDecoderColorSpaceConversionOperation: Decoder[ColorSpaceConversionOperation] =
+  JsonDerived.derivedDecoder[ColorSpaceConversionOperation]
+given derivedJsonEncoderColorSpaceConversionParams: Encoder[ColorSpaceConversionParams] =
+  JsonDerived.derivedEncoder[ColorSpaceConversionParams]
+given derivedJsonDecoderColorSpaceConversionParams: Decoder[ColorSpaceConversionParams] =
+  JsonDerived.derivedDecoder[ColorSpaceConversionParams]
 given derivedJsonEncoderColorantAlias: Encoder[ColorantAlias] = JsonDerived.derivedEncoder[ColorantAlias]
 given derivedJsonDecoderColorantAlias: Decoder[ColorantAlias] = JsonDerived.derivedDecoder[ColorantAlias]
 given derivedJsonEncoderColorantControl: Encoder[ColorantControl] = JsonDerived.derivedEncoder[ColorantControl]
 given derivedJsonDecoderColorantControl: Decoder[ColorantControl] = JsonDerived.derivedDecoder[ColorantControl]
-given derivedJsonEncoderCombBindingProductionDetails: Encoder[CombBindingProductionDetails] = JsonDerived.derivedEncoder[CombBindingProductionDetails]
-given derivedJsonDecoderCombBindingProductionDetails: Decoder[CombBindingProductionDetails] = JsonDerived.derivedDecoder[CombBindingProductionDetails]
-given derivedJsonEncoderCombLooseBindingDetails: Encoder[CombLooseBindingDetails] = JsonDerived.derivedEncoder[CombLooseBindingDetails]
-given derivedJsonDecoderCombLooseBindingDetails: Decoder[CombLooseBindingDetails] = JsonDerived.derivedDecoder[CombLooseBindingDetails]
+given derivedJsonEncoderCombBindingProductionDetails: Encoder[CombBindingProductionDetails] =
+  JsonDerived.derivedEncoder[CombBindingProductionDetails]
+given derivedJsonDecoderCombBindingProductionDetails: Decoder[CombBindingProductionDetails] =
+  JsonDerived.derivedDecoder[CombBindingProductionDetails]
+given derivedJsonEncoderCombLooseBindingDetails: Encoder[CombLooseBindingDetails] =
+  JsonDerived.derivedEncoder[CombLooseBindingDetails]
+given derivedJsonDecoderCombLooseBindingDetails: Decoder[CombLooseBindingDetails] =
+  JsonDerived.derivedDecoder[CombLooseBindingDetails]
 given derivedJsonEncoderGangCommandFilter: Encoder[GangCommandFilter] = JsonDerived.derivedEncoder[GangCommandFilter]
 given derivedJsonDecoderGangCommandFilter: Decoder[GangCommandFilter] = JsonDerived.derivedDecoder[GangCommandFilter]
 given derivedJsonEncoderCommandForceGang: Encoder[CommandForceGang] = JsonDerived.derivedEncoder[CommandForceGang]
 given derivedJsonDecoderCommandForceGang: Decoder[CommandForceGang] = JsonDerived.derivedDecoder[CommandForceGang]
-given derivedJsonEncoderCommandModifyQueueEntry: Encoder[CommandModifyQueueEntry] = JsonDerived.derivedEncoder[CommandModifyQueueEntry]
-given derivedJsonDecoderCommandModifyQueueEntry: Decoder[CommandModifyQueueEntry] = JsonDerived.derivedDecoder[CommandModifyQueueEntry]
+given derivedJsonEncoderCommandModifyQueueEntry: Encoder[CommandModifyQueueEntry] =
+  JsonDerived.derivedEncoder[CommandModifyQueueEntry]
+given derivedJsonDecoderCommandModifyQueueEntry: Decoder[CommandModifyQueueEntry] =
+  JsonDerived.derivedDecoder[CommandModifyQueueEntry]
 given derivedJsonEncoderPipeParams: Encoder[PipeParams] = JsonDerived.derivedEncoder[PipeParams]
 given derivedJsonDecoderPipeParams: Decoder[PipeParams] = JsonDerived.derivedDecoder[PipeParams]
 given derivedJsonEncoderCommandPipeControl: Encoder[CommandPipeControl] = JsonDerived.derivedEncoder[CommandPipeControl]
 given derivedJsonDecoderCommandPipeControl: Decoder[CommandPipeControl] = JsonDerived.derivedDecoder[CommandPipeControl]
-given derivedJsonEncoderRequestQueueEntryParams: Encoder[RequestQueueEntryParams] = JsonDerived.derivedEncoder[RequestQueueEntryParams]
-given derivedJsonDecoderRequestQueueEntryParams: Decoder[RequestQueueEntryParams] = JsonDerived.derivedDecoder[RequestQueueEntryParams]
-given derivedJsonEncoderCommandRequestQueueEntry: Encoder[CommandRequestQueueEntry] = JsonDerived.derivedEncoder[CommandRequestQueueEntry]
-given derivedJsonDecoderCommandRequestQueueEntry: Decoder[CommandRequestQueueEntry] = JsonDerived.derivedDecoder[CommandRequestQueueEntry]
-given derivedJsonEncoderResourceCommandParams: Encoder[ResourceCommandParams] = JsonDerived.derivedEncoder[ResourceCommandParams]
-given derivedJsonDecoderResourceCommandParams: Decoder[ResourceCommandParams] = JsonDerived.derivedDecoder[ResourceCommandParams]
+given derivedJsonEncoderRequestQueueEntryParams: Encoder[RequestQueueEntryParams] =
+  JsonDerived.derivedEncoder[RequestQueueEntryParams]
+given derivedJsonDecoderRequestQueueEntryParams: Decoder[RequestQueueEntryParams] =
+  JsonDerived.derivedDecoder[RequestQueueEntryParams]
+given derivedJsonEncoderCommandRequestQueueEntry: Encoder[CommandRequestQueueEntry] =
+  JsonDerived.derivedEncoder[CommandRequestQueueEntry]
+given derivedJsonDecoderCommandRequestQueueEntry: Decoder[CommandRequestQueueEntry] =
+  JsonDerived.derivedDecoder[CommandRequestQueueEntry]
+given derivedJsonEncoderResourceCommandParams: Encoder[ResourceCommandParams] =
+  JsonDerived.derivedEncoder[ResourceCommandParams]
+given derivedJsonDecoderResourceCommandParams: Decoder[ResourceCommandParams] =
+  JsonDerived.derivedDecoder[ResourceCommandParams]
 given derivedJsonEncoderCommandResource: Encoder[CommandResource] = JsonDerived.derivedEncoder[CommandResource]
 given derivedJsonDecoderCommandResource: Decoder[CommandResource] = JsonDerived.derivedDecoder[CommandResource]
 given derivedJsonEncoderResubmissionParams: Encoder[ResubmissionParams] = JsonDerived.derivedEncoder[ResubmissionParams]
 given derivedJsonDecoderResubmissionParams: Decoder[ResubmissionParams] = JsonDerived.derivedDecoder[ResubmissionParams]
-given derivedJsonEncoderCommandResubmitQueueEntry: Encoder[CommandResubmitQueueEntry] = JsonDerived.derivedEncoder[CommandResubmitQueueEntry]
-given derivedJsonDecoderCommandResubmitQueueEntry: Decoder[CommandResubmitQueueEntry] = JsonDerived.derivedDecoder[CommandResubmitQueueEntry]
-given derivedJsonEncoderReturnQueueEntryParams: Encoder[ReturnQueueEntryParams] = JsonDerived.derivedEncoder[ReturnQueueEntryParams]
-given derivedJsonDecoderReturnQueueEntryParams: Decoder[ReturnQueueEntryParams] = JsonDerived.derivedDecoder[ReturnQueueEntryParams]
-given derivedJsonEncoderCommandReturnQueueEntry: Encoder[CommandReturnQueueEntry] = JsonDerived.derivedEncoder[CommandReturnQueueEntry]
-given derivedJsonDecoderCommandReturnQueueEntry: Decoder[CommandReturnQueueEntry] = JsonDerived.derivedDecoder[CommandReturnQueueEntry]
+given derivedJsonEncoderCommandResubmitQueueEntry: Encoder[CommandResubmitQueueEntry] =
+  JsonDerived.derivedEncoder[CommandResubmitQueueEntry]
+given derivedJsonDecoderCommandResubmitQueueEntry: Decoder[CommandResubmitQueueEntry] =
+  JsonDerived.derivedDecoder[CommandResubmitQueueEntry]
+given derivedJsonEncoderReturnQueueEntryParams: Encoder[ReturnQueueEntryParams] =
+  JsonDerived.derivedEncoder[ReturnQueueEntryParams]
+given derivedJsonDecoderReturnQueueEntryParams: Decoder[ReturnQueueEntryParams] =
+  JsonDerived.derivedDecoder[ReturnQueueEntryParams]
+given derivedJsonEncoderCommandReturnQueueEntry: Encoder[CommandReturnQueueEntry] =
+  JsonDerived.derivedEncoder[CommandReturnQueueEntry]
+given derivedJsonDecoderCommandReturnQueueEntry: Decoder[CommandReturnQueueEntry] =
+  JsonDerived.derivedDecoder[CommandReturnQueueEntry]
 given derivedJsonEncoderCommandShutDown: Encoder[CommandShutDown] = JsonDerived.derivedEncoder[CommandShutDown]
 given derivedJsonDecoderCommandShutDown: Decoder[CommandShutDown] = JsonDerived.derivedDecoder[CommandShutDown]
-given derivedJsonEncoderStopPersistentChannelParams: Encoder[StopPersistentChannelParams] = JsonDerived.derivedEncoder[StopPersistentChannelParams]
-given derivedJsonDecoderStopPersistentChannelParams: Decoder[StopPersistentChannelParams] = JsonDerived.derivedDecoder[StopPersistentChannelParams]
-given derivedJsonEncoderCommandStopPersistentChannel: Encoder[CommandStopPersistentChannel] = JsonDerived.derivedEncoder[CommandStopPersistentChannel]
-given derivedJsonDecoderCommandStopPersistentChannel: Decoder[CommandStopPersistentChannel] = JsonDerived.derivedDecoder[CommandStopPersistentChannel]
-given derivedJsonEncoderCommandSubmitQueueEntry: Encoder[CommandSubmitQueueEntry] = JsonDerived.derivedEncoder[CommandSubmitQueueEntry]
-given derivedJsonDecoderCommandSubmitQueueEntry: Decoder[CommandSubmitQueueEntry] = JsonDerived.derivedDecoder[CommandSubmitQueueEntry]
+given derivedJsonEncoderStopPersistentChannelParams: Encoder[StopPersistentChannelParams] =
+  JsonDerived.derivedEncoder[StopPersistentChannelParams]
+given derivedJsonDecoderStopPersistentChannelParams: Decoder[StopPersistentChannelParams] =
+  JsonDerived.derivedDecoder[StopPersistentChannelParams]
+given derivedJsonEncoderCommandStopPersistentChannel: Encoder[CommandStopPersistentChannel] =
+  JsonDerived.derivedEncoder[CommandStopPersistentChannel]
+given derivedJsonDecoderCommandStopPersistentChannel: Decoder[CommandStopPersistentChannel] =
+  JsonDerived.derivedDecoder[CommandStopPersistentChannel]
+given derivedJsonEncoderCommandSubmitQueueEntry: Encoder[CommandSubmitQueueEntry] =
+  JsonDerived.derivedEncoder[CommandSubmitQueueEntry]
+given derivedJsonDecoderCommandSubmitQueueEntry: Decoder[CommandSubmitQueueEntry] =
+  JsonDerived.derivedDecoder[CommandSubmitQueueEntry]
 given derivedJsonEncoderCommandWakeUp: Encoder[CommandWakeUp] = JsonDerived.derivedEncoder[CommandWakeUp]
 given derivedJsonDecoderCommandWakeUp: Decoder[CommandWakeUp] = JsonDerived.derivedDecoder[CommandWakeUp]
-given derivedJsonEncoderCommunicationChannel: Encoder[CommunicationChannel] = JsonDerived.derivedEncoder[CommunicationChannel]
-given derivedJsonDecoderCommunicationChannel: Decoder[CommunicationChannel] = JsonDerived.derivedDecoder[CommunicationChannel]
+given derivedJsonEncoderCommunicationChannel: Encoder[CommunicationChannel] =
+  JsonDerived.derivedEncoder[CommunicationChannel]
+given derivedJsonDecoderCommunicationChannel: Decoder[CommunicationChannel] =
+  JsonDerived.derivedDecoder[CommunicationChannel]
 given derivedJsonEncoderCondition: Encoder[Condition] = JsonDerived.derivedEncoder[Condition]
 given derivedJsonDecoderCondition: Decoder[Condition] = JsonDerived.derivedDecoder[Condition]
 given derivedJsonEncoderContact: Encoder[Contact] = JsonDerived.derivedEncoder[Contact]
@@ -185,12 +229,16 @@ given derivedJsonEncoderContentCheckIntent: Encoder[ContentCheckIntent] = JsonDe
 given derivedJsonDecoderContentCheckIntent: Decoder[ContentCheckIntent] = JsonDerived.derivedDecoder[ContentCheckIntent]
 given derivedJsonEncoderContentMetadata: Encoder[ContentMetadata] = JsonDerived.derivedEncoder[ContentMetadata]
 given derivedJsonDecoderContentMetadata: Decoder[ContentMetadata] = JsonDerived.derivedDecoder[ContentMetadata]
-given derivedJsonEncoderConventionalPrintingParams: Encoder[ConventionalPrintingParams] = JsonDerived.derivedEncoder[ConventionalPrintingParams]
-given derivedJsonDecoderConventionalPrintingParams: Decoder[ConventionalPrintingParams] = JsonDerived.derivedDecoder[ConventionalPrintingParams]
+given derivedJsonEncoderConventionalPrintingParams: Encoder[ConventionalPrintingParams] =
+  JsonDerived.derivedEncoder[ConventionalPrintingParams]
+given derivedJsonDecoderConventionalPrintingParams: Decoder[ConventionalPrintingParams] =
+  JsonDerived.derivedDecoder[ConventionalPrintingParams]
 given derivedJsonEncoderConvertingConfig: Encoder[ConvertingConfig] = JsonDerived.derivedEncoder[ConvertingConfig]
 given derivedJsonDecoderConvertingConfig: Decoder[ConvertingConfig] = JsonDerived.derivedDecoder[ConvertingConfig]
-given derivedJsonEncoderCoverApplicationParams: Encoder[CoverApplicationParams] = JsonDerived.derivedEncoder[CoverApplicationParams]
-given derivedJsonDecoderCoverApplicationParams: Decoder[CoverApplicationParams] = JsonDerived.derivedDecoder[CoverApplicationParams]
+given derivedJsonEncoderCoverApplicationParams: Encoder[CoverApplicationParams] =
+  JsonDerived.derivedEncoder[CoverApplicationParams]
+given derivedJsonDecoderCoverApplicationParams: Decoder[CoverApplicationParams] =
+  JsonDerived.derivedDecoder[CoverApplicationParams]
 given derivedJsonEncoderCrease: Encoder[Crease] = JsonDerived.derivedEncoder[Crease]
 given derivedJsonDecoderCrease: Decoder[Crease] = JsonDerived.derivedDecoder[Crease]
 given derivedJsonEncoderCreasingParams: Encoder[CreasingParams] = JsonDerived.derivedEncoder[CreasingParams]
@@ -211,8 +259,10 @@ given derivedJsonEncoderDefect: Encoder[Defect] = JsonDerived.derivedEncoder[Def
 given derivedJsonDecoderDefect: Decoder[Defect] = JsonDerived.derivedDecoder[Defect]
 given derivedJsonEncoderDeliveryParams: Encoder[DeliveryParams] = JsonDerived.derivedEncoder[DeliveryParams]
 given derivedJsonDecoderDeliveryParams: Decoder[DeliveryParams] = JsonDerived.derivedDecoder[DeliveryParams]
-given derivedJsonEncoderDensityMeasuringField: Encoder[DensityMeasuringField] = JsonDerived.derivedEncoder[DensityMeasuringField]
-given derivedJsonDecoderDensityMeasuringField: Decoder[DensityMeasuringField] = JsonDerived.derivedDecoder[DensityMeasuringField]
+given derivedJsonEncoderDensityMeasuringField: Encoder[DensityMeasuringField] =
+  JsonDerived.derivedEncoder[DensityMeasuringField]
+given derivedJsonDecoderDensityMeasuringField: Decoder[DensityMeasuringField] =
+  JsonDerived.derivedDecoder[DensityMeasuringField]
 given derivedJsonEncoderDependent: Encoder[Dependent] = JsonDerived.derivedEncoder[Dependent]
 given derivedJsonDecoderDependent: Decoder[Dependent] = JsonDerived.derivedDecoder[Dependent]
 given derivedJsonEncoderDevelopingParams: Encoder[DevelopingParams] = JsonDerived.derivedEncoder[DevelopingParams]
@@ -229,12 +279,16 @@ given derivedJsonEncoderDeviceNSpace: Encoder[DeviceNSpace] = JsonDerived.derive
 given derivedJsonDecoderDeviceNSpace: Decoder[DeviceNSpace] = JsonDerived.derivedDecoder[DeviceNSpace]
 given derivedJsonEncoderDieLayout: Encoder[DieLayout] = JsonDerived.derivedEncoder[DieLayout]
 given derivedJsonDecoderDieLayout: Decoder[DieLayout] = JsonDerived.derivedDecoder[DieLayout]
-given derivedJsonEncoderDieLayoutProductionParams: Encoder[DieLayoutProductionParams] = JsonDerived.derivedEncoder[DieLayoutProductionParams]
-given derivedJsonDecoderDieLayoutProductionParams: Decoder[DieLayoutProductionParams] = JsonDerived.derivedDecoder[DieLayoutProductionParams]
+given derivedJsonEncoderDieLayoutProductionParams: Encoder[DieLayoutProductionParams] =
+  JsonDerived.derivedEncoder[DieLayoutProductionParams]
+given derivedJsonDecoderDieLayoutProductionParams: Decoder[DieLayoutProductionParams] =
+  JsonDerived.derivedDecoder[DieLayoutProductionParams]
 given derivedJsonEncoderDieStation: Encoder[DieStation] = JsonDerived.derivedEncoder[DieStation]
 given derivedJsonDecoderDieStation: Decoder[DieStation] = JsonDerived.derivedDecoder[DieStation]
-given derivedJsonEncoderDigitalPrintingParams: Encoder[DigitalPrintingParams] = JsonDerived.derivedEncoder[DigitalPrintingParams]
-given derivedJsonDecoderDigitalPrintingParams: Decoder[DigitalPrintingParams] = JsonDerived.derivedDecoder[DigitalPrintingParams]
+given derivedJsonEncoderDigitalPrintingParams: Encoder[DigitalPrintingParams] =
+  JsonDerived.derivedEncoder[DigitalPrintingParams]
+given derivedJsonDecoderDigitalPrintingParams: Decoder[DigitalPrintingParams] =
+  JsonDerived.derivedDecoder[DigitalPrintingParams]
 given derivedJsonEncoderDisjointing: Encoder[Disjointing] = JsonDerived.derivedEncoder[Disjointing]
 given derivedJsonDecoderDisjointing: Decoder[Disjointing] = JsonDerived.derivedDecoder[Disjointing]
 given derivedJsonEncoderDropItem: Encoder[DropItem] = JsonDerived.derivedEncoder[DropItem]
@@ -249,16 +303,20 @@ given derivedJsonEncoderEmbossingItem: Encoder[EmbossingItem] = JsonDerived.deri
 given derivedJsonDecoderEmbossingItem: Decoder[EmbossingItem] = JsonDerived.derivedDecoder[EmbossingItem]
 given derivedJsonEncoderEmbossingParams: Encoder[EmbossingParams] = JsonDerived.derivedEncoder[EmbossingParams]
 given derivedJsonDecoderEmbossingParams: Decoder[EmbossingParams] = JsonDerived.derivedDecoder[EmbossingParams]
-given derivedJsonEncoderEndSheetGluingParams: Encoder[EndSheetGluingParams] = JsonDerived.derivedEncoder[EndSheetGluingParams]
-given derivedJsonDecoderEndSheetGluingParams: Decoder[EndSheetGluingParams] = JsonDerived.derivedDecoder[EndSheetGluingParams]
+given derivedJsonEncoderEndSheetGluingParams: Encoder[EndSheetGluingParams] =
+  JsonDerived.derivedEncoder[EndSheetGluingParams]
+given derivedJsonDecoderEndSheetGluingParams: Decoder[EndSheetGluingParams] =
+  JsonDerived.derivedDecoder[EndSheetGluingParams]
 given derivedJsonEncoderEvent: Encoder[Event] = JsonDerived.derivedEncoder[Event]
 given derivedJsonDecoderEvent: Decoder[Event] = JsonDerived.derivedDecoder[Event]
 given derivedJsonEncoderExposedMedia: Encoder[ExposedMedia] = JsonDerived.derivedEncoder[ExposedMedia]
 given derivedJsonDecoderExposedMedia: Decoder[ExposedMedia] = JsonDerived.derivedDecoder[ExposedMedia]
 given derivedJsonEncoderFeeder: Encoder[Feeder] = JsonDerived.derivedEncoder[Feeder]
 given derivedJsonDecoderFeeder: Decoder[Feeder] = JsonDerived.derivedDecoder[Feeder]
-given derivedJsonEncoderFeederQualityParams: Encoder[FeederQualityParams] = JsonDerived.derivedEncoder[FeederQualityParams]
-given derivedJsonDecoderFeederQualityParams: Decoder[FeederQualityParams] = JsonDerived.derivedDecoder[FeederQualityParams]
+given derivedJsonEncoderFeederQualityParams: Encoder[FeederQualityParams] =
+  JsonDerived.derivedEncoder[FeederQualityParams]
+given derivedJsonDecoderFeederQualityParams: Decoder[FeederQualityParams] =
+  JsonDerived.derivedDecoder[FeederQualityParams]
 given derivedJsonEncoderFeedingParams: Encoder[FeedingParams] = JsonDerived.derivedEncoder[FeedingParams]
 given derivedJsonDecoderFeedingParams: Decoder[FeedingParams] = JsonDerived.derivedDecoder[FeedingParams]
 given derivedJsonEncoderFillMark: Encoder[FillMark] = JsonDerived.derivedEncoder[FillMark]
@@ -289,10 +347,14 @@ given derivedJsonEncoderGangSource: Encoder[GangSource] = JsonDerived.derivedEnc
 given derivedJsonDecoderGangSource: Decoder[GangSource] = JsonDerived.derivedDecoder[GangSource]
 given derivedJsonEncoderGluingParams: Encoder[GluingParams] = JsonDerived.derivedEncoder[GluingParams]
 given derivedJsonDecoderGluingParams: Decoder[GluingParams] = JsonDerived.derivedDecoder[GluingParams]
-given derivedJsonEncoderHardCoverBindingDetails: Encoder[HardCoverBindingDetails] = JsonDerived.derivedEncoder[HardCoverBindingDetails]
-given derivedJsonDecoderHardCoverBindingDetails: Decoder[HardCoverBindingDetails] = JsonDerived.derivedDecoder[HardCoverBindingDetails]
-given derivedJsonEncoderHeadBandApplicationParams: Encoder[HeadBandApplicationParams] = JsonDerived.derivedEncoder[HeadBandApplicationParams]
-given derivedJsonDecoderHeadBandApplicationParams: Decoder[HeadBandApplicationParams] = JsonDerived.derivedDecoder[HeadBandApplicationParams]
+given derivedJsonEncoderHardCoverBindingDetails: Encoder[HardCoverBindingDetails] =
+  JsonDerived.derivedEncoder[HardCoverBindingDetails]
+given derivedJsonDecoderHardCoverBindingDetails: Decoder[HardCoverBindingDetails] =
+  JsonDerived.derivedDecoder[HardCoverBindingDetails]
+given derivedJsonEncoderHeadBandApplicationParams: Encoder[HeadBandApplicationParams] =
+  JsonDerived.derivedEncoder[HeadBandApplicationParams]
+given derivedJsonDecoderHeadBandApplicationParams: Decoder[HeadBandApplicationParams] =
+  JsonDerived.derivedDecoder[HeadBandApplicationParams]
 given derivedJsonEncoderHoleMakingIntent: Encoder[HoleMakingIntent] = JsonDerived.derivedEncoder[HoleMakingIntent]
 given derivedJsonDecoderHoleMakingIntent: Decoder[HoleMakingIntent] = JsonDerived.derivedDecoder[HoleMakingIntent]
 given derivedJsonEncoderHoleMakingParams: Encoder[HoleMakingParams] = JsonDerived.derivedEncoder[HoleMakingParams]
@@ -301,22 +363,32 @@ given derivedJsonEncoderHolePattern: Encoder[HolePattern] = JsonDerived.derivedE
 given derivedJsonDecoderHolePattern: Decoder[HolePattern] = JsonDerived.derivedDecoder[HolePattern]
 given derivedJsonEncoderIconList: Encoder[IconList] = JsonDerived.derivedEncoder[IconList]
 given derivedJsonDecoderIconList: Decoder[IconList] = JsonDerived.derivedDecoder[IconList]
-given derivedJsonEncoderIdentificationField: Encoder[IdentificationField] = JsonDerived.derivedEncoder[IdentificationField]
-given derivedJsonDecoderIdentificationField: Decoder[IdentificationField] = JsonDerived.derivedDecoder[IdentificationField]
+given derivedJsonEncoderIdentificationField: Encoder[IdentificationField] =
+  JsonDerived.derivedEncoder[IdentificationField]
+given derivedJsonDecoderIdentificationField: Decoder[IdentificationField] =
+  JsonDerived.derivedDecoder[IdentificationField]
 given derivedJsonEncoderImageCompression: Encoder[ImageCompression] = JsonDerived.derivedEncoder[ImageCompression]
 given derivedJsonDecoderImageCompression: Decoder[ImageCompression] = JsonDerived.derivedDecoder[ImageCompression]
-given derivedJsonEncoderImageCompressionParams: Encoder[ImageCompressionParams] = JsonDerived.derivedEncoder[ImageCompressionParams]
-given derivedJsonDecoderImageCompressionParams: Decoder[ImageCompressionParams] = JsonDerived.derivedDecoder[ImageCompressionParams]
-given derivedJsonEncoderImageEnhancementOperation: Encoder[ImageEnhancementOperation] = JsonDerived.derivedEncoder[ImageEnhancementOperation]
-given derivedJsonDecoderImageEnhancementOperation: Decoder[ImageEnhancementOperation] = JsonDerived.derivedDecoder[ImageEnhancementOperation]
-given derivedJsonEncoderImageEnhancementParams: Encoder[ImageEnhancementParams] = JsonDerived.derivedEncoder[ImageEnhancementParams]
-given derivedJsonDecoderImageEnhancementParams: Decoder[ImageEnhancementParams] = JsonDerived.derivedDecoder[ImageEnhancementParams]
+given derivedJsonEncoderImageCompressionParams: Encoder[ImageCompressionParams] =
+  JsonDerived.derivedEncoder[ImageCompressionParams]
+given derivedJsonDecoderImageCompressionParams: Decoder[ImageCompressionParams] =
+  JsonDerived.derivedDecoder[ImageCompressionParams]
+given derivedJsonEncoderImageEnhancementOperation: Encoder[ImageEnhancementOperation] =
+  JsonDerived.derivedEncoder[ImageEnhancementOperation]
+given derivedJsonDecoderImageEnhancementOperation: Decoder[ImageEnhancementOperation] =
+  JsonDerived.derivedDecoder[ImageEnhancementOperation]
+given derivedJsonEncoderImageEnhancementParams: Encoder[ImageEnhancementParams] =
+  JsonDerived.derivedEncoder[ImageEnhancementParams]
+given derivedJsonDecoderImageEnhancementParams: Decoder[ImageEnhancementParams] =
+  JsonDerived.derivedDecoder[ImageEnhancementParams]
 given derivedJsonEncoderImageSetterParams: Encoder[ImageSetterParams] = JsonDerived.derivedEncoder[ImageSetterParams]
 given derivedJsonDecoderImageSetterParams: Decoder[ImageSetterParams] = JsonDerived.derivedDecoder[ImageSetterParams]
 given derivedJsonEncoderInk: Encoder[Ink] = JsonDerived.derivedEncoder[Ink]
 given derivedJsonDecoderInk: Decoder[Ink] = JsonDerived.derivedDecoder[Ink]
-given derivedJsonEncoderInkZoneCalculationParams: Encoder[InkZoneCalculationParams] = JsonDerived.derivedEncoder[InkZoneCalculationParams]
-given derivedJsonDecoderInkZoneCalculationParams: Decoder[InkZoneCalculationParams] = JsonDerived.derivedDecoder[InkZoneCalculationParams]
+given derivedJsonEncoderInkZoneCalculationParams: Encoder[InkZoneCalculationParams] =
+  JsonDerived.derivedEncoder[InkZoneCalculationParams]
+given derivedJsonDecoderInkZoneCalculationParams: Decoder[InkZoneCalculationParams] =
+  JsonDerived.derivedDecoder[InkZoneCalculationParams]
 given derivedJsonEncoderInkZoneProfile: Encoder[InkZoneProfile] = JsonDerived.derivedEncoder[InkZoneProfile]
 given derivedJsonDecoderInkZoneProfile: Decoder[InkZoneProfile] = JsonDerived.derivedDecoder[InkZoneProfile]
 given derivedJsonEncoderInsertSheet: Encoder[InsertSheet] = JsonDerived.derivedEncoder[InsertSheet]
@@ -327,8 +399,10 @@ given derivedJsonEncoderInspection: Encoder[Inspection] = JsonDerived.derivedEnc
 given derivedJsonDecoderInspection: Decoder[Inspection] = JsonDerived.derivedDecoder[Inspection]
 given derivedJsonEncoderIntentResource: Encoder[IntentResource] = JsonDerived.derivedEncoder[IntentResource]
 given derivedJsonDecoderIntentResource: Decoder[IntentResource] = JsonDerived.derivedDecoder[IntentResource]
-given derivedJsonEncoderInterpretingDetails: Encoder[InterpretingDetails] = JsonDerived.derivedEncoder[InterpretingDetails]
-given derivedJsonDecoderInterpretingDetails: Decoder[InterpretingDetails] = JsonDerived.derivedDecoder[InterpretingDetails]
+given derivedJsonEncoderInterpretingDetails: Encoder[InterpretingDetails] =
+  JsonDerived.derivedEncoder[InterpretingDetails]
+given derivedJsonDecoderInterpretingDetails: Decoder[InterpretingDetails] =
+  JsonDerived.derivedDecoder[InterpretingDetails]
 given derivedJsonEncoderInterpretingParams: Encoder[InterpretingParams] = JsonDerived.derivedEncoder[InterpretingParams]
 given derivedJsonDecoderInterpretingParams: Decoder[InterpretingParams] = JsonDerived.derivedDecoder[InterpretingParams]
 given derivedJsonEncoderJacketingParams: Encoder[JacketingParams] = JsonDerived.derivedEncoder[JacketingParams]
@@ -349,16 +423,20 @@ given derivedJsonEncoderLaminatingParams: Encoder[LaminatingParams] = JsonDerive
 given derivedJsonDecoderLaminatingParams: Decoder[LaminatingParams] = JsonDerived.derivedDecoder[LaminatingParams]
 given derivedJsonEncoderLayout: Encoder[Layout] = JsonDerived.derivedEncoder[Layout]
 given derivedJsonDecoderLayout: Decoder[Layout] = JsonDerived.derivedDecoder[Layout]
-given derivedJsonEncoderLayoutElementProductionParams: Encoder[LayoutElementProductionParams] = JsonDerived.derivedEncoder[LayoutElementProductionParams]
-given derivedJsonDecoderLayoutElementProductionParams: Decoder[LayoutElementProductionParams] = JsonDerived.derivedDecoder[LayoutElementProductionParams]
+given derivedJsonEncoderLayoutElementProductionParams: Encoder[LayoutElementProductionParams] =
+  JsonDerived.derivedEncoder[LayoutElementProductionParams]
+given derivedJsonDecoderLayoutElementProductionParams: Decoder[LayoutElementProductionParams] =
+  JsonDerived.derivedDecoder[LayoutElementProductionParams]
 given derivedJsonEncoderLayoutIntent: Encoder[LayoutIntent] = JsonDerived.derivedEncoder[LayoutIntent]
 given derivedJsonDecoderLayoutIntent: Decoder[LayoutIntent] = JsonDerived.derivedDecoder[LayoutIntent]
 given derivedJsonEncoderLayoutPosition: Encoder[LayoutPosition] = JsonDerived.derivedEncoder[LayoutPosition]
 given derivedJsonDecoderLayoutPosition: Decoder[LayoutPosition] = JsonDerived.derivedDecoder[LayoutPosition]
 given derivedJsonEncoderLayoutShift: Encoder[LayoutShift] = JsonDerived.derivedEncoder[LayoutShift]
 given derivedJsonDecoderLayoutShift: Decoder[LayoutShift] = JsonDerived.derivedDecoder[LayoutShift]
-given derivedJsonEncoderLooseBindingDetails: Encoder[LooseBindingDetails] = JsonDerived.derivedEncoder[LooseBindingDetails]
-given derivedJsonDecoderLooseBindingDetails: Decoder[LooseBindingDetails] = JsonDerived.derivedDecoder[LooseBindingDetails]
+given derivedJsonEncoderLooseBindingDetails: Encoder[LooseBindingDetails] =
+  JsonDerived.derivedEncoder[LooseBindingDetails]
+given derivedJsonDecoderLooseBindingDetails: Decoder[LooseBindingDetails] =
+  JsonDerived.derivedDecoder[LooseBindingDetails]
 given derivedJsonEncoderLzwParams: Encoder[LzwParams] = JsonDerived.derivedEncoder[LzwParams]
 given derivedJsonDecoderLzwParams: Decoder[LzwParams] = JsonDerived.derivedDecoder[LzwParams]
 given derivedJsonEncoderManualLaborParams: Encoder[ManualLaborParams] = JsonDerived.derivedEncoder[ManualLaborParams]
@@ -391,8 +469,10 @@ given derivedJsonEncoderObjectModel: Encoder[ObjectModel] = JsonDerived.derivedE
 given derivedJsonDecoderObjectModel: Decoder[ObjectModel] = JsonDerived.derivedDecoder[ObjectModel]
 given derivedJsonEncoderObjectResolution: Encoder[ObjectResolution] = JsonDerived.derivedEncoder[ObjectResolution]
 given derivedJsonDecoderObjectResolution: Decoder[ObjectResolution] = JsonDerived.derivedDecoder[ObjectResolution]
-given derivedJsonEncoderOptionalContentGroupControl: Encoder[OptionalContentGroupControl] = JsonDerived.derivedEncoder[OptionalContentGroupControl]
-given derivedJsonDecoderOptionalContentGroupControl: Decoder[OptionalContentGroupControl] = JsonDerived.derivedDecoder[OptionalContentGroupControl]
+given derivedJsonEncoderOptionalContentGroupControl: Encoder[OptionalContentGroupControl] =
+  JsonDerived.derivedEncoder[OptionalContentGroupControl]
+given derivedJsonDecoderOptionalContentGroupControl: Decoder[OptionalContentGroupControl] =
+  JsonDerived.derivedDecoder[OptionalContentGroupControl]
 given derivedJsonEncoderPDLCreationParams: Encoder[PDLCreationParams] = JsonDerived.derivedEncoder[PDLCreationParams]
 given derivedJsonDecoderPDLCreationParams: Decoder[PDLCreationParams] = JsonDerived.derivedDecoder[PDLCreationParams]
 given derivedJsonEncoderPageActivation: Encoder[PageActivation] = JsonDerived.derivedEncoder[PageActivation]
@@ -407,8 +487,10 @@ given derivedJsonEncoderPatch: Encoder[Patch] = JsonDerived.derivedEncoder[Patch
 given derivedJsonDecoderPatch: Decoder[Patch] = JsonDerived.derivedDecoder[Patch]
 given derivedJsonEncoderPdfCreationDetails: Encoder[PdfCreationDetails] = JsonDerived.derivedEncoder[PdfCreationDetails]
 given derivedJsonDecoderPdfCreationDetails: Decoder[PdfCreationDetails] = JsonDerived.derivedDecoder[PdfCreationDetails]
-given derivedJsonEncoderPdfInterpretingParams: Encoder[PdfInterpretingParams] = JsonDerived.derivedEncoder[PdfInterpretingParams]
-given derivedJsonDecoderPdfInterpretingParams: Decoder[PdfInterpretingParams] = JsonDerived.derivedDecoder[PdfInterpretingParams]
+given derivedJsonEncoderPdfInterpretingParams: Encoder[PdfInterpretingParams] =
+  JsonDerived.derivedEncoder[PdfInterpretingParams]
+given derivedJsonDecoderPdfInterpretingParams: Decoder[PdfInterpretingParams] =
+  JsonDerived.derivedDecoder[PdfInterpretingParams]
 given derivedJsonEncoderPdfXParams: Encoder[PdfXParams] = JsonDerived.derivedEncoder[PdfXParams]
 given derivedJsonDecoderPdfXParams: Decoder[PdfXParams] = JsonDerived.derivedDecoder[PdfXParams]
 given derivedJsonEncoderPerforate: Encoder[Perforate] = JsonDerived.derivedEncoder[Perforate]
@@ -419,8 +501,10 @@ given derivedJsonEncoderPerson: Encoder[Person] = JsonDerived.derivedEncoder[Per
 given derivedJsonDecoderPerson: Decoder[Person] = JsonDerived.derivedDecoder[Person]
 given derivedJsonEncoderPositionedObject: Encoder[PositionedObject] = JsonDerived.derivedEncoder[PositionedObject]
 given derivedJsonDecoderPositionedObject: Decoder[PositionedObject] = JsonDerived.derivedDecoder[PositionedObject]
-given derivedJsonEncoderPostScriptCreationDetails: Encoder[PostScriptCreationDetails] = JsonDerived.derivedEncoder[PostScriptCreationDetails]
-given derivedJsonDecoderPostScriptCreationDetails: Decoder[PostScriptCreationDetails] = JsonDerived.derivedDecoder[PostScriptCreationDetails]
+given derivedJsonEncoderPostScriptCreationDetails: Encoder[PostScriptCreationDetails] =
+  JsonDerived.derivedEncoder[PostScriptCreationDetails]
+given derivedJsonDecoderPostScriptCreationDetails: Decoder[PostScriptCreationDetails] =
+  JsonDerived.derivedDecoder[PostScriptCreationDetails]
 given derivedJsonEncoderPreflightCheck: Encoder[PreflightCheck] = JsonDerived.derivedEncoder[PreflightCheck]
 given derivedJsonDecoderPreflightCheck: Decoder[PreflightCheck] = JsonDerived.derivedDecoder[PreflightCheck]
 given derivedJsonEncoderPreflightItem: Encoder[PreflightItem] = JsonDerived.derivedEncoder[PreflightItem]
@@ -433,8 +517,10 @@ given derivedJsonEncoderPreflightTest: Encoder[PreflightTest] = JsonDerived.deri
 given derivedJsonDecoderPreflightTest: Decoder[PreflightTest] = JsonDerived.derivedDecoder[PreflightTest]
 given derivedJsonEncoderPreview: Encoder[Preview] = JsonDerived.derivedEncoder[Preview]
 given derivedJsonDecoderPreview: Decoder[Preview] = JsonDerived.derivedDecoder[Preview]
-given derivedJsonEncoderPreviewGenerationParams: Encoder[PreviewGenerationParams] = JsonDerived.derivedEncoder[PreviewGenerationParams]
-given derivedJsonDecoderPreviewGenerationParams: Decoder[PreviewGenerationParams] = JsonDerived.derivedDecoder[PreviewGenerationParams]
+given derivedJsonEncoderPreviewGenerationParams: Encoder[PreviewGenerationParams] =
+  JsonDerived.derivedEncoder[PreviewGenerationParams]
+given derivedJsonDecoderPreviewGenerationParams: Decoder[PreviewGenerationParams] =
+  JsonDerived.derivedDecoder[PreviewGenerationParams]
 given derivedJsonEncoderPrintCondition: Encoder[PrintCondition] = JsonDerived.derivedEncoder[PrintCondition]
 given derivedJsonDecoderPrintCondition: Decoder[PrintCondition] = JsonDerived.derivedDecoder[PrintCondition]
 given derivedJsonEncoderProduct: Encoder[Product] = JsonDerived.derivedEncoder[Product]
@@ -447,16 +533,22 @@ given derivedJsonEncoderProductionPath: Encoder[ProductionPath] = JsonDerived.de
 given derivedJsonDecoderProductionPath: Decoder[ProductionPath] = JsonDerived.derivedDecoder[ProductionPath]
 given derivedJsonEncoderProofItem: Encoder[ProofItem] = JsonDerived.derivedEncoder[ProofItem]
 given derivedJsonDecoderProofItem: Decoder[ProofItem] = JsonDerived.derivedDecoder[ProofItem]
-given derivedJsonEncoderQualityControlParams: Encoder[QualityControlParams] = JsonDerived.derivedEncoder[QualityControlParams]
-given derivedJsonDecoderQualityControlParams: Decoder[QualityControlParams] = JsonDerived.derivedDecoder[QualityControlParams]
-given derivedJsonEncoderQualityControlResult: Encoder[QualityControlResult] = JsonDerived.derivedEncoder[QualityControlResult]
-given derivedJsonDecoderQualityControlResult: Decoder[QualityControlResult] = JsonDerived.derivedDecoder[QualityControlResult]
+given derivedJsonEncoderQualityControlParams: Encoder[QualityControlParams] =
+  JsonDerived.derivedEncoder[QualityControlParams]
+given derivedJsonDecoderQualityControlParams: Decoder[QualityControlParams] =
+  JsonDerived.derivedDecoder[QualityControlParams]
+given derivedJsonEncoderQualityControlResult: Encoder[QualityControlResult] =
+  JsonDerived.derivedEncoder[QualityControlResult]
+given derivedJsonDecoderQualityControlResult: Decoder[QualityControlResult] =
+  JsonDerived.derivedDecoder[QualityControlResult]
 given derivedJsonEncoderQueryGangStatus: Encoder[QueryGangStatus] = JsonDerived.derivedEncoder[QueryGangStatus]
 given derivedJsonDecoderQueryGangStatus: Decoder[QueryGangStatus] = JsonDerived.derivedDecoder[QueryGangStatus]
 given derivedJsonEncoderQueryKnownDevices: Encoder[QueryKnownDevices] = JsonDerived.derivedEncoder[QueryKnownDevices]
 given derivedJsonDecoderQueryKnownDevices: Decoder[QueryKnownDevices] = JsonDerived.derivedDecoder[QueryKnownDevices]
-given derivedJsonEncoderQueryKnownSubscriptions: Encoder[QueryKnownSubscriptions] = JsonDerived.derivedEncoder[QueryKnownSubscriptions]
-given derivedJsonDecoderQueryKnownSubscriptions: Decoder[QueryKnownSubscriptions] = JsonDerived.derivedDecoder[QueryKnownSubscriptions]
+given derivedJsonEncoderQueryKnownSubscriptions: Encoder[QueryKnownSubscriptions] =
+  JsonDerived.derivedEncoder[QueryKnownSubscriptions]
+given derivedJsonDecoderQueryKnownSubscriptions: Decoder[QueryKnownSubscriptions] =
+  JsonDerived.derivedDecoder[QueryKnownSubscriptions]
 given derivedJsonEncoderQueryNotification: Encoder[QueryNotification] = JsonDerived.derivedEncoder[QueryNotification]
 given derivedJsonDecoderQueryNotification: Decoder[QueryNotification] = JsonDerived.derivedDecoder[QueryNotification]
 given derivedJsonEncoderQueueStatusParams: Encoder[QueueStatusParams] = JsonDerived.derivedEncoder[QueueStatusParams]
@@ -471,16 +563,22 @@ given derivedJsonEncoderQueueEntry: Encoder[QueueEntry] = JsonDerived.derivedEnc
 given derivedJsonDecoderQueueEntry: Decoder[QueueEntry] = JsonDerived.derivedDecoder[QueueEntry]
 given derivedJsonEncoderQueueFilter: Encoder[QueueFilter] = JsonDerived.derivedEncoder[QueueFilter]
 given derivedJsonDecoderQueueFilter: Decoder[QueueFilter] = JsonDerived.derivedDecoder[QueueFilter]
-given derivedJsonEncoderRasterReadingParams: Encoder[RasterReadingParams] = JsonDerived.derivedEncoder[RasterReadingParams]
-given derivedJsonDecoderRasterReadingParams: Decoder[RasterReadingParams] = JsonDerived.derivedDecoder[RasterReadingParams]
+given derivedJsonEncoderRasterReadingParams: Encoder[RasterReadingParams] =
+  JsonDerived.derivedEncoder[RasterReadingParams]
+given derivedJsonDecoderRasterReadingParams: Decoder[RasterReadingParams] =
+  JsonDerived.derivedDecoder[RasterReadingParams]
 given derivedJsonEncoderRefAnchor: Encoder[RefAnchor] = JsonDerived.derivedEncoder[RefAnchor]
 given derivedJsonDecoderRefAnchor: Decoder[RefAnchor] = JsonDerived.derivedDecoder[RefAnchor]
-given derivedJsonEncoderReferenceXObjectParams: Encoder[ReferenceXObjectParams] = JsonDerived.derivedEncoder[ReferenceXObjectParams]
-given derivedJsonDecoderReferenceXObjectParams: Decoder[ReferenceXObjectParams] = JsonDerived.derivedDecoder[ReferenceXObjectParams]
+given derivedJsonEncoderReferenceXObjectParams: Encoder[ReferenceXObjectParams] =
+  JsonDerived.derivedEncoder[ReferenceXObjectParams]
+given derivedJsonDecoderReferenceXObjectParams: Decoder[ReferenceXObjectParams] =
+  JsonDerived.derivedDecoder[ReferenceXObjectParams]
 given derivedJsonEncoderRegisterRibbon: Encoder[RegisterRibbon] = JsonDerived.derivedEncoder[RegisterRibbon]
 given derivedJsonDecoderRegisterRibbon: Decoder[RegisterRibbon] = JsonDerived.derivedDecoder[RegisterRibbon]
-given derivedJsonEncoderRegistrationQuality: Encoder[RegistrationQuality] = JsonDerived.derivedEncoder[RegistrationQuality]
-given derivedJsonDecoderRegistrationQuality: Decoder[RegistrationQuality] = JsonDerived.derivedDecoder[RegistrationQuality]
+given derivedJsonEncoderRegistrationQuality: Encoder[RegistrationQuality] =
+  JsonDerived.derivedEncoder[RegistrationQuality]
+given derivedJsonDecoderRegistrationQuality: Decoder[RegistrationQuality] =
+  JsonDerived.derivedDecoder[RegistrationQuality]
 given derivedJsonEncoderRenderingParams: Encoder[RenderingParams] = JsonDerived.derivedEncoder[RenderingParams]
 given derivedJsonDecoderRenderingParams: Decoder[RenderingParams] = JsonDerived.derivedDecoder[RenderingParams]
 given derivedJsonEncoderRepeatDescription: Encoder[RepeatDescription] = JsonDerived.derivedEncoder[RepeatDescription]
@@ -489,38 +587,64 @@ given derivedJsonEncoderResponseForceGang: Encoder[ResponseForceGang] = JsonDeri
 given derivedJsonDecoderResponseForceGang: Decoder[ResponseForceGang] = JsonDerived.derivedDecoder[ResponseForceGang]
 given derivedJsonEncoderResponseGangStatus: Encoder[ResponseGangStatus] = JsonDerived.derivedEncoder[ResponseGangStatus]
 given derivedJsonDecoderResponseGangStatus: Decoder[ResponseGangStatus] = JsonDerived.derivedDecoder[ResponseGangStatus]
-given derivedJsonEncoderResponseKnownDevices: Encoder[ResponseKnownDevices] = JsonDerived.derivedEncoder[ResponseKnownDevices]
-given derivedJsonDecoderResponseKnownDevices: Decoder[ResponseKnownDevices] = JsonDerived.derivedDecoder[ResponseKnownDevices]
-given derivedJsonEncoderResponseKnownSubscriptions: Encoder[ResponseKnownSubscriptions] = JsonDerived.derivedEncoder[ResponseKnownSubscriptions]
-given derivedJsonDecoderResponseKnownSubscriptions: Decoder[ResponseKnownSubscriptions] = JsonDerived.derivedDecoder[ResponseKnownSubscriptions]
-given derivedJsonEncoderResponseModifyQueueEntry: Encoder[ResponseModifyQueueEntry] = JsonDerived.derivedEncoder[ResponseModifyQueueEntry]
-given derivedJsonDecoderResponseModifyQueueEntry: Decoder[ResponseModifyQueueEntry] = JsonDerived.derivedDecoder[ResponseModifyQueueEntry]
-given derivedJsonEncoderResponseNotification: Encoder[ResponseNotification] = JsonDerived.derivedEncoder[ResponseNotification]
-given derivedJsonDecoderResponseNotification: Decoder[ResponseNotification] = JsonDerived.derivedDecoder[ResponseNotification]
-given derivedJsonEncoderResponsePipeControl: Encoder[ResponsePipeControl] = JsonDerived.derivedEncoder[ResponsePipeControl]
-given derivedJsonDecoderResponsePipeControl: Decoder[ResponsePipeControl] = JsonDerived.derivedDecoder[ResponsePipeControl]
-given derivedJsonEncoderResponseQueueStatus: Encoder[ResponseQueueStatus] = JsonDerived.derivedEncoder[ResponseQueueStatus]
-given derivedJsonDecoderResponseQueueStatus: Decoder[ResponseQueueStatus] = JsonDerived.derivedDecoder[ResponseQueueStatus]
-given derivedJsonEncoderResponseRequestQueueEntry: Encoder[ResponseRequestQueueEntry] = JsonDerived.derivedEncoder[ResponseRequestQueueEntry]
-given derivedJsonDecoderResponseRequestQueueEntry: Decoder[ResponseRequestQueueEntry] = JsonDerived.derivedDecoder[ResponseRequestQueueEntry]
-given derivedJsonEncoderResponseResubmitQueueEntry: Encoder[ResponseResubmitQueueEntry] = JsonDerived.derivedEncoder[ResponseResubmitQueueEntry]
-given derivedJsonDecoderResponseResubmitQueueEntry: Decoder[ResponseResubmitQueueEntry] = JsonDerived.derivedDecoder[ResponseResubmitQueueEntry]
-given derivedJsonEncoderResponseReturnQueueEntry: Encoder[ResponseReturnQueueEntry] = JsonDerived.derivedEncoder[ResponseReturnQueueEntry]
-given derivedJsonDecoderResponseReturnQueueEntry: Decoder[ResponseReturnQueueEntry] = JsonDerived.derivedDecoder[ResponseReturnQueueEntry]
+given derivedJsonEncoderResponseKnownDevices: Encoder[ResponseKnownDevices] =
+  JsonDerived.derivedEncoder[ResponseKnownDevices]
+given derivedJsonDecoderResponseKnownDevices: Decoder[ResponseKnownDevices] =
+  JsonDerived.derivedDecoder[ResponseKnownDevices]
+given derivedJsonEncoderResponseKnownSubscriptions: Encoder[ResponseKnownSubscriptions] =
+  JsonDerived.derivedEncoder[ResponseKnownSubscriptions]
+given derivedJsonDecoderResponseKnownSubscriptions: Decoder[ResponseKnownSubscriptions] =
+  JsonDerived.derivedDecoder[ResponseKnownSubscriptions]
+given derivedJsonEncoderResponseModifyQueueEntry: Encoder[ResponseModifyQueueEntry] =
+  JsonDerived.derivedEncoder[ResponseModifyQueueEntry]
+given derivedJsonDecoderResponseModifyQueueEntry: Decoder[ResponseModifyQueueEntry] =
+  JsonDerived.derivedDecoder[ResponseModifyQueueEntry]
+given derivedJsonEncoderResponseNotification: Encoder[ResponseNotification] =
+  JsonDerived.derivedEncoder[ResponseNotification]
+given derivedJsonDecoderResponseNotification: Decoder[ResponseNotification] =
+  JsonDerived.derivedDecoder[ResponseNotification]
+given derivedJsonEncoderResponsePipeControl: Encoder[ResponsePipeControl] =
+  JsonDerived.derivedEncoder[ResponsePipeControl]
+given derivedJsonDecoderResponsePipeControl: Decoder[ResponsePipeControl] =
+  JsonDerived.derivedDecoder[ResponsePipeControl]
+given derivedJsonEncoderResponseQueueStatus: Encoder[ResponseQueueStatus] =
+  JsonDerived.derivedEncoder[ResponseQueueStatus]
+given derivedJsonDecoderResponseQueueStatus: Decoder[ResponseQueueStatus] =
+  JsonDerived.derivedDecoder[ResponseQueueStatus]
+given derivedJsonEncoderResponseRequestQueueEntry: Encoder[ResponseRequestQueueEntry] =
+  JsonDerived.derivedEncoder[ResponseRequestQueueEntry]
+given derivedJsonDecoderResponseRequestQueueEntry: Decoder[ResponseRequestQueueEntry] =
+  JsonDerived.derivedDecoder[ResponseRequestQueueEntry]
+given derivedJsonEncoderResponseResubmitQueueEntry: Encoder[ResponseResubmitQueueEntry] =
+  JsonDerived.derivedEncoder[ResponseResubmitQueueEntry]
+given derivedJsonDecoderResponseResubmitQueueEntry: Decoder[ResponseResubmitQueueEntry] =
+  JsonDerived.derivedDecoder[ResponseResubmitQueueEntry]
+given derivedJsonEncoderResponseReturnQueueEntry: Encoder[ResponseReturnQueueEntry] =
+  JsonDerived.derivedEncoder[ResponseReturnQueueEntry]
+given derivedJsonDecoderResponseReturnQueueEntry: Decoder[ResponseReturnQueueEntry] =
+  JsonDerived.derivedDecoder[ResponseReturnQueueEntry]
 given derivedJsonEncoderResponseShutDown: Encoder[ResponseShutDown] = JsonDerived.derivedEncoder[ResponseShutDown]
 given derivedJsonDecoderResponseShutDown: Decoder[ResponseShutDown] = JsonDerived.derivedDecoder[ResponseShutDown]
 given derivedJsonEncoderResponseStatus: Encoder[ResponseStatus] = JsonDerived.derivedEncoder[ResponseStatus]
 given derivedJsonDecoderResponseStatus: Decoder[ResponseStatus] = JsonDerived.derivedDecoder[ResponseStatus]
-given derivedJsonEncoderResponseStopPersistentChannel: Encoder[ResponseStopPersistentChannel] = JsonDerived.derivedEncoder[ResponseStopPersistentChannel]
-given derivedJsonDecoderResponseStopPersistentChannel: Decoder[ResponseStopPersistentChannel] = JsonDerived.derivedDecoder[ResponseStopPersistentChannel]
-given derivedJsonEncoderResponseSubmitQueueEntry: Encoder[ResponseSubmitQueueEntry] = JsonDerived.derivedEncoder[ResponseSubmitQueueEntry]
-given derivedJsonDecoderResponseSubmitQueueEntry: Decoder[ResponseSubmitQueueEntry] = JsonDerived.derivedDecoder[ResponseSubmitQueueEntry]
+given derivedJsonEncoderResponseStopPersistentChannel: Encoder[ResponseStopPersistentChannel] =
+  JsonDerived.derivedEncoder[ResponseStopPersistentChannel]
+given derivedJsonDecoderResponseStopPersistentChannel: Decoder[ResponseStopPersistentChannel] =
+  JsonDerived.derivedDecoder[ResponseStopPersistentChannel]
+given derivedJsonEncoderResponseSubmitQueueEntry: Encoder[ResponseSubmitQueueEntry] =
+  JsonDerived.derivedEncoder[ResponseSubmitQueueEntry]
+given derivedJsonDecoderResponseSubmitQueueEntry: Decoder[ResponseSubmitQueueEntry] =
+  JsonDerived.derivedDecoder[ResponseSubmitQueueEntry]
 given derivedJsonEncoderResponseWakeUp: Encoder[ResponseWakeUp] = JsonDerived.derivedEncoder[ResponseWakeUp]
 given derivedJsonDecoderResponseWakeUp: Decoder[ResponseWakeUp] = JsonDerived.derivedDecoder[ResponseWakeUp]
-given derivedJsonEncoderRingBindingProductionDetails: Encoder[RingBindingProductionDetails] = JsonDerived.derivedEncoder[RingBindingProductionDetails]
-given derivedJsonDecoderRingBindingProductionDetails: Decoder[RingBindingProductionDetails] = JsonDerived.derivedDecoder[RingBindingProductionDetails]
-given derivedJsonEncoderRingLooseBindingDetails: Encoder[RingLooseBindingDetails] = JsonDerived.derivedEncoder[RingLooseBindingDetails]
-given derivedJsonDecoderRingLooseBindingDetails: Decoder[RingLooseBindingDetails] = JsonDerived.derivedDecoder[RingLooseBindingDetails]
+given derivedJsonEncoderRingBindingProductionDetails: Encoder[RingBindingProductionDetails] =
+  JsonDerived.derivedEncoder[RingBindingProductionDetails]
+given derivedJsonDecoderRingBindingProductionDetails: Decoder[RingBindingProductionDetails] =
+  JsonDerived.derivedDecoder[RingBindingProductionDetails]
+given derivedJsonEncoderRingLooseBindingDetails: Encoder[RingLooseBindingDetails] =
+  JsonDerived.derivedEncoder[RingLooseBindingDetails]
+given derivedJsonDecoderRingLooseBindingDetails: Decoder[RingLooseBindingDetails] =
+  JsonDerived.derivedDecoder[RingLooseBindingDetails]
 given derivedJsonEncoderRuleLength: Encoder[RuleLength] = JsonDerived.derivedEncoder[RuleLength]
 given derivedJsonDecoderRuleLength: Decoder[RuleLength] = JsonDerived.derivedDecoder[RuleLength]
 given derivedJsonEncoderScavengerArea: Encoder[ScavengerArea] = JsonDerived.derivedEncoder[ScavengerArea]
@@ -531,8 +655,10 @@ given derivedJsonEncoderScreenSelector: Encoder[ScreenSelector] = JsonDerived.de
 given derivedJsonDecoderScreenSelector: Decoder[ScreenSelector] = JsonDerived.derivedDecoder[ScreenSelector]
 given derivedJsonEncoderScreeningParams: Encoder[ScreeningParams] = JsonDerived.derivedEncoder[ScreeningParams]
 given derivedJsonDecoderScreeningParams: Decoder[ScreeningParams] = JsonDerived.derivedDecoder[ScreeningParams]
-given derivedJsonEncoderSeparationControlParams: Encoder[SeparationControlParams] = JsonDerived.derivedEncoder[SeparationControlParams]
-given derivedJsonDecoderSeparationControlParams: Decoder[SeparationControlParams] = JsonDerived.derivedDecoder[SeparationControlParams]
+given derivedJsonEncoderSeparationControlParams: Encoder[SeparationControlParams] =
+  JsonDerived.derivedEncoder[SeparationControlParams]
+given derivedJsonDecoderSeparationControlParams: Decoder[SeparationControlParams] =
+  JsonDerived.derivedDecoder[SeparationControlParams]
 given derivedJsonEncoderSeparationTint: Encoder[SeparationTint] = JsonDerived.derivedEncoder[SeparationTint]
 given derivedJsonDecoderSeparationTint: Decoder[SeparationTint] = JsonDerived.derivedDecoder[SeparationTint]
 given derivedJsonEncoderShape: Encoder[Shape] = JsonDerived.derivedEncoder[Shape]
@@ -545,18 +671,24 @@ given derivedJsonEncoderShapeCuttingParams: Encoder[ShapeCuttingParams] = JsonDe
 given derivedJsonDecoderShapeCuttingParams: Decoder[ShapeCuttingParams] = JsonDerived.derivedDecoder[ShapeCuttingParams]
 given derivedJsonEncoderShapeDef: Encoder[ShapeDef] = JsonDerived.derivedEncoder[ShapeDef]
 given derivedJsonDecoderShapeDef: Decoder[ShapeDef] = JsonDerived.derivedDecoder[ShapeDef]
-given derivedJsonEncoderShapeDefProductionParams: Encoder[ShapeDefProductionParams] = JsonDerived.derivedEncoder[ShapeDefProductionParams]
-given derivedJsonDecoderShapeDefProductionParams: Decoder[ShapeDefProductionParams] = JsonDerived.derivedDecoder[ShapeDefProductionParams]
+given derivedJsonEncoderShapeDefProductionParams: Encoder[ShapeDefProductionParams] =
+  JsonDerived.derivedEncoder[ShapeDefProductionParams]
+given derivedJsonDecoderShapeDefProductionParams: Decoder[ShapeDefProductionParams] =
+  JsonDerived.derivedDecoder[ShapeDefProductionParams]
 given derivedJsonEncoderShapeDimension: Encoder[ShapeDimension] = JsonDerived.derivedEncoder[ShapeDimension]
 given derivedJsonDecoderShapeDimension: Decoder[ShapeDimension] = JsonDerived.derivedDecoder[ShapeDimension]
 given derivedJsonEncoderShapeTemplate: Encoder[ShapeTemplate] = JsonDerived.derivedEncoder[ShapeTemplate]
 given derivedJsonDecoderShapeTemplate: Decoder[ShapeTemplate] = JsonDerived.derivedDecoder[ShapeTemplate]
 given derivedJsonEncoderSheetActivation: Encoder[SheetActivation] = JsonDerived.derivedEncoder[SheetActivation]
 given derivedJsonDecoderSheetActivation: Decoder[SheetActivation] = JsonDerived.derivedDecoder[SheetActivation]
-given derivedJsonEncoderSheetOptimizingParams: Encoder[SheetOptimizingParams] = JsonDerived.derivedEncoder[SheetOptimizingParams]
-given derivedJsonDecoderSheetOptimizingParams: Decoder[SheetOptimizingParams] = JsonDerived.derivedDecoder[SheetOptimizingParams]
-given derivedJsonEncoderSheetOptimizingReport: Encoder[SheetOptimizingReport] = JsonDerived.derivedEncoder[SheetOptimizingReport]
-given derivedJsonDecoderSheetOptimizingReport: Decoder[SheetOptimizingReport] = JsonDerived.derivedDecoder[SheetOptimizingReport]
+given derivedJsonEncoderSheetOptimizingParams: Encoder[SheetOptimizingParams] =
+  JsonDerived.derivedEncoder[SheetOptimizingParams]
+given derivedJsonDecoderSheetOptimizingParams: Decoder[SheetOptimizingParams] =
+  JsonDerived.derivedDecoder[SheetOptimizingParams]
+given derivedJsonEncoderSheetOptimizingReport: Encoder[SheetOptimizingReport] =
+  JsonDerived.derivedEncoder[SheetOptimizingReport]
+given derivedJsonDecoderSheetOptimizingReport: Decoder[SheetOptimizingReport] =
+  JsonDerived.derivedDecoder[SheetOptimizingReport]
 given derivedJsonEncoderShiftPoint: Encoder[ShiftPoint] = JsonDerived.derivedEncoder[ShiftPoint]
 given derivedJsonDecoderShiftPoint: Decoder[ShiftPoint] = JsonDerived.derivedDecoder[ShiftPoint]
 given derivedJsonEncoderShrinkingParams: Encoder[ShrinkingParams] = JsonDerived.derivedEncoder[ShrinkingParams]
@@ -567,16 +699,22 @@ given derivedJsonEncoderSignalGangStatus: Encoder[SignalGangStatus] = JsonDerive
 given derivedJsonDecoderSignalGangStatus: Decoder[SignalGangStatus] = JsonDerived.derivedDecoder[SignalGangStatus]
 given derivedJsonEncoderSignalKnownDevices: Encoder[SignalKnownDevices] = JsonDerived.derivedEncoder[SignalKnownDevices]
 given derivedJsonDecoderSignalKnownDevices: Decoder[SignalKnownDevices] = JsonDerived.derivedDecoder[SignalKnownDevices]
-given derivedJsonEncoderSignalKnownSubscriptions: Encoder[SignalKnownSubscriptions] = JsonDerived.derivedEncoder[SignalKnownSubscriptions]
-given derivedJsonDecoderSignalKnownSubscriptions: Decoder[SignalKnownSubscriptions] = JsonDerived.derivedDecoder[SignalKnownSubscriptions]
+given derivedJsonEncoderSignalKnownSubscriptions: Encoder[SignalKnownSubscriptions] =
+  JsonDerived.derivedEncoder[SignalKnownSubscriptions]
+given derivedJsonDecoderSignalKnownSubscriptions: Decoder[SignalKnownSubscriptions] =
+  JsonDerived.derivedDecoder[SignalKnownSubscriptions]
 given derivedJsonEncoderSignalQueueStatus: Encoder[SignalQueueStatus] = JsonDerived.derivedEncoder[SignalQueueStatus]
 given derivedJsonDecoderSignalQueueStatus: Decoder[SignalQueueStatus] = JsonDerived.derivedDecoder[SignalQueueStatus]
 given derivedJsonEncoderSignatureCell: Encoder[SignatureCell] = JsonDerived.derivedEncoder[SignatureCell]
 given derivedJsonDecoderSignatureCell: Decoder[SignatureCell] = JsonDerived.derivedDecoder[SignatureCell]
-given derivedJsonEncoderSoftCoverBindingDetails: Encoder[SoftCoverBindingDetails] = JsonDerived.derivedEncoder[SoftCoverBindingDetails]
-given derivedJsonDecoderSoftCoverBindingDetails: Decoder[SoftCoverBindingDetails] = JsonDerived.derivedDecoder[SoftCoverBindingDetails]
-given derivedJsonEncoderSpinePreparationParams: Encoder[SpinePreparationParams] = JsonDerived.derivedEncoder[SpinePreparationParams]
-given derivedJsonDecoderSpinePreparationParams: Decoder[SpinePreparationParams] = JsonDerived.derivedDecoder[SpinePreparationParams]
+given derivedJsonEncoderSoftCoverBindingDetails: Encoder[SoftCoverBindingDetails] =
+  JsonDerived.derivedEncoder[SoftCoverBindingDetails]
+given derivedJsonDecoderSoftCoverBindingDetails: Decoder[SoftCoverBindingDetails] =
+  JsonDerived.derivedDecoder[SoftCoverBindingDetails]
+given derivedJsonEncoderSpinePreparationParams: Encoder[SpinePreparationParams] =
+  JsonDerived.derivedEncoder[SpinePreparationParams]
+given derivedJsonDecoderSpinePreparationParams: Decoder[SpinePreparationParams] =
+  JsonDerived.derivedDecoder[SpinePreparationParams]
 given derivedJsonEncoderSpineTapingParams: Encoder[SpineTapingParams] = JsonDerived.derivedEncoder[SpineTapingParams]
 given derivedJsonDecoderSpineTapingParams: Decoder[SpineTapingParams] = JsonDerived.derivedDecoder[SpineTapingParams]
 given derivedJsonEncoderStackingParams: Encoder[StackingParams] = JsonDerived.derivedEncoder[StackingParams]
@@ -589,8 +727,10 @@ given derivedJsonEncoderStitchingParams: Encoder[StitchingParams] = JsonDerived.
 given derivedJsonDecoderStitchingParams: Decoder[StitchingParams] = JsonDerived.derivedDecoder[StitchingParams]
 given derivedJsonEncoderStrappingParams: Encoder[StrappingParams] = JsonDerived.derivedEncoder[StrappingParams]
 given derivedJsonDecoderStrappingParams: Decoder[StrappingParams] = JsonDerived.derivedDecoder[StrappingParams]
-given derivedJsonEncoderStripBindingProductionDetails: Encoder[StripBindingProductionDetails] = JsonDerived.derivedEncoder[StripBindingProductionDetails]
-given derivedJsonDecoderStripBindingProductionDetails: Decoder[StripBindingProductionDetails] = JsonDerived.derivedDecoder[StripBindingProductionDetails]
+given derivedJsonEncoderStripBindingProductionDetails: Encoder[StripBindingProductionDetails] =
+  JsonDerived.derivedEncoder[StripBindingProductionDetails]
+given derivedJsonDecoderStripBindingProductionDetails: Decoder[StripBindingProductionDetails] =
+  JsonDerived.derivedDecoder[StripBindingProductionDetails]
 given derivedJsonEncoderStripMark: Encoder[StripMark] = JsonDerived.derivedEncoder[StripMark]
 given derivedJsonDecoderStripMark: Decoder[StripMark] = JsonDerived.derivedDecoder[StripMark]
 given derivedJsonEncoderSubscriptionFilter: Encoder[SubscriptionFilter] = JsonDerived.derivedEncoder[SubscriptionFilter]
@@ -605,8 +745,10 @@ given derivedJsonEncoderTabs: Encoder[Tabs] = JsonDerived.derivedEncoder[Tabs]
 given derivedJsonDecoderTabs: Decoder[Tabs] = JsonDerived.derivedDecoder[Tabs]
 given derivedJsonEncoderThinPdfParams: Encoder[ThinPdfParams] = JsonDerived.derivedEncoder[ThinPdfParams]
 given derivedJsonDecoderThinPdfParams: Decoder[ThinPdfParams] = JsonDerived.derivedDecoder[ThinPdfParams]
-given derivedJsonEncoderThreadSealingParams: Encoder[ThreadSealingParams] = JsonDerived.derivedEncoder[ThreadSealingParams]
-given derivedJsonDecoderThreadSealingParams: Decoder[ThreadSealingParams] = JsonDerived.derivedDecoder[ThreadSealingParams]
+given derivedJsonEncoderThreadSealingParams: Encoder[ThreadSealingParams] =
+  JsonDerived.derivedEncoder[ThreadSealingParams]
+given derivedJsonDecoderThreadSealingParams: Decoder[ThreadSealingParams] =
+  JsonDerived.derivedDecoder[ThreadSealingParams]
 given derivedJsonEncoderThreadSewingParams: Encoder[ThreadSewingParams] = JsonDerived.derivedEncoder[ThreadSewingParams]
 given derivedJsonDecoderThreadSewingParams: Decoder[ThreadSewingParams] = JsonDerived.derivedDecoder[ThreadSewingParams]
 given derivedJsonEncoderTiffEmbeddedFile: Encoder[TiffEmbeddedFile] = JsonDerived.derivedEncoder[TiffEmbeddedFile]
@@ -629,8 +771,10 @@ given derivedJsonEncoderVerificationParams: Encoder[VerificationParams] = JsonDe
 given derivedJsonDecoderVerificationParams: Decoder[VerificationParams] = JsonDerived.derivedDecoder[VerificationParams]
 given derivedJsonEncoderVerificationResult: Encoder[VerificationResult] = JsonDerived.derivedEncoder[VerificationResult]
 given derivedJsonDecoderVerificationResult: Decoder[VerificationResult] = JsonDerived.derivedDecoder[VerificationResult]
-given derivedJsonEncoderWebInlineFinishingParams: Encoder[WebInlineFinishingParams] = JsonDerived.derivedEncoder[WebInlineFinishingParams]
-given derivedJsonDecoderWebInlineFinishingParams: Decoder[WebInlineFinishingParams] = JsonDerived.derivedDecoder[WebInlineFinishingParams]
+given derivedJsonEncoderWebInlineFinishingParams: Encoder[WebInlineFinishingParams] =
+  JsonDerived.derivedEncoder[WebInlineFinishingParams]
+given derivedJsonDecoderWebInlineFinishingParams: Decoder[WebInlineFinishingParams] =
+  JsonDerived.derivedDecoder[WebInlineFinishingParams]
 given derivedJsonEncoderWindingParams: Encoder[WindingParams] = JsonDerived.derivedEncoder[WindingParams]
 given derivedJsonDecoderWindingParams: Decoder[WindingParams] = JsonDerived.derivedDecoder[WindingParams]
 given derivedJsonEncoderWrappingParams: Encoder[WrappingParams] = JsonDerived.derivedEncoder[WrappingParams]

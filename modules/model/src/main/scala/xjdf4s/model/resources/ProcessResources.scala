@@ -26,7 +26,6 @@ final case class CuttingParams(
 
 enum ShapeCuttingDeliveryMode derives CanEqual:
   case FullSheet, RemoveGripperMargin, SeparateBlanks
-end ShapeCuttingDeliveryMode
 
 final case class ShapeCuttingParams(
     deliveryMode: Option[ShapeCuttingDeliveryMode] = None,
@@ -62,7 +61,6 @@ enum ScreeningType(val lexical: String):
   case FM extends ScreeningType("FM")
   case HybridAmFm extends ScreeningType("HybridAM-FM")
   case HybridAmLineDot extends ScreeningType("HybridAMline-dot")
-end ScreeningType
 
 final case class ScreenSelector(
     angle: Option[Float] = None,
@@ -88,11 +86,9 @@ final case class ScreeningParams(
 
 enum BearerBars derives CanEqual:
   case None, TopBottom, Box, BoxHMarks
-end BearerBars
 
 enum BarcodeMasking derives CanEqual:
   case None, WhiteBox
-end BarcodeMasking
 
 final case class BarcodeReproParams(
     bearerBars: Option[BearerBars] = None,
@@ -109,7 +105,6 @@ final case class BarcodeReproParams(
 
 enum MarkUsage derives CanEqual:
   case Color, PaperPath, Tile
-end MarkUsage
 
 final case class MarkElement(
     center: XYPair,

@@ -28,4 +28,3 @@ class MessagingChecksSuite extends munit.FunSuite:
     )
     assert(results.size == 21)
   }
-end MessagingChecksSuite

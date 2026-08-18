@@ -4,11 +4,10 @@ import xjdf4s.core.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
 
-/**
- * Document-wide ID/IDREF integrity pass over the node surface covered by the codec slice. Declared IDs are the
- * `ResourceSet/@ID` and `Resource/@ID` attributes; references are collected from the covered nodes that carry
- * IDREF attributes (`Component/@MediaRef`, `Component/@ContentRefs`, `Glue/@GlueRef`). Duplicate detection is
- * performed by the model (`XJDF.validate`); this pass checks that every reference points at a declared ID.
+/** Document-wide ID/IDREF integrity pass over the node surface covered by the codec slice. Declared IDs are the
+ *  `ResourceSet/@ID` and `Resource/@ID` attributes; references are collected from the covered nodes that carry
+ *  IDREF attributes (`Component/@MediaRef`, `Component/@ContentRefs`, `Glue/@GlueRef`). Duplicate detection is
+ *  performed by the model (`XJDF.validate`); this pass checks that every reference points at a declared ID.
  */
 object ReferenceCheck:
 
@@ -34,7 +33,7 @@ object ReferenceCheck:
           case Some(media: Media) =>
             media.mediaLayers.toVector.flatMap(_.layers).flatMap {
               case MediaLayer.GlueLayer(glue) => glue.glueRef.toVector.map(("Glue/@GlueRef", _))
-              case _: MediaLayer.MediaLayer   => Vector.empty[(String, XsdIdRef)]
+              case _: MediaLayer.MediaLayer => Vector.empty[(String, XsdIdRef)]
             }
           case _ => Vector.empty[(String, XsdIdRef)]
 end ReferenceCheck

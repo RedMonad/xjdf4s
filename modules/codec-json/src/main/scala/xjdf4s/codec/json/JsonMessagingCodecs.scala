@@ -2,14 +2,12 @@ package xjdf4s.codec.json
 
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.syntax.*
-
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
 
-/**
- * JSON codecs for the XJMF surface. `XJMF` carries the normative JSON exception: exactly one message, in-lined as
- * a member named by the message element.
+/** JSON codecs for the XJMF surface. `XJMF` carries the normative JSON exception: exactly one message, in-lined as
+ *  a member named by the message element.
  */
 object JsonMessagingCodecs:
 
@@ -31,16 +29,16 @@ object JsonMessagingCodecs:
   )
   given Decoder[Header] = Decoder.instance(cursor =>
     for
-      deviceId <- cursor.get[Nmtoken]("DeviceID")
-      time <- cursor.get[XsdDateTime]("Time")
-      agentName <- JsonHelpers.opt[XjdfString](cursor, "AgentName")
-      agentVersion <- JsonHelpers.opt[XjdfString](cursor, "AgentVersion")
-      author <- JsonHelpers.opt[XjdfString](cursor, "Author")
+      deviceId        <- cursor.get[Nmtoken]("DeviceID")
+      time            <- cursor.get[XsdDateTime]("Time")
+      agentName       <- JsonHelpers.opt[XjdfString](cursor, "AgentName")
+      agentVersion    <- JsonHelpers.opt[XjdfString](cursor, "AgentVersion")
+      author          <- JsonHelpers.opt[XjdfString](cursor, "Author")
       descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
-      icsVersions <- JsonHelpers.vec[Nmtoken](cursor, "ICSVersions")
-      id <- JsonHelpers.opt[XsdId](cursor, "ID")
-      personalId <- JsonHelpers.opt[Nmtoken](cursor, "PersonalID")
-      refId <- JsonHelpers.opt[Nmtoken](cursor, "refID")
+      icsVersions     <- JsonHelpers.vec[Nmtoken](cursor, "ICSVersions")
+      id              <- JsonHelpers.opt[XsdId](cursor, "ID")
+      personalId      <- JsonHelpers.opt[Nmtoken](cursor, "PersonalID")
+      refId           <- JsonHelpers.opt[Nmtoken](cursor, "refID")
     yield Header(deviceId, time, agentName, agentVersion, author, descriptiveName, icsVersions, id, personalId, refId),
   )
 
@@ -56,10 +54,10 @@ object JsonMessagingCodecs:
   )
   given Decoder[Subscription] = Decoder.instance(cursor =>
     for
-      url <- cursor.get[UriRef]("URL")
+      url         <- cursor.get[UriRef]("URL")
       channelMode <- JsonHelpers.vec[ChannelMode](cursor, "ChannelMode")
-      languages <- JsonHelpers.vec[LanguageTag](cursor, "Languages")
-      repeatTime <- JsonHelpers.opt[Float](cursor, "RepeatTime")
+      languages   <- JsonHelpers.vec[LanguageTag](cursor, "Languages")
+      repeatTime  <- JsonHelpers.opt[Float](cursor, "RepeatTime")
     yield Subscription(url, channelMode, languages, repeatTime),
   )
 
@@ -80,15 +78,15 @@ object JsonMessagingCodecs:
   )
   given Decoder[ResourceQuParams] = Decoder.instance(cursor =>
     for
-      scope <- cursor.get[Scope]("Scope")
-      externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
-      jobId <- JsonHelpers.opt[Nmtoken](cursor, "JobID")
-      jobPartId <- JsonHelpers.opt[Nmtoken](cursor, "JobPartID")
+      scope        <- cursor.get[Scope]("Scope")
+      externalId   <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
+      jobId        <- JsonHelpers.opt[Nmtoken](cursor, "JobID")
+      jobPartId    <- JsonHelpers.opt[Nmtoken](cursor, "JobPartID")
       queueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "QueueEntryID")
-      details <- JsonHelpers.opt[ResourceDetails](cursor, "ResourceDetails")
+      details      <- JsonHelpers.opt[ResourceDetails](cursor, "ResourceDetails")
       resourceName <- JsonHelpers.opt[Nmtoken](cursor, "ResourceName")
-      types <- JsonHelpers.vec[Nmtoken](cursor, "Types")
-      parts <- JsonHelpers.vec[Part](cursor, "Part")
+      types        <- JsonHelpers.vec[Nmtoken](cursor, "Types")
+      parts        <- JsonHelpers.vec[Part](cursor, "Part")
     yield ResourceQuParams(scope, externalId, jobId, jobPartId, queueEntryId, details, resourceName, types, parts),
   )
 
@@ -111,23 +109,37 @@ object JsonMessagingCodecs:
   )
   given Decoder[ResourceInfo] = Decoder.instance(cursor =>
     for
-      resourceSet <- cursor.get[ResourceSet]("ResourceSet")
+      resourceSet   <- cursor.get[ResourceSet]("ResourceSet")
       commandResult <- JsonHelpers.opt[CommandResult](cursor, "CommandResult")
-      jobId <- JsonHelpers.opt[Nmtoken](cursor, "JobID")
-      jobPartId <- JsonHelpers.opt[Nmtoken](cursor, "JobPartID")
-      level <- JsonHelpers.opt[ResourceLevel](cursor, "Level")
-      moduleId <- JsonHelpers.opt[Nmtoken](cursor, "ModuleID")
-      queueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "QueueEntryID")
-      scope <- JsonHelpers.opt[Scope](cursor, "Scope")
-      speed <- JsonHelpers.opt[Float](cursor, "Speed")
-      types <- JsonHelpers.vec[Nmtoken](cursor, "Types")
-      totalAmount <- JsonHelpers.opt[Float](cursor, "TotalAmount")
-    yield ResourceInfo(resourceSet, Vector.empty, None, commandResult, jobId, jobPartId, level, moduleId, queueEntryId, scope, speed, types, totalAmount),
+      jobId         <- JsonHelpers.opt[Nmtoken](cursor, "JobID")
+      jobPartId     <- JsonHelpers.opt[Nmtoken](cursor, "JobPartID")
+      level         <- JsonHelpers.opt[ResourceLevel](cursor, "Level")
+      moduleId      <- JsonHelpers.opt[Nmtoken](cursor, "ModuleID")
+      queueEntryId  <- JsonHelpers.opt[Nmtoken](cursor, "QueueEntryID")
+      scope         <- JsonHelpers.opt[Scope](cursor, "Scope")
+      speed         <- JsonHelpers.opt[Float](cursor, "Speed")
+      types         <- JsonHelpers.vec[Nmtoken](cursor, "Types")
+      totalAmount   <- JsonHelpers.opt[Float](cursor, "TotalAmount")
+    yield ResourceInfo(
+      resourceSet,
+      Vector.empty,
+      None,
+      commandResult,
+      jobId,
+      jobPartId,
+      level,
+      moduleId,
+      queueEntryId,
+      scope,
+      speed,
+      types,
+      totalAmount
+    ),
   )
 
   given Encoder[DeviceInfo] = Encoder.instance(info =>
     if info.activities.nonEmpty || info.events.nonEmpty || info.jobPhases.nonEmpty ||
-        info.schemas.current.nonEmpty || info.schemas.global.nonEmpty
+      info.schemas.current.nonEmpty || info.schemas.global.nonEmpty
     then
       throw new UnsupportedOperationException("DeviceInfo children are not covered by the JSON codec slice yet")
     JsonHelpers.obj(
@@ -149,17 +161,17 @@ object JsonMessagingCodecs:
   )
   given Decoder[DeviceInfo] = Decoder.instance(cursor =>
     for
-      status <- cursor.get[DeviceStatus]("Status")
-      counterUnit <- JsonHelpers.opt[Nmtoken](cursor, "CounterUnit")
-      endTime <- JsonHelpers.opt[XsdDateTime](cursor, "EndTime")
-      hourCounter <- JsonHelpers.opt[XsdDuration](cursor, "HourCounter")
-      idleStartTime <- JsonHelpers.opt[XsdDateTime](cursor, "IdleStartTime")
-      moduleIds <- JsonHelpers.vec[Nmtoken](cursor, "ModuleIDs")
-      powerOnTime <- JsonHelpers.opt[XsdDateTime](cursor, "PowerOnTime")
-      productionCounter <- JsonHelpers.opt[Float](cursor, "ProductionCounter")
-      speed <- JsonHelpers.opt[Float](cursor, "Speed")
-      statusDetails <- JsonHelpers.opt[Nmtoken](cursor, "StatusDetails")
-      toolIds <- JsonHelpers.vec[Nmtoken](cursor, "ToolIDs")
+      status                 <- cursor.get[DeviceStatus]("Status")
+      counterUnit            <- JsonHelpers.opt[Nmtoken](cursor, "CounterUnit")
+      endTime                <- JsonHelpers.opt[XsdDateTime](cursor, "EndTime")
+      hourCounter            <- JsonHelpers.opt[XsdDuration](cursor, "HourCounter")
+      idleStartTime          <- JsonHelpers.opt[XsdDateTime](cursor, "IdleStartTime")
+      moduleIds              <- JsonHelpers.vec[Nmtoken](cursor, "ModuleIDs")
+      powerOnTime            <- JsonHelpers.opt[XsdDateTime](cursor, "PowerOnTime")
+      productionCounter      <- JsonHelpers.opt[Float](cursor, "ProductionCounter")
+      speed                  <- JsonHelpers.opt[Float](cursor, "Speed")
+      statusDetails          <- JsonHelpers.opt[Nmtoken](cursor, "StatusDetails")
+      toolIds                <- JsonHelpers.vec[Nmtoken](cursor, "ToolIDs")
       totalProductionCounter <- JsonHelpers.opt[Float](cursor, "TotalProductionCounter")
     yield DeviceInfo(
       status,
@@ -197,13 +209,24 @@ object JsonMessagingCodecs:
   )
   given Decoder[Notification] = Decoder.instance(cursor =>
     for
-      severity <- cursor.get[Severity]("Class")
-      comments <- JsonHelpers.vec[Comment](cursor, "Comment")
-      jobId <- JsonHelpers.opt[Nmtoken](cursor, "JobID")
-      jobPartId <- JsonHelpers.opt[Nmtoken](cursor, "JobPartID")
-      moduleId <- JsonHelpers.opt[Nmtoken](cursor, "ModuleID")
+      severity     <- cursor.get[Severity]("Class")
+      comments     <- JsonHelpers.vec[Comment](cursor, "Comment")
+      jobId        <- JsonHelpers.opt[Nmtoken](cursor, "JobID")
+      jobPartId    <- JsonHelpers.opt[Nmtoken](cursor, "JobPartID")
+      moduleId     <- JsonHelpers.opt[Nmtoken](cursor, "ModuleID")
       queueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "QueueEntryID")
-    yield Notification(severity, comments, None, None, Vector.empty, Vector.empty, jobId, jobPartId, moduleId, queueEntryId),
+    yield Notification(
+      severity,
+      comments,
+      None,
+      None,
+      Vector.empty,
+      Vector.empty,
+      jobId,
+      jobPartId,
+      moduleId,
+      queueEntryId
+    ),
   )
 
   given Encoder[MessageService] = Encoder.instance(service =>
@@ -217,9 +240,9 @@ object JsonMessagingCodecs:
   )
   given Decoder[MessageService] = Decoder.instance(cursor =>
     for
-      messageType <- cursor.get[Nmtoken]("Type")
+      messageType   <- cursor.get[Nmtoken]("Type")
       responseModes <- JsonHelpers.vec[MessageResponseMode](cursor, "ResponseModes")
-      urlSchemes <- JsonHelpers.vec[MessageUrlScheme](cursor, "URLSchemes")
+      urlSchemes    <- JsonHelpers.vec[MessageUrlScheme](cursor, "URLSchemes")
     yield MessageService(messageType, responseModes, urlSchemes),
   )
 
@@ -243,10 +266,10 @@ object JsonMessagingCodecs:
   )
   given Decoder[QueryResource] = Decoder.instance(cursor =>
     for
-      header <- cursor.get[Header]("Header")
-      params <- cursor.get[ResourceQuParams]("ResourceQuParams")
+      header       <- cursor.get[Header]("Header")
+      params       <- cursor.get[ResourceQuParams]("ResourceQuParams")
       subscription <- JsonHelpers.opt[Subscription](cursor, "Subscription")
-      languages <- JsonHelpers.vec[LanguageTag](cursor, "Languages")
+      languages    <- JsonHelpers.vec[LanguageTag](cursor, "Languages")
     yield QueryResource(header, params, languages, subscription),
   )
 
@@ -262,9 +285,9 @@ object JsonMessagingCodecs:
   )
   given Decoder[ResponseKnownMessages] = Decoder.instance(cursor =>
     for
-      header <- cursor.get[Header]("Header")
-      services <- JsonHelpers.vec[MessageService](cursor, "MessageService")
-      returnCode <- JsonHelpers.opt[Int](cursor, "ReturnCode")
+      header       <- cursor.get[Header]("Header")
+      services     <- JsonHelpers.vec[MessageService](cursor, "MessageService")
+      returnCode   <- JsonHelpers.opt[Int](cursor, "ReturnCode")
       notification <- JsonHelpers.opt[Notification](cursor, "Notification")
     yield ResponseKnownMessages(header, services, returnCode, notification),
   )
@@ -281,9 +304,9 @@ object JsonMessagingCodecs:
   )
   given Decoder[ResponseResource] = Decoder.instance(cursor =>
     for
-      header <- cursor.get[Header]("Header")
+      header       <- cursor.get[Header]("Header")
       resourceInfo <- JsonHelpers.vec[ResourceInfo](cursor, "ResourceInfo")
-      returnCode <- JsonHelpers.opt[Int](cursor, "ReturnCode")
+      returnCode   <- JsonHelpers.opt[Int](cursor, "ReturnCode")
       notification <- JsonHelpers.opt[Notification](cursor, "Notification")
     yield ResponseResource(header, resourceInfo, returnCode, notification),
   )
@@ -301,10 +324,10 @@ object JsonMessagingCodecs:
   )
   given Decoder[SignalResource] = Decoder.instance(cursor =>
     for
-      header <- cursor.get[Header]("Header")
-      resourceInfo <- JsonHelpers.vec[ResourceInfo](cursor, "ResourceInfo")
-      channelMode <- JsonHelpers.opt[ChannelMode](cursor, "ChannelMode")
-      replaceAfter <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceAfter")
+      header        <- cursor.get[Header]("Header")
+      resourceInfo  <- JsonHelpers.vec[ResourceInfo](cursor, "ResourceInfo")
+      channelMode   <- JsonHelpers.opt[ChannelMode](cursor, "ChannelMode")
+      replaceAfter  <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceAfter")
       replaceBefore <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceBefore")
     yield SignalResource(header, resourceInfo, replaceAfter, replaceBefore, channelMode),
   )
@@ -320,9 +343,9 @@ object JsonMessagingCodecs:
   )
   given Decoder[SignalNotification] = Decoder.instance(cursor =>
     for
-      header <- cursor.get[Header]("Header")
+      header       <- cursor.get[Header]("Header")
       notification <- cursor.get[Notification]("Notification")
-      channelMode <- JsonHelpers.opt[ChannelMode](cursor, "ChannelMode")
+      channelMode  <- JsonHelpers.opt[ChannelMode](cursor, "ChannelMode")
     yield SignalNotification(header, notification, channelMode),
   )
 
@@ -343,15 +366,15 @@ object JsonMessagingCodecs:
   )
   given Decoder[SignalStatus] = Decoder.instance(cursor =>
     for
-      header <- cursor.get[Header]("Header")
-      deviceInfo <- cursor.get[DeviceInfo]("DeviceInfo")
-      replaceAfter <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceAfter")
+      header        <- cursor.get[Header]("Header")
+      deviceInfo    <- cursor.get[DeviceInfo]("DeviceInfo")
+      replaceAfter  <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceAfter")
       replaceBefore <- JsonHelpers.opt[XsdDateTime](cursor, "ReplaceBefore")
-      channelMode <- JsonHelpers.opt[ChannelMode](cursor, "ChannelMode")
-      replacement <- (replaceAfter, replaceBefore) match
+      channelMode   <- JsonHelpers.opt[ChannelMode](cursor, "ChannelMode")
+      replacement   <- (replaceAfter, replaceBefore) match
         case (Some(after), Some(before)) => Right(Some(StatusReplacementWindow(after, before)))
-        case (None, None)                => Right(None)
-        case _                           => JsonHelpers.fail(cursor, "both ReplaceAfter and ReplaceBefore or neither")
+        case (None, None) => Right(None)
+        case _ => JsonHelpers.fail(cursor, "both ReplaceAfter and ReplaceBefore or neither")
     yield SignalStatus(header, deviceInfo, replacement, channelMode),
   )
 
@@ -383,14 +406,14 @@ object JsonMessagingCodecs:
   )
   given Decoder[XJMF] = Decoder.instance(cursor =>
     for
-      header <- cursor.get[Header]("Header")
-      version <- JsonHelpers.opt[Version](cursor, "Version")
+      header         <- cursor.get[Header]("Header")
+      version        <- JsonHelpers.opt[Version](cursor, "Version")
       messageMembers <- messageNames.foldLeft[Decoder.Result[Vector[Message]]](Right(Vector.empty)) { (acc, name) =>
         for
           accumulated <- acc
-          next <- cursor.downField(name).focus match
+          next        <- cursor.downField(name).focus match
             case Some(json) => decodeMessage(name, json).map(accumulated :+ _)
-            case None       => Right(accumulated)
+            case None => Right(accumulated)
         yield next
       }
       single <- messageMembers match

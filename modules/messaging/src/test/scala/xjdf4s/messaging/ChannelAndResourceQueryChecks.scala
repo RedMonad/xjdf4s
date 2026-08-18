@@ -45,7 +45,8 @@ object ChannelAndResourceQueryChecks:
     val channelId = Nmtoken.from("Q1").toOption.get
     val messageType = Nmtoken.from("SignalResource").toOption.get
     val subscription = Subscription(url)
-    val info = SubscriptionInfo(channelId, messageType, subscription, languages = Vector(LanguageTag.from("en-US").toOption.get))
+    val info =
+      SubscriptionInfo(channelId, messageType, subscription, languages = Vector(LanguageTag.from("en-US").toOption.get))
     assert(info.channelId.value == "Q1")
     assert(info.languages.nonEmpty)
 end ChannelAndResourceQueryChecks

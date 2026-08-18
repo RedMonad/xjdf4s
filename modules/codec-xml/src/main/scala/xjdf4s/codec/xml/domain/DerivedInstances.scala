@@ -1,29 +1,21 @@
 package xjdf4s.codec.xml.domain
 
 import xjdf4s.codec.xml.*
-
 import xjdf4s.codec.xml.derivation.Derived
-
 import xjdf4s.codec.xml.derivation.FieldCodec.given
-
 import xjdf4s.core.*
-
 import xjdf4s.messaging.*
-
 import xjdf4s.model.*
-
 import xjdf4s.model.resources.*
 
-
-/**
- * GENERATED: root `XmlElementCodec` givens for every case class without a hand-written codec. They serve as
- * the entry points for ordinary `summon[XmlElementCodec[X]]` (registries, tests); nested product fields are
- * resolved by the canonical deriveOrSummon fallback in `FieldCodec.productCodec`, so the list order no longer
- * affects resolution (it is kept topologically sorted by field dependencies anyway).
+/** GENERATED: root `XmlElementCodec` givens for every case class without a hand-written codec. They serve as
+ *  the entry points for ordinary `summon[XmlElementCodec[X]]` (registries, tests); nested product fields are
+ *  resolved by the canonical deriveOrSummon fallback in `FieldCodec.productCodec`, so the list order no longer
+ *  affects resolution (it is kept topologically sorted by field dependencies anyway).
  *
- * Excluded: hand codecs (including self-recursive AssemblySection/BundleItem and name overrides such as
- * DeviceModule -> Module), attribute-only value types, the Audit family (dispatched through AuditCodec) and
- * the foreign fallback message carriers. Regenerate from the model case-class list when the model grows.
+ *  Excluded: hand codecs (including self-recursive AssemblySection/BundleItem and name overrides such as
+ *  DeviceModule -> Module), attribute-only value types, the Audit family (dispatched through AuditCodec) and
+ *  the foreign fallback message carriers. Regenerate from the model case-class list when the model grows.
  */
 given derivedCodecActivity: XmlElementCodec[Activity] = Derived.derived[Activity]
 given derivedCodecAddress: XmlElementCodec[Address] = Derived.derived[Address]
@@ -36,7 +28,8 @@ given derivedCodecBindIn: XmlElementCodec[BindIn] = Derived.derived[BindIn]
 given derivedCodecBlowIn: XmlElementCodec[BlowIn] = Derived.derived[BlowIn]
 given derivedCodecAssemblingIntent: XmlElementCodec[AssemblingIntent] = Derived.derived[AssemblingIntent]
 given derivedCodecAuditPool: XmlElementCodec[AuditPool] = Derived.derived[AuditPool]
-given derivedCodecAutomatedOverPrintParams: XmlElementCodec[AutomatedOverPrintParams] = Derived.derived[AutomatedOverPrintParams]
+given derivedCodecAutomatedOverPrintParams: XmlElementCodec[AutomatedOverPrintParams] =
+  Derived.derived[AutomatedOverPrintParams]
 given derivedCodecBand: XmlElementCodec[Band] = Derived.derived[Band]
 given derivedCodecBarcodeCompParams: XmlElementCodec[BarcodeCompParams] = Derived.derived[BarcodeCompParams]
 given derivedCodecBarcodeDetails: XmlElementCodec[BarcodeDetails] = Derived.derived[BarcodeDetails]
@@ -44,7 +37,8 @@ given derivedCodecBarcodeReproParams: XmlElementCodec[BarcodeReproParams] = Deri
 given derivedCodecMetadataExpression: XmlElementCodec[MetadataExpression] = Derived.derived[MetadataExpression]
 given derivedCodecMetadataMap: XmlElementCodec[MetadataMap] = Derived.derived[MetadataMap]
 given derivedCodecIdentificationField: XmlElementCodec[IdentificationField] = Derived.derived[IdentificationField]
-given derivedCodecBarcodeProductionParams: XmlElementCodec[BarcodeProductionParams] = Derived.derived[BarcodeProductionParams]
+given derivedCodecBarcodeProductionParams: XmlElementCodec[BarcodeProductionParams] =
+  Derived.derived[BarcodeProductionParams]
 given derivedCodecBendingParams: XmlElementCodec[BendingParams] = Derived.derived[BendingParams]
 given derivedCodecMultiPageFold: XmlElementCodec[MultiPageFold] = Derived.derived[MultiPageFold]
 given derivedCodecCondition: XmlElementCodec[Condition] = Derived.derived[Condition]
@@ -52,10 +46,12 @@ given derivedCodecCellCondition: XmlElementCodec[CellCondition] = Derived.derive
 given derivedCodecSignatureCell: XmlElementCodec[SignatureCell] = Derived.derived[SignatureCell]
 given derivedCodecBinderySignature: XmlElementCodec[BinderySignature] = Derived.derived[BinderySignature]
 given derivedCodecBindingQuality: XmlElementCodec[BindingQuality] = Derived.derived[BindingQuality]
-given derivedCodecBindingQualityMeasurement: XmlElementCodec[BindingQualityMeasurement] = Derived.derived[BindingQualityMeasurement]
+given derivedCodecBindingQualityMeasurement: XmlElementCodec[BindingQualityMeasurement] =
+  Derived.derived[BindingQualityMeasurement]
 given derivedCodecBindingQualityParams: XmlElementCodec[BindingQualityParams] = Derived.derived[BindingQualityParams]
 given derivedCodecRegisterRibbon: XmlElementCodec[RegisterRibbon] = Derived.derived[RegisterRibbon]
-given derivedCodecBlockPreparationParams: XmlElementCodec[BlockPreparationParams] = Derived.derived[BlockPreparationParams]
+given derivedCodecBlockPreparationParams: XmlElementCodec[BlockPreparationParams] =
+  Derived.derived[BlockPreparationParams]
 given derivedCodecBoxFoldAction: XmlElementCodec[BoxFoldAction] = Derived.derived[BoxFoldAction]
 given derivedCodecBoxFoldingParams: XmlElementCodec[BoxFoldingParams] = Derived.derived[BoxFoldingParams]
 given derivedCodecBoxPackingParams: XmlElementCodec[BoxPackingParams] = Derived.derived[BoxPackingParams]
@@ -69,35 +65,48 @@ given derivedCodecCertification: XmlElementCodec[Certification] = Derived.derive
 given derivedCodecCieLabMeasuringField: XmlElementCodec[CieLabMeasuringField] = Derived.derived[CieLabMeasuringField]
 given derivedCodecDensityMeasuringField: XmlElementCodec[DensityMeasuringField] = Derived.derived[DensityMeasuringField]
 given derivedCodecColorControlStrip: XmlElementCodec[ColorControlStrip] = Derived.derived[ColorControlStrip]
-given derivedCodecColorConversionProfiles: XmlElementCodec[ColorConversionProfiles] = Derived.derived[ColorConversionProfiles]
-given derivedCodecColorCorrectionOperation: XmlElementCodec[ColorCorrectionOperation] = Derived.derived[ColorCorrectionOperation]
+given derivedCodecColorConversionProfiles: XmlElementCodec[ColorConversionProfiles] =
+  Derived.derived[ColorConversionProfiles]
+given derivedCodecColorCorrectionOperation: XmlElementCodec[ColorCorrectionOperation] =
+  Derived.derived[ColorCorrectionOperation]
 given derivedCodecColorCorrectionParams: XmlElementCodec[ColorCorrectionParams] = Derived.derived[ColorCorrectionParams]
 given derivedCodecColorMeasurement: XmlElementCodec[ColorMeasurement] = Derived.derived[ColorMeasurement]
 given derivedCodecScreenSelector: XmlElementCodec[ScreenSelector] = Derived.derived[ScreenSelector]
-given derivedCodecColorSpaceConversionOperation: XmlElementCodec[ColorSpaceConversionOperation] = Derived.derived[ColorSpaceConversionOperation]
-given derivedCodecColorSpaceConversionParams: XmlElementCodec[ColorSpaceConversionParams] = Derived.derived[ColorSpaceConversionParams]
+given derivedCodecColorSpaceConversionOperation: XmlElementCodec[ColorSpaceConversionOperation] =
+  Derived.derived[ColorSpaceConversionOperation]
+given derivedCodecColorSpaceConversionParams: XmlElementCodec[ColorSpaceConversionParams] =
+  Derived.derived[ColorSpaceConversionParams]
 given derivedCodecColorantAlias: XmlElementCodec[ColorantAlias] = Derived.derived[ColorantAlias]
 given derivedCodecDeviceNSpace: XmlElementCodec[DeviceNSpace] = Derived.derived[DeviceNSpace]
 given derivedCodecColorantControl: XmlElementCodec[ColorantControl] = Derived.derived[ColorantControl]
 given derivedCodecGangCommandFilter: XmlElementCodec[GangCommandFilter] = Derived.derived[GangCommandFilter]
 given derivedCodecCommandForceGang: XmlElementCodec[CommandForceGang] = Derived.derived[CommandForceGang]
-given derivedCodecCommandModifyQueueEntry: XmlElementCodec[CommandModifyQueueEntry] = Derived.derived[CommandModifyQueueEntry]
+given derivedCodecCommandModifyQueueEntry: XmlElementCodec[CommandModifyQueueEntry] =
+  Derived.derived[CommandModifyQueueEntry]
 given derivedCodecMisDetails: XmlElementCodec[MisDetails] = Derived.derived[MisDetails]
 given derivedCodecPipeParams: XmlElementCodec[PipeParams] = Derived.derived[PipeParams]
 given derivedCodecCommandPipeControl: XmlElementCodec[CommandPipeControl] = Derived.derived[CommandPipeControl]
-given derivedCodecRequestQueueEntryParams: XmlElementCodec[RequestQueueEntryParams] = Derived.derived[RequestQueueEntryParams]
-given derivedCodecCommandRequestQueueEntry: XmlElementCodec[CommandRequestQueueEntry] = Derived.derived[CommandRequestQueueEntry]
+given derivedCodecRequestQueueEntryParams: XmlElementCodec[RequestQueueEntryParams] =
+  Derived.derived[RequestQueueEntryParams]
+given derivedCodecCommandRequestQueueEntry: XmlElementCodec[CommandRequestQueueEntry] =
+  Derived.derived[CommandRequestQueueEntry]
 given derivedCodecResourceCommandParams: XmlElementCodec[ResourceCommandParams] = Derived.derived[ResourceCommandParams]
 given derivedCodecCommandResource: XmlElementCodec[CommandResource] = Derived.derived[CommandResource]
 given derivedCodecResubmissionParams: XmlElementCodec[ResubmissionParams] = Derived.derived[ResubmissionParams]
-given derivedCodecCommandResubmitQueueEntry: XmlElementCodec[CommandResubmitQueueEntry] = Derived.derived[CommandResubmitQueueEntry]
-given derivedCodecReturnQueueEntryParams: XmlElementCodec[ReturnQueueEntryParams] = Derived.derived[ReturnQueueEntryParams]
-given derivedCodecCommandReturnQueueEntry: XmlElementCodec[CommandReturnQueueEntry] = Derived.derived[CommandReturnQueueEntry]
+given derivedCodecCommandResubmitQueueEntry: XmlElementCodec[CommandResubmitQueueEntry] =
+  Derived.derived[CommandResubmitQueueEntry]
+given derivedCodecReturnQueueEntryParams: XmlElementCodec[ReturnQueueEntryParams] =
+  Derived.derived[ReturnQueueEntryParams]
+given derivedCodecCommandReturnQueueEntry: XmlElementCodec[CommandReturnQueueEntry] =
+  Derived.derived[CommandReturnQueueEntry]
 given derivedCodecShutDownParams: XmlElementCodec[ShutDownParams] = Derived.derived[ShutDownParams]
 given derivedCodecCommandShutDown: XmlElementCodec[CommandShutDown] = Derived.derived[CommandShutDown]
-given derivedCodecStopPersistentChannelParams: XmlElementCodec[StopPersistentChannelParams] = Derived.derived[StopPersistentChannelParams]
-given derivedCodecCommandStopPersistentChannel: XmlElementCodec[CommandStopPersistentChannel] = Derived.derived[CommandStopPersistentChannel]
-given derivedCodecCommandSubmitQueueEntry: XmlElementCodec[CommandSubmitQueueEntry] = Derived.derived[CommandSubmitQueueEntry]
+given derivedCodecStopPersistentChannelParams: XmlElementCodec[StopPersistentChannelParams] =
+  Derived.derived[StopPersistentChannelParams]
+given derivedCodecCommandStopPersistentChannel: XmlElementCodec[CommandStopPersistentChannel] =
+  Derived.derived[CommandStopPersistentChannel]
+given derivedCodecCommandSubmitQueueEntry: XmlElementCodec[CommandSubmitQueueEntry] =
+  Derived.derived[CommandSubmitQueueEntry]
 given derivedCodecCommandWakeUp: XmlElementCodec[CommandWakeUp] = Derived.derived[CommandWakeUp]
 given derivedCodecCommunicationChannel: XmlElementCodec[CommunicationChannel] = Derived.derived[CommunicationChannel]
 given derivedCodecCompany: XmlElementCodec[Company] = Derived.derived[Company]
@@ -110,18 +119,21 @@ given derivedCodecJbig2Params: XmlElementCodec[Jbig2Params] = Derived.derived[Jb
 given derivedCodecJpeg2000Params: XmlElementCodec[Jpeg2000Params] = Derived.derived[Jpeg2000Params]
 given derivedCodecLzwParams: XmlElementCodec[LzwParams] = Derived.derived[LzwParams]
 given derivedCodecImageCompression: XmlElementCodec[ImageCompression] = Derived.derived[ImageCompression]
-given derivedCodecOptionalContentGroupControl: XmlElementCodec[OptionalContentGroupControl] = Derived.derived[OptionalContentGroupControl]
+given derivedCodecOptionalContentGroupControl: XmlElementCodec[OptionalContentGroupControl] =
+  Derived.derived[OptionalContentGroupControl]
 given derivedCodecRefAnchor: XmlElementCodec[RefAnchor] = Derived.derived[RefAnchor]
 given derivedCodecPositionedObject: XmlElementCodec[PositionedObject] = Derived.derived[PositionedObject]
 given derivedCodecContent: XmlElementCodec[Content] = Derived.derived[Content]
 given derivedCodecPreflightItem: XmlElementCodec[PreflightItem] = Derived.derived[PreflightItem]
 given derivedCodecProofItem: XmlElementCodec[ProofItem] = Derived.derived[ProofItem]
 given derivedCodecContentCheckIntent: XmlElementCodec[ContentCheckIntent] = Derived.derived[ContentCheckIntent]
-given derivedCodecConventionalPrintingParams: XmlElementCodec[ConventionalPrintingParams] = Derived.derived[ConventionalPrintingParams]
+given derivedCodecConventionalPrintingParams: XmlElementCodec[ConventionalPrintingParams] =
+  Derived.derived[ConventionalPrintingParams]
 given derivedCodecCutBlock: XmlElementCodec[CutBlock] = Derived.derived[CutBlock]
 given derivedCodecConvertingConfig: XmlElementCodec[ConvertingConfig] = Derived.derived[ConvertingConfig]
 given derivedCodecScore: XmlElementCodec[Score] = Derived.derived[Score]
-given derivedCodecCoverApplicationParams: XmlElementCodec[CoverApplicationParams] = Derived.derived[CoverApplicationParams]
+given derivedCodecCoverApplicationParams: XmlElementCodec[CoverApplicationParams] =
+  Derived.derived[CoverApplicationParams]
 given derivedCodecCrease: XmlElementCodec[Crease] = Derived.derived[Crease]
 given derivedCodecCreasingParams: XmlElementCodec[CreasingParams] = Derived.derived[CreasingParams]
 given derivedCodecCustomerInfo: XmlElementCodec[CustomerInfo] = Derived.derived[CustomerInfo]
@@ -143,7 +155,8 @@ given derivedCodecDieStation: XmlElementCodec[DieStation] = Derived.derived[DieS
 given derivedCodecRuleLength: XmlElementCodec[RuleLength] = Derived.derived[RuleLength]
 given derivedCodecDieLayout: XmlElementCodec[DieLayout] = Derived.derived[DieLayout]
 given derivedCodecRepeatDescription: XmlElementCodec[RepeatDescription] = Derived.derived[RepeatDescription]
-given derivedCodecDieLayoutProductionParams: XmlElementCodec[DieLayoutProductionParams] = Derived.derived[DieLayoutProductionParams]
+given derivedCodecDieLayoutProductionParams: XmlElementCodec[DieLayoutProductionParams] =
+  Derived.derived[DieLayoutProductionParams]
 given derivedCodecDigitalPrintingParams: XmlElementCodec[DigitalPrintingParams] = Derived.derived[DigitalPrintingParams]
 given derivedCodecMarkColor: XmlElementCodec[MarkColor] = Derived.derived[MarkColor]
 given derivedCodecFillMark: XmlElementCodec[FillMark] = Derived.derived[FillMark]
@@ -176,24 +189,30 @@ given derivedCodecGangElement: XmlElementCodec[GangElement] = Derived.derived[Ga
 given derivedCodecGangInfo: XmlElementCodec[GangInfo] = Derived.derived[GangInfo]
 given derivedCodecGangQueryFilter: XmlElementCodec[GangQueryFilter] = Derived.derived[GangQueryFilter]
 given derivedCodecGluingParams: XmlElementCodec[GluingParams] = Derived.derived[GluingParams]
-given derivedCodecHeadBandApplicationParams: XmlElementCodec[HeadBandApplicationParams] = Derived.derived[HeadBandApplicationParams]
+given derivedCodecHeadBandApplicationParams: XmlElementCodec[HeadBandApplicationParams] =
+  Derived.derived[HeadBandApplicationParams]
 given derivedCodecHolePattern: XmlElementCodec[HolePattern] = Derived.derived[HolePattern]
 given derivedCodecHoleMakingIntent: XmlElementCodec[HoleMakingIntent] = Derived.derived[HoleMakingIntent]
 given derivedCodecHoleMakingParams: XmlElementCodec[HoleMakingParams] = Derived.derived[HoleMakingParams]
 given derivedCodecIconList: XmlElementCodec[IconList] = Derived.derived[IconList]
-given derivedCodecImageCompressionParams: XmlElementCodec[ImageCompressionParams] = Derived.derived[ImageCompressionParams]
-given derivedCodecImageEnhancementOperation: XmlElementCodec[ImageEnhancementOperation] = Derived.derived[ImageEnhancementOperation]
-given derivedCodecImageEnhancementParams: XmlElementCodec[ImageEnhancementParams] = Derived.derived[ImageEnhancementParams]
+given derivedCodecImageCompressionParams: XmlElementCodec[ImageCompressionParams] =
+  Derived.derived[ImageCompressionParams]
+given derivedCodecImageEnhancementOperation: XmlElementCodec[ImageEnhancementOperation] =
+  Derived.derived[ImageEnhancementOperation]
+given derivedCodecImageEnhancementParams: XmlElementCodec[ImageEnhancementParams] =
+  Derived.derived[ImageEnhancementParams]
 given derivedCodecImageSetterParams: XmlElementCodec[ImageSetterParams] = Derived.derived[ImageSetterParams]
 given derivedCodecInk: XmlElementCodec[Ink] = Derived.derived[Ink]
-given derivedCodecInkZoneCalculationParams: XmlElementCodec[InkZoneCalculationParams] = Derived.derived[InkZoneCalculationParams]
+given derivedCodecInkZoneCalculationParams: XmlElementCodec[InkZoneCalculationParams] =
+  Derived.derived[InkZoneCalculationParams]
 given derivedCodecInkZoneProfile: XmlElementCodec[InkZoneProfile] = Derived.derived[InkZoneProfile]
 given derivedCodecInsertingParams: XmlElementCodec[InsertingParams] = Derived.derived[InsertingParams]
 given derivedCodecInspection: XmlElementCodec[Inspection] = Derived.derived[Inspection]
 given derivedCodecIntentResource: XmlElementCodec[IntentResource] = Derived.derived[IntentResource]
 given derivedCodecInterpretingDetails: XmlElementCodec[InterpretingDetails] = Derived.derived[InterpretingDetails]
 given derivedCodecObjectResolution: XmlElementCodec[ObjectResolution] = Derived.derived[ObjectResolution]
-given derivedCodecReferenceXObjectParams: XmlElementCodec[ReferenceXObjectParams] = Derived.derived[ReferenceXObjectParams]
+given derivedCodecReferenceXObjectParams: XmlElementCodec[ReferenceXObjectParams] =
+  Derived.derived[ReferenceXObjectParams]
 given derivedCodecPdfInterpretingParams: XmlElementCodec[PdfInterpretingParams] = Derived.derived[PdfInterpretingParams]
 given derivedCodecInterpretingParams: XmlElementCodec[InterpretingParams] = Derived.derived[InterpretingParams]
 given derivedCodecJacketingParams: XmlElementCodec[JacketingParams] = Derived.derived[JacketingParams]
@@ -203,7 +222,8 @@ given derivedCodecLaminatingParams: XmlElementCodec[LaminatingParams] = Derived.
 given derivedCodecLayoutPosition: XmlElementCodec[LayoutPosition] = Derived.derived[LayoutPosition]
 given derivedCodecSheetActivation: XmlElementCodec[SheetActivation] = Derived.derived[SheetActivation]
 given derivedCodecLayout: XmlElementCodec[Layout] = Derived.derived[Layout]
-given derivedCodecLayoutElementProductionParams: XmlElementCodec[LayoutElementProductionParams] = Derived.derived[LayoutElementProductionParams]
+given derivedCodecLayoutElementProductionParams: XmlElementCodec[LayoutElementProductionParams] =
+  Derived.derived[LayoutElementProductionParams]
 given derivedCodecLayoutIntent: XmlElementCodec[LayoutIntent] = Derived.derived[LayoutIntent]
 given derivedCodecShiftPoint: XmlElementCodec[ShiftPoint] = Derived.derived[ShiftPoint]
 given derivedCodecLayoutShift: XmlElementCodec[LayoutShift] = Derived.derived[LayoutShift]
@@ -219,7 +239,8 @@ given derivedCodecObjectModel: XmlElementCodec[ObjectModel] = Derived.derived[Ob
 given derivedCodecPdfXParams: XmlElementCodec[PdfXParams] = Derived.derived[PdfXParams]
 given derivedCodecThinPdfParams: XmlElementCodec[ThinPdfParams] = Derived.derived[ThinPdfParams]
 given derivedCodecPdfCreationDetails: XmlElementCodec[PdfCreationDetails] = Derived.derived[PdfCreationDetails]
-given derivedCodecPostScriptCreationDetails: XmlElementCodec[PostScriptCreationDetails] = Derived.derived[PostScriptCreationDetails]
+given derivedCodecPostScriptCreationDetails: XmlElementCodec[PostScriptCreationDetails] =
+  Derived.derived[PostScriptCreationDetails]
 given derivedCodecPDLCreationParams: XmlElementCodec[PDLCreationParams] = Derived.derived[PDLCreationParams]
 given derivedCodecPageActivation: XmlElementCodec[PageActivation] = Derived.derived[PageActivation]
 given derivedCodecPageCondition: XmlElementCodec[PageCondition] = Derived.derived[PageCondition]
@@ -231,7 +252,8 @@ given derivedCodecPreflightTest: XmlElementCodec[PreflightTest] = Derived.derive
 given derivedCodecPreflightParams: XmlElementCodec[PreflightParams] = Derived.derived[PreflightParams]
 given derivedCodecPreflightReport: XmlElementCodec[PreflightReport] = Derived.derived[PreflightReport]
 given derivedCodecPreview: XmlElementCodec[Preview] = Derived.derived[Preview]
-given derivedCodecPreviewGenerationParams: XmlElementCodec[PreviewGenerationParams] = Derived.derived[PreviewGenerationParams]
+given derivedCodecPreviewGenerationParams: XmlElementCodec[PreviewGenerationParams] =
+  Derived.derived[PreviewGenerationParams]
 given derivedCodecPrintCondition: XmlElementCodec[PrintCondition] = Derived.derived[PrintCondition]
 given derivedCodecProcessRun: XmlElementCodec[ProcessRun] = Derived.derived[ProcessRun]
 given derivedCodecProduct: XmlElementCodec[Product] = Derived.derived[Product]
@@ -244,7 +266,8 @@ given derivedCodecQualityControlResult: XmlElementCodec[QualityControlResult] = 
 given derivedCodecQueryGangStatus: XmlElementCodec[QueryGangStatus] = Derived.derived[QueryGangStatus]
 given derivedCodecQueryKnownDevices: XmlElementCodec[QueryKnownDevices] = Derived.derived[QueryKnownDevices]
 given derivedCodecSubscriptionFilter: XmlElementCodec[SubscriptionFilter] = Derived.derived[SubscriptionFilter]
-given derivedCodecQueryKnownSubscriptions: XmlElementCodec[QueryKnownSubscriptions] = Derived.derived[QueryKnownSubscriptions]
+given derivedCodecQueryKnownSubscriptions: XmlElementCodec[QueryKnownSubscriptions] =
+  Derived.derived[QueryKnownSubscriptions]
 given derivedCodecQueryNotification: XmlElementCodec[QueryNotification] = Derived.derived[QueryNotification]
 given derivedCodecQueueFilter: XmlElementCodec[QueueFilter] = Derived.derived[QueueFilter]
 given derivedCodecQueueStatusParams: XmlElementCodec[QueueStatusParams] = Derived.derived[QueueStatusParams]
@@ -261,21 +284,29 @@ given derivedCodecResponseForceGang: XmlElementCodec[ResponseForceGang] = Derive
 given derivedCodecResponseGangStatus: XmlElementCodec[ResponseGangStatus] = Derived.derived[ResponseGangStatus]
 given derivedCodecResponseKnownDevices: XmlElementCodec[ResponseKnownDevices] = Derived.derived[ResponseKnownDevices]
 given derivedCodecSubscriptionInfo: XmlElementCodec[SubscriptionInfo] = Derived.derived[SubscriptionInfo]
-given derivedCodecResponseKnownSubscriptions: XmlElementCodec[ResponseKnownSubscriptions] = Derived.derived[ResponseKnownSubscriptions]
-given derivedCodecResponseModifyQueueEntry: XmlElementCodec[ResponseModifyQueueEntry] = Derived.derived[ResponseModifyQueueEntry]
+given derivedCodecResponseKnownSubscriptions: XmlElementCodec[ResponseKnownSubscriptions] =
+  Derived.derived[ResponseKnownSubscriptions]
+given derivedCodecResponseModifyQueueEntry: XmlElementCodec[ResponseModifyQueueEntry] =
+  Derived.derived[ResponseModifyQueueEntry]
 given derivedCodecResponseNotification: XmlElementCodec[ResponseNotification] = Derived.derived[ResponseNotification]
 given derivedCodecResponsePipeControl: XmlElementCodec[ResponsePipeControl] = Derived.derived[ResponsePipeControl]
 given derivedCodecResponseQueueStatus: XmlElementCodec[ResponseQueueStatus] = Derived.derived[ResponseQueueStatus]
-given derivedCodecResponseRequestQueueEntry: XmlElementCodec[ResponseRequestQueueEntry] = Derived.derived[ResponseRequestQueueEntry]
-given derivedCodecResponseResubmitQueueEntry: XmlElementCodec[ResponseResubmitQueueEntry] = Derived.derived[ResponseResubmitQueueEntry]
-given derivedCodecResponseReturnQueueEntry: XmlElementCodec[ResponseReturnQueueEntry] = Derived.derived[ResponseReturnQueueEntry]
+given derivedCodecResponseRequestQueueEntry: XmlElementCodec[ResponseRequestQueueEntry] =
+  Derived.derived[ResponseRequestQueueEntry]
+given derivedCodecResponseResubmitQueueEntry: XmlElementCodec[ResponseResubmitQueueEntry] =
+  Derived.derived[ResponseResubmitQueueEntry]
+given derivedCodecResponseReturnQueueEntry: XmlElementCodec[ResponseReturnQueueEntry] =
+  Derived.derived[ResponseReturnQueueEntry]
 given derivedCodecResponseShutDown: XmlElementCodec[ResponseShutDown] = Derived.derived[ResponseShutDown]
 given derivedCodecResponseStatus: XmlElementCodec[ResponseStatus] = Derived.derived[ResponseStatus]
-given derivedCodecResponseStopPersistentChannel: XmlElementCodec[ResponseStopPersistentChannel] = Derived.derived[ResponseStopPersistentChannel]
-given derivedCodecResponseSubmitQueueEntry: XmlElementCodec[ResponseSubmitQueueEntry] = Derived.derived[ResponseSubmitQueueEntry]
+given derivedCodecResponseStopPersistentChannel: XmlElementCodec[ResponseStopPersistentChannel] =
+  Derived.derived[ResponseStopPersistentChannel]
+given derivedCodecResponseSubmitQueueEntry: XmlElementCodec[ResponseSubmitQueueEntry] =
+  Derived.derived[ResponseSubmitQueueEntry]
 given derivedCodecResponseWakeUp: XmlElementCodec[ResponseWakeUp] = Derived.derived[ResponseWakeUp]
 given derivedCodecScreeningParams: XmlElementCodec[ScreeningParams] = Derived.derived[ScreeningParams]
-given derivedCodecSeparationControlParams: XmlElementCodec[SeparationControlParams] = Derived.derived[SeparationControlParams]
+given derivedCodecSeparationControlParams: XmlElementCodec[SeparationControlParams] =
+  Derived.derived[SeparationControlParams]
 given derivedCodecSeparationTint: XmlElementCodec[SeparationTint] = Derived.derived[SeparationTint]
 given derivedCodecShape: XmlElementCodec[Shape] = Derived.derived[Shape]
 given derivedCodecShapeCut: XmlElementCodec[ShapeCut] = Derived.derived[ShapeCut]
@@ -284,16 +315,19 @@ given derivedCodecShapeCuttingParams: XmlElementCodec[ShapeCuttingParams] = Deri
 given derivedCodecShapeDef: XmlElementCodec[ShapeDef] = Derived.derived[ShapeDef]
 given derivedCodecShapeDimension: XmlElementCodec[ShapeDimension] = Derived.derived[ShapeDimension]
 given derivedCodecShapeTemplate: XmlElementCodec[ShapeTemplate] = Derived.derived[ShapeTemplate]
-given derivedCodecShapeDefProductionParams: XmlElementCodec[ShapeDefProductionParams] = Derived.derived[ShapeDefProductionParams]
+given derivedCodecShapeDefProductionParams: XmlElementCodec[ShapeDefProductionParams] =
+  Derived.derived[ShapeDefProductionParams]
 given derivedCodecSheetOptimizingParams: XmlElementCodec[SheetOptimizingParams] = Derived.derived[SheetOptimizingParams]
 given derivedCodecSheetOptimizingReport: XmlElementCodec[SheetOptimizingReport] = Derived.derived[SheetOptimizingReport]
 given derivedCodecShrinkingParams: XmlElementCodec[ShrinkingParams] = Derived.derived[ShrinkingParams]
 given derivedCodecSignalGangStatus: XmlElementCodec[SignalGangStatus] = Derived.derived[SignalGangStatus]
 given derivedCodecSignalKnownDevices: XmlElementCodec[SignalKnownDevices] = Derived.derived[SignalKnownDevices]
-given derivedCodecSignalKnownSubscriptions: XmlElementCodec[SignalKnownSubscriptions] = Derived.derived[SignalKnownSubscriptions]
+given derivedCodecSignalKnownSubscriptions: XmlElementCodec[SignalKnownSubscriptions] =
+  Derived.derived[SignalKnownSubscriptions]
 given derivedCodecSignalNotification: XmlElementCodec[SignalNotification] = Derived.derived[SignalNotification]
 given derivedCodecSignalQueueStatus: XmlElementCodec[SignalQueueStatus] = Derived.derived[SignalQueueStatus]
-given derivedCodecSpinePreparationParams: XmlElementCodec[SpinePreparationParams] = Derived.derived[SpinePreparationParams]
+given derivedCodecSpinePreparationParams: XmlElementCodec[SpinePreparationParams] =
+  Derived.derived[SpinePreparationParams]
 given derivedCodecSpineTapingParams: XmlElementCodec[SpineTapingParams] = Derived.derived[SpineTapingParams]
 given derivedCodecStackingParams: XmlElementCodec[StackingParams] = Derived.derived[StackingParams]
 given derivedCodecStitchingDetails: XmlElementCodec[StitchingDetails] = Derived.derived[StitchingDetails]
@@ -312,6 +346,7 @@ given derivedCodecVariableIntent: XmlElementCodec[VariableIntent] = Derived.deri
 given derivedCodecVarnishingParams: XmlElementCodec[VarnishingParams] = Derived.derived[VarnishingParams]
 given derivedCodecVerificationParams: XmlElementCodec[VerificationParams] = Derived.derived[VerificationParams]
 given derivedCodecVerificationResult: XmlElementCodec[VerificationResult] = Derived.derived[VerificationResult]
-given derivedCodecWebInlineFinishingParams: XmlElementCodec[WebInlineFinishingParams] = Derived.derived[WebInlineFinishingParams]
+given derivedCodecWebInlineFinishingParams: XmlElementCodec[WebInlineFinishingParams] =
+  Derived.derived[WebInlineFinishingParams]
 given derivedCodecWindingParams: XmlElementCodec[WindingParams] = Derived.derived[WindingParams]
 given derivedCodecWrappingParams: XmlElementCodec[WrappingParams] = Derived.derived[WrappingParams]

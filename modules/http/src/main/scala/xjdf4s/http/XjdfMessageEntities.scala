@@ -1,16 +1,13 @@
 package xjdf4s.http
 
 import cats.effect.IO
-
 import org.http4s.{EntityDecoder, EntityEncoder}
-
 import xjdf4s.codec.json.given
 import xjdf4s.messaging.*
 
-/**
- * Entity codecs for the single-message bodies of the 9.10.3 REST endpoints: the element name of the message is
- * implied by the endpoint, so the body is the bare message object (JSON) with the XJMF media type. Named values,
- * not givens — the same rationale as in [[XjdfEntities]].
+/** Entity codecs for the single-message bodies of the 9.10.3 REST endpoints: the element name of the message is
+ *  implied by the endpoint, so the body is the bare message object (JSON) with the XJMF media type. Named values,
+ *  not givens — the same rationale as in [[XjdfEntities]].
  */
 object XjdfMessageEntities:
 

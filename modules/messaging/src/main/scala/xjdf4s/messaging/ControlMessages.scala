@@ -5,7 +5,6 @@ import xjdf4s.model.*
 
 enum PipeOperation derives CanEqual:
   case Close, Pause, Pull, Push
-end PipeOperation
 
 final case class PipeParams(
     jobId: Nmtoken,
@@ -35,7 +34,6 @@ final case class ResponsePipeControl(
 
 enum ShutDownType derives CanEqual:
   case StandBy, Full
-end ShutDownType
 
 final case class ShutDownParams(
     shutDownType: Option[ShutDownType] = None,
@@ -80,9 +78,8 @@ final case class StopPersistentChannelParams(
 ) extends XjdfNode,
       Extensible
 
-/**
- * Table 8.71. `@ChannelID` is the NMTOKEN-valued `Header/@ID` of the Query that initiated the persistent channel;
- * `@Languages` (New in XJDF 2.2) reports the language list selected by that Query.
+/** Table 8.71. `@ChannelID` is the NMTOKEN-valued `Header/@ID` of the Query that initiated the persistent channel;
+ *  `@Languages` (New in XJDF 2.2) reports the language list selected by that Query.
  */
 final case class SubscriptionInfo(
     channelId: Nmtoken,

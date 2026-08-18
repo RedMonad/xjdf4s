@@ -1,13 +1,11 @@
 package xjdf4s.model
 
 import cats.{Eq, Hash, Show}
-
 import xjdf4s.core.ValidationError
 
-/**
- * `NamedColor` (Appendix A.2.30): a machine-readable color definition. The closed vocabulary below is the value set
- * defined by `[Color Names]` and encoded by the XSD pattern restriction of the `NamedColor` simple type; matching is
- * case-insensitive. Representing it as a closed enum makes invalid color names unrepresentable.
+/** `NamedColor` (Appendix A.2.30): a machine-readable color definition. The closed vocabulary below is the value set
+ *  defined by `[Color Names]` and encoded by the XSD pattern restriction of the `NamedColor` simple type; matching is
+ *  case-insensitive. Representing it as a closed enum makes invalid color names unrepresentable.
  */
 enum NamedColor(val lexical: String) derives CanEqual:
   case AliceBlue extends NamedColor("ALICEBLUE")
@@ -157,7 +155,6 @@ enum NamedColor(val lexical: String) derives CanEqual:
   case WhiteSmoke extends NamedColor("WHITESMOKE")
   case Yellow extends NamedColor("YELLOW")
   case YellowGreen extends NamedColor("YELLOWGREEN")
-end NamedColor
 
 object NamedColor:
   private val byLexical: Map[String, NamedColor] = values.map(value => value.lexical -> value).toMap
@@ -168,9 +165,8 @@ object NamedColor:
       .toRight(ValidationError.InvalidValue("NamedColor", value, "a color name from the [Color Names] vocabulary"))
 end NamedColor
 
-/**
- * CIE Lab color (Appendix A.1): three values in the sequence `L a b`. `L` is restricted to `[0..100]`; `a` and `b`
- * are unbounded. Values are normalized to D50 illumination at a 2-degree observer angle.
+/** CIE Lab color (Appendix A.1): three values in the sequence `L a b`. `L` is restricted to `[0..100]`; `a` and `b`
+ *  are unbounded. Values are normalized to D50 illumination at a 2-degree observer angle.
  */
 opaque type LabColor = (Double, Double, Double)
 object LabColor:
@@ -192,9 +188,8 @@ object LabColor:
   given Hash[LabColor] = Hash.fromUniversalHashCode
 end LabColor
 
-/**
- * CMYK color (Appendix A.1): four values in the sequence `C M Y K`, each in the range `[0..1.0]`, where `0.0`
- * specifies no ink and `1.0` specifies full ink.
+/** CMYK color (Appendix A.1): four values in the sequence `C M Y K`, each in the range `[0..1.0]`, where `0.0`
+ *  specifies no ink and `1.0` specifies full ink.
  */
 opaque type CmykColor = (Double, Double, Double, Double)
 object CmykColor:
@@ -226,9 +221,8 @@ object CmykColor:
   given Hash[CmykColor] = Hash.fromUniversalHashCode
 end CmykColor
 
-/**
- * sRGB color: three components in the sequence `R G B`, each in the valid sRGB range `[0..1.0]`. The XSD restricts
- * only the list length; the component range is the normative sRGB value space and is enforced here as a refinement.
+/** sRGB color: three components in the sequence `R G B`, each in the valid sRGB range `[0..1.0]`. The XSD restricts
+ *  only the list length; the component range is the normative sRGB value space and is enforced here as a refinement.
  */
 opaque type SrgbColor = (Double, Double, Double)
 object SrgbColor:
