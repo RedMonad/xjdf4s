@@ -63,7 +63,11 @@ object XjdfServerChecks:
     IO.racePair(IO.sleep(3.seconds), io).flatMap {
       case Left(_) => IO.raiseError[A](new RuntimeException(s"step timed out: $name"))
       case Right((outcome, _)) =>
-        outcome.embed(IO.canceled)
+        outcome.join.flatMap {
+          case cats.effect.kernel.Outcome.Succeeded(value) => value
+          case cats.effect.kernel.Outcome.Errored(error)  => IO.raiseError(error)
+          case cats.effect.kernel.Outcome.Canceled()      => IO.canceled
+        }
     }
 
   /** Diagnostic stage: submit over HTTP alone (Client.fromHttpApp with a finite body). */
