@@ -1,275 +1,217 @@
-[warn] Canceling execution...
-Test run xjdf4s.http.HttpChecksSuite started
-==> X xjdf4s.http.HttpChecksSuite.all http checks pass 46.058s java.lang.ExceptionInInitializerError: null
-    at xjdf4s.http.HttpChecksSuite.$init$$$anonfun$1(HttpChecksSuite.scala:12)
-Caused by: java.util.NoSuchElementException: None.get
-    at scala.None$.get(Option.scala:628)
-java.lang.NoClassDefFoundError: Could not initialize class xjdf4s.http.XjdfServerChecks$
-	at cats.effect.IOFiber.succeeded(IOFiber.scala:1237)
-	at cats.effect.IOFiber.next$1(IOFiber.scala:333)
-	at cats.effect.IOFiber.runLoop(IOFiber.scala:339)
-	at cats.effect.IOFiber.asyncContinueSuccessfulR(IOFiber.scala:1405)
-	at cats.effect.IOFiber.run(IOFiber.scala:123)
-	at cats.effect.unsafe.WorkerThread.lookForWork$1(WorkerThread.scala:549)
-	at cats.effect.unsafe.WorkerThread.run(WorkerThread.scala:942)
-Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElementException: None.get [in thread "pool-31-thread-2"]
-	at scala.None$.get(Option.scala:628)
-	at scala.None$.get(Option.scala:628)
-	at cats.effect.IOPlatform.unsafeRunSync(IOPlatform.scala:42)
-	at xjdf4s.http.XjdfServerChecks$.<clinit>(XjdfServerChecks.scala:93)
-	at xjdf4s.http.HttpChecksSuite.$init$$$anonfun$1(HttpChecksSuite.scala:12)
-	at munit.internal.console.StackTraces$.dropOutside(StackTraces.scala:12)
-	at munit.ValueTransforms.$anonfun$2(ValueTransforms.scala:31)
-	at scala.util.Try$.apply(Try.scala:199)
-	at munit.ValueTransforms.munitValueTransform(ValueTransforms.scala:31)
-	at munit.ValueTransforms.munitValueTransform$(ValueTransforms.scala:8)
-	at munit.FunSuite.munitValueTransform(FunSuite.scala:12)
-	at munit.BaseFunSuite.test$$anonfun$1$$anonfun$1(FunSuite.scala:34)
-	at munit.internal.PlatformCompat$.waitAtMost$$anonfun$1(PlatformCompat.scala:61)
-	at munit.Suite$$anon$1.execute(Suite.scala:28)
-	at munit.internal.PlatformCompat$.waitAtMost(PlatformCompat.scala:60)
-	at munit.BaseFunSuite.waitForCompletion(FunSuite.scala:43)
-	at munit.BaseFunSuite.test$$anonfun$1(FunSuite.scala:34)
-	at munit.MUnitRunner.runTestBody$$anonfun$1$$anonfun$1(MUnitRunner.scala:306)
-	at munit.internal.console.StackTraces$.dropOutside(StackTraces.scala:12)
-	at munit.MUnitRunner.runTestBody$$anonfun$1(MUnitRunner.scala:306)
-	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:489)
-	at munit.Suite$$anon$1.execute(Suite.scala:28)
-	at scala.concurrent.impl.Promise$Transformation.submitWithValue(Promise.scala:448)
-	at scala.concurrent.impl.Promise$DefaultPromise.submitWithValue(Promise.scala:360)
-	at scala.concurrent.impl.Promise$DefaultPromise.dispatchOrAddCallbacks(Promise.scala:311)
-	at scala.concurrent.impl.Promise$DefaultPromise.flatMap(Promise.scala:165)
-	at munit.MUnitRunner.runTestBody(MUnitRunner.scala:336)
-	at munit.MUnitRunner.runTest(MUnitRunner.scala:276)
-	at munit.MUnitRunner.runAsync$$anonfun$1$$anonfun$1(MUnitRunner.scala:112)
-	at scala.collection.Iterator$$anon$9.next(Iterator.scala:598)
-	at munit.MUnitRunner.loop$1(MUnitRunner.scala:135)
-	at munit.MUnitRunner.sequenceFutures(MUnitRunner.scala:147)
-	at munit.MUnitRunner.runAsync$$anonfun$1(MUnitRunner.scala:112)
-	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:496)
-	at munit.Suite$$anon$1.execute(Suite.scala:28)
-	at scala.concurrent.impl.Promise$Transformation.submitWithValue(Promise.scala:448)
-	at scala.concurrent.impl.Promise$DefaultPromise.submitWithValue(Promise.scala:360)
-	at scala.concurrent.impl.Promise$DefaultPromise.dispatchOrAddCallbacks(Promise.scala:311)
-	at scala.concurrent.impl.Promise$DefaultPromise.transformWith(Promise.scala:120)
-	at munit.MUnitRunner.runAsync(MUnitRunner.scala:117)
-	at munit.MUnitRunner.run(MUnitRunner.scala:100)
-	at munit.internal.junitinterface.JUnitRunnerWrapper.run(JUnitRunnerWrapper.java:24)
-	at org.junit.runners.Suite.runChild(Suite.java:128)
-	at org.junit.runners.Suite.runChild(Suite.java:27)
-	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
-	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
-	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
-	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
-	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
-	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
-	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
-	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
-	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
-	at munit.internal.junitinterface.JUnitTask.execute(JUnitTask.java:87)
-	at sbt.TestRunner.runTest$1(TestFramework.scala:154)
-	at sbt.TestRunner.run(TestFramework.scala:170)
-	at sbt.TestFramework$.$anon$superArg$1$1$$anonfun$1$$anonfun$1(TestFramework.scala:317)
-	at sbt.TestFramework$.withContextLoader(TestFramework.scala:303)
-	at sbt.TestFramework$.$anon$superArg$1$1$$anonfun$1(TestFramework.scala:317)
-	at sbt.TestFunction.apply(TestFramework.scala:329)
-	at sbt.Tests$.$anonfun$8(Tests.scala:440)
-	at sbt.std.Transform$.sbt$std$Transform$$anon$1$$_$apply$$anonfun$1(Transform.scala:50)
-	at sbt.std.Transform$$anon$2.work(Transform.scala:70)
-	at sbt.std.Transform$$anon$2.work(Transform.scala:70)
-	at sbt.Execute.submit$$anonfun$1$$anonfun$1(Execute.scala:283)
-	at sbt.internal.util.ErrorHandling$.wideConvert(ErrorHandling.scala:24)
-	at sbt.Execute.work(Execute.scala:294)
-	at sbt.Execute.submit$$anonfun$1(Execute.scala:283)
-	at sbt.ConcurrentRestrictions$$anon$4.$anonfun$2(ConcurrentRestrictions.scala:269)
-	at sbt.CompletionService$$anon$2.call(CompletionService.scala:75)
-	at sbt.CompletionService$$anon$2.call(CompletionService.scala:73)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
-	at java.base/java.lang.Thread.run(Thread.java:1474)
-java.lang.NoClassDefFoundError: Could not initialize class xjdf4s.http.XjdfServerChecks$
-	at cats.effect.IOFiber.succeeded(IOFiber.scala:1237)
-	at cats.effect.IOFiber.next$1(IOFiber.scala:333)
-	at cats.effect.IOFiber.runLoop(IOFiber.scala:339)
-	at cats.effect.IOFiber.asyncContinueSuccessfulR(IOFiber.scala:1405)
-	at cats.effect.IOFiber.run(IOFiber.scala:123)
-	at cats.effect.unsafe.WorkerThread.lookForWork$1(WorkerThread.scala:549)
-	at cats.effect.unsafe.WorkerThread.run(WorkerThread.scala:942)
-Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElementException: None.get [in thread "pool-31-thread-2"]
-	at scala.None$.get(Option.scala:628)
-	at scala.None$.get(Option.scala:628)
-	at cats.effect.IOPlatform.unsafeRunSync(IOPlatform.scala:42)
-	at xjdf4s.http.XjdfServerChecks$.<clinit>(XjdfServerChecks.scala:93)
-	at xjdf4s.http.HttpChecksSuite.$init$$$anonfun$1(HttpChecksSuite.scala:12)
-	at munit.internal.console.StackTraces$.dropOutside(StackTraces.scala:12)
-	at munit.ValueTransforms.$anonfun$2(ValueTransforms.scala:31)
-	at scala.util.Try$.apply(Try.scala:199)
-	at munit.ValueTransforms.munitValueTransform(ValueTransforms.scala:31)
-	at munit.ValueTransforms.munitValueTransform$(ValueTransforms.scala:8)
-	at munit.FunSuite.munitValueTransform(FunSuite.scala:12)
-	at munit.BaseFunSuite.test$$anonfun$1$$anonfun$1(FunSuite.scala:34)
-	at munit.internal.PlatformCompat$.waitAtMost$$anonfun$1(PlatformCompat.scala:61)
-	at munit.Suite$$anon$1.execute(Suite.scala:28)
-	at munit.internal.PlatformCompat$.waitAtMost(PlatformCompat.scala:60)
-	at munit.BaseFunSuite.waitForCompletion(FunSuite.scala:43)
-	at munit.BaseFunSuite.test$$anonfun$1(FunSuite.scala:34)
-	at munit.MUnitRunner.runTestBody$$anonfun$1$$anonfun$1(MUnitRunner.scala:306)
-	at munit.internal.console.StackTraces$.dropOutside(StackTraces.scala:12)
-	at munit.MUnitRunner.runTestBody$$anonfun$1(MUnitRunner.scala:306)
-	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:489)
-	at munit.Suite$$anon$1.execute(Suite.scala:28)
-	at scala.concurrent.impl.Promise$Transformation.submitWithValue(Promise.scala:448)
-	at scala.concurrent.impl.Promise$DefaultPromise.submitWithValue(Promise.scala:360)
-	at scala.concurrent.impl.Promise$DefaultPromise.dispatchOrAddCallbacks(Promise.scala:311)
-	at scala.concurrent.impl.Promise$DefaultPromise.flatMap(Promise.scala:165)
-	at munit.MUnitRunner.runTestBody(MUnitRunner.scala:336)
-	at munit.MUnitRunner.runTest(MUnitRunner.scala:276)
-	at munit.MUnitRunner.runAsync$$anonfun$1$$anonfun$1(MUnitRunner.scala:112)
-	at scala.collection.Iterator$$anon$9.next(Iterator.scala:598)
-	at munit.MUnitRunner.loop$1(MUnitRunner.scala:135)
-	at munit.MUnitRunner.sequenceFutures(MUnitRunner.scala:147)
-	at munit.MUnitRunner.runAsync$$anonfun$1(MUnitRunner.scala:112)
-	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:496)
-	at munit.Suite$$anon$1.execute(Suite.scala:28)
-	at scala.concurrent.impl.Promise$Transformation.submitWithValue(Promise.scala:448)
-	at scala.concurrent.impl.Promise$DefaultPromise.submitWithValue(Promise.scala:360)
-	at scala.concurrent.impl.Promise$DefaultPromise.dispatchOrAddCallbacks(Promise.scala:311)
-	at scala.concurrent.impl.Promise$DefaultPromise.transformWith(Promise.scala:120)
-	at munit.MUnitRunner.runAsync(MUnitRunner.scala:117)
-	at munit.MUnitRunner.run(MUnitRunner.scala:100)
-	at munit.internal.junitinterface.JUnitRunnerWrapper.run(JUnitRunnerWrapper.java:24)
-	at org.junit.runners.Suite.runChild(Suite.java:128)
-	at org.junit.runners.Suite.runChild(Suite.java:27)
-	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
-	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
-	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
-	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
-	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
-	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
-	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
-	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
-	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
-	at munit.internal.junitinterface.JUnitTask.execute(JUnitTask.java:87)
-	at sbt.TestRunner.runTest$1(TestFramework.scala:154)
-	at sbt.TestRunner.run(TestFramework.scala:170)
-	at sbt.TestFramework$.$anon$superArg$1$1$$anonfun$1$$anonfun$1(TestFramework.scala:317)
-	at sbt.TestFramework$.withContextLoader(TestFramework.scala:303)
-	at sbt.TestFramework$.$anon$superArg$1$1$$anonfun$1(TestFramework.scala:317)
-	at sbt.TestFunction.apply(TestFramework.scala:329)
-	at sbt.Tests$.$anonfun$8(Tests.scala:440)
-	at sbt.std.Transform$.sbt$std$Transform$$anon$1$$_$apply$$anonfun$1(Transform.scala:50)
-	at sbt.std.Transform$$anon$2.work(Transform.scala:70)
-	at sbt.std.Transform$$anon$2.work(Transform.scala:70)
-	at sbt.Execute.submit$$anonfun$1$$anonfun$1(Execute.scala:283)
-	at sbt.internal.util.ErrorHandling$.wideConvert(ErrorHandling.scala:24)
-	at sbt.Execute.work(Execute.scala:294)
-	at sbt.Execute.submit$$anonfun$1(Execute.scala:283)
-	at sbt.ConcurrentRestrictions$$anon$4.$anonfun$2(ConcurrentRestrictions.scala:269)
-	at sbt.CompletionService$$anon$2.call(CompletionService.scala:75)
-	at sbt.CompletionService$$anon$2.call(CompletionService.scala:73)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
-	at java.base/java.lang.Thread.run(Thread.java:1474)
-java.lang.NoClassDefFoundError: Could not initialize class xjdf4s.http.XjdfServerChecks$
-	at cats.effect.IOFiber.succeeded(IOFiber.scala:1237)
-	at cats.effect.IOFiber.next$1(IOFiber.scala:333)
-	at cats.effect.IOFiber.runLoop(IOFiber.scala:339)
-	at cats.effect.IOFiber.asyncContinueSuccessfulR(IOFiber.scala:1405)
-	at cats.effect.IOFiber.run(IOFiber.scala:123)
-	at cats.effect.unsafe.WorkerThread.lookForWork$1(WorkerThread.scala:549)
-	at cats.effect.unsafe.WorkerThread.run(WorkerThread.scala:942)
-Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElementException: None.get [in thread "pool-31-thread-2"]
-	at scala.None$.get(Option.scala:628)
-	at scala.None$.get(Option.scala:628)
-	at cats.effect.IOPlatform.unsafeRunSync(IOPlatform.scala:42)
-	at xjdf4s.http.XjdfServerChecks$.<clinit>(XjdfServerChecks.scala:93)
-	at xjdf4s.http.HttpChecksSuite.$init$$$anonfun$1(HttpChecksSuite.scala:12)
-	at munit.internal.console.StackTraces$.dropOutside(StackTraces.scala:12)
-	at munit.ValueTransforms.$anonfun$2(ValueTransforms.scala:31)
-	at scala.util.Try$.apply(Try.scala:199)
-	at munit.ValueTransforms.munitValueTransform(ValueTransforms.scala:31)
-	at munit.ValueTransforms.munitValueTransform$(ValueTransforms.scala:8)
-	at munit.FunSuite.munitValueTransform(FunSuite.scala:12)
-	at munit.BaseFunSuite.test$$anonfun$1$$anonfun$1(FunSuite.scala:34)
-	at munit.internal.PlatformCompat$.waitAtMost$$anonfun$1(PlatformCompat.scala:61)
-	at munit.Suite$$anon$1.execute(Suite.scala:28)
-	at munit.internal.PlatformCompat$.waitAtMost(PlatformCompat.scala:60)
-	at munit.BaseFunSuite.waitForCompletion(FunSuite.scala:43)
-	at munit.BaseFunSuite.test$$anonfun$1(FunSuite.scala:34)
-	at munit.MUnitRunner.runTestBody$$anonfun$1$$anonfun$1(MUnitRunner.scala:306)
-	at munit.internal.console.StackTraces$.dropOutside(StackTraces.scala:12)
-	at munit.MUnitRunner.runTestBody$$anonfun$1(MUnitRunner.scala:306)
-	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:489)
-	at munit.Suite$$anon$1.execute(Suite.scala:28)
-	at scala.concurrent.impl.Promise$Transformation.submitWithValue(Promise.scala:448)
-	at scala.concurrent.impl.Promise$DefaultPromise.submitWithValue(Promise.scala:360)
-	at scala.concurrent.impl.Promise$DefaultPromise.dispatchOrAddCallbacks(Promise.scala:311)
-	at scala.concurrent.impl.Promise$DefaultPromise.flatMap(Promise.scala:165)
-	at munit.MUnitRunner.runTestBody(MUnitRunner.scala:336)
-	at munit.MUnitRunner.runTest(MUnitRunner.scala:276)
-	at munit.MUnitRunner.runAsync$$anonfun$1$$anonfun$1(MUnitRunner.scala:112)
-	at scala.collection.Iterator$$anon$9.next(Iterator.scala:598)
-	at munit.MUnitRunner.loop$1(MUnitRunner.scala:135)
-	at munit.MUnitRunner.sequenceFutures(MUnitRunner.scala:147)
-	at munit.MUnitRunner.runAsync$$anonfun$1(MUnitRunner.scala:112)
-	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:496)
-	at munit.Suite$$anon$1.execute(Suite.scala:28)
-	at scala.concurrent.impl.Promise$Transformation.submitWithValue(Promise.scala:448)
-	at scala.concurrent.impl.Promise$DefaultPromise.submitWithValue(Promise.scala:360)
-	at scala.concurrent.impl.Promise$DefaultPromise.dispatchOrAddCallbacks(Promise.scala:311)
-	at scala.concurrent.impl.Promise$DefaultPromise.transformWith(Promise.scala:120)
-	at munit.MUnitRunner.runAsync(MUnitRunner.scala:117)
-	at munit.MUnitRunner.run(MUnitRunner.scala:100)
-	at munit.internal.junitinterface.JUnitRunnerWrapper.run(JUnitRunnerWrapper.java:24)
-	at org.junit.runners.Suite.runChild(Suite.java:128)
-	at org.junit.runners.Suite.runChild(Suite.java:27)
-	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
-	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
-	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
-	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
-	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
-	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
-	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
-	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
-	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
-	at munit.internal.junitinterface.JUnitTask.execute(JUnitTask.java:87)
-	at sbt.TestRunner.runTest$1(TestFramework.scala:154)
-	at sbt.TestRunner.run(TestFramework.scala:170)
-	at sbt.TestFramework$.$anon$superArg$1$1$$anonfun$1$$anonfun$1(TestFramework.scala:317)
-	at sbt.TestFramework$.withContextLoader(TestFramework.scala:303)
-	at sbt.TestFramework$.$anon$superArg$1$1$$anonfun$1(TestFramework.scala:317)
-	at sbt.TestFunction.apply(TestFramework.scala:329)
-	at sbt.Tests$.$anonfun$8(Tests.scala:440)
-	at sbt.std.Transform$.sbt$std$Transform$$anon$1$$_$apply$$anonfun$1(Transform.scala:50)
-	at sbt.std.Transform$$anon$2.work(Transform.scala:70)
-	at sbt.std.Transform$$anon$2.work(Transform.scala:70)
-	at sbt.Execute.submit$$anonfun$1$$anonfun$1(Execute.scala:283)
-	at sbt.internal.util.ErrorHandling$.wideConvert(ErrorHandling.scala:24)
-	at sbt.Execute.work(Execute.scala:294)
-	at sbt.Execute.submit$$anonfun$1(Execute.scala:283)
-	at sbt.ConcurrentRestrictions$$anon$4.$anonfun$2(ConcurrentRestrictions.scala:269)
-	at sbt.CompletionService$$anon$2.call(CompletionService.scala:75)
-	at sbt.CompletionService$$anon$2.call(CompletionService.scala:73)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
-	at java.base/java.lang.Thread.run(Thread.java:1474)
-Cancelled: testFull
-    at scala.None$.get(Option.scala:628)
-    at cats.effect.IOPlatform.unsafeRunSync(IOPlatform.scala:42)
-    at xjdf4s.http.XjdfServerChecks$.<clinit>(XjdfServerChecks.scala:93)
-    ... 1 more
-xjdf4s.http.HttpChecksSuite: finished 46.065s
-Test run xjdf4s.http.HttpChecksSuite finished: 1 failed, 0 ignored, 1 total 46.069s
-[error] Cancelled: testFull
-[error] Use 'last' for the full log.
-[IJ]
-Process finished with exit code 130 (interrupted by signal 2:SIGINT)
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:11:31
+[error] 11 |  test("entity xml round trip".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:15:32
+[error] 15 |  test("entity json round trip".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:19:32
+[error] 19 |  test("xjmf entity round trip".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:23:33
+[error] 23 |  test("rejects wrong mime type".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:27:35
+[error] 27 |  test("message entity round trip".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:31:38
+[error] 31 |  test("diagnostic: submit over http".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:35:41
+[error] 35 |  test("diagnostic: subscribe over http".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:39:34
+[error] 39 |  test("diagnostic: hub delivery".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:43:25
+[error] 43 |  test("end to end demo".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:47:35
+[error] 47 |  test("subscription stream route".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:51:22
+[error] 51 |  test("stop channel".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:55:20
+[error] 55 |  test("body limit".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:59:33
+[error] 59 |  test("transport await timeout".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:63:36
+[error] 63 |  test("await cancellation cleanup".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/HttpChecksSuite.scala:67:36
+[error] 67 |  test("effectful document builder".timeout(15.seconds)) {
+[error]    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |value timeout is not a member of String, but could be made available as an extension method.
+[error]    |
+[error]    |One of the following imports might make progress towards fixing the problem:
+[error]    |
+[error]    |  import cats.effect.implicits.genTemporalOps
+[error]    |  import cats.effect.kernel.implicits.genTemporalOps
+[error]    |  import cats.effect.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.all.genTemporalOps
+[error]    |  import cats.effect.kernel.syntax.temporal.genTemporalOps
+[error]    |  import cats.effect.syntax.temporal.genTemporalOps
+[error]    |
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/XjdfServerChecks.scala:66:16
+[error] 66 |        outcome.embed(IO.canceled)
+[error]    |        ^^^^^^^^^^^^^
+[error]    |value embed is not a member of cats.effect.kernel.Fiber[cats.effect.IO, Throwable, Unit]
+[error] stack trace is suppressed; run last http / Test / compileIncremental for the full output
+[error] (http / Test / compileIncremental) sbt.util.CachedCompileFailure$$anon$1: Compilation failed
+[error] elapsed time: 0 s, cache 100%, 1 cached-failure cache hit, 228 disk cache hits
