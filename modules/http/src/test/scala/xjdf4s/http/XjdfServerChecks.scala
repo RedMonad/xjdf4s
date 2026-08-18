@@ -62,7 +62,8 @@ object XjdfServerChecks:
   private def step[A](name: String)(io: IO[A]): IO[A] =
     IO.racePair(IO.sleep(3.seconds), io).flatMap {
       case Left(_) => IO.raiseError[A](new RuntimeException(s"step timed out: $name"))
-      case Right((outcome, _)) =>
+      // racePair's pair is (loser fiber, winner outcome): the step wins when its outcome is the second element
+      case Right((_, outcome)) =>
         outcome.join.flatMap {
           case cats.effect.kernel.Outcome.Succeeded(value) => value
           case cats.effect.kernel.Outcome.Errored(error)  => IO.raiseError(error)
