@@ -1,43 +1,23 @@
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:50:42
-[error] 50 |            IO.pure(Left(MediaTypeMismatch(contentType.mediaType, Set(mediaType)): Either[org.http4s.DecodeFailure, A]))
-[error]    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                         Found:    org.http4s.MediaTypeMismatch
-[error]    |                         Required: Either[org.http4s.DecodeFailure, A]
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/XjdfIoChecks.scala:51:14
+[error] 51 |        _ <- (Xjdf.openChannel(subscription, channelId, messageType) *> Xjdf.deliver(signal)).foldMap(transport.interpreter)
+[error]    |              ^^^^
+[error]    |              Not found: Xjdf
 [error]    |
 [error]    | longer explanation available when compiling with `-explain`
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfEntities.scala:52:41
-[error] 52 |            IO.pure(Left(MediaTypeMissing(Set(mediaType)): Either[org.http4s.DecodeFailure, A]))
-[error]    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |                         Found:    org.http4s.MediaTypeMissing
-[error]    |                         Required: Either[org.http4s.DecodeFailure, A]
+[error] -- [E006] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/XjdfIoChecks.scala:70:18
+[error] 70 |        program = Xjdf.openChannel(subscription, channelId, messageType) *> Xjdf.awaitResponse(signalId)
+[error]    |                  ^^^^
+[error]    |                  Not found: Xjdf
 [error]    |
 [error]    | longer explanation available when compiling with `-explain`
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:45:54
-[error] 45 |          xjdf <- request.as[XJDF](using XjdfEntities.xjdfXmlDecoder)
-[error]    |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |          Found:    (xjdf4s.http.XjdfEntities.xjdfXmlDecoder :
-[error]    |            org.http4s.EntityDecoder[cats.effect.IO, xjdf4s.model.XJDF])
-[error]    |          Required: cats.MonadThrow[cats.effect.IO]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:56:69
-[error] 56 |          query <- request.as[QueryStatus](using XjdfMessageEntities.queryStatusDecoder)
-[error]    |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |Found:    (xjdf4s.http.XjdfMessageEntities.queryStatusDecoder :
-[error]    |  org.http4s.EntityDecoder[cats.effect.IO, xjdf4s.messaging.QueryStatus])
-[error]    |Required: cats.MonadThrow[cats.effect.IO]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] -- [E007] Type Mismatch Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/main/scala/xjdf4s/http/XjdfServer.scala:75:88
-[error] 75 |          command <- request.as[CommandStopPersistentChannel](using XjdfMessageEntities.commandStopPersistentChannelDecoder)
-[error]    |                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[error]    |Found:    (xjdf4s.http.XjdfMessageEntities.commandStopPersistentChannelDecoder :
-[error]    |  org.http4s.EntityDecoder[cats.effect.IO,
-[error]    |    xjdf4s.messaging.CommandStopPersistentChannel]
-[error]    |)
-[error]    |Required: cats.MonadThrow[cats.effect.IO]
-[error]    |
-[error]    | longer explanation available when compiling with `-explain`
-[error] 5 errors found
-[error] (http / Compile / compileIncremental) Compilation failed
-[error] elapsed time: 4 s, cache 99%, 221 disk cache hits, 1 onsite task
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/XjdfServerChecks.scala:54:57
+[error] 54 |        first <- Client.fromHttpApp(XjdfServer.app(hub)).use { client =>
+[error]    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |   value use is not a member of org.http4s.client.Client[cats.effect.IO]
+[error] -- [E008] Not Found Error: /Users/black-monad/Projects/xjdf4s/modules/http/src/test/scala/xjdf4s/http/XjdfServerChecks.scala:85:53
+[error] 85 |        _ <- Client.fromHttpApp(XjdfServer.app(hub)).use { client =>
+[error]    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]    |   value use is not a member of org.http4s.client.Client[cats.effect.IO]
+[error] stack trace is suppressed; run last http / Test / compileIncremental for the full output
+[error] (http / Test / compileIncremental) sbt.util.CachedCompileFailure$$anon$1: Compilation failed
+[error] elapsed time: 3 s, cache 100%, 1 cached-failure cache hit, 228 disk cache hits
