@@ -3,8 +3,6 @@ package xjdf4s.http
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 
-import scala.concurrent.duration.*
-
 import org.http4s.{MediaType, Method, Request, Status}
 import org.http4s.client.Client
 import org.http4s.headers.`Content-Type`
@@ -54,32 +52,14 @@ object XjdfServerChecks:
       subscription = Some(subscription),
     )
 
-  /**
-   * Diagnostic guard: names the step that fails to complete instead of hanging the whole suite. racePair (not
-   * race) is deliberate: cats-effect 3's race waits for the loser's cancellation, and a hung step with an
-   * uncancelable region (like the fromHttpApp producer) would hang the guard itself. racePair returns as soon
-   * as either side completes; when the timer wins, the hung step leaks but the test fails with its name.
-   */
-  private def step[A](name: String)(io: IO[A]): IO[A] =
-    IO.racePair(IO.sleep(3.seconds), io).flatMap {
-      case Left(_) => IO.raiseError[A](new RuntimeException(s"step timed out: $name"))
-      // racePair's pair is (loser fiber, winner outcome): the step wins when its outcome is the second element
-      case Right((_, outcome)) =>
-        outcome match
-          case cats.effect.kernel.Outcome.Succeeded(value) => value
-          case cats.effect.kernel.Outcome.Errored(error)  => IO.raiseError(error)
-          // self-cancel, typed: the continuation is unreachable because the cancellation raises on evaluation
-          case cats.effect.kernel.Outcome.Canceled()      => IO.canceled.flatMap(_ => IO.never[A])
-    }
-
   /** Diagnostic stage: submit over HTTP alone (Client.fromHttpApp with a finite body). */
   def submitOverHttp(): Unit =
     val document = XJDF(jobId, NonEmptyVector.one(process))
     val run: IO[ResponseSubmitQueueEntry] =
       for
-        hub <- step("submit: hub.create")(XjdfHub.create)
+        hub <- XjdfHub.create
         client = Client.fromHttpApp(XjdfServer.app(hub))
-        receipt <- step("submit: client.submit")(XjdfClient.submit(client, document))
+        receipt <- XjdfClient.submit(client, document)
       yield receipt
     val receipt = run.unsafeRunSync()
     assert(receipt.returnCode.contains(0))
@@ -89,9 +69,9 @@ object XjdfServerChecks:
   def subscribeOverHttp(): Unit =
     val run: IO[ResponseStatus] =
       for
-        hub <- step("subscribe: hub.create")(XjdfHub.create)
+        hub <- XjdfHub.create
         client = Client.fromHttpApp(XjdfServer.app(hub))
-        response <- step("subscribe: client.subscribeStatus")(XjdfClient.subscribeStatus(client, statusQuery))
+        response <- XjdfClient.subscribeStatus(client, statusQuery)
       yield response
     val response = run.unsafeRunSync()
     assert(response.returnCode.contains(0))
@@ -103,12 +83,11 @@ object XjdfServerChecks:
     val secondSignal = signal("S2")
     val run: IO[Vector[XJMF]] =
       for
-        hub <- step("delivery: hub.create")(XjdfHub.create)
-        _ <- step("delivery: openChannel")(hub.openChannel(subscription, channelId, messageType))
-        resource <- step("delivery: subscribeAwait")(hub.subscribeAwait(channelId))
+        hub <- XjdfHub.create
+        _ <- hub.openChannel(subscription, channelId, messageType)
+        resource <- hub.subscribeAwait(channelId)
         frames <- resource match
           case Some(resource) =>
-            step("delivery: two signals") {
               resource.use { stream =>
                 for
                   fiber <- stream.map(hub.envelope).take(2).compile.toVector.start
@@ -117,7 +96,6 @@ object XjdfServerChecks:
                   delivered <- fiber.joinWithNever
                 yield delivered
               }
-            }
           case None => IO.raiseError(new AssertionError(s"channel '$channelId' was not opened"))
       yield frames
     val frames = run.unsafeRunSync()
@@ -130,14 +108,13 @@ object XjdfServerChecks:
     val secondSignal = signal("S2")
     val run: IO[(ResponseSubmitQueueEntry, ResponseStatus, Vector[XJMF])] =
       for
-        hub <- step("demo: hub.create")(XjdfHub.create)
+        hub <- XjdfHub.create
         client = Client.fromHttpApp(XjdfServer.app(hub))
-        receipt <- step("demo: client.submit")(XjdfClient.submit(client, document))
-        response <- step("demo: client.subscribeStatus")(XjdfClient.subscribeStatus(client, statusQuery))
-        resource <- step("demo: hub.subscribeAwait")(hub.subscribeAwait(channelId))
+        receipt <- XjdfClient.submit(client, document)
+        response <- XjdfClient.subscribeStatus(client, statusQuery)
+        resource <- hub.subscribeAwait(channelId)
         frames <- resource match
           case Some(resource) =>
-            step("demo: deliver-two-signals") {
               resource.use { stream =>
                 for
                   fiber <- stream.map(hub.envelope).take(2).compile.toVector.start
@@ -146,7 +123,6 @@ object XjdfServerChecks:
                   delivered <- fiber.joinWithNever
                 yield delivered
               }
-            }
           case None => IO.raiseError(new AssertionError(s"channel '$channelId' was not opened"))
       yield (receipt, response, frames)
     val (receipt, response, frames) = run.unsafeRunSync()
@@ -200,8 +176,8 @@ object XjdfServerChecks:
         limited = XjdfServer.limitedApp(hub, limit = 64)
         // the XJDF media type lets the strict decoder start reading the body, so the limiter trips on it
         request = Request[IO](Method.POST, uri"/submit")
-          .withContentType(`Content-Type`(XjdfMediaTypes.xjdfXml))
           .withEntity("x" * 1024)
+          .withContentType(`Content-Type`(XjdfMediaTypes.xjdfXml))
         _ <- limited.run(request).void
       yield ()
     // in http4s 0.23 the middleware raises EntityTooLarge (it does not fabricate a 413 response itself)

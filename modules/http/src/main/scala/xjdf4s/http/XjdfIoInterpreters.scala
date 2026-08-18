@@ -30,6 +30,7 @@ object XjdfIoInterpreters:
       waits: Ref[IO, Map[String, Deferred[IO, Response]]],
       send: Signal => IO[Unit],
       awaitTimeout: FiniteDuration,
+      sleep: FiniteDuration => IO[Unit],
   ):
 
     val interpreter: XjmfOp ~> IO = new (XjmfOp ~> IO):
@@ -67,10 +68,14 @@ object XjdfIoInterpreters:
     private def awaitNewResponse(responseId: String): IO[Option[Response]] =
       Deferred[IO, Response].flatMap { deferred =>
         waits.update(_ + (responseId -> deferred)) *>
-          deferred.get
-            .map(Some(_))
-            .timeoutTo(awaitTimeout, IO.pure(None))
-            .guarantee(waits.update(_ - responseId))
+          IO.racePair(sleep(awaitTimeout), deferred.get).flatMap {
+            case Left(_) => IO.pure(None)
+            case Right((_, outcome)) =>
+              outcome match
+                case cats.effect.kernel.Outcome.Succeeded(value) => value.map(Some(_))
+                case cats.effect.kernel.Outcome.Errored(error)  => IO.raiseError(error)
+                case cats.effect.kernel.Outcome.Canceled()      => IO.pure(None)
+          }.guarantee(waits.update(_ - responseId))
       }
 
     private def runTransition[A](operation: XjmfOp[A]): IO[Chain[TransportEvent]] =
@@ -90,14 +95,19 @@ object XjdfIoInterpreters:
     def waitingCount: IO[Int] = waits.get.map(_.size)
   end Transport
 
-  /** Creates the transport interpreter: state, the delivery hook and the await timeout. */
+  /**
+   * Creates the transport interpreter: state, the delivery hook, the await timeout and the timer effect.
+   * The timer is injectable so tests can drive the timeout deterministically (an instant timer fires the
+   * timeout immediately, a never timer disables it) without relying on wall-clock scheduling.
+   */
   def transport(
       state: Ref[IO, XjmfState],
       send: Signal => IO[Unit],
       awaitTimeout: FiniteDuration,
+      sleep: FiniteDuration => IO[Unit] = IO.sleep,
   ): IO[Transport] =
     Ref.of[IO, Map[String, Deferred[IO, Response]]](Map.empty).map { waits =>
-      new Transport(state, waits, send, awaitTimeout)
+      new Transport(state, waits, send, awaitTimeout, sleep)
     }
 
   /** `DocOp ~> IO`: the effectful document builder — the stage 03 step logic, folded into a `Ref`. */

@@ -16,6 +16,9 @@ import xjdf4s.xjmf.*
  * The stage 07 interpreters: the effectful transport (stateful core + delivery hook + deferred correlation +
  * await timeout with cancellation cleanup) and the effectful document builder. The stage 03/06 algebras are
  * untouched — these are new interpreters only.
+ *
+ * The timer is injected: an instant timer fires the await timeout immediately, a never timer disables it.
+ * This keeps every test deterministic - no wall-clock scheduling is involved.
  */
 object XjdfIoChecks:
 
@@ -41,34 +44,19 @@ object XjdfIoChecks:
   private val answer: ResponseResource =
     ResponseResource(header("R1", Some("S1")), returnCode = Some(0))
 
-  /**
-   * Diagnostic guard, same rationale as in XjdfServerChecks: racePair names the step that fails to complete
-   * without waiting for the loser's cancellation (which can itself hang on an uncancelable region).
-   */
-  private def step[A](name: String)(io: IO[A]): IO[A] =
-    IO.racePair(IO.sleep(3.seconds), io).flatMap {
-      case Left(_) => IO.raiseError[A](new RuntimeException(s"step timed out: $name"))
-      case Right((_, outcome)) =>
-        outcome match
-          case cats.effect.kernel.Outcome.Succeeded(value) => value
-          case cats.effect.kernel.Outcome.Errored(error)  => IO.raiseError(error)
-          // self-cancel, typed: the continuation is unreachable because the cancellation raises on evaluation
-          case cats.effect.kernel.Outcome.Canceled()      => IO.canceled.flatMap(_ => IO.never[A])
-    }
-
-  /** Task 5: the await times out while no answer arrives and resolves once the response is delivered. */
+  /** Task 5: with the instant timer the unanswered await times out immediately; the answer then correlates. */
   val transportTimeout: Unit =
     val run: IO[(Option[Response], Option[Response], Vector[Signal], XjmfState)] =
       for
-        state <- step("transport: state ref")(Ref.of[IO, XjmfState](XjmfState.empty))
-        sent <- step("transport: sent ref")(Ref.of[IO, Vector[Signal]](Vector.empty))
-        transport <- step("transport: create")(XjdfIoInterpreters.transport(state, value => sent.update(_ :+ value), 100.millis))
-        _ <- step("transport: open+deliver")((Xjmf.openChannel(subscription, channelId, messageType) *> Xjmf.deliver(signal)).foldMap(transport.interpreter))
-        before <- step("transport: await before")(Xjmf.awaitResponse(signalId).foldMap(transport.interpreter))
-        _ <- step("transport: deliverResponse")(Xjmf.deliverResponse(answer).foldMap(transport.interpreter))
-        after <- step("transport: await after")(Xjmf.awaitResponse(signalId).foldMap(transport.interpreter))
-        delivered <- step("transport: sent get")(sent.get)
-        finalState <- step("transport: state get")(state.get)
+        state <- Ref.of[IO, XjmfState](XjmfState.empty)
+        sent <- Ref.of[IO, Vector[Signal]](Vector.empty)
+        transport <- XjdfIoInterpreters.transport(state, value => sent.update(_ :+ value), 100.millis, _ => IO.unit)
+        _ <- (Xjmf.openChannel(subscription, channelId, messageType) *> Xjmf.deliver(signal)).foldMap(transport.interpreter)
+        before <- Xjmf.awaitResponse(signalId).foldMap(transport.interpreter)
+        _ <- Xjmf.deliverResponse(answer).foldMap(transport.interpreter)
+        after <- Xjmf.awaitResponse(signalId).foldMap(transport.interpreter)
+        delivered <- sent.get
+        finalState <- state.get
       yield (before, after, delivered, finalState)
     val (before, after, delivered, finalState) = run.unsafeRunSync()
     assert(before.isEmpty, "the reliable signal has no answer yet, so the await must time out")
@@ -76,12 +64,12 @@ object XjdfIoChecks:
     assert(delivered == Vector(signal))
     assert(finalState.pending.isEmpty)
 
-  /** Task 5: cancelling the await frees the waiter registration (no leak in the interpreter). */
+  /** Task 5: with the never timer the await waits indefinitely, and cancelling it frees the registration. */
   val awaitCancellation: Unit =
     val run: IO[Int] =
       for
         state <- Ref.of[IO, XjmfState](XjmfState.empty)
-        transport <- XjdfIoInterpreters.transport(state, _ => IO.unit, 10.seconds)
+        transport <- XjdfIoInterpreters.transport(state, _ => IO.unit, 10.seconds, _ => IO.never)
         program = Xjmf.openChannel(subscription, channelId, messageType) *> Xjmf.awaitResponse(signalId)
         fiber <- program.foldMap(transport.interpreter).start
         _ <- fiber.cancel
