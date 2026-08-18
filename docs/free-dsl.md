@@ -75,3 +75,8 @@ val document: XJDF = DocInterpreters.run(program, seed)   // seed: XJDF(jobId, t
 она не нужна в алгебре.
 
 Понятийный минимум (Functor/Monad/Free/State/Writer) — [fp-glossary.md](fp-glossary.md).
+
+Этап 06 подтвердил правило на практике: транспортная алгебра `XjmfOp` — Free (сценарии каналов),
+а её traced-интерпретатор — `WriterT[State, Chain[TransportEvent], *]`, потому что трасса зависит
+от состояния канала (`Unrouted`/`ChannelNotOpen`), которого голый `Writer` не видит; обе трассы
+обёрнуты над одним ядром переходов и совпадают по построению.
