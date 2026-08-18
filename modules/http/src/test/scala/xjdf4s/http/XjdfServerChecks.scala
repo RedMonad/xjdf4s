@@ -53,9 +53,16 @@ object XjdfServerChecks:
       subscription = Some(subscription),
     )
 
-  /** Diagnostic guard: names the step that fails to complete instead of hanging the whole suite. */
+  /**
+   * Diagnostic guard: names the step that fails to complete instead of hanging the whole suite. IO.race is
+   * deliberate: timeoutTo would wait for the losing side's finalizers, and the fromHttpApp finalizer drains a
+   * channel that itself can hang - race cancels the loser without awaiting its finalizers.
+   */
   private def step[A](name: String)(io: IO[A]): IO[A] =
-    io.timeoutTo(3.seconds, IO.raiseError(new RuntimeException(s"step timed out: $name")))
+    IO.race(io, IO.sleep(3.seconds) *> IO.raiseError[Nothing](new RuntimeException(s"step timed out: $name"))).flatMap {
+      case Left(value) => IO.pure(value)
+      case Right(_)    => IO.raiseError[A](new RuntimeException(s"step timed out: $name"))
+    }
 
   /** Task 2 + 4: the demo runs end-to-end — submit and subscribe over HTTP, then two signals over the hub. */
   val endToEndDemo: Unit =
