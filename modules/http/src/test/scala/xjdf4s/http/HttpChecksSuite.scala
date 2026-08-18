@@ -70,4 +70,8 @@ class HttpChecksSuite extends munit.FunSuite:
   test("effectful document builder") {
     XjdfIoChecks.documentInterpreter()
   }
+
+  test("multipart submission round trip") {
+    XjdfIoChecks.multipartSubmission()
+  }
 end HttpChecksSuite

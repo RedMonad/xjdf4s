@@ -15,7 +15,7 @@
 
 ## Карта этапов
 
-> Статус: этапы 01–06 выполнены; этапы 07–08 — план. Детали дизайна — в `docs/`.
+> Статус: этапы 01–07 выполнены; этап 08 — план. Детали дизайна — в `docs/`.
 
 | # | Этап | Ключевые средства cats | Модуль(и) | Зависит от |
 |---:|---|---|---|---|
@@ -25,7 +25,7 @@
 | 04 ✅ | [XML-кодек](04-xml-codec.md) | `Kleisli`, `Either`, `ValidatedNel`, деривация, XSD-proof | `codec-xml` (полное покрытие 102/14/44) | 01, 02 |
 | 05 ✅ | [JSON-кодек и JSON-исключения](05-json-codec.md) | circe, кросс-закон XML↔JSON | `codec-json` (полное покрытие 102/14/44) | 04 |
 | 06 ✅ | [XJMF-транспорт: каналы и сессии](06-xjmf-transport.md) | `Free`, `State`, `Chain`, `WriterT` | `xjmf` (алгебра + 2 интерпретатора + 7 сценариев) | 03, 04 |
-| 07 | [Эффекты и HTTP-рантайм](07-effects-http-runtime.md) | cats-effect, fs2, http4s (над cats) | новый `http` | 04–06 |
+| 07 ✅ | [Эффекты и HTTP-рантайм](07-effects-http-runtime.md) | cats-effect, fs2, http4s (над cats) | `http` (entity-кодеки, сервер, клиент, топики, IO-интерпретаторы, multipart) | 04–06 |
 | 08 | [Деривация, законы, property-тесты и публикация](08-derivation-laws-publishing.md) | `cats-laws`, discipline, scalacheck, sbt-typelevel | все | 01–07 |
 
 ## Граф зависимостей
@@ -78,4 +78,4 @@
   property-based proof против `schema.xsd` — 2×100 детерминированных документов (генераторы в тестовых
   scope'ах `model`/`messaging`, переиспользуются через `test->test`); proof поймал три дефекта порядка
   и dangling IDREF, которых не видели round-trip-тесты.
-- Этапы 07–08 — план.
+- Этап 08 — план.

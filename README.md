@@ -20,6 +20,9 @@ The project is intentionally split along protocol boundaries:
 - `xjdf4s-codec-xml` — XML codec over the domain: parser, writer, decoders/encoders, ID/IDREF pass,
   full 102/14/44 coverage via typeclass derivation, and a property-based round-trip proof against the
   XJDF schema (`xjdf.xsd`);
+- `xjdf4s-http` — the HTTP runtime (cats-effect, fs2, http4s): Table 9.1 entity codecs over the stage
+  04/05 codecs, the Table 9.5 device surface with Topic-backed subscription streams, the multipart packaging
+  of 9.10.4.2, and IO interpreters for the stage 03/06 algebras;
 - `xjdf4s-codec-json` — JSON codec (circe): full 102/14/44 coverage with typeclass derivation, the normative
   JSON exceptions (`$schema`/`Name`, XJMF exactly-one-message, MediaLayers in-lining, Comment `"Text"`,
   AuditPool array form), foreign-namespace members as JSON-LD `"Prefix:Name"` + `"@context"`, and an
