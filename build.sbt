@@ -1,6 +1,12 @@
 val scala3Version = "3.8.4"
 val catsVersion = "2.12.0"
 val circeVersion = "0.14.10"
+// versions checked against the reference documentation at the stage 07 start:
+// cats-effect 3.7.0 (reference/cats-effect), fs2 3.12.0, http4s 0.23.30 (the stable line;
+// the 1.0.0-M4x milestones are avoided per the stage 07 risk note)
+val catsEffectVersion = "3.7.0"
+val fs2Version = "3.12.0"
+val http4sVersion = "0.23.30"
 
 scalaVersion := scala3Version
 organization := "io.github.redmonad"
@@ -57,6 +63,22 @@ lazy val xjmf = project
     libraryDependencies += "org.typelevel" %% "cats-free" % catsVersion
   )
 
+lazy val http = project
+  .in(file("modules/http"))
+  .dependsOn(model, messaging, dsl, xjmf, codecXml, codecJson)
+  .settings(
+    name := "xjdf4s-http",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-effect" % catsEffectVersion,
+      "co.fs2"        %% "fs2-core"    % fs2Version,
+      "org.http4s"    %% "http4s-core"   % http4sVersion,
+      "org.http4s"    %% "http4s-dsl"    % http4sVersion,
+      "org.http4s"    %% "http4s-server" % http4sVersion,
+      "org.http4s"    %% "http4s-client" % http4sVersion,
+      "io.circe"      %% "circe-parser" % circeVersion
+    )
+  )
+
 lazy val codecXml = project
   .in(file("modules/codec-xml"))
   // "test->test" makes the domain generators (model and messaging test scopes) available to the codec tests,
@@ -82,7 +104,7 @@ lazy val codecJson = project
   )
 
 lazy val root = rootProject
-  .aggregate(core, model, messaging, protocol, dsl, xjmf, codecXml, codecJson)
+  .aggregate(core, model, messaging, protocol, dsl, xjmf, codecXml, codecJson, http)
   .settings(
     name := "xjdf4s",
     publish / skip := true,
