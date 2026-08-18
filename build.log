@@ -1,31 +1,31 @@
 [warn] Canceling execution...
 Test run xjdf4s.http.HttpChecksSuite started
-==> X xjdf4s.http.HttpChecksSuite.body limit 0.007s java.lang.AssertionError: assertion failed: expected EntityTooLarge, got Right(())
-    at xjdf4s.http.XjdfServerChecks$.bodyLimit(XjdfServerChecks.scala:210)
-    at xjdf4s.http.HttpChecksSuite.$init$$$anonfun$12(HttpChecksSuite.scala:59)
-==> X xjdf4s.http.HttpChecksSuite.transport await timeout 58.405s java.lang.ExceptionInInitializerError: null
+==> X xjdf4s.http.HttpChecksSuite.transport await timeout 60.98s java.lang.ExceptionInInitializerError: null
     at xjdf4s.http.HttpChecksSuite.$init$$$anonfun$13(HttpChecksSuite.scala:63)
 Caused by: java.util.NoSuchElementException: None.get
     at scala.None$.get(Option.scala:628)
     at scala.None$.get(Option.scala:628)
     at cats.effect.IOPlatform.unsafeRunSync(IOPlatform.scala:42)
-    at xjdf4s.http.XjdfIoChecks$.<clinit>(XjdfIoChecks.scala:73)
+    at xjdf4s.http.XjdfIoChecks$.<clinit>(XjdfIoChecks.scala:61)
     ... 1 more
 ==> s xjdf4s.http.HttpChecksSuite.await cancellation cleanup skipped 0.0s
 ==> s xjdf4s.http.HttpChecksSuite.effectful document builder skipped 0.0s
-xjdf4s.http.HttpChecksSuite: finished 59.828s
-Test run xjdf4s.http.HttpChecksSuite finished: 2 failed, 0 ignored, 13 total 59.834s
+xjdf4s.http.HttpChecksSuite: finished 62.217s
+Test run xjdf4s.http.HttpChecksSuite finished: 1 failed, 0 ignored, 13 total 62.223s
 [error] Cancelled: testFull
 java.lang.NoClassDefFoundError: Could not initialize class xjdf4s.http.XjdfIoChecks$
+	at xjdf4s.http.XjdfIoChecks$.$init$$$anonfun$1$$anonfun$1$$anonfun$3(XjdfIoChecks.scala:54)
 	at cats.effect.IOFiber.succeeded(IOFiber.scala:1237)
-	at cats.effect.IOFiber.asyncContinueSuccessfulR(IOFiber.scala:1405)
-	at cats.effect.IOFiber.run(IOFiber.scala:123)
-	at cats.effect.unsafe.WorkerThread.run(WorkerThread.scala:935)
-Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElementException: None.get [in thread "pool-31-thread-6"]
+	at cats.effect.IOFiber.runLoop(IOFiber.scala:367)
+	at cats.effect.IOFiber.execR(IOFiber.scala:1399)
+	at cats.effect.IOFiber.run(IOFiber.scala:122)
+	at cats.effect.unsafe.WorkerThread.lookForWork$1(WorkerThread.scala:519)
+	at cats.effect.unsafe.WorkerThread.run(WorkerThread.scala:942)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElementException: None.get [in thread "pool-31-thread-8"]
 	at scala.None$.get(Option.scala:628)
 	at scala.None$.get(Option.scala:628)
 	at cats.effect.IOPlatform.unsafeRunSync(IOPlatform.scala:42)
-	at xjdf4s.http.XjdfIoChecks$.<clinit>(XjdfIoChecks.scala:73)
+	at xjdf4s.http.XjdfIoChecks$.<clinit>(XjdfIoChecks.scala:61)
 	at xjdf4s.http.HttpChecksSuite.$init$$$anonfun$13(HttpChecksSuite.scala:63)
 	at munit.internal.console.StackTraces$.dropOutside(StackTraces.scala:12)
 	at munit.ValueTransforms.$anonfun$2(ValueTransforms.scala:31)
@@ -100,15 +100,18 @@ Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElem
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
 	at java.base/java.lang.Thread.run(Thread.java:1474)
 java.lang.NoClassDefFoundError: Could not initialize class xjdf4s.http.XjdfIoChecks$
+	at xjdf4s.http.XjdfIoChecks$.$init$$$anonfun$1$$anonfun$1$$anonfun$3(XjdfIoChecks.scala:54)
 	at cats.effect.IOFiber.succeeded(IOFiber.scala:1237)
-	at cats.effect.IOFiber.asyncContinueSuccessfulR(IOFiber.scala:1405)
-	at cats.effect.IOFiber.run(IOFiber.scala:123)
-	at cats.effect.unsafe.WorkerThread.run(WorkerThread.scala:935)
-Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElementException: None.get [in thread "pool-31-thread-6"]
+	at cats.effect.IOFiber.runLoop(IOFiber.scala:367)
+	at cats.effect.IOFiber.execR(IOFiber.scala:1399)
+	at cats.effect.IOFiber.run(IOFiber.scala:122)
+	at cats.effect.unsafe.WorkerThread.lookForWork$1(WorkerThread.scala:519)
+	at cats.effect.unsafe.WorkerThread.run(WorkerThread.scala:942)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElementException: None.get [in thread "pool-31-thread-8"]
 	at scala.None$.get(Option.scala:628)
 	at scala.None$.get(Option.scala:628)
 	at cats.effect.IOPlatform.unsafeRunSync(IOPlatform.scala:42)
-	at xjdf4s.http.XjdfIoChecks$.<clinit>(XjdfIoChecks.scala:73)
+	at xjdf4s.http.XjdfIoChecks$.<clinit>(XjdfIoChecks.scala:61)
 	at xjdf4s.http.HttpChecksSuite.$init$$$anonfun$13(HttpChecksSuite.scala:63)
 	at munit.internal.console.StackTraces$.dropOutside(StackTraces.scala:12)
 	at munit.ValueTransforms.$anonfun$2(ValueTransforms.scala:31)
@@ -183,15 +186,18 @@ Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElem
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
 	at java.base/java.lang.Thread.run(Thread.java:1474)
 java.lang.NoClassDefFoundError: Could not initialize class xjdf4s.http.XjdfIoChecks$
+	at xjdf4s.http.XjdfIoChecks$.$init$$$anonfun$1$$anonfun$1$$anonfun$3(XjdfIoChecks.scala:54)
 	at cats.effect.IOFiber.succeeded(IOFiber.scala:1237)
-	at cats.effect.IOFiber.asyncContinueSuccessfulR(IOFiber.scala:1405)
-	at cats.effect.IOFiber.run(IOFiber.scala:123)
-	at cats.effect.unsafe.WorkerThread.run(WorkerThread.scala:935)
-Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElementException: None.get [in thread "pool-31-thread-6"]
+	at cats.effect.IOFiber.runLoop(IOFiber.scala:367)
+	at cats.effect.IOFiber.execR(IOFiber.scala:1399)
+	at cats.effect.IOFiber.run(IOFiber.scala:122)
+	at cats.effect.unsafe.WorkerThread.lookForWork$1(WorkerThread.scala:519)
+	at cats.effect.unsafe.WorkerThread.run(WorkerThread.scala:942)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.util.NoSuchElementException: None.get [in thread "pool-31-thread-8"]
 	at scala.None$.get(Option.scala:628)
 	at scala.None$.get(Option.scala:628)
 	at cats.effect.IOPlatform.unsafeRunSync(IOPlatform.scala:42)
-	at xjdf4s.http.XjdfIoChecks$.<clinit>(XjdfIoChecks.scala:73)
+	at xjdf4s.http.XjdfIoChecks$.<clinit>(XjdfIoChecks.scala:61)
 	at xjdf4s.http.HttpChecksSuite.$init$$$anonfun$13(HttpChecksSuite.scala:63)
 	at munit.internal.console.StackTraces$.dropOutside(StackTraces.scala:12)
 	at munit.ValueTransforms.$anonfun$2(ValueTransforms.scala:31)
