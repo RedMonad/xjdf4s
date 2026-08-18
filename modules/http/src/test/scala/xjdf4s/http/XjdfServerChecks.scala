@@ -3,6 +3,8 @@ package xjdf4s.http
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 
+import scala.concurrent.duration.*
+
 import org.http4s.{MediaType, Method, Request, Status}
 import org.http4s.client.Client
 import org.http4s.headers.`Content-Type`
@@ -51,6 +53,10 @@ object XjdfServerChecks:
       subscription = Some(subscription),
     )
 
+  /** Diagnostic guard: names the step that fails to complete instead of hanging the whole suite. */
+  private def step[A](name: String)(io: IO[A]): IO[A] =
+    io.timeoutTo(3.seconds, IO.raiseError(new RuntimeException(s"step timed out: $name")))
+
   /** Task 2 + 4: the demo runs end-to-end — submit and subscribe over HTTP, then two signals over the hub. */
   val endToEndDemo: Unit =
     val document = XJDF(jobId, NonEmptyVector.one(process))
@@ -58,22 +64,24 @@ object XjdfServerChecks:
     val secondSignal = signal("S2")
     val run: IO[(ResponseSubmitQueueEntry, ResponseStatus, Vector[XJMF])] =
       for
-        hub <- XjdfHub.create
+        hub <- step("hub.create")(XjdfHub.create)
         client = Client.fromHttpApp(XjdfServer.app(hub))
-        receipt <- XjdfClient.submit(client, document)
-        response <- XjdfClient.subscribeStatus(client, statusQuery)
-        frames <- hub.subscribeAwait(channelId).flatMap {
+        receipt <- step("client.submit")(XjdfClient.submit(client, document))
+        response <- step("client.subscribeStatus")(XjdfClient.subscribeStatus(client, statusQuery))
+        resource <- step("hub.subscribeAwait")(hub.subscribeAwait(channelId))
+        frames <- resource match
           case Some(resource) =>
-            resource.use { stream =>
-              for
-                fiber <- stream.map(hub.envelope).take(2).compile.toVector.start
-                _ <- hub.publish(firstSignal)
-                _ <- hub.publish(secondSignal)
-                delivered <- fiber.joinWithNever
-              yield delivered
+            step("deliver-two-signals") {
+              resource.use { stream =>
+                for
+                  fiber <- stream.map(hub.envelope).take(2).compile.toVector.start
+                  _ <- hub.publish(firstSignal)
+                  _ <- hub.publish(secondSignal)
+                  delivered <- fiber.joinWithNever
+                yield delivered
+              }
             }
           case None => IO.raiseError(new AssertionError(s"channel '$channelId' was not opened"))
-        }
       yield (receipt, response, frames)
     val (receipt, response, frames) = run.unsafeRunSync()
     assert(receipt.returnCode.contains(0))
