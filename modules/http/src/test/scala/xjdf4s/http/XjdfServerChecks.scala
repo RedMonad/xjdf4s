@@ -75,7 +75,7 @@ object XjdfServerChecks:
       header = Header(deviceId, time, id = Some(XsdId.from("Q1").toOption.get)),
       subscription = Some(subscription),
     )
-    val run: IO[(ResponseStatus, Status)] =
+    val run: IO[(ResponseStopPersistentChannel, Status)] =
       for
         hub <- XjdfHub.create
         client = Client.fromHttpApp(XjdfServer.app(hub))
