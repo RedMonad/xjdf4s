@@ -37,8 +37,27 @@ JSON_SPECIALS = """""".split()
 # Types that transitively contain the specials (their codecs must exist first).
 JSON_AFFECTED = []
 
-# XML hand codecs whose JSON shape is plain field-uniform, so they derive normally.
-JSON_ADDITIONS = ["Patch", "DeviceModule", "Dependent"]
+# XML hand codecs whose JSON shape is plain field-uniform, so they derive normally. The binding details are
+# XML Derived.derivedNamed instances (name overrides for their element names); the JSON codecs name members
+# explicitly at their hand-codec call sites, so the default element names are fine and the types derive plainly.
+JSON_ADDITIONS = [
+    "Patch",
+    "DeviceModule",
+    "Dependent",
+    "AdhesiveNoteDetails",
+    "CoilLooseBindingDetails",
+    "CombLooseBindingDetails",
+    "EdgeGluingDetails",
+    "HardCoverBindingDetails",
+    "LooseBindingDetails",
+    "RingLooseBindingDetails",
+    "SoftCoverBindingDetails",
+    "ChannelBindingProductionDetails",
+    "CoilBindingProductionDetails",
+    "CombBindingProductionDetails",
+    "RingBindingProductionDetails",
+    "StripBindingProductionDetails",
+]
 
 VALUE_TYPES = """Int Long Float Double Boolean String Vector[Byte] Nmtoken XsdId XsdIdRef XjdfString XsdDateTime
 XsdDuration LanguageTag UriRef Priority0To100 CountryCode XPath PdfPath EvenPageCount CommonFolds QualityScore
