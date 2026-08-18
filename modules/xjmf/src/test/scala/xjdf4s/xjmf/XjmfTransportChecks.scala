@@ -18,7 +18,7 @@ object XjmfTransportChecks:
   private val url = UriRef.from("https://example.com/xjmfurl").toOption.get
   private val subscription = Subscription(url, channelMode = Vector(ChannelMode.Reliable))
 
-  private def header(id: String, refId: Option[String] = None, time: String = "2026-08-17T12:00:00+03:00"): Header =
+  private def header(id: String, refId: Option[String], time: String = "2026-08-17T12:00:00+03:00"): Header =
     Header(
       deviceId,
       XsdDateTime.from(time).toOption.get,
