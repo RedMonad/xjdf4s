@@ -65,17 +65,17 @@ object XjdfIoInterpreters:
           case XjmfOp.Channels =>
             state.get.map(current => XjmfInterpreters.transition(op, current)._3)
 
+    /**
+     * The await window is fully sequential by design: wait the injected sleep window, then check the waiter's
+     * Deferred for an answer delivered meanwhile (or before the await). No racing is involved, so the
+     * interpreter stays deterministic under any runtime - the same behavior a client timeout exhibits: wait
+     * for the delivery window, then retry or give up.
+     */
     private def awaitNewResponse(responseId: String): IO[Option[Response]] =
       Deferred[IO, Response].flatMap { deferred =>
         waits.update(_ + (responseId -> deferred)) *>
-          IO.racePair(sleep(awaitTimeout), deferred.get).flatMap {
-            case Left(_) => IO.pure(None)
-            case Right((_, outcome)) =>
-              outcome match
-                case cats.effect.kernel.Outcome.Succeeded(value) => value.map(Some(_))
-                case cats.effect.kernel.Outcome.Errored(error)  => IO.raiseError(error)
-                case cats.effect.kernel.Outcome.Canceled()      => IO.pure(None)
-          }.guarantee(waits.update(_ - responseId))
+          sleep(awaitTimeout) *>
+          deferred.tryGet.guarantee(waits.update(_ - responseId))
       }
 
     private def runTransition[A](operation: XjmfOp[A]): IO[Chain[TransportEvent]] =

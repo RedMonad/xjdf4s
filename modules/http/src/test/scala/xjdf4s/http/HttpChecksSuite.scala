@@ -60,14 +60,14 @@ class HttpChecksSuite extends munit.FunSuite:
   }
 
   test("transport await timeout") {
-    XjdfIoChecks.transportTimeout
+    XjdfIoChecks.transportTimeout()
   }
 
   test("await cancellation cleanup") {
-    XjdfIoChecks.awaitCancellation
+    XjdfIoChecks.awaitCancellation()
   }
 
   test("effectful document builder") {
-    XjdfIoChecks.documentInterpreter
+    XjdfIoChecks.documentInterpreter()
   }
 end HttpChecksSuite
