@@ -55,11 +55,15 @@ object XjdfServerChecks:
         client = Client.fromHttpApp(XjdfServer.app(hub))
         receipt <- XjdfClient.submit(client, document)
         response <- XjdfClient.subscribeStatus(client, query)
-        fiber <- XjdfClient.signals(client, channelId).take(1).compile.toVector.start
+        firstFiber <- XjdfClient.signals(client, channelId).take(1).compile.toVector.start
+        // fs2 publish1 drops a signal without subscribers, so the producer awaits the delivery handshake
+        _ <- hub.awaitingSubscriber(channelId)
         _ <- hub.publish(firstSignal)
-        firstFrame <- fiber.joinWithNever
+        firstFrame <- firstFiber.joinWithNever
+        secondFiber <- XjdfClient.signals(client, channelId).take(1).compile.toVector.start
+        _ <- hub.awaitingSubscriber(channelId)
         _ <- hub.publish(secondSignal)
-        second <- XjdfClient.signals(client, channelId).take(1).compile.toVector
+        second <- secondFiber.joinWithNever
       yield (receipt, response, firstFrame, second)
     val (receipt, response, first, second) = run.unsafeRunSync()
     assert(receipt.returnCode.contains(0))

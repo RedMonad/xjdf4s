@@ -81,6 +81,19 @@ final class XjdfHub private (
   def signals(channelId: Nmtoken): IO[Option[Stream[IO, Signal]]] =
     topics.get.map(_.get(channelId).map(_.subscribe(16)))
 
+  /**
+   * The delivery handshake: completes when at least one subscriber is attached to the channel's topic (fs2's
+   * own subscriber count). fs2 `publish1` DROPS an element published while nobody is subscribed, so a producer
+   * MUST await this before the first publish - otherwise a signal raced against the subscriber registration is
+   * silently lost and a waiting `take(1)` stream hangs forever.
+   */
+  def awaitingSubscriber(channelId: Nmtoken): IO[Unit] =
+    topics.get.flatMap {
+      _.get(channelId) match
+        case Some(topic) => topic.subscribers.exists(_ > 0).compile.drain
+        case None        => IO.unit
+    }
+
   /** The subscription handshake for the `/status/subscribe` endpoint: opens the channel and answers (9.6.2). */
   def subscribeStatus(query: QueryStatus): IO[Option[ResponseStatus]] =
     (query.header.id, query.subscription) match
