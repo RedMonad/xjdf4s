@@ -51,20 +51,16 @@ object XjdfServerChecks:
     val run: IO[(ResponseSubmitQueueEntry, ResponseStatus, Vector[XJMF], Vector[XJMF])] =
       for
         hub <- XjdfHub.create
-        first <- Client.fromHttpApp(XjdfServer.app(hub)).use { client =>
-          for
-            receipt <- XjdfClient.submit(client, document)
-            response <- XjdfClient.subscribeStatus(client, query)
-            fiber <- XjdfClient.signals(client, channelId).take(1).compile.toVector.start
-            _ <- hub.publish(firstSignal)
-            firstFrame <- fiber.joinWithNever
-          yield (receipt, response, firstFrame)
-        }
+        // Client.fromHttpApp returns the in-memory Client directly (no Resource: nothing to acquire or release)
+        client = Client.fromHttpApp(XjdfServer.app(hub))
+        receipt <- XjdfClient.submit(client, document)
+        response <- XjdfClient.subscribeStatus(client, query)
+        fiber <- XjdfClient.signals(client, channelId).take(1).compile.toVector.start
+        _ <- hub.publish(firstSignal)
+        firstFrame <- fiber.joinWithNever
         _ <- hub.publish(secondSignal)
-        second <- Client.fromHttpApp(XjdfServer.app(hub)).use { client =>
-          XjdfClient.signals(client, channelId).take(1).compile.toVector
-        }
-      yield (first._1, first._2, first._3, second)
+        second <- XjdfClient.signals(client, channelId).take(1).compile.toVector
+      yield (receipt, response, firstFrame, second)
     val (receipt, response, first, second) = run.unsafeRunSync()
     assert(receipt.returnCode.contains(0))
     assert(receipt.header.refId.contains(jobId))
@@ -82,23 +78,18 @@ object XjdfServerChecks:
     val run: IO[(ResponseStatus, Status)] =
       for
         hub <- XjdfHub.create
-        _ <- Client.fromHttpApp(XjdfServer.app(hub)).use { client =>
-          XjdfClient.subscribeStatus(client, query)
-        }
-        stopResult <- Client.fromHttpApp(XjdfServer.app(hub)).use { client =>
-          for
-            response <- client.expect[ResponseStopPersistentChannel](
-              Request[IO](Method.POST, uri"/subscriptions/stop").withEntity(
-                CommandStopPersistentChannel(
-                  Header(deviceId, time, id = Some(XsdId.from("C1").toOption.get)),
-                  StopPersistentChannelParams(channelId = Some(channelId)),
-                ),
-              )(using XjdfMessageEntities.commandStopPersistentChannelEncoder),
-            )(using XjdfMessageEntities.responseStopPersistentChannelEncoder)
-            streamStatus <- client.status(Request[IO](Method.GET, uri"/channels" / channelId.value / "signals"))
-          yield (response, streamStatus)
-        }
-      yield (stopResult._1, stopResult._2)
+        client = Client.fromHttpApp(XjdfServer.app(hub))
+        _ <- XjdfClient.subscribeStatus(client, query)
+        stopResponse <- client.expect[ResponseStopPersistentChannel](
+          Request[IO](Method.POST, uri"/subscriptions/stop").withEntity(
+            CommandStopPersistentChannel(
+              Header(deviceId, time, id = Some(XsdId.from("C1").toOption.get)),
+              StopPersistentChannelParams(channelId = Some(channelId)),
+            ),
+          )(using XjdfMessageEntities.commandStopPersistentChannelEncoder),
+        )(using XjdfMessageEntities.responseStopPersistentChannelEncoder)
+        streamStatus <- client.status(Request[IO](Method.GET, uri"/channels" / channelId.value / "signals"))
+      yield (stopResponse, streamStatus)
     val (stopResponse, streamStatus) = run.unsafeRunSync()
     assert(stopResponse.returnCode.contains(0))
     assert(streamStatus == Status.NotFound)

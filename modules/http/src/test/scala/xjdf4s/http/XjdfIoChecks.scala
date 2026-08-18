@@ -48,10 +48,10 @@ object XjdfIoChecks:
         state <- Ref.of[IO, XjmfState](XjmfState.empty)
         sent <- Ref.of[IO, Vector[Signal]](Vector.empty)
         transport <- XjdfIoInterpreters.transport(state, value => sent.update(_ :+ value), 100.millis)
-        _ <- (Xjdf.openChannel(subscription, channelId, messageType) *> Xjdf.deliver(signal)).foldMap(transport.interpreter)
-        before <- Xjdf.awaitResponse(signalId).foldMap(transport.interpreter)
-        _ <- Xjdf.deliverResponse(answer).foldMap(transport.interpreter)
-        after <- Xjdf.awaitResponse(signalId).foldMap(transport.interpreter)
+        _ <- (Xjmf.openChannel(subscription, channelId, messageType) *> Xjmf.deliver(signal)).foldMap(transport.interpreter)
+        before <- Xjmf.awaitResponse(signalId).foldMap(transport.interpreter)
+        _ <- Xjmf.deliverResponse(answer).foldMap(transport.interpreter)
+        after <- Xjmf.awaitResponse(signalId).foldMap(transport.interpreter)
         delivered <- sent.get
         finalState <- state.get
       yield (before, after, delivered, finalState)
@@ -67,7 +67,7 @@ object XjdfIoChecks:
       for
         state <- Ref.of[IO, XjmfState](XjmfState.empty)
         transport <- XjdfIoInterpreters.transport(state, _ => IO.unit, 10.seconds)
-        program = Xjdf.openChannel(subscription, channelId, messageType) *> Xjdf.awaitResponse(signalId)
+        program = Xjmf.openChannel(subscription, channelId, messageType) *> Xjmf.awaitResponse(signalId)
         fiber <- program.foldMap(transport.interpreter).start
         _ <- fiber.cancel
         waits <- transport.waitingCount
