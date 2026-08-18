@@ -40,6 +40,10 @@ object CrossCodecPropertyChecks:
       assert(xmlDecoded == document, s"iteration $index: XML round-trip mismatch")
       assert(jsonDecoded == document, s"iteration $index: JSON round-trip mismatch\n$jsonText")
       assert(xmlDecoded == jsonDecoded, s"iteration $index: XML and JSON disagree")
+      // the JSON analogue of the XSD ID/IDREF proof (stage 04 precaution 4): the domain reference check
+      // must hold on the JSON-decoded document
+      val referenceErrors = ReferenceCheck.validate(jsonDecoded)
+      assert(referenceErrors.isEmpty, s"iteration $index: dangling references in the JSON-decoded document: $referenceErrors")
       index += 1
 
   val xjmfMessages: Unit =

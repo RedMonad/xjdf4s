@@ -17,8 +17,6 @@ import xjdf4s.codec.json.JsonAuditCodecs.given
 object JsonRootCodecs:
 
   given Encoder[XJDF] = Encoder.instance(document =>
-    if document.productList.nonEmpty then
-      throw new UnsupportedOperationException("ProductList is not covered by the JSON codec slice yet")
     JsonHelpers.obj(
       JsonHelpers.memberList(
         document.auditPool.toVector.map(pool => JsonHelpers.member("AuditPool", pool.asJson)),
@@ -36,7 +34,9 @@ object JsonRootCodecs:
         JsonHelpers.optMember("Version", document.version),
         JsonHelpers.vecMember("Comment", document.comments),
         JsonHelpers.vecMember("GeneralID", document.generalIds),
+        JsonHelpers.optMember("ProductList", document.productList),
         JsonHelpers.vecMember("ResourceSet", document.resourceSets),
+        JsonForeign.encodeExtensions(document.extensions),
         Vector(JsonHelpers.rootName("XJDF")),
       ),
     ),
@@ -60,15 +60,17 @@ object JsonRootCodecs:
       version <- JsonHelpers.opt[Version](cursor, "Version")
       comments <- JsonHelpers.vec[Comment](cursor, "Comment")
       generalIds <- JsonHelpers.vec[GeneralId](cursor, "GeneralID")
+      productList <- JsonHelpers.opt[ProductList](cursor, "ProductList")
       resourceSets <- JsonHelpers.vec[ResourceSet](cursor, "ResourceSet")
       auditPool <- JsonHelpers.opt[AuditPool](cursor, "AuditPool")
+      extensions <- JsonForeign.decodeExtensions(cursor)
     yield XJDF(
       jobId,
       nonEmptyTypes,
       auditPool,
       comments,
       generalIds,
-      None,
+      productList,
       resourceSets,
       category,
       commentUrl,
@@ -80,6 +82,7 @@ object JsonRootCodecs:
       relatedJobPartId,
       relatedProjectId,
       version,
+      extensions,
     ),
   )
 end JsonRootCodecs

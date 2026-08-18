@@ -3,6 +3,10 @@ package xjdf4s.codec.json
 import io.circe.{Decoder, Json}
 import io.circe.syntax.*
 
+import xjdf4s.codec.json.JsonSpecialCodecs.given
+
+import xjdf4s.codec.json.JsonResources.given
+
 import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
@@ -22,6 +26,7 @@ object JsonRegistry:
   val resourceNames: Set[String] = Set(
     "ApprovalDetails",
     "ApprovalParams",
+    "Assembly",
     "BarcodeCompParams",
     "BarcodeReproParams",
     "BendingParams",
@@ -54,6 +59,7 @@ object JsonRegistry:
     "EmbossingParams",
     "EndSheetGluingParams",
     "ExposedMedia",
+    "FeedingParams",
     "FoldingParams",
     "FontPolicy",
     "GluingParams",
@@ -73,6 +79,7 @@ object JsonRegistry:
     "Layout",
     "LayoutElementProductionParams",
     "LayoutShift",
+    "LooseBindingParams",
     "ManualLaborParams",
     "Media",
     "MiscConsumable",
@@ -124,6 +131,7 @@ object JsonRegistry:
   val resourceEncoders: Map[String, SpecificResource => Json] = Map(
     "ApprovalDetails" -> (value => value.asInstanceOf[ApprovalDetails].asJson),
     "ApprovalParams" -> (value => value.asInstanceOf[ApprovalParams].asJson),
+    "Assembly" -> (value => value.asInstanceOf[Assembly].asJson),
     "BarcodeCompParams" -> (value => value.asInstanceOf[BarcodeCompParams].asJson),
     "BarcodeReproParams" -> (value => value.asInstanceOf[BarcodeReproParams].asJson),
     "BendingParams" -> (value => value.asInstanceOf[BendingParams].asJson),
@@ -156,6 +164,7 @@ object JsonRegistry:
     "EmbossingParams" -> (value => value.asInstanceOf[EmbossingParams].asJson),
     "EndSheetGluingParams" -> (value => value.asInstanceOf[EndSheetGluingParams].asJson),
     "ExposedMedia" -> (value => value.asInstanceOf[ExposedMedia].asJson),
+    "FeedingParams" -> (value => value.asInstanceOf[FeedingParams].asJson),
     "FoldingParams" -> (value => value.asInstanceOf[FoldingParams].asJson),
     "FontPolicy" -> (value => value.asInstanceOf[FontPolicy].asJson),
     "GluingParams" -> (value => value.asInstanceOf[GluingParams].asJson),
@@ -175,6 +184,7 @@ object JsonRegistry:
     "Layout" -> (value => value.asInstanceOf[Layout].asJson),
     "LayoutElementProductionParams" -> (value => value.asInstanceOf[LayoutElementProductionParams].asJson),
     "LayoutShift" -> (value => value.asInstanceOf[LayoutShift].asJson),
+    "LooseBindingParams" -> (value => value.asInstanceOf[LooseBindingParams].asJson),
     "ManualLaborParams" -> (value => value.asInstanceOf[ManualLaborParams].asJson),
     "Media" -> (value => value.asInstanceOf[Media].asJson),
     "MiscConsumable" -> (value => value.asInstanceOf[MiscConsumable].asJson),
@@ -226,6 +236,7 @@ object JsonRegistry:
   val resourceDecoders: Map[String, Json => Decoder.Result[SpecificResource]] = Map(
     "ApprovalDetails" -> (json => summon[Decoder[ApprovalDetails]].decodeJson(json)),
     "ApprovalParams" -> (json => summon[Decoder[ApprovalParams]].decodeJson(json)),
+    "Assembly" -> (json => summon[Decoder[Assembly]].decodeJson(json)),
     "BarcodeCompParams" -> (json => summon[Decoder[BarcodeCompParams]].decodeJson(json)),
     "BarcodeReproParams" -> (json => summon[Decoder[BarcodeReproParams]].decodeJson(json)),
     "BendingParams" -> (json => summon[Decoder[BendingParams]].decodeJson(json)),
@@ -258,6 +269,7 @@ object JsonRegistry:
     "EmbossingParams" -> (json => summon[Decoder[EmbossingParams]].decodeJson(json)),
     "EndSheetGluingParams" -> (json => summon[Decoder[EndSheetGluingParams]].decodeJson(json)),
     "ExposedMedia" -> (json => summon[Decoder[ExposedMedia]].decodeJson(json)),
+    "FeedingParams" -> (json => summon[Decoder[FeedingParams]].decodeJson(json)),
     "FoldingParams" -> (json => summon[Decoder[FoldingParams]].decodeJson(json)),
     "FontPolicy" -> (json => summon[Decoder[FontPolicy]].decodeJson(json)),
     "GluingParams" -> (json => summon[Decoder[GluingParams]].decodeJson(json)),
@@ -277,6 +289,7 @@ object JsonRegistry:
     "Layout" -> (json => summon[Decoder[Layout]].decodeJson(json)),
     "LayoutElementProductionParams" -> (json => summon[Decoder[LayoutElementProductionParams]].decodeJson(json)),
     "LayoutShift" -> (json => summon[Decoder[LayoutShift]].decodeJson(json)),
+    "LooseBindingParams" -> (json => summon[Decoder[LooseBindingParams]].decodeJson(json)),
     "ManualLaborParams" -> (json => summon[Decoder[ManualLaborParams]].decodeJson(json)),
     "Media" -> (json => summon[Decoder[Media]].decodeJson(json)),
     "MiscConsumable" -> (json => summon[Decoder[MiscConsumable]].decodeJson(json)),
@@ -326,6 +339,9 @@ object JsonRegistry:
   )
 
   val intentNames: Set[String] = Set(
+    "AssemblingIntent",
+    "BindingIntent",
+    "ColorIntent",
     "ContentCheckIntent",
     "EmbossingIntent",
     "FoldingIntent",
@@ -340,6 +356,9 @@ object JsonRegistry:
   )
 
   val intentEncoders: Map[String, ProductIntent => Json] = Map(
+    "AssemblingIntent" -> (value => value.asInstanceOf[AssemblingIntent].asJson),
+    "BindingIntent" -> (value => value.asInstanceOf[BindingIntent].asJson),
+    "ColorIntent" -> (value => value.asInstanceOf[ColorIntent].asJson),
     "ContentCheckIntent" -> (value => value.asInstanceOf[ContentCheckIntent].asJson),
     "EmbossingIntent" -> (value => value.asInstanceOf[EmbossingIntent].asJson),
     "FoldingIntent" -> (value => value.asInstanceOf[FoldingIntent].asJson),
@@ -354,6 +373,9 @@ object JsonRegistry:
   )
 
   val intentDecoders: Map[String, Json => Decoder.Result[ProductIntent]] = Map(
+    "AssemblingIntent" -> (json => summon[Decoder[AssemblingIntent]].decodeJson(json)),
+    "BindingIntent" -> (json => summon[Decoder[BindingIntent]].decodeJson(json)),
+    "ColorIntent" -> (json => summon[Decoder[ColorIntent]].decodeJson(json)),
     "ContentCheckIntent" -> (json => summon[Decoder[ContentCheckIntent]].decodeJson(json)),
     "EmbossingIntent" -> (json => summon[Decoder[EmbossingIntent]].decodeJson(json)),
     "FoldingIntent" -> (json => summon[Decoder[FoldingIntent]].decodeJson(json)),
@@ -369,6 +391,7 @@ object JsonRegistry:
 
   val messageNames: Set[String] = Set(
     "CommandForceGang",
+    "CommandModifyQueueEntry",
     "CommandPipeControl",
     "CommandRequestQueueEntry",
     "CommandResource",
@@ -376,6 +399,7 @@ object JsonRegistry:
     "CommandReturnQueueEntry",
     "CommandShutDown",
     "CommandStopPersistentChannel",
+    "CommandSubmitQueueEntry",
     "CommandWakeUp",
     "QueryGangStatus",
     "QueryKnownDevices",
@@ -414,6 +438,7 @@ object JsonRegistry:
 
   val messageEncoders: Map[String, Message => Json] = Map(
     "CommandForceGang" -> (value => value.asInstanceOf[CommandForceGang].asJson),
+    "CommandModifyQueueEntry" -> (value => value.asInstanceOf[CommandModifyQueueEntry].asJson),
     "CommandPipeControl" -> (value => value.asInstanceOf[CommandPipeControl].asJson),
     "CommandRequestQueueEntry" -> (value => value.asInstanceOf[CommandRequestQueueEntry].asJson),
     "CommandResource" -> (value => value.asInstanceOf[CommandResource].asJson),
@@ -421,6 +446,7 @@ object JsonRegistry:
     "CommandReturnQueueEntry" -> (value => value.asInstanceOf[CommandReturnQueueEntry].asJson),
     "CommandShutDown" -> (value => value.asInstanceOf[CommandShutDown].asJson),
     "CommandStopPersistentChannel" -> (value => value.asInstanceOf[CommandStopPersistentChannel].asJson),
+    "CommandSubmitQueueEntry" -> (value => value.asInstanceOf[CommandSubmitQueueEntry].asJson),
     "CommandWakeUp" -> (value => value.asInstanceOf[CommandWakeUp].asJson),
     "QueryGangStatus" -> (value => value.asInstanceOf[QueryGangStatus].asJson),
     "QueryKnownDevices" -> (value => value.asInstanceOf[QueryKnownDevices].asJson),
@@ -459,6 +485,7 @@ object JsonRegistry:
 
   val messageDecoders: Map[String, Json => Decoder.Result[Message]] = Map(
     "CommandForceGang" -> (json => summon[Decoder[CommandForceGang]].decodeJson(json)),
+    "CommandModifyQueueEntry" -> (json => summon[Decoder[CommandModifyQueueEntry]].decodeJson(json)),
     "CommandPipeControl" -> (json => summon[Decoder[CommandPipeControl]].decodeJson(json)),
     "CommandRequestQueueEntry" -> (json => summon[Decoder[CommandRequestQueueEntry]].decodeJson(json)),
     "CommandResource" -> (json => summon[Decoder[CommandResource]].decodeJson(json)),
@@ -466,6 +493,7 @@ object JsonRegistry:
     "CommandReturnQueueEntry" -> (json => summon[Decoder[CommandReturnQueueEntry]].decodeJson(json)),
     "CommandShutDown" -> (json => summon[Decoder[CommandShutDown]].decodeJson(json)),
     "CommandStopPersistentChannel" -> (json => summon[Decoder[CommandStopPersistentChannel]].decodeJson(json)),
+    "CommandSubmitQueueEntry" -> (json => summon[Decoder[CommandSubmitQueueEntry]].decodeJson(json)),
     "CommandWakeUp" -> (json => summon[Decoder[CommandWakeUp]].decodeJson(json)),
     "QueryGangStatus" -> (json => summon[Decoder[QueryGangStatus]].decodeJson(json)),
     "QueryKnownDevices" -> (json => summon[Decoder[QueryKnownDevices]].decodeJson(json)),

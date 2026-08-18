@@ -4,6 +4,7 @@ import io.circe.syntax.*
 
 import xjdf4s.codec.json.given
 import xjdf4s.codec.json.JsonSpecialCodecs.given
+import xjdf4s.codec.json.JsonRootCodecs.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
 import xjdf4s.model.*
@@ -103,6 +104,101 @@ object JsonDerivedChecks:
     assert(members.contains("ExpansionBox"))
     assert(!members.contains("Rectangle"))
 
+  // -- payload-enum specials (the deferred batch) ---------------------------------
+
+  val stickOn: Unit =
+    val value = StickOn(
+      XsdIdRef.from("part-1").toOption.get,
+      location = Some(ProductLocation.OnFolio(2)),
+      orientation = Some(Orientation.Rotate90),
+      position = Some(XYPair(1.0, 2.0)),
+    )
+    assert(roundTrip(value) == value)
+
+  val collatingItem: Unit =
+    val value = CollatingItem(amount = Some(2), placement = Some(CollatingPlacement.ByTransformation(Matrix.identity)))
+    assert(roundTrip(value) == value)
+
+  val looseBindingParams: Unit =
+    val value = LooseBindingParams(
+      binding = ProductionLooseBinding.Ring(Some(RingBindingProductionDetails())),
+      coverMaterial = Some(Nmtoken.from("cover-1").toOption.get),
+      holePatterns = Vector(HolePattern(pattern = Some(HolePatternCatalog.S1Generic))),
+    )
+    assert(roundTrip(value) == value)
+
+  val assembly: Unit =
+    val value = Assembly(AssemblyPlan.Listed(NonEmptyVector.one(AssemblySection(Nmtoken.from("sig-1").toOption.get))))
+    assert(roundTrip(value) == value)
+    val collecting = Assembly(AssemblyPlan.Collecting(Vector(Nmtoken.from("sig-2").toOption.get)))
+    assert(roundTrip(collecting) == collecting)
+
+  val bindingIntent: Unit =
+    val value = BindingIntent(
+      BindingSpecification.SaddleStitch(Some(StitchingDetails(stitchNumber = Some(3)))),
+      bindingSide = Some(BindingEdge.Left),
+    )
+    assert(roundTrip(value) == value)
+    assert(roundTrip(BindingIntent(BindingSpecification.AdhesiveNote(None))) == BindingIntent(BindingSpecification.AdhesiveNote(None)))
+
+  val colorIntent: Unit =
+    val value = ColorIntent(ColorSurfaces.Both(SurfaceColor(coverage = Some(0.5f)), SurfaceColor()))
+    assert(roundTrip(value) == value)
+
+  val modifyQueueEntryParams: Unit =
+    val value = ModifyQueueEntryParams(
+      QueueModification.Move(Some(QueueMoveTarget.Position(3))),
+      QueueFilter(jobId = Some(Nmtoken.from("job-1").toOption.get)),
+    )
+    assert(roundTrip(value) == value)
+    assert(
+      roundTrip(ModifyQueueEntryParams(QueueModification.SetGang(Some(Nmtoken.from("gang-1").toOption.get)), QueueFilter())) ==
+        ModifyQueueEntryParams(QueueModification.SetGang(Some(Nmtoken.from("gang-1").toOption.get)), QueueFilter()),
+    )
+
+  val queueSubmissionParams: Unit =
+    val value = QueueSubmissionParams(
+      url,
+      position = Some(QueueSubmissionPosition.After(Nmtoken.from("entry-1").toOption.get)),
+      returnJmf = Some(url),
+    )
+    assert(roundTrip(value) == value)
+
+  // -- root product list, dependents and foreign content ---------------------------
+
+  val productListRoot: Unit =
+    val document = XJDF(
+      Nmtoken.from("job-1").toOption.get,
+      NonEmptyVector.one(Nmtoken.from("Product").toOption.get),
+      productList = Some(ProductList(NonEmptyVector.one(Product(amount = Some(2), intents = Vector(Intent(Nmtoken.from("i-1").toOption.get, Some(MediaIntent(MediaType.Paper)))))))),
+    )
+    val decoded = roundTrip(document)
+    assert(decoded.productList.exists(_.products.toVector.head.intents.size == 1))
+
+  val dependentResourceSet: Unit =
+    val set = ResourceSet(
+      Nmtoken.from("NodeInfo").toOption.get,
+      dependents = Vector(Dependent(Nmtoken.from("job-2").toOption.get, pipeProtocol = Some(Nmtoken.from("pipe").toOption.get))),
+    )
+    assert(roundTrip(set) == set)
+
+  val foreignResource: Unit =
+    val foreignName = ForeignQName.from("http://example.com/ics", "FooBar", Some("Foo")).toOption.get
+    val resource = Resource(
+      specificResource = None,
+      foreignElements = Vector(ExtensionElement(foreignName, attributes = Map(QualifiedName("http://example.com/ics", "weight", Some("Foo")) -> ExtensionValue.Number(BigDecimal("1.5"))))),
+    )
+    val decoded = roundTrip(resource)
+    assert(decoded.foreignElements.size == 1)
+    assert(decoded.foreignElements.head.name.qualifiedName.localName == "FooBar")
+    assert(decoded.foreignElements.head.attributes.values.toVector.contains(ExtensionValue.Number(BigDecimal("1.5"))))
+
+  val foreignIntent: Unit =
+    val foreignName = ForeignQName.from("http://example.com/ics", "MyIntent", Some("Foo")).toOption.get
+    val intent = Intent(Nmtoken.from("i-1").toOption.get, Some(NamedProductIntent(foreignName)))
+    val decoded = roundTrip(intent)
+    assert(decoded.productIntent.exists(_.elementName.localName == "MyIntent"))
+
   val foreignExtensions: Unit =
     val mediaIntent = MediaIntent(
       MediaType.Paper,
@@ -115,9 +211,9 @@ object JsonDerivedChecks:
     assert(decodedAttribute._2 == ExtensionValue.Number(BigDecimal("1.5")))
 
   val registryCoverage: Unit =
-    assert(JsonRegistry.resourceNames.size == 99)
-    assert(JsonRegistry.intentNames.size == 11)
-    assert(JsonRegistry.messageNames.size == 42)
+    assert(JsonRegistry.resourceNames.size == 102)
+    assert(JsonRegistry.intentNames.size == 14)
+    assert(JsonRegistry.messageNames.size == 44)
     assert(JsonRegistry.resourceNames.contains("Media"))
     assert(JsonRegistry.resourceNames.contains("DeliveryParams"))
     assert(JsonRegistry.intentNames.contains("MediaIntent"))

@@ -58,6 +58,16 @@ object JsonForeign:
   def decodeForeignElements(cursor: HCursor): Decoder.Result[Vector[ExtensionElement]] =
     decodeForeignMembers(cursor).map(_._2)
 
+  /** The first foreign element member of an object, if any (the open-intent fallback of the Intent codec). */
+  def decodeForeignElement(cursor: HCursor): Decoder.Result[Option[ExtensionElement]] =
+    decodeForeignMembers(cursor).map(_._2.headOption)
+
+  /** Members contributed by a foreign element: its `"Prefix:Name"` key plus the shared `"@context"`. */
+  def encodeForeignElementMember(element: ExtensionElement): Vector[(String, Json)] =
+    val prefixes = new PrefixTable
+    val key = prefixes.keyOf(element.name.qualifiedName)
+    contextMember(Vector((key, element.name.qualifiedName.namespace))) ++ Vector((key, encodeElement(element, prefixes)))
+
   private def contextMember(entries: Vector[(String, String)]): Vector[(String, Json)] =
     val mappings = entries.distinctBy(_._1).sortBy(_._1).map { case (key, namespace) =>
       (key.substring(0, key.indexOf(":")), Json.fromString(namespace))

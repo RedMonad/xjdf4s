@@ -250,9 +250,9 @@ object JsonNodeCodecs:
         JsonHelpers.vecMember("Comment", resource.comments),
         JsonHelpers.vecMember("GeneralID", resource.generalIds),
         JsonHelpers.vecMember("Part", resource.parts),
-        resource.specificResource.toVector.map(specific =>
-          JsonHelpers.member(JsonResources.nameOf(specific), JsonResources.encode(specific)),
-        ),
+        resource.specificResource.toVector.flatMap(JsonResources.encodeMembers),
+        JsonForeign.encodeExtensions(Extensions(elements = resource.foreignElements)),
+        JsonForeign.encodeExtensions(resource.extensions),
       ),
     ),
   )
@@ -263,6 +263,7 @@ object JsonNodeCodecs:
       generalIds <- JsonHelpers.vec[GeneralId](cursor, "GeneralID")
       parts <- JsonHelpers.vec[Part](cursor, "Part")
       specific <- JsonResources.decodeSpecific(cursor)
+      decodedExtensions <- JsonForeign.decodeExtensions(cursor)
       brand <- JsonHelpers.opt[XjdfString](cursor, "Brand")
       commentUrl <- JsonHelpers.opt[UriRef](cursor, "CommentURL")
       descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
@@ -283,7 +284,7 @@ object JsonNodeCodecs:
       generalIds,
       parts,
       specific,
-      Vector.empty,
+      decodedExtensions.elements,
       brand,
       commentUrl,
       descriptiveName,
@@ -298,6 +299,7 @@ object JsonNodeCodecs:
       startOffset,
       status,
       transformation,
+      decodedExtensions.copy(elements = Vector.empty),
     ),
   )
 
@@ -313,6 +315,7 @@ object JsonNodeCodecs:
         JsonHelpers.optMember("Unit", resourceSet.unit),
         JsonHelpers.optMember("Usage", resourceSet.usage),
         JsonHelpers.vecMember("Comment", resourceSet.comments),
+        JsonHelpers.vecMember("Dependent", resourceSet.dependents),
         JsonHelpers.vecMember("GeneralID", resourceSet.generalIds),
         JsonHelpers.vecMember("Resource", resourceSet.resources),
       ),
@@ -329,6 +332,7 @@ object JsonNodeCodecs:
       unit <- JsonHelpers.opt[Nmtoken](cursor, "Unit")
       usage <- JsonHelpers.opt[ResourceUsage](cursor, "Usage")
       comments <- JsonHelpers.vec[Comment](cursor, "Comment")
+      dependents <- JsonHelpers.vec[Dependent](cursor, "Dependent")
       generalIds <- JsonHelpers.vec[GeneralId](cursor, "GeneralID")
       resources <- JsonHelpers.vec[Resource](cursor, "Resource")
     yield ResourceSet(
@@ -341,7 +345,7 @@ object JsonNodeCodecs:
       unit,
       usage,
       comments,
-      Vector.empty,
+      dependents,
       generalIds,
       resources,
     ),

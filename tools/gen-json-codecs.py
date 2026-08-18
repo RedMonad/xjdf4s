@@ -29,15 +29,16 @@ ColorMeasurementConditions Media MediaLayers Color Component Tool RunList Regist
 ResourceQuParams ResourceInfo DeviceInfo Notification MessageService QueryKnownMessages QueryResource
 ResponseKnownMessages ResponseResource SignalNotification SignalResource SignalStatus XJMF ProcessRun AuditPool
 Address Company FileSpec Disposition NetworkHeader TiffTag PlacedObject DeliveryFiles DeviceSchemas
-DeviceInfoSchemas VerificationFiles QualityControlFiles BundleItem AssemblySection""".split()
+DeviceInfoSchemas VerificationFiles QualityControlFiles BundleItem AssemblySection BindingIntent ColorIntent
+StickOn CollatingItem LooseBindingParams Assembly ModifyQueueEntryParams QueueSubmissionParams""".split()
 
-JSON_SPECIALS = """BindingIntent ColorIntent StickOn CollatingItem LooseBindingParams Assembly
-ModifyQueueEntryParams QueueSubmissionParams""".split()
+JSON_SPECIALS = """""".split()
 
 # Types that transitively contain the specials (their codecs must exist first).
-JSON_AFFECTED = ["CommandModifyQueueEntry", "CommandSubmitQueueEntry"]
+JSON_AFFECTED = []
 
-JSON_ADDITIONS = []  # self-recursive types are hand-coded (XML rule f: the generic derivation would loop)
+# XML hand codecs whose JSON shape is plain field-uniform, so they derive normally.
+JSON_ADDITIONS = ["Patch", "DeviceModule", "Dependent"]
 
 VALUE_TYPES = """Int Long Float Double Boolean String Vector[Byte] Nmtoken XsdId XsdIdRef XjdfString XsdDateTime
 XsdDuration LanguageTag UriRef Priority0To100 CountryCode XPath PdfPath EvenPageCount CommonFolds QualityScore
@@ -246,6 +247,10 @@ import xjdf4s.model.resources.*
 
 import io.circe.{Decoder, Json}
 import io.circe.syntax.*
+
+import xjdf4s.codec.json.JsonSpecialCodecs.given
+
+import xjdf4s.codec.json.JsonResources.given
 
 import xjdf4s.messaging.*
 import xjdf4s.model.*

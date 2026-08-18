@@ -14,9 +14,19 @@ import xjdf4s.model.resources.*
  */
 object JsonResources:
 
-  def nameOf(resource: SpecificResource): String = JsonRegistry.resourceName(resource)
-
-  def encode(resource: SpecificResource): Json = JsonRegistry.encodeSpecificResource(resource)
+  /** Members contributed by a specific resource: the standard member, or the prefixed foreign member plus `"@context"`. */
+  def encodeMembers(resource: SpecificResource): Vector[(String, Json)] =
+    resource match
+      case named: NamedSpecificResource =>
+        JsonForeign.encodeForeignElementMember(
+          ExtensionElement(
+            named.foreignName,
+            attributes = named.extensions.attributes,
+            content = named.extensions.elements.map(ExtensionContent.Element(_)),
+          ),
+        )
+      case standard =>
+        Vector(JsonHelpers.member(JsonRegistry.resourceName(standard), JsonRegistry.encodeSpecificResource(standard)))
 
   def decodeSpecific(cursor: HCursor): Decoder.Result[Option[SpecificResource]] =
     JsonRegistry.resourceNames.toVector.sorted.foldLeft[Decoder.Result[Option[SpecificResource]]](Right(None)) {

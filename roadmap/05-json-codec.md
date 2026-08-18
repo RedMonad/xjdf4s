@@ -181,7 +181,7 @@ def xmlJsonAgree[A: XmlDecoder: JsonCodec: Eq](value: A): Boolean =
   поймал цикл givens (`E046` через export-форвардеры фасада: корень требует `Encoder[AuditPool]`, аудиты —
   `Encoder[Part]`/`Header`) — граф givens, как и граф файлов, должен оставаться ацикличным.
 
-## Состояние исполнения (батч деривации — в работе)
+## Состояние исполнения (батч деривации)
 
 - **Деривация JSON-кодеков** (`JsonDerived.scala`, правила этапа 04): `JsonFieldCodec` (скаляры — low-priority
   given поверх любой пары `Encoder`/`Decoder`, включая generic-энамы; контейнеры `Option`/`Vector`/
@@ -220,9 +220,32 @@ def xmlJsonAgree[A: XmlDecoder: JsonCodec: Eq](value: A): Boolean =
   `GluingPattern` → массив float, `Vector[Byte]` → hex-строка, кардинальные контейнеры → массивы.
 - **Переиспользование XML-слоя**: `codecXml` подключён в compile-scope (`Names`, `Defaults`, `Lexical`,
   `CodecHelpers`); naming-политика проверена скриптом против 116 `XjdfNames.element`-имён модели — 0 расхождений.
-- **Осталось:** ручные кодеки оставшихся спец-форм (payload-энамы: `BindingIntent`, `ColorIntent`, `StickOn`,
-  `CollatingItem`, `LooseBindingParams`, `Assembly`, `ModifyQueueEntryParams`, `QueueSubmissionParams` —
-  из-за них отложены ресурсы `Assembly`/`LooseBindingParams`/`FeedingParams`, интенты
-  `BindingIntent`/`ColorIntent`/`AssemblingIntent`, сообщения `CommandModifyQueueEntry`/`CommandSubmitQueueEntry`);
-  `Dependent`/`ProductList` и интенты в корне XJDF; foreign-ресурсы в `Resource`-членах; ReferenceCheck
-  для JSON (предостережение #4).
+
+## Состояние исполнения (батч дозакрытия — этап завершён)
+
+- **Полное покрытие реестра: 102 ресурса / 14 интенций / 44 сообщения** — паритет с XML-кодеком достигнут.
+  Закрыты последние спец-формы с payload-энамами (`JsonSpecialCodecs`, зеркала XML-маппинга):
+  `BindingIntent` (`BindingType` + детали-член на кейс: `AdhesiveNote`/`LooseBinding`/`EdgeGluing`/
+  `HardCoverBinding`/`SaddleStitching`/`SideStitching`/`SoftCoverBinding`), `ColorIntent` (`SurfaceColor[]`
+  с членом `Surface`), `StickOn` (`Face` xor `Folio`), `CollatingItem` (`Orientation` xor `Transformation`),
+  `LooseBindingParams` (`BindingType` + `ChannelBindingDetails`/`CoilBindingDetails`/…), `Assembly`
+  (`BinderySignatureIDs` ↔ `AssemblySection[]`), `ModifyQueueEntryParams` (`Operation` + целевые атрибуты
+  `NextQueueEntryID`/`PrevQueueEntryID`/`Position`/`Priority`/`GangName`), `QueueSubmissionParams`
+  (`URL` + позиционные атрибуты). Вместе с ними вернулись в деривацию `FeedingParams`, `AssemblingIntent`,
+  `CommandModifyQueueEntry`, `CommandSubmitQueueEntry`; `Patch`/`DeviceModule`/`Dependent` добавлены в
+  генератор как обычные деривируемые (у `DeviceModule` имя члена `Module` — переопределение в
+  `JsonDerived.elementNameOf`).
+- **Корень XJDF дополнен**: `ProductList` (массив `Product` с интентами через ручной `Intent`-кодек) и
+  foreign/extensions члены корня; `ResourceSet.Dependent` добавлен в ручной кодек.
+- **Foreign-ресурсы и foreign-интенты** (JSON-LD минимум, 9.10.2.4): `NamedSpecificResource`/
+  `NamedProductIntent` кодируются `"Prefix:Name"` + `"@context"` через `JsonForeign`; в `Resource`-кодеке
+  foreign-дети идут в `foreignElements`, атрибуты — в `extensions` (семантика XML-`ResourceCodec`);
+  `Intent`-декодер принимает ровно один foreign-член (как XML).
+- **ReferenceCheck для JSON** (предостережение #4 из этапа 04): кросс-закон на каждой итерации прогоняет
+  доменную проверку ссылок на JSON-декодированном документе — аналог XSD ID/IDREF-доказательства.
+- **Тесты**: 42 проверки `JsonChecksSuite` (плюс round-trip'ы всех восьми спец-форм, `ProductList`-корня,
+  `Dependent`, foreign-ресурса и foreign-интента); нормативные фикстуры 3.1/7.1/8.5/9.11; кросс-закон
+  2×100 итераций; XSD-property остаётся в XML-модуле.
+
+**Итог этапа 05: JSON-кодек закрыт по паритету с XML (102/14/44), все нормативные JSON-исключения
+реализованы, foreign-JSON и ReferenceCheck на месте, сборка и тесты зелёные.**

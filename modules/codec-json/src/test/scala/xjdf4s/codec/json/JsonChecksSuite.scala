@@ -32,9 +32,21 @@ class JsonChecksSuite extends munit.FunSuite:
       JsonDerivedChecks.productWithIntent,
       JsonDerivedChecks.nodeInfoStatus,
       JsonDerivedChecks.layoutExpansionBox,
+      JsonDerivedChecks.stickOn,
+      JsonDerivedChecks.collatingItem,
+      JsonDerivedChecks.looseBindingParams,
+      JsonDerivedChecks.assembly,
+      JsonDerivedChecks.bindingIntent,
+      JsonDerivedChecks.colorIntent,
+      JsonDerivedChecks.modifyQueueEntryParams,
+      JsonDerivedChecks.queueSubmissionParams,
+      JsonDerivedChecks.productListRoot,
+      JsonDerivedChecks.dependentResourceSet,
+      JsonDerivedChecks.foreignResource,
+      JsonDerivedChecks.foreignIntent,
       JsonDerivedChecks.foreignExtensions,
       JsonDerivedChecks.registryCoverage,
     )
-    assert(results.size == 30)
+    assert(results.size == 42)
   }
 end JsonChecksSuite

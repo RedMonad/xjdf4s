@@ -1,6 +1,6 @@
 package xjdf4s.codec.json
 
-import io.circe.{Decoder, Encoder, Json}
+import io.circe.{Decoder, Encoder, HCursor, Json}
 import io.circe.syntax.*
 
 import xjdf4s.codec.xml.Lexical
@@ -320,8 +320,9 @@ object JsonSpecialCodecs:
   // -- Intent (open ProductIntent union, dispatched through the registry) --------
 
   /**
-   * Mirror of the XML IntentCodec: the intent child is dispatched by its element name through [[JsonRegistry]],
-   * so exactly one intent member may be present. The root product-list batch will reuse this codec.
+   * Mirror of the XML IntentCodec: the intent child is dispatched by its member name through [[JsonRegistry]],
+   * so exactly one intent member may be present; a foreign-namespace member becomes a NamedProductIntent via
+   * [[JsonForeign]]. The root product-list batch reuses this codec.
    */
   given Encoder[Intent] = Encoder.instance(intent =>
     JsonHelpers.obj(
@@ -329,7 +330,17 @@ object JsonSpecialCodecs:
         Vector(JsonHelpers.member("Name", Json.fromString(intent.name.value))),
         JsonHelpers.optMember("DescriptiveName", intent.descriptiveName),
         JsonHelpers.optMember("ExternalID", intent.externalId),
-        intent.productIntent.toVector.map(value => JsonHelpers.member(JsonRegistry.intentName(value), JsonRegistry.encodeProductIntent(value))),
+        intent.productIntent.toVector.flatMap {
+          case named: NamedProductIntent =>
+            JsonForeign.encodeForeignElementMember(
+              ExtensionElement(
+                named.foreignName,
+                attributes = named.extensions.attributes,
+                content = named.extensions.elements.map(ExtensionContent.Element(_)),
+              ),
+            )
+          case standard => Vector(JsonHelpers.member(JsonRegistry.intentName(standard), JsonRegistry.encodeProductIntent(standard)))
+        },
         JsonForeign.encodeExtensions(intent.extensions),
       ),
     ),
@@ -339,7 +350,7 @@ object JsonSpecialCodecs:
       name <- cursor.get[Nmtoken]("Name")
       descriptiveName <- JsonHelpers.opt[XjdfString](cursor, "DescriptiveName")
       externalId <- JsonHelpers.opt[Nmtoken](cursor, "ExternalID")
-      decodedIntents <- JsonRegistry.intentNames.toVector.sorted.foldLeft[Decoder.Result[Vector[ProductIntent]]](Right(Vector.empty)) {
+      standardIntents <- JsonRegistry.intentNames.toVector.sorted.foldLeft[Decoder.Result[Vector[ProductIntent]]](Right(Vector.empty)) {
         (acc, intentName) =>
           for
             accumulated <- acc
@@ -348,10 +359,13 @@ object JsonSpecialCodecs:
               case None       => Right(accumulated)
           yield next
       }
-      productIntent <- decodedIntents match
-        case Vector(single) => Right(Some(single))
-        case Vector()       => Right(None)
-        case other          => JsonHelpers.fail(cursor, s"Intent requires at most one intent member, found ${other.size}")
+      foreignIntents <- JsonForeign.decodeForeignElement(cursor)
+      productIntent <- (standardIntents, foreignIntents) match
+        case (Vector(single), None) => Right(Some(single))
+        case (Vector(), Some(element)) =>
+          Right(Some(NamedProductIntent(element.name, Extensions(element.attributes, element.content.collect { case ExtensionContent.Element(node) => node }))))
+        case (Vector(), None) => Right(None)
+        case _                => JsonHelpers.fail(cursor, "Intent requires at most one intent member")
       extensions <- JsonForeign.decodeExtensions(cursor)
     yield Intent(name, productIntent, descriptiveName, externalId, extensions),
   )
@@ -444,6 +458,422 @@ object JsonSpecialCodecs:
 
   given encoderAssemblySection: Encoder[AssemblySection] = AssemblySectionJson.encoder
   given decoderAssemblySection: Decoder[AssemblySection] = AssemblySectionJson.decoder
+
+  // -- StickOn: @Face xor @Folio -----------------------------------------------------
+
+  given Encoder[StickOn] = Encoder.instance(stickOn =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("ChildRef", Json.fromString(stickOn.childRef.value))),
+        JsonHelpers.optMember("Face", stickOn.location.collect { case ProductLocation.OnFace(face) => face }),
+        JsonHelpers.optMember("Folio", stickOn.location.collect { case ProductLocation.OnFolio(folio) => folio }),
+        JsonHelpers.optMember("Orientation", stickOn.orientation),
+        JsonHelpers.optMember("Position", stickOn.position),
+        JsonHelpers.optMember("Glue", stickOn.glue),
+      ),
+    ),
+  )
+  given Decoder[StickOn] = Decoder.instance(cursor =>
+    for
+      childRef <- cursor.get[XsdIdRef]("ChildRef")
+      face <- JsonHelpers.opt[Face](cursor, "Face")
+      folio <- JsonHelpers.opt[Int](cursor, "Folio")
+      orientation <- JsonHelpers.opt[Orientation](cursor, "Orientation")
+      position <- JsonHelpers.opt[XYPair](cursor, "Position")
+      glue <- JsonHelpers.opt[Glue](cursor, "Glue")
+      location <- (face, folio) match
+        case (Some(f), None) => Right(Some(ProductLocation.OnFace(f)))
+        case (None, Some(p)) => Right(Some(ProductLocation.OnFolio(p)))
+        case (None, None)    => Right(None)
+        case _               => JsonHelpers.fail(cursor, "Face/Folio are mutually exclusive")
+    yield StickOn(childRef, location, orientation, position, glue),
+  )
+
+  // -- CollatingItem: @Orientation xor @Transformation ----------------------------------
+
+  given Encoder[CollatingItem] = Encoder.instance(item =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("Amount", item.amount),
+        JsonHelpers.optMember("ComponentRef", item.componentRef),
+        JsonHelpers.optMember("Orientation", item.placement.collect { case CollatingPlacement.ByOrientation(orientation) => orientation }),
+        JsonHelpers.optMember("Transformation", item.placement.collect { case CollatingPlacement.ByTransformation(transformation) => transformation }),
+        JsonHelpers.optMember("TransformationContext", item.transformationContext),
+      ),
+    ),
+  )
+  given Decoder[CollatingItem] = Decoder.instance(cursor =>
+    for
+      amount <- JsonHelpers.opt[Int](cursor, "Amount")
+      componentRef <- JsonHelpers.opt[XsdIdRef](cursor, "ComponentRef")
+      orientation <- JsonHelpers.opt[Orientation](cursor, "Orientation")
+      transformation <- JsonHelpers.opt[Matrix](cursor, "Transformation")
+      transformationContext <- JsonHelpers.opt[TransformationContext](cursor, "TransformationContext")
+      placement <- (orientation, transformation) match
+        case (Some(o), None) => Right(Some(CollatingPlacement.ByOrientation(o)))
+        case (None, Some(t)) => Right(Some(CollatingPlacement.ByTransformation(t)))
+        case (None, None)    => Right(None)
+        case _               => JsonHelpers.fail(cursor, "Orientation/Transformation are mutually exclusive")
+    yield CollatingItem(amount, componentRef, placement, transformationContext),
+  )
+
+  // -- LooseBindingParams: BindingType plus per-case details --------------------------
+
+  private val looseBindingTypes: Vector[(ProductionLooseBinding, String)] = Vector(
+    ProductionLooseBinding.Channel() -> "ChannelBinding",
+    ProductionLooseBinding.Coil() -> "CoilBinding",
+    ProductionLooseBinding.Comb() -> "CombBinding",
+    ProductionLooseBinding.Ring() -> "RingBinding",
+    ProductionLooseBinding.Strip() -> "StripBinding",
+  )
+
+  private def looseBindingTypeName(binding: ProductionLooseBinding): String =
+    looseBindingTypes.find(_._1.productPrefix == binding.productPrefix).map(_._2).getOrElse(binding.productPrefix)
+
+  private def looseBindingDetailsMembers(binding: ProductionLooseBinding): Vector[(String, Json)] =
+    binding match
+      case ProductionLooseBinding.Channel(details) =>
+        details.toVector.map(value => JsonHelpers.member("ChannelBindingDetails", value.asJson))
+      case ProductionLooseBinding.Coil(details) =>
+        details.toVector.map(value => JsonHelpers.member("CoilBindingDetails", value.asJson))
+      case ProductionLooseBinding.Comb(details) =>
+        details.toVector.map(value => JsonHelpers.member("CombBindingDetails", value.asJson))
+      case ProductionLooseBinding.Ring(details) =>
+        details.toVector.map(value => JsonHelpers.member("RingBindingDetails", value.asJson))
+      case ProductionLooseBinding.Strip(details) =>
+        details.toVector.map(value => JsonHelpers.member("StripBindingDetails", value.asJson))
+
+  given Encoder[LooseBindingParams] = Encoder.instance(params =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("BindingType", Json.fromString(looseBindingTypeName(params.binding)))),
+        JsonHelpers.optMember("CoverMaterial", params.coverMaterial),
+        JsonHelpers.vecMember("HolePattern", params.holePatterns),
+        looseBindingDetailsMembers(params.binding),
+      ),
+    ),
+  )
+  given Decoder[LooseBindingParams] = Decoder.instance(cursor =>
+    for
+      bindingType <- cursor.get[String]("BindingType")
+      coverMaterial <- JsonHelpers.opt[Nmtoken](cursor, "CoverMaterial")
+      holePatterns <- JsonHelpers.vec[HolePattern](cursor, "HolePattern")
+      binding <- bindingType match
+        case "ChannelBinding" =>
+          JsonHelpers.opt[ChannelBindingProductionDetails](cursor, "ChannelBindingDetails").map(ProductionLooseBinding.Channel(_))
+        case "CoilBinding" =>
+          JsonHelpers.opt[CoilBindingProductionDetails](cursor, "CoilBindingDetails").map(ProductionLooseBinding.Coil(_))
+        case "CombBinding" =>
+          JsonHelpers.opt[CombBindingProductionDetails](cursor, "CombBindingDetails").map(ProductionLooseBinding.Comb(_))
+        case "RingBinding" =>
+          JsonHelpers.opt[RingBindingProductionDetails](cursor, "RingBindingDetails").map(ProductionLooseBinding.Ring(_))
+        case "StripBinding" =>
+          JsonHelpers.opt[StripBindingProductionDetails](cursor, "StripBindingDetails").map(ProductionLooseBinding.Strip(_))
+        case other => JsonHelpers.fail(cursor, s"unknown LooseBindingParams BindingType '$other'")
+    yield LooseBindingParams(binding, coverMaterial, holePatterns),
+  )
+
+  // -- Assembly: the plan coproduct maps to BinderySignatureIDs / AssemblySection -------
+
+  given Encoder[Assembly] = Encoder.instance(assembly =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        assembly.plan match
+          case AssemblyPlan.Collecting(ids) =>
+            Vector(JsonHelpers.member("BinderySignatureIDs", Json.arr(ids.map(id => Json.fromString(id.value))*)))
+          case AssemblyPlan.Gathering(ids) =>
+            Vector(JsonHelpers.member("BinderySignatureIDs", Json.arr(ids.map(id => Json.fromString(id.value))*)))
+          case AssemblyPlan.Listed(sections) =>
+            Vector(JsonHelpers.member("AssemblySection", Json.arr(sections.toVector.map(_.asJson)*)))
+          case AssemblyPlan.None => Vector.empty,
+      ),
+    ),
+  )
+  given Decoder[Assembly] = Decoder.instance(cursor =>
+    for
+      binderySignatureIds <- JsonHelpers.vec[Nmtoken](cursor, "BinderySignatureIDs")
+      sections <- JsonHelpers.vec[AssemblySection](cursor, "AssemblySection")
+      plan <-
+        if sections.nonEmpty then
+          NonEmptyVector.from(sections) match
+            case Right(nonEmpty) => Right(AssemblyPlan.Listed(nonEmpty))
+            case Left(_)         => JsonHelpers.fail(cursor, "AssemblySection must not be empty")
+        else if binderySignatureIds.nonEmpty then Right(AssemblyPlan.Collecting(binderySignatureIds))
+        else Right(AssemblyPlan.None)
+    yield Assembly(plan),
+  )
+
+  // -- BindingIntent: BindingType plus per-case details -------------------------------
+
+  private val bindingTypes: Vector[(BindingSpecification, String)] = Vector(
+    BindingSpecification.AdhesiveNote() -> "AdhesiveNote",
+    BindingSpecification.ChannelBinding() -> "ChannelBinding",
+    BindingSpecification.CoilBinding() -> "CoilBinding",
+    BindingSpecification.CombBinding() -> "CombBinding",
+    BindingSpecification.CornerStitch -> "CornerStitch",
+    BindingSpecification.EdgeGluing() -> "EdgeGluing",
+    BindingSpecification.HardCover() -> "HardCover",
+    BindingSpecification.LooseBinding() -> "LooseBinding",
+    BindingSpecification.None -> "None",
+    BindingSpecification.RingBinding() -> "RingBinding",
+    BindingSpecification.SaddleStitch() -> "SaddleStitch",
+    BindingSpecification.SideStitch() -> "SideStitch",
+    BindingSpecification.SoftCover() -> "SoftCover",
+    BindingSpecification.StripBinding() -> "StripBinding",
+    BindingSpecification.Tape -> "Tape",
+    BindingSpecification.WireComb() -> "WireComb",
+  )
+
+  private def bindingTypeName(binding: BindingSpecification): String =
+    bindingTypes.find(_._1.productPrefix == binding.productPrefix).map(_._2).getOrElse(binding.productPrefix)
+
+  private def bindingDetailsMembers(binding: BindingSpecification): Vector[(String, Json)] =
+    binding match
+      case BindingSpecification.AdhesiveNote(details) =>
+        details.toVector.map(value => JsonHelpers.member("AdhesiveNote", value.asJson))
+      case BindingSpecification.ChannelBinding(details) =>
+        details.toVector.map(value => JsonHelpers.member("LooseBinding", value.asJson))
+      case BindingSpecification.CoilBinding(details) =>
+        details.toVector.map(value => JsonHelpers.member("LooseBinding", value.asJson))
+      case BindingSpecification.CombBinding(details) =>
+        details.toVector.map(value => JsonHelpers.member("LooseBinding", value.asJson))
+      case BindingSpecification.EdgeGluing(details) =>
+        details.toVector.map(value => JsonHelpers.member("EdgeGluing", value.asJson))
+      case BindingSpecification.HardCover(details) =>
+        details.toVector.map(value => JsonHelpers.member("HardCoverBinding", value.asJson))
+      case BindingSpecification.LooseBinding(details) =>
+        details.toVector.map(value => JsonHelpers.member("LooseBinding", value.asJson))
+      case BindingSpecification.RingBinding(details) =>
+        details.toVector.map(value => JsonHelpers.member("LooseBinding", value.asJson))
+      case BindingSpecification.SaddleStitch(details) =>
+        details.toVector.map(value => JsonHelpers.member("SaddleStitching", value.asJson))
+      case BindingSpecification.SideStitch(details) =>
+        details.toVector.map(value => JsonHelpers.member("SideStitching", value.asJson))
+      case BindingSpecification.SoftCover(details) =>
+        details.toVector.map(value => JsonHelpers.member("SoftCoverBinding", value.asJson))
+      case BindingSpecification.StripBinding(details) =>
+        details.toVector.map(value => JsonHelpers.member("LooseBinding", value.asJson))
+      case BindingSpecification.WireComb(details) =>
+        details.toVector.map(value => JsonHelpers.member("LooseBinding", value.asJson))
+      case _ => Vector.empty
+
+  given Encoder[BindingIntent] = Encoder.instance(intent =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        JsonHelpers.optMember("BackCoverColor", intent.backCoverColor),
+        JsonHelpers.optMember("BackCoverColorDetails", intent.backCoverColorDetails),
+        JsonHelpers.optMember("BindingColor", intent.bindingColor),
+        JsonHelpers.optMember("BindingColorDetails", intent.bindingColorDetails),
+        JsonHelpers.optMember("BindingOrder", intent.bindingOrder),
+        JsonHelpers.optMember("BindingSide", intent.bindingSide),
+        JsonHelpers.vecMemberOf("ChildRefs", intent.childRefs.toVector.flatMap(_.toVector))(ref => Json.fromString(ref.value)),
+        JsonHelpers.optMember("CoverColor", intent.coverColor),
+        JsonHelpers.optMember("CoverColorDetails", intent.coverColorDetails),
+        Vector(JsonHelpers.member("BindingType", Json.fromString(bindingTypeName(intent.binding)))),
+        JsonHelpers.optMember("Tabs", intent.tabs),
+        bindingDetailsMembers(intent.binding),
+      ),
+    ),
+  )
+  given Decoder[BindingIntent] = Decoder.instance(cursor =>
+    for
+      bindingType <- cursor.get[String]("BindingType")
+      backCoverColor <- JsonHelpers.opt[NamedColor](cursor, "BackCoverColor")
+      backCoverColorDetails <- JsonHelpers.opt[XjdfString](cursor, "BackCoverColorDetails")
+      bindingColor <- JsonHelpers.opt[NamedColor](cursor, "BindingColor")
+      bindingColorDetails <- JsonHelpers.opt[XjdfString](cursor, "BindingColorDetails")
+      bindingOrder <- JsonHelpers.opt[BindingOrder](cursor, "BindingOrder")
+      bindingSide <- JsonHelpers.opt[BindingEdge](cursor, "BindingSide")
+      childRefs <- JsonHelpers.vec[XsdIdRef](cursor, "ChildRefs")
+      coverColor <- JsonHelpers.opt[NamedColor](cursor, "CoverColor")
+      coverColorDetails <- JsonHelpers.opt[XjdfString](cursor, "CoverColorDetails")
+      tabs <- JsonHelpers.opt[Tabs](cursor, "Tabs")
+      binding <- decodeBindingDetails(bindingType, cursor)
+    yield BindingIntent(
+      binding,
+      backCoverColor,
+      backCoverColorDetails,
+      bindingColor,
+      bindingColorDetails,
+      bindingOrder,
+      bindingSide,
+      TwoOrMore.from(childRefs).toOption,
+      coverColor,
+      coverColorDetails,
+      tabs,
+    ),
+  )
+
+  private def decodeBindingDetails(bindingType: String, cursor: HCursor): Decoder.Result[BindingSpecification] =
+    bindingType match
+      case "AdhesiveNote" =>
+        JsonHelpers.opt[AdhesiveNoteDetails](cursor, "AdhesiveNote").map(BindingSpecification.AdhesiveNote(_))
+      case "ChannelBinding" =>
+        JsonHelpers.opt[LooseBindingDetails](cursor, "LooseBinding").map(BindingSpecification.ChannelBinding(_))
+      case "CoilBinding" =>
+        JsonHelpers.opt[CoilLooseBindingDetails](cursor, "LooseBinding").map(BindingSpecification.CoilBinding(_))
+      case "CombBinding" =>
+        JsonHelpers.opt[CombLooseBindingDetails](cursor, "LooseBinding").map(BindingSpecification.CombBinding(_))
+      case "CornerStitch" => Right(BindingSpecification.CornerStitch)
+      case "EdgeGluing" =>
+        JsonHelpers.opt[EdgeGluingDetails](cursor, "EdgeGluing").map(BindingSpecification.EdgeGluing(_))
+      case "HardCover" =>
+        JsonHelpers.opt[HardCoverBindingDetails](cursor, "HardCoverBinding").map(BindingSpecification.HardCover(_))
+      case "LooseBinding" =>
+        JsonHelpers.opt[LooseBindingDetails](cursor, "LooseBinding").map(BindingSpecification.LooseBinding(_))
+      case "None" => Right(BindingSpecification.None)
+      case "RingBinding" =>
+        JsonHelpers.opt[RingLooseBindingDetails](cursor, "LooseBinding").map(BindingSpecification.RingBinding(_))
+      case "SaddleStitch" =>
+        JsonHelpers.opt[StitchingDetails](cursor, "SaddleStitching").map(BindingSpecification.SaddleStitch(_))
+      case "SideStitch" =>
+        JsonHelpers.opt[StitchingDetails](cursor, "SideStitching").map(BindingSpecification.SideStitch(_))
+      case "SoftCover" =>
+        JsonHelpers.opt[SoftCoverBindingDetails](cursor, "SoftCoverBinding").map(BindingSpecification.SoftCover(_))
+      case "StripBinding" =>
+        JsonHelpers.opt[LooseBindingDetails](cursor, "LooseBinding").map(BindingSpecification.StripBinding(_))
+      case "Tape" => Right(BindingSpecification.Tape)
+      case "WireComb" =>
+        JsonHelpers.opt[LooseBindingDetails](cursor, "LooseBinding").map(BindingSpecification.WireComb(_))
+      case other => JsonHelpers.fail(cursor, s"unknown BindingType '$other'")
+
+  // -- ColorIntent: SurfaceColor members distinguished by @Surface ---------------------
+
+  private def surfaceColorMember(side: Side, value: SurfaceColor): Json =
+    value.asJson.mapObject(_.add("Surface", Json.fromString(side.toString)))
+
+  given Encoder[ColorIntent] = Encoder.instance(intent =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        intent.surfaces match
+          case ColorSurfaces.Unprinted    => Vector.empty
+          case ColorSurfaces.Front(front) => Vector(JsonHelpers.member("SurfaceColor", Json.arr(surfaceColorMember(Side.Front, front))))
+          case ColorSurfaces.Back(back)   => Vector(JsonHelpers.member("SurfaceColor", Json.arr(surfaceColorMember(Side.Back, back))))
+          case ColorSurfaces.Both(front, back) =>
+            Vector(JsonHelpers.member("SurfaceColor", Json.arr(surfaceColorMember(Side.Front, front), surfaceColorMember(Side.Back, back)))),
+      ),
+    ),
+  )
+  given Decoder[ColorIntent] = Decoder.instance(cursor =>
+    for
+      items <- cursor.downField("SurfaceColor").focus match
+        case Some(json) => json.as[List[Json]]
+        case None       => Right(List.empty)
+      pairs <- items.foldLeft[Decoder.Result[Vector[(Side, SurfaceColor)]]](Right(Vector.empty)) { (acc, item) =>
+        for
+          accumulated <- acc
+          side <- item.hcursor.get[Side]("Surface")
+          color <- item.mapObject(_.remove("Surface")).as[SurfaceColor]
+        yield accumulated :+ (side, color)
+      }
+      surfaces <- pairs match
+        case Vector((Side.Front, front), (Side.Back, back)) => Right(ColorSurfaces.Both(front, back))
+        case Vector((Side.Front, front))                    => Right(ColorSurfaces.Front(front))
+        case Vector((Side.Back, back))                      => Right(ColorSurfaces.Back(back))
+        case Vector()                                       => Right(ColorSurfaces.Unprinted)
+        case _ => JsonHelpers.fail(cursor, "one front and one back SurfaceColor at most")
+    yield ColorIntent(surfaces),
+  )
+
+  // -- ModifyQueueEntryParams: Operation plus target payload ---------------------------
+
+  private val queueOperations: Vector[(QueueModification, String)] = Vector(
+    QueueModification.Abort -> "Abort",
+    QueueModification.Complete -> "Complete",
+    QueueModification.Hold -> "Hold",
+    QueueModification.Remove -> "Remove",
+    QueueModification.Resume -> "Resume",
+    QueueModification.Suspend -> "Suspend",
+    QueueModification.Move() -> "Move",
+    QueueModification.SetGang() -> "SetGang",
+  )
+
+  private def queueOperationName(operation: QueueModification): String =
+    queueOperations.find(_._1.productPrefix == operation.productPrefix).map(_._2).getOrElse(operation.productPrefix)
+
+  given Encoder[ModifyQueueEntryParams] = Encoder.instance(params =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("Operation", Json.fromString(queueOperationName(params.operation)))),
+        Vector(JsonHelpers.member("QueueFilter", params.filter.asJson)),
+        params.operation match
+          case QueueModification.Move(target) =>
+            target.toVector.flatMap {
+              case QueueMoveTarget.After(next)   => Vector(JsonHelpers.member("NextQueueEntryID", Json.fromString(next.value)))
+              case QueueMoveTarget.Before(prev)  => Vector(JsonHelpers.member("PrevQueueEntryID", Json.fromString(prev.value)))
+              case QueueMoveTarget.Position(pos) => Vector(JsonHelpers.member("Position", Json.fromInt(pos)))
+              case QueueMoveTarget.Priority(prio) => Vector(JsonHelpers.member("Priority", Json.fromInt(prio.value)))
+            }
+          case QueueModification.SetGang(gangName) =>
+            JsonHelpers.optMember("GangName", gangName)
+          case _ => Vector.empty,
+      ),
+    ),
+  )
+  given Decoder[ModifyQueueEntryParams] = Decoder.instance(cursor =>
+    for
+      operation <- cursor.get[String]("Operation")
+      filter <- cursor.get[QueueFilter]("QueueFilter")
+      nextQueueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "NextQueueEntryID")
+      prevQueueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "PrevQueueEntryID")
+      position <- JsonHelpers.opt[Int](cursor, "Position")
+      priority <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
+      gangName <- JsonHelpers.opt[Nmtoken](cursor, "GangName")
+      modification <- operation match
+        case "Move" =>
+          val target = (nextQueueEntryId, prevQueueEntryId, position, priority) match
+            case (Some(next), _, _, _)  => Some(QueueMoveTarget.After(next))
+            case (_, Some(prev), _, _)  => Some(QueueMoveTarget.Before(prev))
+            case (_, _, Some(pos), _)   => Some(QueueMoveTarget.Position(pos))
+            case (_, _, _, Some(prio))  => Some(QueueMoveTarget.Priority(prio))
+            case _                      => None
+          Right(QueueModification.Move(target))
+        case "SetGang" => Right(QueueModification.SetGang(gangName))
+        case "Abort"   => Right(QueueModification.Abort)
+        case "Complete" => Right(QueueModification.Complete)
+        case "Hold"    => Right(QueueModification.Hold)
+        case "Remove"  => Right(QueueModification.Remove)
+        case "Resume"  => Right(QueueModification.Resume)
+        case "Suspend" => Right(QueueModification.Suspend)
+        case other     => JsonHelpers.fail(cursor, s"unknown Operation '$other'")
+    yield ModifyQueueEntryParams(modification, filter),
+  )
+
+  // -- QueueSubmissionParams: position payload flattens to attributes ------------------
+
+  given Encoder[QueueSubmissionParams] = Encoder.instance(params =>
+    JsonHelpers.obj(
+      JsonHelpers.memberList(
+        Vector(JsonHelpers.member("URL", Json.fromString(params.url.value.toString))),
+        JsonHelpers.optMember("Activation", params.activation),
+        JsonHelpers.optMember("GangName", params.gangName),
+        JsonHelpers.optMember("GangPolicy", params.gangPolicy),
+        params.position.toVector.flatMap {
+          case QueueSubmissionPosition.After(next)   => Vector(JsonHelpers.member("NextQueueEntryID", Json.fromString(next.value)))
+          case QueueSubmissionPosition.Before(prev)  => Vector(JsonHelpers.member("PrevQueueEntryID", Json.fromString(prev.value)))
+          case QueueSubmissionPosition.Priority(prio) => Vector(JsonHelpers.member("Priority", Json.fromInt(prio.value)))
+        },
+        JsonHelpers.optMember("ReturnJMF", params.returnJmf),
+      ),
+    ),
+  )
+  given Decoder[QueueSubmissionParams] = Decoder.instance(cursor =>
+    for
+      url <- cursor.get[UriRef]("URL")
+      activation <- JsonHelpers.opt[QueueActivation](cursor, "Activation")
+      gangName <- JsonHelpers.opt[Nmtoken](cursor, "GangName")
+      gangPolicy <- JsonHelpers.opt[QueueGangPolicy](cursor, "GangPolicy")
+      nextQueueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "NextQueueEntryID")
+      prevQueueEntryId <- JsonHelpers.opt[Nmtoken](cursor, "PrevQueueEntryID")
+      priority <- JsonHelpers.opt[Priority0To100](cursor, "Priority")
+      returnJmf <- JsonHelpers.opt[UriRef](cursor, "ReturnJMF")
+      position <- (nextQueueEntryId, prevQueueEntryId, priority) match
+        case (Some(next), _, _) => Right(Some(QueueSubmissionPosition.After(next)))
+        case (_, Some(prev), _) => Right(Some(QueueSubmissionPosition.Before(prev)))
+        case (_, _, Some(prio)) => Right(Some(QueueSubmissionPosition.Priority(prio)))
+        case _                  => Right(None)
+    yield QueueSubmissionParams(url, activation, gangName, gangPolicy, position, returnJmf),
+  )
 
   // -- TIFF tag ------------------------------------------------------------------
 
