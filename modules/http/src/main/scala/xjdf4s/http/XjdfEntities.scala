@@ -47,9 +47,9 @@ object XjdfEntities:
                 contentType.mediaType.subType == mediaType.subType =>
             media.as[String].map(text => decode(text))
           case Some(contentType) =>
-            IO.pure(Left(MediaTypeMismatch(contentType.mediaType, Set(mediaType)): Either[org.http4s.DecodeFailure, A]))
+            IO.pure((Left(MediaTypeMismatch(contentType.mediaType, Set(mediaType))): Either[org.http4s.DecodeFailure, A]))
           case None =>
-            IO.pure(Left(MediaTypeMissing(Set(mediaType)): Either[org.http4s.DecodeFailure, A]))
+            IO.pure((Left(MediaTypeMissing(Set(mediaType))): Either[org.http4s.DecodeFailure, A]))
       EitherT(result)
     }
 
