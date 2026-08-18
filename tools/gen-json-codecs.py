@@ -269,8 +269,6 @@ import io.circe.syntax.*
 
 import xjdf4s.codec.json.JsonSpecialCodecs.given
 
-import xjdf4s.codec.json.JsonResources.given
-
 import xjdf4s.messaging.*
 import xjdf4s.model.*
 import xjdf4s.model.resources.*
