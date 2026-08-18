@@ -49,6 +49,14 @@ lazy val dsl = project
     libraryDependencies += "org.typelevel" %% "cats-free" % catsVersion
   )
 
+lazy val xjmf = project
+  .in(file("modules/xjmf"))
+  .dependsOn(messaging)
+  .settings(
+    name := "xjdf4s-xjmf",
+    libraryDependencies += "org.typelevel" %% "cats-free" % catsVersion
+  )
+
 lazy val codecXml = project
   .in(file("modules/codec-xml"))
   // "test->test" makes the domain generators (model and messaging test scopes) available to the codec tests,
@@ -74,7 +82,7 @@ lazy val codecJson = project
   )
 
 lazy val root = rootProject
-  .aggregate(core, model, messaging, protocol, dsl, codecXml, codecJson)
+  .aggregate(core, model, messaging, protocol, dsl, xjmf, codecXml, codecJson)
   .settings(
     name := "xjdf4s",
     publish / skip := true,

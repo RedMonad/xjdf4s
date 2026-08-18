@@ -14,6 +14,9 @@ The project is intentionally split along protocol boundaries:
 - `xjdf4s-messaging` — XJMF envelope, headers and the four message families (44 concrete messages);
 - `xjdf4s-protocol` — public protocol-wide union/intersection types;
 - `xjdf4s-dsl` — Free-based DSL for constructing XJDF documents (one program, several interpreters);
+- `xjdf4s-xjmf` — executable XJMF transport without a network: persistent channels, refID response
+  correlation, SignalResource replacement windows as a pure Free algebra with a deterministic channel
+  machine and an event-trace interpreter (the HTTP runtime is planned for the next stage);
 - `xjdf4s-codec-xml` — XML codec over the domain: parser, writer, decoders/encoders, ID/IDREF pass,
   full 102/14/44 coverage via typeclass derivation, and a property-based round-trip proof against the
   XJDF schema (`xjdf.xsd`);

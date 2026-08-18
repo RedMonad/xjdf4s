@@ -106,14 +106,33 @@ end ChannelState
 6. Writer-трасса: события `Opened/Closed/Delivered/Replaced` в хронологическом порядке.
 7. README модуля: диаграмма состояний канала + пример сценария.
 
+## Уточнения дизайна (зафиксированы по нормативу при реализации)
+
+1. **`@ChannelID` — это `Header/@ID` инициировавшего Query** (Table 8.71, подтверждено scaladoc'ом
+   модели `SubscriptionInfo`): `OpenChannel(subscription, channelId, messageType)` не нуждается в
+   отдельном индексе — сигнал маршрутизируется по `Header/@refID` прямо в канал.
+2. **`DeliverResponse` добавлен в алгебру**: корреляция требует, чтобы ответы входили в состояние;
+   `AwaitResponse(answeredId)` возвращает ответ, отвечающий сообщению с этим `Header/@ID`
+   (для сигнала это `Header/@ID` сигнала, для Query — ID запроса, 9.6.1/9.6.2).
+3. **Traced-интерпретатор — `WriterT[State[XjmfState, *], Chain[TransportEvent], *]`, а не голый
+   `Writer`**: трасса зависит от состояния канала (`Unrouted`/`ChannelNotOpen`). Оба интерпретатора —
+   тонкие обёртки над одним ядром `transition`, трассы совпадают по построению.
+4. **Окно замены — строгое с обеих сторон**: `@ReplaceAfter < time < @ReplaceBefore` («after»/«prior
+   to» в Table 7.54; эскизный вариант `≤ ReplaceBefore` скорректирован по нормативной таблице —
+   норматив > эскиз). Scope = канал подписки; фильтр — `SignalResource`, тот же `Header/@DeviceID`.
+5. **Надёжность берётся из `Signal/@ChannelMode`** (Table 7.7), как в эскизе; `Subscription/@ChannelMode`
+   остаётся списком предпочтений канала (Table 7.5) и в машине не перечитывается.
+6. Повторное открытие того же `@ChannelID` **замещает** подписку (9.6.3 SHOULD); закрытие канала
+   идемпотентно; закрытый канал остаётся видимым как `Closed` (попытка доставки → событие).
+
 ## Definition of Done
 
-- [ ] Сценарий подписки исполняется State- и Writer-интерпретаторами с одинаковой трассой.
-- [ ] Корреляция `refID`: тест связки Query→Signal→Response.
-- [ ] Окна замены `SignalResource` работают (замещение по `@ReplaceAfter/@ReplaceBefore`).
-- [ ] `Reliable`-сигнал без ответа виден как незакрытое ожидание; `FireAndForget` — нет.
-- [ ] Транспорт не содержит IO; сеть появится только на этапе 07.
-- [ ] `sbt "clean ; compile ; test"` зелёный.
+- [x] Сценарий подписки исполняется State- и Writer-интерпретаторами с одинаковой трассой.
+- [x] Корреляция `refID`: тест связки Query→Signal→Response (+ начальный ответ на подписку).
+- [x] Окна замены `SignalResource` работают (замещение по `@ReplaceAfter/@ReplaceBefore`).
+- [x] `Reliable`-сигнал без ответа виден как незакрытое ожидание; `FireAndForget` — нет.
+- [x] Транспорт не содержит IO; сеть появится только на этапе 07.
+- [ ] `sbt "clean ; compile ; test"` зелёный (ждёт прогона).
 
 ## Риски и альтернативы
 
@@ -124,3 +143,24 @@ end ChannelState
   упорядоченного журнала — `Chain` сохраняет порядок и дёшево конкатенируется.
 - **Два стиля (Free и tagless) в одном модуле** сбивают новичков — зафиксируйте правило из
   п. 5 в README и в ревью-гайде.
+
+## Состояние исполнения
+
+Реализовано в модуле `xjmf` (`cats-free`; `State`/`WriterT`/`Chain` — из cats-core):
+
+- **Алгебра** (`XjmfOp.scala`): `OpenChannel`/`CloseChannel`/`Deliver`/`DeliverResponse`/
+  `AwaitResponse`/`Channels` + `Functor` (обоснование каста — как у `DocOp` этапа 03) и синтаксис
+  `Xjmf.*` через `Free.liftF`.
+- **Состояние** (`XjmfState.scala`): каналы по `@ChannelID`, `pending` (неотвеченные Reliable-сигналы
+  в порядке доставки — 9.6.5.1), `responses` (корреляция по `@refID`), `delivered` (журнал канала,
+  прореживается окнами), `events` (трасса).
+- **Интерпретаторы** (`XjmfInterpreters.scala`): единое ядро `transition` + две обёртки —
+  `stateful: XjmfOp ~> State[XjmfState, *]` и `traced: XjmfOp ~> WriterT[State, Chain[TransportEvent], *]`;
+  трассы совпадают по построению (проверено тестом `tracesAgree`).
+- **Сценарии** (`XjmfTransportChecks`, 7 проверок): жизненный цикл подписки, начальный ответ на
+  Query (9.6.2), цепочка корреляции Q1→S1→R1, окно замены (Table 7.54, строгие границы), семантика
+  `ChannelMode` (Reliable-ожидание видимо, FireAndForget — нет), маршрутные отказы (`Unrouted`/
+  `ChannelNotOpen`), замещение подписки при повторном открытии (9.6.3).
+- **README модуля**: нормативная таблица-карта, диаграмма состояний канала, пример сценария,
+  правило Free-vs-tagless, заметки о scope (окна — `SignalResource`; `SignalStatus` — точка расширения;
+  таймеры/ретраи — этап 07).
