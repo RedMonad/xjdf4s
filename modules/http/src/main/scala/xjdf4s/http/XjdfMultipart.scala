@@ -1,6 +1,7 @@
 package xjdf4s.http
 
 import cats.effect.IO
+import cats.syntax.all.*
 import fs2.Stream
 
 import io.circe.syntax.*
