@@ -41,7 +41,7 @@ object XjmfInterpreters:
 
       case XjmfOp.CloseChannel(channelId) =>
         state.channels.get(channelId) match
-          case Some(_: ChannelState.Subscribed) =>
+          case Some(ChannelState.Subscribed(_, _)) =>
             val next = state.copy(channels = state.channels.updated(channelId, ChannelState.Closed))
             (next, Chain.one(TransportEvent.ChannelClosed(channelId)), ())
           case _ =>
@@ -77,9 +77,9 @@ object XjmfInterpreters:
         (state, Chain.one(TransportEvent.Unrouted(signalId)), ())
       case Some(refId) =>
         state.channels.get(refId) match
-          case Some(_: ChannelState.Closed) =>
+          case Some(ChannelState.Closed) =>
             (state, Chain.one(TransportEvent.ChannelNotOpen(refId, signalId)), ())
-          case Some(_: ChannelState.Subscribed) =>
+          case Some(ChannelState.Subscribed(_, _)) =>
             val (journal, replaced) = replaceInWindow(signal, refId, state.delivered)
             val withJournal = state.copy(delivered = journal.append((refId, signal)))
             // 9.6.5: a Reliable signal needs an answer; a FireAndForget signal does not (9.6.4).
@@ -163,5 +163,5 @@ object XjmfInterpreters:
 
   /** Runs a program for its trace only; equal to `run(program, initial).events` by construction. */
   def trace[A](program: Xjmf[A], initial: XjmfState = XjmfState.empty): Chain[TransportEvent] =
-    program.foldMap(traced).run.runS(initial).value._1
+    program.foldMap(traced).run.runA(initial).value._1
 end XjmfInterpreters
