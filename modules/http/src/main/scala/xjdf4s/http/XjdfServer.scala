@@ -14,7 +14,7 @@ import org.http4s.server.middleware.EntityLimiter
 import xjdf4s.codec.json.given
 import xjdf4s.core.*
 import xjdf4s.messaging.*
-import xjdf4s.model.{Header, XJDF}
+import xjdf4s.model.Header
 
 /**
  * The REST surface of the device side (Table 9.5): `POST /submit`, `POST /status/subscribe`,

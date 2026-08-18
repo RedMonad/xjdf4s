@@ -2,7 +2,6 @@ package xjdf4s.http
 
 import cats.~>
 import cats.data.Chain
-import cats.syntax.all.*
 import cats.effect.{Deferred, IO, Ref}
 
 import scala.concurrent.duration.FiniteDuration

@@ -2,7 +2,6 @@ package xjdf4s.http
 
 import cats.data.Chain
 import cats.effect.{IO, Ref}
-import cats.syntax.all.*
 import fs2.Stream
 import fs2.concurrent.Topic
 
@@ -108,7 +107,7 @@ final class XjdfHub private (
 
   private def runOp[A](op: XjmfOp[A]): IO[Chain[TransportEvent]] =
     state.modify { current =>
-      val (next, events, result) = XjmfInterpreters.transition(op, current)
+      val (next, events, _) = XjmfInterpreters.transition(op, current)
       (next.copy(events = next.events ++ events), events)
     }
 end XjdfHub
