@@ -39,6 +39,20 @@ object XjdfServerChecks:
   private def envelope(value: SignalStatus): XJMF =
     XJMF(value.header, NonEmptyVector.one(value), Some(Version.V2_2))
 
+  /** One signal frame delivered over the subscription stream (direct app.run: see the framesOf note). */
+  private def deliverFrame(hub: XjdfHub, signalToDeliver: SignalStatus): IO[Vector[XJMF]] =
+    for
+      fiber <- XjdfServer
+        .app(hub)
+        .run(Request[IO](Method.GET, uri"/channels" / channelId.value / "signals"))
+        .flatMap(response => XjdfClient.framesOf(response).take(1).compile.toVector)
+        .start
+      // fs2 publish races a subscriber that has not registered yet, so the producer awaits the handshake
+      _ <- hub.awaitingSubscriber(channelId)
+      _ <- hub.publish(signalToDeliver)
+      frame <- fiber.joinWithNever
+    yield frame
+
   /** Task 2 + 4: the demo runs end-to-end — submit, subscribe, two delivered signals, refID correlation. */
   val endToEndDemo: Unit =
     val document = XJDF(jobId, NonEmptyVector.one(process))
@@ -51,20 +65,15 @@ object XjdfServerChecks:
     val run: IO[(ResponseSubmitQueueEntry, ResponseStatus, Vector[XJMF], Vector[XJMF])] =
       for
         hub <- XjdfHub.create
-        // Client.fromHttpApp returns the in-memory Client directly (no Resource: nothing to acquire or release)
+        // Client.fromHttpApp handles the finite request/response pairs; the infinite subscription stream is
+        // consumed via a direct app.run (the fromHttpApp body finalizer drains a channel that only closes
+        // when the infinite stream ends - see the framesOf note in XjdfClient)
         client = Client.fromHttpApp(XjdfServer.app(hub))
         receipt <- XjdfClient.submit(client, document)
         response <- XjdfClient.subscribeStatus(client, query)
-        firstFiber <- XjdfClient.signals(client, channelId).take(1).compile.toVector.start
-        // fs2 publish1 drops a signal without subscribers, so the producer awaits the delivery handshake
-        _ <- hub.awaitingSubscriber(channelId)
-        _ <- hub.publish(firstSignal)
-        firstFrame <- firstFiber.joinWithNever
-        secondFiber <- XjdfClient.signals(client, channelId).take(1).compile.toVector.start
-        _ <- hub.awaitingSubscriber(channelId)
-        _ <- hub.publish(secondSignal)
-        second <- secondFiber.joinWithNever
-      yield (receipt, response, firstFrame, second)
+        first <- deliverFrame(hub, firstSignal)
+        second <- deliverFrame(hub, secondSignal)
+      yield (receipt, response, first, second)
     val (receipt, response, first, second) = run.unsafeRunSync()
     assert(receipt.returnCode.contains(0))
     assert(receipt.header.refId.contains(jobId))

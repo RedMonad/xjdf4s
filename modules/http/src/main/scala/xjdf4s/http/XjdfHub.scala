@@ -49,6 +49,12 @@ final class XjdfHub private (
   /** 9.6.6: closes the channel and releases its topic (the stage 06 entry stays visible as Closed). */
   def closeChannel(channelId: Nmtoken): IO[Unit] =
     for
+      // the fs2 graceful shutdown: closing the topic lets subscribers terminate naturally after draining
+      _ <- topics.get.flatMap {
+        _.get(channelId) match
+          case Some(topic) => topic.close.void
+          case None        => IO.unit
+      }
       _ <- topics.update(_ - channelId)
       _ <- runOp(XjmfOp.CloseChannel(channelId))
     yield ()

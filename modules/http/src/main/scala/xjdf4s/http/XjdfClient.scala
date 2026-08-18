@@ -33,22 +33,29 @@ object XjdfClient:
   /**
    * GET /channels/{id}/signals: the subscription stream, one JSON XJMF envelope per line (the vendor framing
    * documented in [[XjdfServer]]). The stream ends when the server closes the channel or the client cancels.
+   *
+   * NOTE for in-memory testing: `Client.fromHttpApp` pumps the response body through a synchronous channel and
+   * its finalizer drains that channel, which only finishes when the producer ends - with an infinite
+   * subscription stream the finalizer deadlocks on completion/cancellation. Tests consume [[framesOf]] from a
+   * direct `app.run(...)` response instead; socket-backed clients (ember) are unaffected.
    */
   def signals(client: Client[IO], channelId: Nmtoken): Stream[IO, XJMF] =
     client
       .stream(Request[IO](Method.GET, uri"/channels" / channelId.value / "signals"))
-      .flatMap { response =>
-        response.bodyText
-          .through(text.lines)
-          .filter(_.nonEmpty)
-          .evalMap { line =>
-            IO.fromEither(
-              io.circe.parser
-                .parse(line)
-                .flatMap(_.as[XJMF])
-                .left
-                .map(error => new IllegalArgumentException(s"signal frame: $error")),
-            )
-          }
-      }
+      .flatMap(framesOf)
+
+  /** Decodes one JSON-Lines frame of the subscription stream (the vendor framing of [[XjdfServer]]). */
+  def decodeFrame(line: String): Either[Throwable, XJMF] =
+    io.circe.parser
+      .parse(line)
+      .flatMap(_.as[XJMF])
+      .left
+      .map(error => new IllegalArgumentException(s"signal frame: $error"))
+
+  /** The signal frames of a raw subscription response, used by tests over a direct `app.run` call. */
+  def framesOf(response: org.http4s.Response[IO]): Stream[IO, XJMF] =
+    response.bodyText
+      .through(text.lines)
+      .filter(_.nonEmpty)
+      .evalMap(line => IO.fromEither(decodeFrame(line)))
 end XjdfClient
