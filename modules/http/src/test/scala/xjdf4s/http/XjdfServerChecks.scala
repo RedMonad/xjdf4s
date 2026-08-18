@@ -87,7 +87,7 @@ object XjdfServerChecks:
               StopPersistentChannelParams(channelId = Some(channelId)),
             ),
           )(using XjdfMessageEntities.commandStopPersistentChannelEncoder),
-        )(using XjdfMessageEntities.responseStopPersistentChannelEncoder)
+        )(using XjdfMessageEntities.responseStopPersistentChannelDecoder)
         streamStatus <- client.status(Request[IO](Method.GET, uri"/channels" / channelId.value / "signals"))
       yield (stopResponse, streamStatus)
     val (stopResponse, streamStatus) = run.unsafeRunSync()

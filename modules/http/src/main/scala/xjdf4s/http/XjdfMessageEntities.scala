@@ -29,6 +29,8 @@ object XjdfMessageEntities:
   val commandStopPersistentChannelEncoder: EntityEncoder[IO, CommandStopPersistentChannel] =
     XjdfEntities.jsonEntityEncoder[CommandStopPersistentChannel](XjdfMediaTypes.xjmfJson)
 
+  val responseStopPersistentChannelDecoder: EntityDecoder[IO, ResponseStopPersistentChannel] =
+    XjdfEntities.jsonEntityDecoder[ResponseStopPersistentChannel](XjdfMediaTypes.xjmfJson)
   val responseStopPersistentChannelEncoder: EntityEncoder[IO, ResponseStopPersistentChannel] =
     XjdfEntities.jsonEntityEncoder[ResponseStopPersistentChannel](XjdfMediaTypes.xjmfJson)
 
