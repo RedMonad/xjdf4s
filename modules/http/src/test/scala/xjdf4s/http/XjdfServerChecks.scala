@@ -64,11 +64,10 @@ object XjdfServerChecks:
       case Left(_) => IO.raiseError[A](new RuntimeException(s"step timed out: $name"))
       // racePair's pair is (loser fiber, winner outcome): the step wins when its outcome is the second element
       case Right((_, outcome)) =>
-        outcome.join.flatMap {
+        outcome match
           case cats.effect.kernel.Outcome.Succeeded(value) => value
           case cats.effect.kernel.Outcome.Errored(error)  => IO.raiseError(error)
           case cats.effect.kernel.Outcome.Canceled()      => IO.canceled
-        }
     }
 
   /** Diagnostic stage: submit over HTTP alone (Client.fromHttpApp with a finite body). */
