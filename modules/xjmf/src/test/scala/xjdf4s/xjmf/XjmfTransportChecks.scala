@@ -2,6 +2,7 @@ package xjdf4s.xjmf
 
 import xjdf4s.core.*
 import xjdf4s.messaging.*
+import xjdf4s.model.Header
 
 /**
  * The stage 06 scenarios, executed by both interpreters: the subscription handshake (9.6.2), the refID
