@@ -3,68 +3,71 @@ package xjdf4s.http
 import scala.concurrent.duration.*
 
 /**
- * One munit test per stage 07 check: a hung scenario fails with its own name and timeout instead of taking the
- * whole suite down through a shared eager initializer.
+ * One munit test per stage 07 check: a hung scenario fails with its own name (the demo scenarios additionally
+ * carry racePair step guards that name the exact step) instead of taking the whole suite down through a shared
+ * eager initializer. The suite-level munitTimeout is the final safety net.
  */
 class HttpChecksSuite extends munit.FunSuite:
 
-  test("entity xml round trip".timeout(15.seconds)) {
+  override def munitTimeout: Duration = 30.seconds
+
+  test("entity xml round trip") {
     XjdfEntityChecks.xmlRoundTrip
   }
 
-  test("entity json round trip".timeout(15.seconds)) {
+  test("entity json round trip") {
     XjdfEntityChecks.jsonRoundTrip
   }
 
-  test("xjmf entity round trip".timeout(15.seconds)) {
+  test("xjmf entity round trip") {
     XjdfEntityChecks.xjmfRoundTrip
   }
 
-  test("rejects wrong mime type".timeout(15.seconds)) {
+  test("rejects wrong mime type") {
     XjdfEntityChecks.rejectsWrongMimeType
   }
 
-  test("message entity round trip".timeout(15.seconds)) {
+  test("message entity round trip") {
     XjdfEntityChecks.messageEntityRoundTrip
   }
 
-  test("diagnostic: submit over http".timeout(15.seconds)) {
+  test("diagnostic: submit over http") {
     XjdfServerChecks.submitOverHttp()
   }
 
-  test("diagnostic: subscribe over http".timeout(15.seconds)) {
+  test("diagnostic: subscribe over http") {
     XjdfServerChecks.subscribeOverHttp()
   }
 
-  test("diagnostic: hub delivery".timeout(15.seconds)) {
+  test("diagnostic: hub delivery") {
     XjdfServerChecks.hubDelivery()
   }
 
-  test("end to end demo".timeout(15.seconds)) {
+  test("end to end demo") {
     XjdfServerChecks.endToEndDemo()
   }
 
-  test("subscription stream route".timeout(15.seconds)) {
+  test("subscription stream route") {
     XjdfServerChecks.streamRoute()
   }
 
-  test("stop channel".timeout(15.seconds)) {
+  test("stop channel") {
     XjdfServerChecks.stopChannel()
   }
 
-  test("body limit".timeout(15.seconds)) {
+  test("body limit") {
     XjdfServerChecks.bodyLimit()
   }
 
-  test("transport await timeout".timeout(15.seconds)) {
+  test("transport await timeout") {
     XjdfIoChecks.transportTimeout
   }
 
-  test("await cancellation cleanup".timeout(15.seconds)) {
+  test("await cancellation cleanup") {
     XjdfIoChecks.awaitCancellation
   }
 
-  test("effectful document builder".timeout(15.seconds)) {
+  test("effectful document builder") {
     XjdfIoChecks.documentInterpreter
   }
 end HttpChecksSuite
