@@ -1,7 +1,7 @@
 package xjdf4s.http
 
 import cats.data.Chain
-import cats.effect.{IO, Ref}
+import cats.effect.{IO, Ref, Resource}
 import fs2.Stream
 import fs2.concurrent.Topic
 
@@ -88,10 +88,19 @@ final class XjdfHub private (
     topics.get.map(_.get(channelId).map(_.subscribe(16)))
 
   /**
-   * The delivery handshake: completes when at least one subscriber is attached to the channel's topic (fs2's
-   * own subscriber count). fs2 `publish1` DROPS an element published while nobody is subscribed, so a producer
-   * MUST await this before the first publish - otherwise a signal raced against the subscriber registration is
-   * silently lost and a waiting `take(1)` stream hangs forever.
+   * The deterministic subscription primitive: fs2's `subscribeAwait` Resource completes only after the
+   * subscriber is registered in the topic, so a producer that publishes after the resource acquisition can
+   * never race the registration (`publish1` would otherwise drop the element). Prefer this over
+   * [[awaitingSubscriber]] in tests and local producers.
+   */
+  def subscribeAwait(channelId: Nmtoken): IO[Option[Resource[IO, Stream[IO, Signal]]]] =
+    topics.get.map(_.get(channelId).map(_.subscribeAwait(16)))
+
+  /**
+   * The pull-based delivery handshake: completes when at least one subscriber is attached to the channel's
+   * topic (fs2's own subscriber count). `publish1` DROPS an element published while nobody is subscribed, so a
+   * producer racing a `subscribe`-based stream must await this before the first publish; for deterministic
+   * tests prefer [[subscribeAwait]], whose acquisition already guarantees the registration.
    */
   def awaitingSubscriber(channelId: Nmtoken): IO[Unit] =
     topics.get.flatMap {

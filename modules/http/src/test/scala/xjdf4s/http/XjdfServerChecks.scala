@@ -3,8 +3,9 @@ package xjdf4s.http
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 
+import org.http4s.{MediaType, Method, Request, Status}
 import org.http4s.client.Client
-import org.http4s.{Method, Request, Status}
+import org.http4s.headers.`Content-Type`
 import org.http4s.implicits.*
 
 import xjdf4s.core.*
@@ -12,8 +13,12 @@ import xjdf4s.messaging.*
 import xjdf4s.model.{DeviceInfo, Header, XJDF}
 
 /**
- * The end-to-end demo of stage 07, over `Client.fromHttpApp` (no sockets, per the stage risk note): submit an
- * XJDF, subscribe for status, receive signals on the stream, stop the channel, and the body-limit middleware.
+ * The stage 07 scenarios, without sockets (per the stage risk note): the finite request/response pairs go
+ * through `Client.fromHttpApp`, while the subscription stream is consumed over the hub's deterministic
+ * `subscribeAwait` resource - its acquisition completes only after the subscriber is registered, so no signal
+ * can be dropped by a publish race, and no cross-fiber timing is involved. The infinite stream is kept away
+ * from `Client.fromHttpApp` because its body finalizer drains a channel that only closes when the stream ends
+ * (see the framesOf note in XjdfClient).
  */
 object XjdfServerChecks:
 
@@ -21,6 +26,7 @@ object XjdfServerChecks:
   private val process = Nmtoken.from("Product").toOption.get
   private val deviceId = Nmtoken.from("device-1").toOption.get
   private val channelId = Nmtoken.from("Q1").toOption.get
+  private val messageType = Nmtoken.from("SignalStatus").toOption.get
   private val time = XsdDateTime.from("2026-08-17T12:00:00+03:00").toOption.get
   private val url = UriRef.from("https://example.com/xjmfurl").toOption.get
   private val subscription = Subscription(url, channelMode = Vector(ChannelMode.Reliable))
@@ -39,60 +45,65 @@ object XjdfServerChecks:
   private def envelope(value: SignalStatus): XJMF =
     XJMF(value.header, NonEmptyVector.one(value), Some(Version.V2_2))
 
-  /** One signal frame delivered over the subscription stream (direct app.run: see the framesOf note). */
-  private def deliverFrame(hub: XjdfHub, signalToDeliver: SignalStatus): IO[Vector[XJMF]] =
-    for
-      fiber <- XjdfServer
-        .app(hub)
-        .run(Request[IO](Method.GET, uri"/channels" / channelId.value / "signals"))
-        .flatMap(response => XjdfClient.framesOf(response).take(1).compile.toVector)
-        .start
-      // fs2 publish races a subscriber that has not registered yet, so the producer awaits the handshake
-      _ <- hub.awaitingSubscriber(channelId)
-      _ <- hub.publish(signalToDeliver)
-      frame <- fiber.joinWithNever
-    yield frame
-
-  /** Task 2 + 4: the demo runs end-to-end — submit, subscribe, two delivered signals, refID correlation. */
-  val endToEndDemo: Unit =
-    val document = XJDF(jobId, NonEmptyVector.one(process))
-    val query = QueryStatus(
+  private def statusQuery: QueryStatus =
+    QueryStatus(
       header = Header(deviceId, time, id = Some(XsdId.from("Q1").toOption.get)),
       subscription = Some(subscription),
     )
+
+  /** Task 2 + 4: the demo runs end-to-end — submit and subscribe over HTTP, then two signals over the hub. */
+  val endToEndDemo: Unit =
+    val document = XJDF(jobId, NonEmptyVector.one(process))
     val firstSignal = signal("S1")
     val secondSignal = signal("S2")
-    val run: IO[(ResponseSubmitQueueEntry, ResponseStatus, Vector[XJMF], Vector[XJMF])] =
+    val run: IO[(ResponseSubmitQueueEntry, ResponseStatus, Vector[XJMF])] =
       for
         hub <- XjdfHub.create
-        // Client.fromHttpApp handles the finite request/response pairs; the infinite subscription stream is
-        // consumed via a direct app.run (the fromHttpApp body finalizer drains a channel that only closes
-        // when the infinite stream ends - see the framesOf note in XjdfClient)
         client = Client.fromHttpApp(XjdfServer.app(hub))
         receipt <- XjdfClient.submit(client, document)
-        response <- XjdfClient.subscribeStatus(client, query)
-        first <- deliverFrame(hub, firstSignal)
-        second <- deliverFrame(hub, secondSignal)
-      yield (receipt, response, first, second)
-    val (receipt, response, first, second) = run.unsafeRunSync()
+        response <- XjdfClient.subscribeStatus(client, statusQuery)
+        frames <- hub.subscribeAwait(channelId).flatMap {
+          case Some(resource) =>
+            resource.use { stream =>
+              for
+                fiber <- stream.map(hub.envelope).take(2).compile.toVector.start
+                _ <- hub.publish(firstSignal)
+                _ <- hub.publish(secondSignal)
+                delivered <- fiber.joinWithNever
+              yield delivered
+            }
+          case None => IO.raiseError(new AssertionError(s"channel '$channelId' was not opened"))
+        }
+      yield (receipt, response, frames)
+    val (receipt, response, frames) = run.unsafeRunSync()
     assert(receipt.returnCode.contains(0))
     assert(receipt.header.refId.contains(jobId))
     assert(response.returnCode.contains(0))
     assert(response.header.refId.contains(channelId))
-    assert(first == Vector(envelope(firstSignal)), s"first frame: $first")
-    assert(second == Vector(envelope(secondSignal)), s"second frame: $second")
+    assert(frames == Vector(envelope(firstSignal), envelope(secondSignal)), s"frames: $frames")
+
+  /** The subscription stream route serves an open channel with the documented vendor framing media type. */
+  val streamRoute: Unit =
+    val run: IO[(Status, Option[MediaType])] =
+      for
+        hub <- XjdfHub.create
+        _ <- hub.openChannel(subscription, channelId, messageType)
+        response <- XjdfServer.app(hub).run(Request[IO](Method.GET, uri"/channels" / channelId.value / "signals"))
+      yield (response.status, response.headers.get[`Content-Type`].map(_.mediaType))
+    val (status, mediaType) = run.unsafeRunSync()
+    assert(status == Status.Ok)
+    assert(
+      mediaType.exists(mt => mt.mainType == XjdfMediaTypes.xjmfJson.mainType && mt.subType == XjdfMediaTypes.xjmfJson.subType),
+      s"media type: $mediaType",
+    )
 
   /** Task 2 + 6: `POST /subscriptions/stop` closes the channel; the stream endpoint then answers 404. */
   val stopChannel: Unit =
-    val query = QueryStatus(
-      header = Header(deviceId, time, id = Some(XsdId.from("Q1").toOption.get)),
-      subscription = Some(subscription),
-    )
     val run: IO[(ResponseStopPersistentChannel, Status)] =
       for
         hub <- XjdfHub.create
         client = Client.fromHttpApp(XjdfServer.app(hub))
-        _ <- XjdfClient.subscribeStatus(client, query)
+        _ <- XjdfClient.subscribeStatus(client, statusQuery)
         stopResponse <- client.expect[ResponseStopPersistentChannel](
           Request[IO](Method.POST, uri"/subscriptions/stop").withEntity(
             CommandStopPersistentChannel(
